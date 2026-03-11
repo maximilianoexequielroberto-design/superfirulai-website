@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SuperFirulai $FIRU</title>
+<meta name="description" content="SuperFirulai $FIRU - The community powered memecoin.">
+<style>
+:root{
+  --bg:#050816; --panel:#0b1022; --line:rgba(255,255,255,.08);
+  --text:#fff; --muted:#b8c3e0; --blue:#1b83ff; --blue2:#0c57d6; --gold:#ffca36; --gold2:#ff9800;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text); font-family:Arial,Helvetica,sans-serif;
+}
+.container{
+  width:100%; max-width:1536px; margin:0 auto;
+}
+.hero{
+  position:relative;
+  line-height:0;
+}
+.hero img{
+  width:100%;
+  display:block;
+}
+.hotspot{
+  position:absolute;
+  display:block;
+  z-index:5;
+  cursor:pointer;
+  text-decoration:none;
+  outline:none;
+}
+.hotspot:focus-visible{
+  box-shadow:0 0 0 3px rgba(255,255,255,.8);
+  border-radius:18px;
+}
+
+/* top nav */
+.home{left:31.8%;top:1.0%;width:7.2%;height:6.0%}
+.tokenomics{left:39.5%;top:1.0%;width:11.5%;height:6.0%}
+.airdrop{left:51.8%;top:1.0%;width:8.8%;height:6.0%}
+.roadmap{left:61.2%;top:1.0%;width:9.8%;height:6.0%}
+.community{left:71.4%;top:1.0%;width:12.8%;height:6.0%}
+
+/* buttons */
+.telegram-top{left:78.5%;top:0.8%;width:15.5%;height:6.8%}
+.buy-top{left:94.0%;top:0.8%;width:5.5%;height:6.8%}
+.telegram-main{left:4.0%;top:41.2%;width:20.5%;height:7.0%}
+.airdrop-main{left:25.6%;top:41.2%;width:19.6%;height:7.0%}
+
+/* mid sections */
+.token-box{left:74.0%;top:9.5%;width:24.0%;height:36.5%}
+.about-box{left:2.5%;top:59.3%;width:43.0%;height:22.8%}
+.buy-box{left:45.8%;top:59.3%;width:40.0%;height:22.8%}
+.roadmap-box{left:29.5%;top:87.8%;width:41.5%;height:8.8%}
+
+.content{
+  padding:28px 16px 42px;
+  display:grid;
+  gap:18px;
+}
+.section{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:22px;
+}
+.section h2{
+  margin:0 0 10px;
+  font-size:28px;
+}
+.section p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.7;
+}
+.actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+.btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:14px 18px; border-radius:14px; text-decoration:none; font-weight:800;
+}
+.btn-blue{background:linear-gradient(180deg,var(--blue),var(--blue2)); color:#fff}
+.btn-gold{background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#241300}
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+@media (max-width: 800px){
+  .grid{grid-template-columns:1fr}
+  .section h2{font-size:24px}
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <section class="hero" id="home">
+    <img src="superfirulai.webp" alt="SuperFirulai landing">
+
+    <a class="hotspot home" href="#home" aria-label="Home"></a>
+    <a class="hotspot tokenomics" href="#tokenomics" aria-label="Tokenomics"></a>
+    <a class="hotspot airdrop" href="#airdrop" aria-label="Airdrop"></a>
+    <a class="hotspot roadmap" href="#roadmap" aria-label="Roadmap"></a>
+    <a class="hotspot community" href="#community" aria-label="Community"></a>
+
+    <a class="hotspot telegram-top" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer" aria-label="Join Telegram"></a>
+    <a class="hotspot buy-top" href="#buy" aria-label="Buy FIRU"></a>
+
+    <a class="hotspot telegram-main" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer" aria-label="Join Telegram main"></a>
+    <a class="hotspot airdrop-main" href="#airdrop" aria-label="Register Airdrop"></a>
+
+    <a class="hotspot token-box" href="#tokenomics" aria-label="Tokenomics panel"></a>
+    <a class="hotspot about-box" href="#about" aria-label="About section"></a>
+    <a class="hotspot buy-box" href="#buy" aria-label="How to buy section"></a>
+    <a class="hotspot roadmap-box" href="#roadmap" aria-label="Roadmap panel"></a>
+  </section>
+
+  <div class="content">
+    <section class="section" id="community">
+      <h2>Community</h2>
+      <p>SuperFirulai está construido para crecer con la comunidad. Únete al Telegram, sigue el proyecto y participa del airdrop temprano.</p>
+      <div class="actions">
+        <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer">Join Telegram</a>
+        <a class="btn btn-gold" href="#airdrop">Register Airdrop</a>
+      </div>
+    </section>
+
+    <div class="grid">
+      <section class="section" id="tokenomics">
+        <h2>Tokenomics</h2>
+        <p>Total supply: 1,000,000,000 $FIRU. Distribución: 55% Liquidity, 20% Community, 10% Marketing, 10% Team y 5% Burn.</p>
+      </section>
+
+      <section class="section" id="about">
+        <h2>About SuperFirulai</h2>
+        <p>SuperFirulai es un perro héroe creado por la comunidad para conquistar el universo meme. El proyecto busca verse fuerte, claro y profesional desde el primer día.</p>
+      </section>
+
+      <section class="section" id="buy">
+        <h2>How to Buy</h2>
+        <p>Compra SOL, conecta tu wallet, intercambia por $FIRU cuando esté en vivo y mantente cerca de la comunidad para las actualizaciones de launch.</p>
+      </section>
+
+      <section class="section" id="airdrop">
+        <h2>Airdrop</h2>
+        <p>La imagen principal ya te lleva a esta sección. Aquí luego puedes conectar un formulario real de registro con Google Forms, Airtable, Supabase o Firebase.</p>
+      </section>
+    </div>
+
+    <section class="section" id="roadmap">
+      <h2>Roadmap</h2>
+      <p>Phase 1: Community Growth. Phase 2: Token Launch. Phase 3: CEX Listing. La navegación superior y la zona roadmap de la imagen ya apuntan aquí.</p>
+    </section>
+  </div>
+</div>
+
+</body>
+</html>
