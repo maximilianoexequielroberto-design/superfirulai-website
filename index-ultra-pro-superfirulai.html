@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SuperFirulai $FIRU</title>
+<meta name="description" content="SuperFirulai ($FIRU) is a community-powered memecoin built on Solana." />
+<meta name="keywords" content="SuperFirulai, FIRU, memecoin, Solana, crypto, airdrop, tokenomics" />
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#040817;--panel:#091126;--text:#fff;--muted:#bcc7e8;--yellow:#ffc62f;--blue:#1d82ff;--blue2:#0c57d6;--red:#ff4444;--line:rgba(112,164,255,.28);--line-soft:rgba(255,255,255,.10);--shadow:0 24px 50px rgba(0,0,0,.35)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;color:var(--text);font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at 15% 10%, rgba(25,130,255,.22), transparent 22%),radial-gradient(circle at 85% 18%, rgba(255,68,68,.18), transparent 18%),radial-gradient(circle at 50% 90%, rgba(255,198,47,.10), transparent 22%),linear-gradient(180deg,#02050f 0%, #08112a 42%, #040817 100%);overflow-x:hidden}
+.space,.space:before,.space:after{content:"";position:fixed;inset:0;z-index:-3;pointer-events:none;background-image:radial-gradient(2px 2px at 30px 40px, rgba(255,255,255,.9), transparent),radial-gradient(2px 2px at 120px 90px, rgba(255,196,0,.8), transparent),radial-gradient(1.5px 1.5px at 220px 180px, rgba(255,255,255,.7), transparent),radial-gradient(2px 2px at 340px 60px, rgba(255,255,255,.6), transparent),radial-gradient(2px 2px at 460px 120px, rgba(255,150,50,.6), transparent);background-size:520px 280px;opacity:.45;animation:drift 38s linear infinite}.space:before{opacity:.28;animation-duration:62s}.space:after{opacity:.18;animation-duration:90s}
+@keyframes drift{from{transform:translateY(0)}to{transform:translateY(280px)}}
+.floating{position:fixed;z-index:-2;pointer-events:none;opacity:.22;filter:drop-shadow(0 0 12px rgba(255,198,47,.25))}.coin{font-size:36px;animation:float 6s ease-in-out infinite}.rocket{font-size:34px;animation:rocket 5.2s ease-in-out infinite}.coin.c1{left:5%;top:16%}.coin.c2{right:7%;top:22%;animation-delay:1s}.coin.c3{left:9%;bottom:18%;animation-delay:2s}.coin.c4{right:8%;bottom:12%;animation-delay:.7s}.rocket.r1{left:8%;top:39%}.rocket.r2{right:12%;top:66%;animation-delay:1.1s}.rocket.r3{right:20%;top:18%;animation-delay:.5s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-16px) rotate(6deg)}}@keyframes rocket{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(-12px) rotate(-7deg)}}@keyframes pulse{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-6px) scale(1.02)}}
+.container{max-width:1280px;margin:0 auto;padding:0 18px}header{position:sticky;top:12px;z-index:50;max-width:1280px;margin:14px auto 0;padding:0 18px}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 18px;border-radius:28px;background:rgba(8,13,30,.82);border:1px solid rgba(45,110,255,.28);backdrop-filter:blur(12px);box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:12px}.brand img{width:58px;height:58px;object-fit:cover;border-radius:50%;border:2px solid rgba(255,198,47,.45)}.brand-title{font-weight:900;font-size:20px;line-height:1}.brand-title span{display:block;color:var(--yellow)}
+.menu{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.menu a{text-decoration:none;color:#f3f6ff;font-weight:800;font-size:14px;padding:14px 18px;border-radius:18px;transition:.25s}.menu a.active,.menu a:hover{box-shadow:inset 0 -2px 0 var(--yellow);color:var(--yellow)}.nav-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-weight:900;border-radius:18px;padding:16px 24px;border:1px solid rgba(255,255,255,.08);transition:.25s transform,.25s filter;cursor:pointer}.btn:hover{transform:translateY(-2px);filter:brightness(1.05)}.btn-blue{background:linear-gradient(180deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 14px 32px rgba(29,130,255,.30)}.btn-gold{background:linear-gradient(180deg,#ffcf3a,#ff9900);color:#1a1200;box-shadow:0 14px 32px rgba(255,176,0,.22)}.btn-dark{background:rgba(255,255,255,.07);color:#fff}
+.hero{padding:38px 0 18px}.hero-card{overflow:hidden;border-radius:34px;border:1px solid rgba(54,122,255,.28);background:radial-gradient(circle at 26% 28%, rgba(255,198,47,.14), transparent 15%),radial-gradient(circle at 78% 22%, rgba(25,130,255,.22), transparent 20%),radial-gradient(circle at 72% 76%, rgba(255,68,68,.16), transparent 20%),linear-gradient(180deg, rgba(8,14,35,.88), rgba(8,14,35,.78));box-shadow:var(--shadow);padding:28px}.hero-grid{display:grid;grid-template-columns:1fr 1.03fr;gap:16px;align-items:center}
+.hero-title{font-size:88px;line-height:.88;margin:0;letter-spacing:-2px;font-weight:900}.hero-title .super{display:block;background:linear-gradient(180deg,#ffd24a 10%, #ff9800 60%);-webkit-background-clip:text;background-clip:text;color:transparent}.hero-title .firu{display:block;background:linear-gradient(180deg,#6bb0ff 10%, #dcecff 58%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero-tag{display:inline-block;margin-top:14px;background:linear-gradient(180deg,#d82222,#a80f0f);padding:12px 18px;border-radius:18px;font-size:19px;font-weight:900}.hero-lines{display:grid;gap:12px;margin-top:18px}.hero-line{display:flex;align-items:center;gap:10px;flex-wrap:wrap;color:#e9eefb;font-size:20px;font-weight:700}.hero-badges{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}.badge{background:rgba(255,255,255,.06);border:1px solid var(--line-soft);border-radius:16px;padding:13px 16px;font-size:18px;font-weight:800;color:#fff}.badge.sol{color:#c7b5ff}.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}
+.character-wrap{position:relative;min-height:540px;display:flex;align-items:flex-end;justify-content:center}.character-wrap:before{content:"";position:absolute;inset:auto 12% 10% 12%;height:70%;border-radius:50%;background:radial-gradient(circle, rgba(255,198,47,.25), rgba(25,130,255,.08), transparent 62%);filter:blur(12px)}.character-wrap img{position:relative;width:100%;max-width:640px;border-radius:26px;box-shadow:0 22px 54px rgba(0,0,0,.42), 0 0 60px rgba(255,198,47,.12);animation:pulse 5.6s ease-in-out infinite}
+.stats-row,.mini-stats,.roadmap-row,.faq-grid{display:grid;gap:12px}.stats-row{grid-template-columns:repeat(4,1fr);margin-top:18px}.stat{background:linear-gradient(180deg, rgba(12,18,42,.95), rgba(14,19,40,.78));border:1px solid rgba(96,160,255,.22);border-radius:22px;padding:18px 16px;box-shadow:var(--shadow)}.stat-label{font-size:15px;color:#f6fbff;font-weight:900;display:flex;align-items:center;gap:8px}.stat-value{font-size:28px;font-weight:900;margin-top:8px}
+.grid-2{display:grid;grid-template-columns:1.04fr .96fr;gap:16px;margin-top:18px}.panel{background:linear-gradient(180deg, rgba(8,15,34,.92), rgba(9,15,32,.72));border:1px solid rgba(74,138,255,.24);border-radius:28px;padding:24px;box-shadow:var(--shadow)}.panel h2{margin:0 0 8px;font-size:28px}.lead{margin:0;color:var(--muted);line-height:1.7}
+.tokenomics-top{display:grid;grid-template-columns:280px 1fr;gap:16px;align-items:center;margin-top:18px}.chart-box{height:260px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:20px;padding:12px}.alloc{display:grid;gap:10px}.alloc-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);font-weight:800}.left{display:flex;align-items:center;gap:10px}.dot{width:12px;height:12px;border-radius:50%}
+.token-cta{margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.token-cta .mini{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:16px;padding:14px;text-align:center}.token-cta strong{display:block;font-size:18px}.token-cta span{display:block;color:var(--muted);font-size:12px;margin-top:6px}
+.buy-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.step{position:relative;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:22px;padding:18px 14px 16px;text-align:center;min-height:180px;overflow:hidden}.step .num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-weight:900;font-size:22px;border:2px solid rgba(255,255,255,.15)}.step h3{margin:0;font-size:18px}.step p{margin:10px 0 0;color:var(--muted);line-height:1.6;font-size:14px}.s1 .num{background:#2d1f1f;color:#ff6b6b}.s2 .num{background:#1d2942;color:#73b0ff}.s3 .num{background:#2b220d;color:#ffd15e}.s4 .num{background:#291b38;color:#df8fff}
+.about-row,.airdrop-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.about-copy p{color:var(--muted);line-height:1.8;font-size:18px;margin:0}.about-tags{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.tag{background:rgba(255,255,255,.05);border:1px solid var(--line-soft);border-radius:16px;padding:12px 14px;font-weight:800}.about-card{display:flex;align-items:center;justify-content:center;min-height:260px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:24px;overflow:hidden}.about-card img{max-width:100%;width:320px}
+.tip{background:rgba(255,198,47,.10);border:1px solid rgba(255,198,47,.18);color:#ffe9aa;line-height:1.8;padding:16px;border-radius:18px;margin-top:16px}.mini-stats{grid-template-columns:repeat(2,1fr);margin-top:16px}.mini{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:18px;padding:16px;text-align:center}.mini strong{display:block;font-size:28px}.mini span{display:block;margin-top:6px;color:var(--muted);font-size:13px}
+.form{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:22px;padding:18px}.form form{display:grid;gap:12px}.form input{width:100%;border:none;outline:none;border-radius:16px;padding:16px;background:#131d39;color:#fff;border:1px solid rgba(255,255,255,.08);font-size:15px}.form input::placeholder{color:#9ca7c6}.msg{margin-top:12px;display:none;border-radius:16px;padding:14px;background:rgba(255,255,255,.05);border:1px solid var(--line-soft);color:#e7eefc;line-height:1.7}.helper{margin-top:12px;color:var(--muted);font-size:12px;line-height:1.8}
+.leader-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid var(--line-soft);margin-top:10px}.leader-left{display:flex;align-items:center;gap:12px}.rank{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#ffd15e,#ff9f1a);color:#1a1200;font-weight:900}.leader-name{font-weight:800}.leader-meta{font-size:13px;color:var(--muted)}.leader-score{text-align:right}.leader-score strong{display:block;font-size:24px;color:var(--yellow)}.leader-score span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
+.roadmap-row{grid-template-columns:repeat(3,1fr);margin-top:18px}.phase{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:24px;padding:22px;box-shadow:var(--shadow)}.phase .title{font-size:14px;color:#9dd8ff;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.phase h3{margin:10px 0 14px;font-size:28px}.phase ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.9}
+.faq-grid{grid-template-columns:repeat(2,1fr);margin-top:18px}.faq{background:rgba(255,255,255,.04);border:1px solid var(--line-soft);border-radius:20px;padding:18px}.faq h3{margin:0 0 8px}.faq p{margin:0;color:var(--muted);line-height:1.8}
+.cta{margin:18px 0 26px;padding:34px 22px;text-align:center;border-radius:28px;background:linear-gradient(135deg, rgba(25,130,255,.18), rgba(255,68,68,.18));border:1px solid rgba(74,138,255,.24);box-shadow:var(--shadow)}.cta h2{font-size:44px;margin:0}.cta p{max-width:760px;margin:14px auto 0;color:var(--muted);line-height:1.8}.cta-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+footer{padding:0 0 36px;color:#93a0c5;font-size:14px}.footer-row{border-top:1px solid rgba(255,255,255,.08);padding-top:20px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}.footer-links{display:flex;gap:16px;flex-wrap:wrap}.footer-links a{text-decoration:none;color:#a9b6d9}.footer-links a:hover{color:#fff}
+@media (max-width:1100px){.hero-grid,.grid-2,.about-row,.airdrop-grid,.roadmap-row,.faq-grid{grid-template-columns:1fr}.tokenomics-top{grid-template-columns:1fr}.buy-steps{grid-template-columns:repeat(2,1fr)}.character-wrap{min-height:auto}.hero-title{font-size:68px}.menu{display:none}}
+@media (max-width:720px){.nav{flex-direction:column;align-items:stretch}.nav-actions{justify-content:stretch}.nav-actions .btn{width:100%}.hero-title{font-size:50px}.stats-row,.mini-stats{grid-template-columns:1fr 1fr}.buy-steps{grid-template-columns:1fr}.cta h2{font-size:34px}}
+@media (max-width:480px){.stats-row,.mini-stats,.faq-grid{grid-template-columns:1fr}.hero-card,.panel,.cta{padding:18px}.hero-title{font-size:42px}.hero-tag{font-size:16px}.hero-line{font-size:16px}.section h2,.panel h2{font-size:26px}}
+</style>
+</head>
+<body>
+<div class="space"></div>
+<div class="floating coin c1">🪙</div><div class="floating coin c2">🪙</div><div class="floating coin c3">🪙</div><div class="floating coin c4">🪙</div>
+<div class="floating rocket r1">🚀</div><div class="floating rocket r2">🚀</div><div class="floating rocket r3">🚀</div>
+
+<header><div class="nav">
+<div class="brand"><img src="superfirulai.png" alt="SuperFirulai logo"><div class="brand-title">SuperFirulai <span>$FIRU</span></div></div>
+<nav class="menu"><a href="#home" class="active">HOME</a><a href="#tokenomics">TOKENOMICS</a><a href="#airdrop">AIRDROP</a><a href="#roadmap">ROADMAP</a><a href="#community">COMMUNITY</a></nav>
+<div class="nav-actions"><a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer">JOIN TELEGRAM</a><a class="btn btn-gold" href="#airdrop">BUY $FIRU</a></div>
+</div></header>
+
+<main class="container">
+<section class="hero" id="home"><div class="hero-card"><div class="hero-grid">
+<div>
+<h1 class="hero-title"><span class="super">SuperFirulai</span><span class="firu">$FIRU</span></h1>
+<div class="hero-tag">THE COMMUNITY POWERED MEMECOIN</div>
+<div class="hero-lines"><div class="hero-line">🟣 Built on Solana Blockchain</div><div class="hero-badges"><div class="badge sol">⚡ FAST</div><div class="badge">🛡 SAFE</div><div class="badge">💛 COMMUNITY DRIVEN</div></div></div>
+<div class="hero-actions"><a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer">JOIN TELEGRAM</a><a class="btn btn-gold" href="#airdrop">REGISTER AIRDROP</a></div>
+</div>
+<div class="character-wrap"><img src="superfirulai.png" alt="SuperFirulai official character"></div>
+</div></div>
+<div class="stats-row" id="community"><div class="stat"><div class="stat-label">👥 HOLDERS</div><div class="stat-value" id="holdersCount">2418</div></div><div class="stat"><div class="stat-label">✈ TELEGRAM</div><div class="stat-value" id="telegramMembers">24</div></div><div class="stat"><div class="stat-label">𝕏 FOLLOWERS</div><div class="stat-value" id="xFollowers">61</div></div><div class="stat"><div class="stat-label">💰 SUPPLY</div><div class="stat-value">1,000,000,000</div></div></div>
+</section>
+
+<section class="grid-2" id="tokenomics">
+<div class="panel"><h2>TOKENOMICS</h2><p class="lead">Interactive chart plus clear distribution data for a more professional presentation.</p>
+<div class="tokenomics-top"><div class="chart-box"><canvas id="tokenomicsChart"></canvas></div><div class="alloc">
+<div class="alloc-row"><div class="left"><span class="dot" style="background:#3b82f6"></span>55% Liquidity</div><strong>55%</strong></div>
+<div class="alloc-row"><div class="left"><span class="dot" style="background:#22c55e"></span>20% Community</div><strong>20%</strong></div>
+<div class="alloc-row"><div class="left"><span class="dot" style="background:#f59e0b"></span>10% Marketing</div><strong>10%</strong></div>
+<div class="alloc-row"><div class="left"><span class="dot" style="background:#ef4444"></span>10% Team</div><strong>10%</strong></div>
+<div class="alloc-row"><div class="left"><span class="dot" style="background:#ffd400"></span>5% Burn</div><strong>5%</strong></div>
+</div></div>
+<div class="token-cta"><div class="mini"><strong>NO TAX</strong><span>Cleaner entry</span></div><div class="mini"><strong>LOCKED LP</strong><span>Trust focused</span></div><div class="mini"><strong>100% COMMUNITY</strong><span>Growth mindset</span></div></div>
+</div>
+
+<div class="panel"><h2>HOW TO BUY $FIRU</h2><p class="lead">A simple step-by-step path for new users joining the project.</p>
+<div class="buy-steps">
+<div class="step s1"><div class="num">1</div><h3>BUY SOL</h3><p>Get SOL in your preferred exchange or wallet.</p></div>
+<div class="step s2"><div class="num">2</div><h3>CONNECT WALLET</h3><p>Use a Solana wallet like Phantom to connect.</p></div>
+<div class="step s3"><div class="num">3</div><h3>SWAP FOR $FIRU</h3><p>Swap SOL for $FIRU once the token is live.</p></div>
+<div class="step s4"><div class="num">4</div><h3>JOIN COMMUNITY</h3><p>Stay close to Telegram and X for updates.</p></div>
+</div></div>
+</section>
+
+<section class="grid-2" style="margin-top:18px;">
+<div class="panel"><h2>ABOUT SUPERFIRULAI</h2><div class="about-row"><div class="about-copy"><p>SuperFirulai is a heroic dog built by the community to conquer the meme universe. Powered by strong branding, community energy, and a clear launch path on Solana, $FIRU is designed to feel fun, memorable, and ambitious from day one.</p><div class="about-tags"><div class="tag">⭐ FUN</div><div class="tag">🛡 TRUST</div><div class="tag">📈 GROWTH</div></div></div><div class="about-card"><img src="superfirulai.png" alt="SuperFirulai mascot"></div></div></div>
+<div class="panel"><h2>OFFICIAL TOKENOMICS IMAGE</h2><p class="lead">Use the tokenomics card for posts, launch materials, and community updates.</p><img src="superfirulai-tokenomics.png" alt="SuperFirulai tokenomics" style="width:100%;border-radius:20px;margin-top:16px;display:block"></div>
+</section>
+
+<section class="panel" id="airdrop" style="margin-top:18px;"><div class="airdrop-grid">
+<div><h2>EARLY SUPPORTERS WILL RECEIVE THE FIRST $FIRU AIRDROP</h2><p class="lead">Join the community and register your details before launch.</p><div class="tip">Recommended professional setup: reward active community members, avoid duplicate wallets, and keep the first distribution gradual to protect long-term growth.</div><div class="mini-stats"><div class="mini"><strong id="savedEntries">0</strong><span>Saved Airdrop Entries</span></div><div class="mini"><strong>TOP 10</strong><span>Referral Bonus Tier</span></div></div></div>
+<div class="form"><form id="airdropForm"><input id="telegramInput" type="text" placeholder="Telegram Username"><input id="twitterInput" type="text" placeholder="Twitter (X) Username"><input id="walletInput" type="text" placeholder="Your Solana wallet address"><button class="btn btn-blue" type="submit" id="registerBtn">Register</button></form><div class="msg" id="msg"></div><div class="helper">Preview mode saves entries in the browser. For public production use later, connect to Google Forms, Airtable, Supabase, or Firebase.</div></div>
+</div></section>
+
+<section class="grid-2" style="margin-top:18px;">
+<div class="panel"><h2>TOP REFERRERS</h2><p class="lead">Reward the strongest community members and create more viral growth.</p>
+<div class="leader-row"><div class="leader-left"><div class="rank">1</div><div><div class="leader-name">@firuarmy</div><div class="leader-meta">Community referrer</div></div></div><div class="leader-score"><strong>45</strong><span>Invites</span></div></div>
+<div class="leader-row"><div class="leader-left"><div class="rank">2</div><div><div class="leader-name">@superholder</div><div class="leader-meta">Community referrer</div></div></div><div class="leader-score"><strong>31</strong><span>Invites</span></div></div>
+<div class="leader-row"><div class="leader-left"><div class="rank">3</div><div><div class="leader-name">@solanamoon</div><div class="leader-meta">Community referrer</div></div></div><div class="leader-score"><strong>18</strong><span>Invites</span></div></div>
+</div>
+
+<div class="panel" id="roadmap"><h2>ROADMAP</h2><p class="lead">Simple, clear, and ambitious roadmap for a more serious launch image.</p><div class="roadmap-row">
+<div class="phase"><div class="title">Phase 1</div><h3>Community Growth</h3><ul><li>Community growth</li><li>Branding</li><li>Website launch</li></ul></div>
+<div class="phase"><div class="title">Phase 2</div><h3>Token Launch</h3><ul><li>Token launch</li><li>Liquidity pool</li><li>DEX listing</li></ul></div>
+<div class="phase"><div class="title">Phase 3</div><h3>Expansion</h3><ul><li>CEX listing</li><li>Partnerships</li><li>Ecosystem</li></ul></div>
+</div></div>
+</section>
+
+<section class="panel" style="margin-top:18px;" id="faq"><h2>FAQ</h2><p class="lead">Clear answers help the project look more trustworthy from the start.</p><div class="faq-grid">
+<div class="faq"><h3>What is SuperFirulai?</h3><p>SuperFirulai is a community-powered memecoin built around a heroic dog mascot, strong branding, and early supporter growth.</p></div>
+<div class="faq"><h3>What is the ticker?</h3><p>The official ticker is $FIRU.</p></div>
+<div class="faq"><h3>Which network is planned?</h3><p>The current launch plan is based on Solana.</p></div>
+<div class="faq"><h3>Can I join before launch?</h3><p>Yes. You can join Telegram, follow on X, and register for the early airdrop on this page.</p></div>
+</div></section>
+
+<section class="cta"><h2>JOIN THE SUPERFIRULAI ARMY</h2><p>The future of $FIRU starts with early supporters. Join Telegram and stay close to the project from the beginning.</p><div class="cta-actions"><a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer">JOIN TELEGRAM</a><a class="btn btn-gold" href="#airdrop">REGISTER AIRDROP</a></div></section>
+
+<footer><div class="footer-row"><div>© 2026 SuperFirulai. Community memecoin project.</div><div class="footer-links"><a href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener noreferrer">Telegram</a><a href="#tokenomics">Tokenomics</a><a href="#airdrop">Airdrop</a></div></div></footer>
+</main>
+
+<script>
+const tokenomicsData={labels:['55% Liquidity','20% Community','10% Marketing','10% Team','5% Burn'],descriptions:['Main liquidity allocation for launch and trading depth.','Reserved for airdrops, contests, and community rewards.','Used for promotion, partnerships, and visibility.','Team allocation with long-term vesting plan.','Strategic reserve for future burn or ecosystem support.'],datasets:[{data:[55,20,10,10,5],backgroundColor:['#3b82f6','#22c55e','#ff9f1a','#ef4444','#ffd400'],borderColor:'rgba(255,255,255,.10)',borderWidth:2,hoverOffset:16}]};
+new Chart(document.getElementById('tokenomicsChart'),{type:'doughnut',data:tokenomicsData,options:{cutout:'56%',plugins:{legend:{labels:{color:'#fff',font:{size:13}}},tooltip:{callbacks:{label:(ctx)=>' '+ctx.label+' — '+tokenomicsData.descriptions[ctx.dataIndex]}}}}});
+const targetDate=new Date();targetDate.setDate(targetDate.getDate()+12);targetDate.setHours(targetDate.getHours()+4);targetDate.setMinutes(targetDate.getMinutes()+33);
+function updateCountdown(){const now=Date.now();const distance=targetDate-now;if(distance<=0){['days','hours','minutes','seconds'].forEach(id=>document.getElementById(id).textContent='00');return}const d=Math.floor(distance/(1000*60*60*24));const h=Math.floor((distance/(1000*60*60))%24);const m=Math.floor((distance/(1000*60))%60);const s=Math.floor((distance/1000)%60);document.getElementById('days').textContent=String(d).padStart(2,'0');document.getElementById('hours').textContent=String(h).padStart(2,'0');document.getElementById('minutes').textContent=String(m).padStart(2,'0');document.getElementById('seconds').textContent=String(s).padStart(2,'0')}
+updateCountdown();setInterval(updateCountdown,1000);
+function loadEntries(){try{const e=JSON.parse(localStorage.getItem('superfirulai_airdrop_entries')||'[]');return Array.isArray(e)?e:[]}catch{return[]}}function saveEntries(e){localStorage.setItem('superfirulai_airdrop_entries',JSON.stringify(e))}
+function refreshStats(){const entries=loadEntries();const count=entries.length;document.getElementById('savedEntries').textContent=count;document.getElementById('telegramMembers').textContent=24+count;document.getElementById('xFollowers').textContent=61+(count*2);document.getElementById('holdersCount').textContent=2418+count}
+function showMessage(t){const msg=document.getElementById('msg');msg.style.display='block';msg.textContent=t}
+function isWalletValid(w){return w.trim().length>=32}
+document.getElementById('airdropForm').addEventListener('submit',function(e){e.preventDefault();const telegram=document.getElementById('telegramInput').value.trim();const twitter=document.getElementById('twitterInput').value.trim();const wallet=document.getElementById('walletInput').value.trim();const button=document.getElementById('registerBtn');if(!telegram||!twitter||!wallet){showMessage('Please complete all fields before registering.');return}if(!isWalletValid(wallet)){showMessage('Please enter a valid Solana wallet address.');return}const entries=loadEntries();const duplicate=entries.some(item=>item.wallet.toLowerCase()===wallet.toLowerCase()||item.telegram.toLowerCase()===telegram.toLowerCase());if(duplicate){showMessage('This Telegram username or wallet is already registered.');return}button.textContent='Registering...';button.disabled=true;entries.push({telegram,twitter,wallet,createdAt:new Date().toISOString()});saveEntries(entries);refreshStats();document.getElementById('airdropForm').reset();showMessage('Registration completed. You are now on the early $FIRU airdrop list.');setTimeout(()=>{button.textContent='Register';button.disabled=false},700)});
+refreshStats();
+</script>
+</body>
+</html>
