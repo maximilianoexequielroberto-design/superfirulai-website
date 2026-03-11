@@ -1,165 +1,202 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SuperFirulai ($FIRU)</title>
-
-<style>
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><title>SuperFirulai $FIRU</title><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><style>
 
 body{
-font-family: Arial, sans-serif;
-background:#0b0f19;
-color:white;
 margin:0;
-}
-
-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-padding:20px;
-background:#111827;
-position:sticky;
-top:0;
-}
-
-header a{
+font-family:Arial, Helvetica, sans-serif;
+background:#070b16;
 color:white;
-text-decoration:none;
-margin-left:15px;
-font-weight:bold;
-}
-
-.hero{
-display:flex;
-flex-wrap:wrap;
-align-items:center;
-justify-content:center;
-padding:60px 20px;
 text-align:center;
 }
 
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+h1{
+font-size:48px;
+margin-bottom:10px;
+}
+
+h2{
+font-size:34px;
+margin-top:60px;
+}
+
+p{
+color:#aaa;
+}
+
 .hero img{
-width:300px;
-border-radius:20px;
+width:280px;
 margin-top:20px;
 }
 
 button{
-background:#ef4444;
+background:#ff3b3b;
 border:none;
-padding:15px 25px;
-border-radius:10px;
+padding:14px 28px;
 color:white;
-font-size:16px;
+border-radius:10px;
+font-weight:bold;
 cursor:pointer;
-margin:10px;
+}
+
+button:hover{
+opacity:0.8;
 }
 
 .section{
-padding:60px 20px;
-text-align:center;
+margin-top:80px;
 }
 
-.tokenomics div{
-margin:10px auto;
-width:300px;
-background:#1f2937;
-padding:10px;
-border-radius:10px;
+.card{
+background:#101626;
+padding:30px;
+border-radius:20px;
+margin-top:20px;
 }
 
 input{
-display:block;
-margin:10px auto;
-padding:12px;
-width:260px;
+width:100%;
+padding:14px;
+margin-top:10px;
 border-radius:8px;
 border:none;
+background:#1c2338;
+color:white;
 }
 
-footer{
-text-align:center;
-padding:30px;
-background:#111827;
+canvas{
+margin-top:30px;
+max-width:500px;
 }
 
-</style>
-</head>
+.footer{
+margin-top:80px;
+padding:40px;
+font-size:14px;
+color:#777;
+}
 
-<body>
+.countdown{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:20px;
+}
 
-<header>
-<div><b>SuperFirulai</b> $FIRU</div>
-<div>
-<a href="#tokenomics">Tokenomics</a>
-<a href="#airdrop">Airdrop</a>
-<a href="#roadmap">Roadmap</a>
-</div>
-</header>
+.time{
+background:#11172a;
+padding:20px;
+border-radius:12px;
+min-width:80px;
+}
 
-<section class="hero">
+.time span{
+font-size:28px;
+font-weight:bold;
+display:block;
+}
 
-<div>
-<h1>SuperFirulai ($FIRU)</h1>
-<p>The community powered memecoin</p>
+</style></head>
+<body><div class="container hero"><h1>SuperFirulai $FIRU</h1><p>The community powered memecoin</p><img src="superfirulai.png"><br><br>
 
-<button onclick="window.location.href='https://t.me/superfirulaicommunity'">
-Join Telegram
-</button>
+<a href="https://t.me/superfirulaicommunity">
+<button>Join Telegram</button>
+</a></div><div class="container section"><h2>Launch Countdown</h2><div class="countdown"><div class="time">
+<span id="days">0</span>
+Days
+</div><div class="time">
+<span id="hours">0</span>
+Hours
+</div><div class="time">
+<span id="minutes">0</span>
+Minutes
+</div><div class="time">
+<span id="seconds">0</span>
+Seconds
+</div></div></div><div class="container section"><h2>Tokenomics</h2><p>Total Supply: 1,000,000,000 $FIRU</p><canvas id="chart"></canvas>
 
-</div>
+</div><div class="container section"><h2>Key Features</h2><div class="card"><p>✅ Community Driven</p>
+<p>✅ Fixed Supply</p>
+<p>✅ No Mint</p>
+<p>✅ Liquidity Locked</p></div></div><div class="container section"><h2>Airdrop Registration</h2><div class="card"><form id="airdropForm"><input type="text" placeholder="Telegram Username" required><input type="text" placeholder="Twitter Username" required><input type="text" placeholder="Solana Wallet Address" required><br><br>
 
-<img src="superfirulai.png">
+<button type="submit">Register</button>
 
-</section>
+</form><p id="msg"></p></div></div><div class="footer">SuperFirulai © 2026
 
-<section class="section tokenomics" id="tokenomics">
+</div><script>
 
-<h2>Tokenomics</h2>
+const ctx=document.getElementById('chart');
 
-<p>Total Supply: 1,000,000,000 $FIRU</p>
+new Chart(ctx,{
+type:'pie',
+data:{
+labels:[
+'Liquidity 55%',
+'Community 20%',
+'Marketing 10%',
+'Team 10%',
+'Burn / Reserve 5%'
+],
+datasets:[{
+data:[55,20,10,10,5],
+backgroundColor:[
+'#3b82f6',
+'#22c55e',
+'#f59e0b',
+'#ef4444',
+'#fb923c'
+]
+}]
+},
+options:{
+plugins:{
+tooltip:{enabled:true}
+}
+}
+});
 
-<div>55% Liquidity</div>
-<div>20% Community</div>
-<div>10% Marketing</div>
-<div>10% Team</div>
-<div>5% Burn / Reserve</div>
 
-</section>
+const launchDate=new Date();
 
-<section class="section" id="airdrop">
+launchDate.setDate(launchDate.getDate()+12);
 
-<h2>Early Airdrop</h2>
 
-<p>Register your wallet to participate</p>
+function updateCountdown(){
 
-<input placeholder="Telegram Username">
+const now=new Date().getTime();
 
-<input placeholder="X Username">
+const distance=launchDate-now;
 
-<input placeholder="Solana Wallet Address">
+const days=Math.floor(distance/(1000*60*60*24));
+const hours=Math.floor((distance%(1000*60*60*24))/(1000*60*60));
+const minutes=Math.floor((distance%(1000*60*60))/(1000*60));
+const seconds=Math.floor((distance%(1000*60))/1000);
 
-<button>Register</button>
+document.getElementById("days").innerHTML=days;
+document.getElementById("hours").innerHTML=hours;
+document.getElementById("minutes").innerHTML=minutes;
+document.getElementById("seconds").innerHTML=seconds;
 
-</section>
+}
 
-<section class="section" id="roadmap">
+setInterval(updateCountdown,1000);
 
-<h2>Roadmap</h2>
 
-<p>Phase 1 — Community Build</p>
-<p>Phase 2 — Airdrop Expansion</p>
-<p>Phase 3 — Solana Launch</p>
+document.getElementById("airdropForm").addEventListener("submit",function(e){
 
-</section>
+e.preventDefault();
 
-<footer>
+document.getElementById("msg").innerText="You are registered for the $FIRU airdrop";
 
-<p>© 2026 SuperFirulai</p>
+});
 
-</footer>
 
-</body>
+</script></body>
 </html>
