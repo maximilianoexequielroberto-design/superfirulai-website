@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuperFirulai $FIRU</title>
+  <meta name="description" content="SuperFirulai official image-based website." />
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <meta name="theme-color" content="#050816" />
+  <style>
+    :root{
+      --text:#fff; --muted:#bfd0ef; --panel:#0c1329; --line:rgba(255,255,255,.10);
+      --blue:#1b83ff; --blue2:#0a57d6; --gold:#ffca36; --gold2:#ff9800; --shadow:0 26px 70px rgba(0,0,0,.48);
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0;padding:0;color:var(--text);font-family:Arial,Helvetica,sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(27,131,255,.18), transparent 18%),
+        radial-gradient(circle at 85% 15%, rgba(255,145,50,.16), transparent 18%),
+        linear-gradient(180deg,#030610 0%,#081229 45%,#040818 100%);
+    }
+    .page{max-width:1660px;margin:0 auto;padding:16px 12px 24px}
+    .frame{
+      position:relative;background:#060b18;border-radius:28px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)
+    }
+    .frame img{display:block;width:100%;height:auto}
+    .hotspot{
+      position:absolute;display:block;border:none;background:transparent;cursor:pointer;
+      border-radius:18px;outline:none;transition:box-shadow .18s ease;
+    }
+    .hotspot:hover,.hotspot:focus-visible{
+      box-shadow:0 0 0 2px rgba(255,255,255,.24),0 0 0 6px rgba(27,131,255,.15);
+    }
+
+    .hs-home{left:28.0%;top:1.0%;width:6.0%;height:6.2%}
+    .hs-tokenomics-top{left:35.3%;top:1.0%;width:11.2%;height:6.2%}
+    .hs-airdrop-top{left:47.7%;top:1.0%;width:8.7%;height:6.2%}
+    .hs-roadmap-top{left:57.8%;top:1.0%;width:10.0%;height:6.2%}
+    .hs-community-top{left:69.0%;top:1.0%;width:10.5%;height:6.2%}
+    .hs-telegram-top{left:79.0%;top:0.8%;width:14.0%;height:6.8%}
+    .hs-buy-top{left:93.3%;top:0.8%;width:6.0%;height:6.8%}
+    .hs-telegram-main{left:4.0%;top:45.0%;width:19.5%;height:7.2%}
+    .hs-airdrop-main{left:24.0%;top:45.0%;width:20.0%;height:7.2%}
+    .hs-holders{left:13.8%;top:56.8%;width:15.0%;height:9.4%}
+    .hs-telegram-mid{left:29.7%;top:56.8%;width:15.7%;height:9.4%}
+    .hs-x-mid{left:46.1%;top:56.8%;width:15.7%;height:9.4%}
+    .hs-supply-mid{left:62.4%;top:56.8%;width:20.3%;height:9.4%}
+    .hs-about{left:2.5%;top:67.5%;width:43.2%;height:20.9%}
+    .hs-buy-box{left:46.7%;top:67.5%;width:35.5%;height:20.9%}
+    .hs-roadmap-bottom{left:10.0%;top:89.5%;width:60.0%;height:8.0%}
+    .hs-tokenomics-panel{left:73.0%;top:11.0%;width:24.0%;height:34.5%}
+
+    .modal{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:18px;
+      background:rgba(3,7,18,.72);backdrop-filter:blur(10px);z-index:99;
+    }
+    .modal.open{display:flex}
+    .panel{
+      width:min(980px,100%);max-height:90vh;overflow:auto;padding:22px;
+      background:linear-gradient(180deg,#0b1226,#0e1732);border:1px solid rgba(255,255,255,.1);
+      border-radius:26px;box-shadow:var(--shadow)
+    }
+    .head{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:14px}
+    .head h2{margin:0;font-size:clamp(24px,3vw,40px)}
+    .close{
+      width:42px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,.12);
+      background:#101a36;color:#fff;font-size:22px;cursor:pointer
+    }
+    .panel p{color:#cbd8fb;line-height:1.7}
+    .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+    .card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:16px}
+    .list{display:grid;gap:10px}
+    .row{
+      display:flex;justify-content:space-between;gap:12px;align-items:center;padding:12px 14px;
+      border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)
+    }
+    .pill{
+      display:inline-flex;padding:8px 12px;border-radius:999px;font-weight:700;background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);color:#d6e0ff;margin:0 8px 8px 0
+    }
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .stats .card strong{display:block;font-size:30px;margin-bottom:6px}
+    .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .step,.phase{padding:16px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04)}
+    .step b{display:block;font-size:28px;margin-bottom:10px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;padding:14px 18px;border-radius:16px;
+      font-weight:800;border:1px solid rgba(255,255,255,.10);box-shadow:var(--shadow)
+    }
+    .btn-blue{background:linear-gradient(180deg,var(--blue),var(--blue2))}
+    .btn-gold{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#1f1200}
+    .muted{color:#9eb1df}
+    @media (max-width:980px){
+      .grid2,.steps,.stats{grid-template-columns:1fr}
+      .page{padding:10px 8px 18px}
+      .frame{border-radius:18px}
+      .panel{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="frame" id="home">
+      <img src="superfirulai-official.webp" alt="SuperFirulai official homepage" />
+
+      <a class="hotspot hs-home" href="#home" aria-label="Home"></a>
+      <button class="hotspot hs-tokenomics-top" data-open="tokenomics" aria-label="Tokenomics"></button>
+      <button class="hotspot hs-airdrop-top" data-open="airdrop" aria-label="Airdrop"></button>
+      <button class="hotspot hs-roadmap-top" data-open="roadmap" aria-label="Roadmap"></button>
+      <button class="hotspot hs-community-top" data-open="community" aria-label="Community"></button>
+      <a class="hotspot hs-telegram-top" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram"></a>
+      <button class="hotspot hs-buy-top" data-open="buy" aria-label="Buy"></button>
+
+      <a class="hotspot hs-telegram-main" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram main"></a>
+      <button class="hotspot hs-airdrop-main" data-open="airdrop" aria-label="Register Airdrop"></button>
+
+      <button class="hotspot hs-holders" data-open="community" aria-label="Holders"></button>
+      <button class="hotspot hs-telegram-mid" data-open="community" aria-label="Telegram members"></button>
+      <button class="hotspot hs-x-mid" data-open="community" aria-label="X followers"></button>
+      <button class="hotspot hs-supply-mid" data-open="tokenomics" aria-label="Supply"></button>
+
+      <button class="hotspot hs-about" data-open="community" aria-label="About"></button>
+      <button class="hotspot hs-buy-box" data-open="buy" aria-label="How to buy"></button>
+      <button class="hotspot hs-roadmap-bottom" data-open="roadmap" aria-label="Roadmap bottom"></button>
+      <button class="hotspot hs-tokenomics-panel" data-open="tokenomics" aria-label="Tokenomics panel"></button>
+    </section>
+  </main>
+
+  <div class="modal" id="modal-tokenomics">
+    <div class="panel">
+      <div class="head"><h2>Tokenomics</h2><button class="close" data-close>&times;</button></div>
+      <div class="grid2">
+        <div class="card">
+          <p>Official token structure for $FIRU on Solana.</p>
+          <div class="list">
+            <div class="row"><span>Liquidity</span><strong>55%</strong></div>
+            <div class="row"><span>Community</span><strong>20%</strong></div>
+            <div class="row"><span>Marketing</span><strong>10%</strong></div>
+            <div class="row"><span>Team</span><strong>10%</strong></div>
+            <div class="row"><span>Burn</span><strong>5%</strong></div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="pill">Solana</span><span class="pill">0% Tax</span><span class="pill">Community First</span>
+          <p style="margin-top:10px">Total Supply: <strong id="supplyValue">1,000,000,000</strong> $FIRU</p>
+          <p>Everything stays centered around the official image while details open in premium panels.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-community">
+    <div class="panel">
+      <div class="head"><h2>Community</h2><button class="close" data-close>&times;</button></div>
+      <p>Official community metrics for SuperFirulai.</p>
+      <div class="stats">
+        <div class="card"><strong id="holdersCard">Coming Soon</strong><span class="muted">Holders</span></div>
+        <div class="card"><strong id="telegramCard">65</strong><span class="muted">Telegram Members</span></div>
+        <div class="card"><strong id="xCard">101</strong><span class="muted">X Followers</span></div>
+        <div class="card"><strong id="supplyCard">1,000,000,000</strong><span class="muted">Total Supply</span></div>
+      </div>
+      <div class="actions">
+        <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+        <button class="btn btn-gold" data-open="airdrop">Register Airdrop</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-buy">
+    <div class="panel">
+      <div class="head"><h2>How to Buy $FIRU</h2><button class="close" data-close>&times;</button></div>
+      <div class="steps">
+        <div class="step"><b>1</b>Buy SOL</div>
+        <div class="step"><b>2</b>Connect Wallet</div>
+        <div class="step"><b>3</b>Swap for $FIRU</div>
+        <div class="step"><b>4</b>Join Community</div>
+      </div>
+      <p style="margin-top:16px">If launch is not live yet, stay close to Telegram and the verified airdrop flow.</p>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-roadmap">
+    <div class="panel">
+      <div class="head"><h2>Roadmap</h2><button class="close" data-close>&times;</button></div>
+      <div class="list">
+        <div class="phase"><strong>Phase 1 — Community Growth</strong><p>Grow Telegram, X, branding and awareness.</p></div>
+        <div class="phase"><strong>Phase 2 — Token Launch</strong><p>Launch on Solana and activate the full buy flow.</p></div>
+        <div class="phase"><strong>Phase 3 — CEX Listing</strong><p>Expand visibility, utility and listing goals.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-airdrop">
+    <div class="panel">
+      <div class="head"><h2>Airdrop Verified</h2><button class="close" data-close>&times;</button></div>
+      <p>Register with wallet signature, Telegram, X and anti-bot verification.</p>
+      <div class="steps" style="margin-bottom:16px">
+        <div class="step"><b>1</b>Connect Wallet</div>
+        <div class="step"><b>2</b>Sign Message</div>
+        <div class="step"><b>3</b>Verify Captcha</div>
+        <div class="step"><b>4</b>Register</div>
+      </div>
+      <div class="card"><div id="airdrop-register"></div></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bs58@6.0.0/dist/index.min.js"></script>
+  <script type="module">
+    import { mountAirdropRegister } from "./airdrop-register.js";
+
+    const modalMap = {
+      tokenomics: document.getElementById("modal-tokenomics"),
+      community: document.getElementById("modal-community"),
+      buy: document.getElementById("modal-buy"),
+      roadmap: document.getElementById("modal-roadmap"),
+      airdrop: document.getElementById("modal-airdrop")
+    };
+
+    let airdropMounted = false;
+
+    function fmt(n) { return Number(n).toLocaleString("en-US"); }
+
+    function renderStats(data) {
+      const holders = Number(data.holders ?? 0);
+      const telegram = Number(data.telegramMembers ?? 65);
+      const x = Number(data.xFollowers ?? 101);
+      const supply = Number(data.totalSupply ?? 1000000000);
+
+      document.getElementById("holdersCard").textContent = holders <= 0 ? "Coming Soon" : fmt(holders);
+      document.getElementById("telegramCard").textContent = fmt(telegram);
+      document.getElementById("xCard").textContent = fmt(x);
+      document.getElementById("supplyCard").textContent = fmt(supply);
+      document.getElementById("supplyValue").textContent = fmt(supply);
+    }
+
+    async function loadStats() {
+      renderStats({ holders: 0, telegramMembers: 65, xFollowers: 101, totalSupply: 1000000000 });
+      try {
+        const resp = await fetch("/api/community-stats", { cache: "no-store" });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        renderStats(data);
+      } catch (e) {}
+    }
+
+    function closeAll() {
+      Object.values(modalMap).forEach(m => m.classList.remove("open"));
+      document.body.style.overflow = "";
+    }
+
+    function openModal(name) {
+      const modal = modalMap[name];
+      if (!modal) return;
+      closeAll();
+      modal.classList.add("open");
+      document.body.style.overflow = "hidden";
+      if (name === "airdrop" && !airdropMounted) {
+        mountAirdropRegister("#airdrop-register");
+        airdropMounted = true;
+      }
+    }
+
+    document.querySelectorAll("[data-open]").forEach(el => {
+      el.addEventListener("click", () => openModal(el.getAttribute("data-open")));
+    });
+
+    document.querySelectorAll("[data-close]").forEach(el => {
+      el.addEventListener("click", closeAll);
+    });
+
+    document.querySelectorAll(".modal").forEach(modal => {
+      modal.addEventListener("click", e => { if (e.target === modal) closeAll(); });
+    });
+
+    window.addEventListener("keydown", e => {
+      if (e.key === "Escape") closeAll();
+    });
+
+    loadStats();
+  </script>
+</body>
+</html>
