@@ -1,0 +1,58 @@
+# SUPERFIRULAI - PAQUETE FINAL
+
+## Archivos para subir a GitHub
+
+Sube TODO lo que está en esta carpeta respetando esta estructura:
+
+index.html
+superfirulai-hero.webp
+superfirulai-tokenomics.webp
+favicon.png
+airdrop-register.js
+package.json
+README.md
+supabase.sql
+api/airdrop/nonce.js
+api/airdrop/register.js
+
+## Lo que ya está listo
+- Web final responsive
+- Airdrop verificado integrado en la sección Airdrop
+- Turnstile Site Key ya cargada en `airdrop-register.js`
+- Endpoints API para nonce y registro
+- SQL para crear la tabla en Supabase
+- Integración lista para Vercel
+
+## Lo único que te queda hacer fuera de GitHub
+
+### 1) En Supabase
+Abre SQL Editor y ejecuta el archivo:
+- `supabase.sql`
+
+Luego ve a:
+- Settings > API
+
+Ahí copia:
+- Project URL
+- service_role key
+
+NO compartas la service_role key.
+
+### 2) En Vercel
+En tu proyecto abre:
+- Settings > Environment Variables
+
+Crea estas variables:
+- SUPABASE_URL = tu Project URL de Supabase
+- SUPABASE_SERVICE_ROLE_KEY = tu service_role key de Supabase
+- TURNSTILE_SECRET_KEY = tu Secret Key de Cloudflare Turnstile
+
+### 3) Redeploy
+Después de subir archivos y cargar variables:
+- haz redeploy en Vercel
+- prueba la sección Airdrop con Phantom
+
+## Importante
+- La Site Key de Turnstile ya está puesta en `airdrop-register.js`
+- La Secret Key NO va en ningún archivo, solo en Vercel
+- `supabase.sql` se usa en Supabase, no en la web
