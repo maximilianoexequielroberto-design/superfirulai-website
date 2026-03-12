@@ -1,1 +1,0 @@
-Este pack corrige la imagen principal y usa la referencia oficial correcta: superfirulai.png
