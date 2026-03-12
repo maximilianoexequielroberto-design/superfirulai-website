@@ -211,7 +211,7 @@
         <p>SuperFirulai está construido para crecer con la comunidad. Únete al Telegram, sigue el proyecto y participa del airdrop temprano.</p>
         <div id="communityStatsNote" style="margin-top:12px;color:#8fa5d9;font-size:13px">Telegram en vivo • X configurable • Holders configurable</div>
         <div class="counter-row">
-          <div class="counter"><strong id="holdersValue">2,418</strong><span>Holders</span></div>
+          <div class="counter"><strong id="holdersValue">Coming Soon</strong><span>Holders</span></div>
           <div class="counter"><strong id="telegramValue">24</strong><span>Telegram Members</span></div>
           <div class="counter"><strong id="xValue">61</strong><span>X Followers</span></div>
           <div class="counter"><strong id="supplyValue">1,000,000,000</strong><span>Total Supply</span></div>
@@ -350,6 +350,24 @@
     }
 
     function animateNumber(id, target) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  if (id === "holdersValue" && Number(target) <= 0) {
+    el.textContent = "Coming Soon";
+    return;
+  }
+
+  const duration = 900;
+  const start = performance.now();
+  const step = (now) => {
+    const progress = Math.min((now - start) / duration, 1);
+    const value = Math.floor(target * progress);
+    el.textContent = value.toLocaleString("en-US");
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+} {
       const el = document.getElementById(id);
       if (!el) return;
       const duration = 900;
