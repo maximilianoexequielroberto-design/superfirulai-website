@@ -155,9 +155,189 @@
       .panel,.phase{border-radius:20px}
       .scroll-hint{bottom:12px; font-size:12px; padding:8px 12px}
     }
+  
+    .topbar-wrap{
+      position:fixed;
+      top:12px;
+      left:0;
+      right:0;
+      z-index:60;
+      pointer-events:none;
+    }
+    .topbar{
+      width:min(var(--max), calc(100% - 24px));
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(7,12,27,.70);
+      backdrop-filter:blur(12px);
+      box-shadow:var(--shadow);
+      pointer-events:auto;
+    }
+    .topbar-brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      white-space:nowrap;
+      min-width:max-content;
+    }
+    .topbar-brand img{
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.12);
+      background:#0f1731;
+    }
+    .topbar-links{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+      overflow-x:auto;
+      scrollbar-width:none;
+      white-space:nowrap;
+      padding:2px 4px;
+    }
+    .topbar-links::-webkit-scrollbar{display:none}
+    .toplink{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:38px;
+      padding:0 14px;
+      border-radius:12px;
+      color:#dce8ff;
+      font-size:14px;
+      font-weight:800;
+      border:1px solid rgba(255,255,255,.06);
+      background:rgba(255,255,255,.03);
+    }
+    .topbar-actions{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-shrink:0;
+    }
+    .sound-toggle{
+      min-height:38px;
+      padding:0 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:var(--shadow);
+      white-space:nowrap;
+    }
+    .sound-toggle.is-on{
+      background:linear-gradient(180deg,var(--blue),var(--blue2));
+    }
+    .hero{
+      padding-top:80px;
+    }
+    .hero-decor{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:2;
+    }
+    .rocket{
+      position:absolute;
+      width:56px;
+      height:56px;
+      display:grid;
+      place-items:center;
+      font-size:38px;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.35));
+      opacity:.88;
+      animation:rocketFloat 8s ease-in-out infinite;
+    }
+    .rocket.r1{left:8%; top:18%; animation-delay:0s}
+    .rocket.r2{right:10%; top:22%; animation-delay:1.6s}
+    .rocket.r3{right:18%; bottom:20%; animation-delay:3.1s}
+    .coin{
+      position:absolute;
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:24px;
+      font-weight:900;
+      color:#2b1800;
+      background:radial-gradient(circle at 35% 30%, #ffe483, #ffc52e 58%, #d88b00 100%);
+      box-shadow:0 12px 24px rgba(0,0,0,.24), inset 0 2px 0 rgba(255,255,255,.45);
+      opacity:.92;
+      animation:coinFloat 7.5s ease-in-out infinite;
+    }
+    .coin.c1{left:10%; top:56%; animation-delay:.4s}
+    .coin.c2{left:74%; top:14%; animation-delay:1.2s}
+    .coin.c3{right:8%; top:52%; animation-delay:2.2s}
+    .coin.c4{left:42%; top:16%; animation-delay:3.2s}
+    .coin small{
+      transform:translateY(-1px);
+      font-size:22px;
+      font-weight:900;
+      color:#2b1800;
+    }
+    @keyframes rocketFloat{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-18px) translateX(6px)}
+    }
+    @keyframes coinFloat{
+      0%,100%{transform:translateY(0) rotate(0deg)}
+      50%{transform:translateY(-16px) rotate(10deg)}
+    }
+    @media (max-width: 820px){
+      .topbar{
+        width:calc(100% - 12px);
+        padding:8px 8px;
+        border-radius:14px;
+        gap:8px;
+      }
+      .topbar-brand span{display:none}
+      .topbar-brand img{width:34px;height:34px}
+      .topbar-links{gap:8px}
+      .toplink{min-height:34px;padding:0 12px;font-size:13px}
+      .sound-toggle{min-height:34px;padding:0 10px;font-size:12px}
+      .hero{padding-top:62px}
+      .rocket{width:38px;height:38px;font-size:28px;opacity:.72}
+      .coin{width:40px;height:40px;font-size:18px;opacity:.82}
+      .coin small{font-size:17px}
+    }
+
   </style>
 </head>
 <body>
+
+  <div class="topbar-wrap">
+    <div class="topbar">
+      <a class="topbar-brand" href="#home">
+        <img src="superfirulai-desktop.webp" alt="SuperFirulai" />
+        <span>SuperFirulai $FIRU</span>
+      </a>
+      <nav class="topbar-links" aria-label="Primary">
+        <a class="toplink" href="#home">Home</a>
+        <a class="toplink" href="#tokenomics">Tokenomics</a>
+        <a class="toplink" href="#community">Community</a>
+        <a class="toplink" href="#airdrop">Airdrop</a>
+        <a class="toplink" href="#roadmap">Roadmap</a>
+      </nav>
+      <div class="topbar-actions">
+        <button class="sound-toggle" id="soundToggle" type="button">Sound: Off</button>
+      </div>
+    </div>
+  </div>
+
   <main>
     <section class="hero" id="home">
       <div class="hero-frame">
@@ -165,6 +345,16 @@
           <source media="(max-width: 820px)" srcset="superfirulai-mobile.webp" />
           <img src="superfirulai-desktop.webp" alt="SuperFirulai official hero" />
         </picture>
+
+        <div class="hero-decor" aria-hidden="true">
+          <div class="rocket r1">🚀</div>
+          <div class="rocket r2">🚀</div>
+          <div class="rocket r3">🚀</div>
+          <div class="coin c1"><small>F</small></div>
+          <div class="coin c2"><small>F</small></div>
+          <div class="coin c3"><small>F</small></div>
+          <div class="coin c4"><small>F</small></div>
+        </div>
 
         <a class="hotspot hs-home" href="#home" aria-label="Home"></a>
         <a class="hotspot hs-tokenomics-top" href="#tokenomics" aria-label="Tokenomics"></a>
@@ -328,6 +518,53 @@
       } catch (e) {}
     }
     loadStats();
+
+
+    let soundEnabled = false;
+    let audioCtx = null;
+
+    function ensureAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+    }
+
+    function playTone(freq = 440, duration = 0.08, type = "sine", gainValue = 0.018) {
+      if (!soundEnabled) return;
+      ensureAudio();
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(gainValue, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + duration + 0.02);
+    }
+
+    const soundToggle = document.getElementById("soundToggle");
+    soundToggle.addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      soundToggle.textContent = soundEnabled ? "Sound: On" : "Sound: Off";
+      soundToggle.classList.toggle("is-on", soundEnabled);
+      if (soundEnabled) {
+        playTone(520, 0.07, "triangle", 0.02);
+        setTimeout(() => playTone(780, 0.09, "triangle", 0.018), 70);
+      }
+    });
+
+    document.querySelectorAll("a, button").forEach((el) => {
+      el.addEventListener("mouseenter", () => playTone(700, 0.05, "triangle", 0.01));
+      el.addEventListener("click", () => playTone(420, 0.08, "square", 0.016));
+    });
+
   </script>
 </body>
 </html>
