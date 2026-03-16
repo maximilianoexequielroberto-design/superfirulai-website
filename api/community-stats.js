@@ -25,6 +25,8 @@ export default async function handler(req, res) {
     // fallback to env/default
   }
 
+  res.setHeader("Cache-Control", "s-maxage=120, stale-while-revalidate=300");
+
   return res.status(200).json({
     holders,
     telegramMembers,
