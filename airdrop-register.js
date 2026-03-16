@@ -31,6 +31,12 @@ function ensureTurnstileScript() {
   document.head.appendChild(s);
 }
 
+function normalizeHandle(value) {
+  return String(value || "").trim().replace(/^@/, "");
+}
+
+const HANDLE_RE = /^[A-Za-z0-9_]{3,20}$/;
+
 export function mountAirdropRegister(selector = "#airdrop-register") {
   ensureTurnstileScript();
   const root = document.querySelector(selector);
@@ -40,8 +46,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     <div style="display:grid;gap:12px">
       <button id="sf-connect" class="btn btn-blue" type="button">Connect Wallet</button>
       <div id="sf-wallet" style="color:#b8c4e4;font-size:14px">Wallet not connected</div>
-      <input id="sf-telegram" placeholder="Telegram username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
-      <input id="sf-x" placeholder="X username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
+      <input id="sf-telegram" autocomplete="off" placeholder="Telegram username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
+      <input id="sf-x" autocomplete="off" placeholder="X username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
       <button id="sf-register" class="btn btn-gold" type="button">Register Airdrop</button>
       <div id="sf-msg" style="color:#b8c4e4;font-size:14px;line-height:1.6"></div>
@@ -52,58 +58,121 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   let signedMessage = "";
   let signature = "";
   let nonce = "";
+  let timestamp = "";
+  let challenge = "";
 
   const msgEl = root.querySelector("#sf-msg");
   const walletEl = root.querySelector("#sf-wallet");
+  const connectBtn = root.querySelector("#sf-connect");
+  const registerBtn = root.querySelector("#sf-register");
 
-  root.querySelector("#sf-connect").addEventListener("click", async () => {
+  function setMessage(text, isError = false) {
+    msgEl.style.color = isError ? "#ffb4c2" : "#b8c4e4";
+    msgEl.textContent = text;
+  }
+
+  function getTurnstileToken() {
+    return root.querySelector('[name="cf-turnstile-response"]')?.value || "";
+  }
+
+  function resetWalletState() {
+    walletAddress = "";
+    signedMessage = "";
+    signature = "";
+    nonce = "";
+    timestamp = "";
+    challenge = "";
+    walletEl.textContent = "Wallet not connected";
+  }
+
+  const provider = getPhantomProvider();
+  if (provider?.on) {
+    provider.on("disconnect", () => {
+      resetWalletState();
+      setMessage("Wallet disconnected. Connect again to continue.", true);
+    });
+    provider.on("accountChanged", (publicKey) => {
+      if (!publicKey) {
+        resetWalletState();
+        return;
+      }
+      resetWalletState();
+      setMessage("Wallet changed. Please connect and sign again.", true);
+    });
+  }
+
+  connectBtn.addEventListener("click", async () => {
+    connectBtn.disabled = true;
+    const oldText = connectBtn.textContent;
+    connectBtn.textContent = "Connecting...";
     try {
-      const provider = getPhantomProvider();
-      if (!provider) {
+      const phantom = getPhantomProvider();
+      if (!phantom) {
         msgEl.innerHTML = phantomHelpMessage();
         return;
       }
 
-      const connectRes = await provider.connect();
+      const connectRes = await phantom.connect();
       walletAddress = connectRes.publicKey.toString();
       walletEl.textContent = `Wallet connected: ${short(walletAddress)}`;
 
-      const nonceResp = await fetch("/api/airdrop/nonce");
+      const nonceResp = await fetch("/api/airdrop/nonce", { headers: { Accept: "application/json" } });
+      if (!nonceResp.ok) throw new Error("Nonce request failed");
       const nonceData = await nonceResp.json();
       nonce = nonceData.nonce;
+      timestamp = nonceData.timestamp;
+      challenge = nonceData.challenge;
 
       signedMessage = [
         "SuperFirulai Airdrop Registration",
         `Wallet: ${walletAddress}`,
         `Nonce: ${nonce}`,
-        `Timestamp: ${nonceData.timestamp}`
+        `Timestamp: ${timestamp}`
       ].join("\n");
 
       const encoded = new TextEncoder().encode(signedMessage);
-      const sig = await provider.signMessage(encoded, "utf8");
+      const sig = await phantom.signMessage(encoded, "utf8");
       signature = bs58.encode(sig.signature);
 
-      msgEl.textContent = "Wallet verified. Complete Telegram, X and the captcha to finish. / Wallet verificada. Completa Telegram, X y el captcha para terminar.";
+      setMessage("Wallet verified. Complete Telegram, X and the captcha to finish.");
     } catch (err) {
-      msgEl.textContent = "Could not connect or sign the wallet. / No se pudo conectar o firmar la wallet.";
+      resetWalletState();
+      setMessage("Could not connect or sign the wallet.", true);
+    } finally {
+      connectBtn.disabled = false;
+      connectBtn.textContent = oldText;
     }
   });
 
-  root.querySelector("#sf-register").addEventListener("click", async () => {
+  registerBtn.addEventListener("click", async () => {
     try {
-      if (!walletAddress || !signedMessage || !signature || !nonce) {
-        msgEl.textContent = "Connect and sign your wallet first. / Primero conecta y firma tu wallet.";
+      if (!walletAddress || !signedMessage || !signature || !nonce || !timestamp || !challenge) {
+        setMessage("Connect and sign your wallet first.", true);
         return;
       }
 
-      const telegram = root.querySelector("#sf-telegram").value.trim();
-      const x = root.querySelector("#sf-x").value.trim();
-      const turnstileToken = document.querySelector('[name="cf-turnstile-response"]')?.value || "";
+      const telegram = normalizeHandle(root.querySelector("#sf-telegram").value);
+      const x = normalizeHandle(root.querySelector("#sf-x").value);
+      const turnstileToken = getTurnstileToken();
 
-      if (!telegram || !x || !turnstileToken) {
-        msgEl.textContent = "Complete Telegram, X and the captcha. / Completa Telegram, X y el captcha.";
+      if (!HANDLE_RE.test(telegram)) {
+        setMessage("Enter a valid Telegram username.", true);
         return;
       }
+
+      if (!HANDLE_RE.test(x)) {
+        setMessage("Enter a valid X username.", true);
+        return;
+      }
+
+      if (!turnstileToken) {
+        setMessage("Complete the captcha before registering.", true);
+        return;
+      }
+
+      registerBtn.disabled = true;
+      const oldText = registerBtn.textContent;
+      registerBtn.textContent = "Registering...";
 
       const resp = await fetch("/api/airdrop/register", {
         method: "POST",
@@ -115,14 +184,25 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           signed_message: signedMessage,
           signature,
           nonce,
+          timestamp,
+          challenge,
           turnstileToken
         })
       });
 
       const data = await resp.json();
-      msgEl.textContent = data.message || data.error || "Unexpected response";
+      setMessage(data.message || data.error || "Unexpected response", !resp.ok);
+      if (resp.ok) {
+        root.querySelector("#sf-telegram").value = "";
+        root.querySelector("#sf-x").value = "";
+      }
+
+      registerBtn.textContent = oldText;
+      registerBtn.disabled = false;
     } catch (err) {
-      msgEl.textContent = "Error registering the airdrop. / Error registrando el airdrop.";
+      registerBtn.disabled = false;
+      registerBtn.textContent = "Register Airdrop";
+      setMessage("Error registering the airdrop.", true);
     }
   });
 }
