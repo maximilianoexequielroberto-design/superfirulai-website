@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import { createClient } from "@supabase/supabase-js";
@@ -6,6 +7,9 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+const HANDLE_RE = /^[A-Za-z0-9_]{3,20}$/;
+const NONCE_TTL_MS = 5 * 60 * 1000;
 
 async function verifyTurnstile(token, ip) {
   const form = new FormData();
@@ -33,6 +37,25 @@ function normalizeHandle(v) {
   return String(v || "").trim().replace(/^@/, "").toLowerCase();
 }
 
+function getExpectedMessage({ wallet, nonce, timestamp }) {
+  return [
+    "SuperFirulai Airdrop Registration",
+    `Wallet: ${wallet}`,
+    `Nonce: ${nonce}`,
+    `Timestamp: ${timestamp}`
+  ].join("\n");
+}
+
+function verifyChallenge({ nonce, timestamp, challenge }) {
+  const secret = process.env.NONCE_SECRET || process.env.TURNSTILE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!secret) return false;
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(`${nonce}.${timestamp}`)
+    .digest("hex");
+  return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(String(challenge || "")));
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -46,11 +69,38 @@ export default async function handler(req, res) {
       signed_message,
       signature,
       nonce,
+      timestamp,
+      challenge,
       turnstileToken
     } = req.body || {};
 
-    if (!wallet || !telegram_username || !x_username || !signed_message || !signature || !nonce || !turnstileToken) {
+    if (!wallet || !telegram_username || !x_username || !signed_message || !signature || !nonce || !timestamp || !challenge || !turnstileToken) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const tg = normalizeHandle(telegram_username);
+    const xh = normalizeHandle(x_username);
+
+    if (!HANDLE_RE.test(tg)) {
+      return res.status(400).json({ error: "Invalid Telegram username" });
+    }
+
+    if (!HANDLE_RE.test(xh)) {
+      return res.status(400).json({ error: "Invalid X username" });
+    }
+
+    const issuedAt = Date.parse(timestamp);
+    if (!Number.isFinite(issuedAt) || Math.abs(Date.now() - issuedAt) > NONCE_TTL_MS) {
+      return res.status(400).json({ error: "Nonce expired. Connect your wallet again." });
+    }
+
+    if (!verifyChallenge({ nonce, timestamp, challenge })) {
+      return res.status(400).json({ error: "Invalid nonce challenge" });
+    }
+
+    const expectedMessage = getExpectedMessage({ wallet, nonce, timestamp });
+    if (signed_message !== expectedMessage) {
+      return res.status(400).json({ error: "Signed message mismatch" });
     }
 
     const turnstileOk = await verifyTurnstile(
@@ -71,9 +121,6 @@ export default async function handler(req, res) {
     if (!isValidSignature) {
       return res.status(400).json({ error: "Invalid wallet signature" });
     }
-
-    const tg = normalizeHandle(telegram_username);
-    const xh = normalizeHandle(x_username);
 
     const duplicateChecks = await Promise.all([
       supabase.from("airdrop_registrations").select("id").eq("wallet", wallet).maybeSingle(),
@@ -99,6 +146,10 @@ export default async function handler(req, res) {
     });
 
     if (error) {
+      const message = String(error.message || "");
+      if (/duplicate key|unique/i.test(message)) {
+        return res.status(409).json({ error: "Registration already exists" });
+      }
       return res.status(500).json({ error: error.message });
     }
 
