@@ -11,6 +11,8 @@ create table if not exists public.airdrop_registrations (
   turnstile_ok boolean not null default false,
   status text not null default 'pending',
   reason text,
+  ip_address text,
+  user_agent text,
   created_at timestamptz not null default now(),
 
   constraint airdrop_wallet_unique unique (wallet),
@@ -33,6 +35,10 @@ create table if not exists public.airdrop_registrations (
   constraint airdrop_nonce_length_check
     check (char_length(nonce) >= 8)
 );
+
+alter table public.airdrop_registrations
+  add column if not exists ip_address text,
+  add column if not exists user_agent text;
 
 create index if not exists idx_airdrop_created_at
   on public.airdrop_registrations (created_at desc);
