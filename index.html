@@ -848,7 +848,11 @@
 
   <script type="module">
     import { mountAirdropRegister } from "./airdrop-register.js";
-    mountAirdropRegister("#airdrop-register");
+    try {
+      mountAirdropRegister("#airdrop-register");
+    } catch (err) {
+      console.error("Airdrop mount failed", err);
+    }
 
     const buyDialog = document.getElementById("buyDialog");
     const openBuy = () => { if (typeof buyDialog.showModal === "function") buyDialog.showModal(); };
