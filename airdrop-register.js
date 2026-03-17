@@ -13,9 +13,19 @@ function getPhantomProvider() {
   return provider?.isPhantom ? provider : null;
 }
 
+function buildPhantomBrowseUrl() {
+  const currentUrl = encodeURIComponent(window.location.href);
+  const ref = encodeURIComponent(window.location.origin);
+  return `https://phantom.app/ul/browse/${currentUrl}?ref=${ref}`;
+}
+
+function openInPhantom() {
+  window.location.href = buildPhantomBrowseUrl();
+}
+
 function phantomHelpMessage() {
   if (isMobileDevice()) {
-    return `Phantom no está disponible en este navegador.<br><br>Abre esta página desde el navegador interno de la app Phantom.`;
+    return `Phantom no está disponible en este navegador.<br><br>Te vamos a abrir esta página en el navegador interno de Phantom.`;
   }
 
   return `Phantom no está disponible.<br><br>Instala la extensión de Phantom y recarga la página.`;
@@ -45,6 +55,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   root.innerHTML = `
     <div style="display:grid;gap:12px">
       <button id="sf-connect" class="btn btn-blue" type="button">Connect Wallet</button>
+      <a id="sf-open-phantom" class="btn btn-blue" href="#" style="display:none;text-align:center;text-decoration:none">Open in Phantom</a>
       <div id="sf-wallet" style="color:#b8c4e4;font-size:14px">Wallet not connected</div>
       <input id="sf-telegram" autocomplete="off" placeholder="Telegram username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
       <input id="sf-x" autocomplete="off" placeholder="X username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
@@ -65,6 +76,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const walletEl = root.querySelector("#sf-wallet");
   const connectBtn = root.querySelector("#sf-connect");
   const registerBtn = root.querySelector("#sf-register");
+  const openPhantomBtn = root.querySelector("#sf-open-phantom");
 
   function setMessage(text, isError = false) {
     msgEl.style.color = isError ? "#ffb4c2" : "#b8c4e4";
@@ -83,6 +95,17 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     timestamp = "";
     challenge = "";
     walletEl.textContent = "Wallet not connected";
+  }
+
+  if (isMobileDevice() && !getPhantomProvider()) {
+    connectBtn.textContent = "Open in Phantom";
+    openPhantomBtn.style.display = "block";
+    openPhantomBtn.href = buildPhantomBrowseUrl();
+    setMessage("Mobile detected. Open this page inside Phantom to connect your wallet.");
+    openPhantomBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openInPhantom();
+    });
   }
 
   const provider = getPhantomProvider();
@@ -109,6 +132,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       const phantom = getPhantomProvider();
       if (!phantom) {
         msgEl.innerHTML = phantomHelpMessage();
+        if (isMobileDevice()) {
+          openInPhantom();
+        }
         return;
       }
 
