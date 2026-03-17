@@ -11,8 +11,14 @@ create table if not exists public.airdrop_registrations (
   turnstile_ok boolean not null default false,
   status text not null default 'pending',
   reason text,
+  ip_address text,
+  user_agent text,
   created_at timestamptz not null default now()
 );
+
+alter table public.airdrop_registrations
+  add column if not exists ip_address text,
+  add column if not exists user_agent text;
 
 alter table public.airdrop_registrations enable row level security;
 

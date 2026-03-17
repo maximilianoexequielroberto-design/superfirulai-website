@@ -111,14 +111,13 @@
     .hero-copy strong{display:block; font-size:clamp(15px,1.7vw,20px); margin-bottom:4px; letter-spacing:.01em; background:linear-gradient(90deg,#fff 55%,#90baff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text}
     .hero-copy p{margin:0; color:rgba(176,202,255,.78); line-height:1.55; font-size:12.5px; letter-spacing:.01em}
 
-    .sound-fab{
-      position:absolute; left:18px; bottom:18px; z-index:20; display:inline-flex; align-items:center; gap:8px;
-      min-height:40px; padding:0 13px; border-radius:999px; border:1px solid rgba(255,255,255,.14);
-      background:rgba(7,12,27,.80); color:#fff; font-weight:900; font-size:13px; backdrop-filter:blur(16px); box-shadow:0 8px 24px rgba(0,0,0,.4); cursor:pointer; pointer-events:all;
-      transition:transform .18s ease, background .22s ease, border-color .22s ease;
-    }
-    .sound-fab:hover{transform:translateY(-1px)}
-    .sound-fab.is-on{background:linear-gradient(180deg,var(--blue),var(--blue2)); border-color:rgba(255,255,255,.2)}
+
+    .desktop-nav{position:absolute; top:18px; left:50%; transform:translateX(-50%); z-index:10; display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:999px; border:1px solid rgba(255,255,255,.12); background:rgba(7,12,27,.74); backdrop-filter:blur(18px); box-shadow:0 12px 30px rgba(0,0,0,.35)}
+    .desktop-nav a,.desktop-nav button{display:inline-flex; align-items:center; justify-content:center; min-height:38px; padding:0 16px; border-radius:999px; border:1px solid transparent; color:#d8e7ff; font-size:12px; font-weight:900; letter-spacing:.08em; text-transform:uppercase; background:transparent; cursor:pointer; transition:background .18s ease, transform .18s ease, border-color .18s ease}
+    .desktop-nav a:hover,.desktop-nav button:hover{background:rgba(255,255,255,.06); transform:translateY(-1px)}
+    .desktop-nav .nav-cta{background:linear-gradient(180deg,var(--gold),var(--gold2)); color:#1b1200; box-shadow:0 14px 28px rgba(0,0,0,.22)}
+    .desktop-nav .nav-cta:hover{background:linear-gradient(180deg,#ffe28a,#ffbb22)}
+    .desktop-nav .nav-accent{border-color:rgba(27,136,255,.3); background:rgba(27,136,255,.12)}
 
     .hotspot{
       position:absolute; display:block; border:none; background:transparent; cursor:pointer;
@@ -140,7 +139,7 @@
     .hs-tokenomics-panel{left:73.8%;top:8.7%;width:25.3%;height:39.6%}
     .hs-metrics{left:14.0%;top:53.6%;width:67.7%;height:11.3%}
 
-    .hero-decor{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:4}
+    .hero-decor{position:absolute; inset:0; pointer-events:none; overflow:visible; z-index:4}
     .rocket{
       position:absolute; width:58px; height:58px; display:grid; place-items:center; font-size:40px;
       filter:drop-shadow(0 10px 24px rgba(0,0,0,.35)); opacity:.84; animation:rocketFloat 9s ease-in-out infinite;
@@ -149,15 +148,15 @@
     .rocket.r2{right:9%;top:20%;animation-delay:1.8s}
     .rocket.r3{right:18%;bottom:18%;animation-delay:3.2s}
     .coin{
-      position:absolute; display:block; opacity:.88; transform-origin:center;
+      position:absolute; display:block; opacity:.96; transform-origin:center;
       filter:drop-shadow(0 18px 34px rgba(0,0,0,.28));
-      mix-blend-mode:screen;
+      mix-blend-mode:screen; overflow:visible;
     }
     .coin img{width:100%; height:100%; object-fit:contain; display:block; user-select:none; -webkit-user-drag:none}
-    .coin.c1{left:2%;bottom:28%;width:80px;height:80px;animation:coinFloat1 8.2s ease-in-out infinite}
-    .coin.c2{right:1%;top:8%;width:76px;height:76px;animation:coinFloat2 8.9s ease-in-out infinite .6s}
-    .coin.c3{right:2%;bottom:22%;width:74px;height:74px;animation:coinFloat3 9.3s ease-in-out infinite 1.2s}
-    .coin.c4{left:2%;top:8%;width:78px;height:78px;animation:coinFloat4 8.7s ease-in-out infinite 1.8s}
+    .coin.c1{left:2%;bottom:28%;width:96px;height:96px;animation:coinFloat1 8.2s ease-in-out infinite}
+    .coin.c2{right:1.2%;top:10%;width:92px;height:92px;animation:coinFloat2 8.9s ease-in-out infinite .6s}
+    .coin.c3{right:2%;bottom:22%;width:88px;height:88px;animation:coinFloat3 9.3s ease-in-out infinite 1.2s}
+    .coin.c4{left:2%;top:10%;width:94px;height:94px;animation:coinFloat4 8.7s ease-in-out infinite 1.8s}
     @keyframes rocketFloat{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-18px) translateX(8px) rotate(2deg)}}
     @keyframes coinFloat1{0%,100%{transform:translate3d(0,0,0) rotate(-6deg)}50%{transform:translate3d(10px,-18px,0) rotate(6deg)}}
     @keyframes coinFloat2{0%,100%{transform:translate3d(0,0,0) rotate(5deg)}50%{transform:translate3d(-8px,-16px,0) rotate(-4deg)}}
@@ -257,6 +256,18 @@
     .phase-tag.future{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.10);color:#8aa0c8}
     .phase h3{margin:14px 0 8px;font-size:22px;letter-spacing:-.01em}
     .phase p{margin:0;color:var(--muted);line-height:1.7;font-size:14px}
+
+
+    .launch-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+    .round-list{display:grid;gap:14px}
+    .round-card{padding:18px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+    .round-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+    .round-head strong{font-size:20px;letter-spacing:-.02em}
+    .pill{display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:rgba(27,136,255,.12);border:1px solid rgba(27,136,255,.24);font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#9bccff}
+    .round-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+    .round-meta .quick-card{min-height:0;padding:16px 14px}
+    .notice-list{display:grid;gap:12px;margin-top:10px}
+    .notice-item{padding:16px 18px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#dce8ff;font-size:14px;line-height:1.6}
 
     .footer{
       padding:28px 0 40px; text-align:center; color:#6a84b8; font-size:13px;
@@ -389,6 +400,7 @@
     .mnav-btn.is-x:hover{background:rgba(120,170,255,.16);color:#fff}
     @keyframes navSlideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
     @media (max-width: 820px){
+      .desktop-nav{display:none}
       .mobile-nav{display:block;animation:navSlideUp .4s cubic-bezier(.22,1,.36,1) both}
       .mobile-topnav{display:block}
       .hero-frame img{object-position:center top}
@@ -396,14 +408,6 @@
       .hero-decor .rocket{display:none}
       /* Hide chip — top nav replaces it */
       .hero-chip{display:none}
-      /* Audio button — small pill, top right */
-      .sound-fab{
-        left:auto; right:10px; bottom:auto; top:54px;
-        min-height:26px; padding:0 8px; font-size:9px; gap:4px;
-        border-radius:999px; background:rgba(4,8,20,.82);
-        border-color:rgba(255,255,255,.12);
-      }
-      .sound-fab #soundLabel{font-size:9px}
       /* Hero copy — clean compact strip above bottom nav */
       .hero-copy{
         left:10px; right:10px; bottom:88px; max-width:none;
@@ -423,13 +427,17 @@
     @media (min-width: 821px){
       .hero-copy-mobile{display:none}
     }
+    @media (max-width: 1100px){
+      .desktop-nav{gap:6px;padding:8px 10px}
+      .desktop-nav a,.desktop-nav button{padding:0 12px;font-size:11px}
+    }
     @media (max-width: 820px){
       body{padding-bottom:80px}
       .hero{margin-top:0}
       .hero-frame{top:46px !important; height:calc(100svh - 46px) !important}
     }
     @media (max-width: 980px){
-      .quick-grid,.token-grid,.feature-grid,.roadmap-grid{grid-template-columns:1fr}
+      .quick-grid,.token-grid,.feature-grid,.roadmap-grid,.launch-grid{grid-template-columns:1fr}
       .steps{grid-template-columns:1fr}
     }
     @media (max-width: 820px){
@@ -484,10 +492,24 @@
           <img src="superfirulai-desktop.webp" alt="SuperFirulai official hero" />
         </picture>
 
+        <nav class="desktop-nav" aria-label="Primary navigation">
+          <a href="#home">Home</a>
+          <a href="#community">Community</a>
+          <a href="#tokenomics">Tokenomics</a>
+          <a href="#launch">Launch</a>
+          <a href="#airdrop">Airdrop</a>
+          <a class="nav-accent" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
+          <button class="nav-cta" type="button" id="buyDesktopNav">Buy $FIRU</button>
+        </nav>
+
         <div class="hero-decor" aria-hidden="true">
           <div class="rocket r1">🚀</div>
           <div class="rocket r2">🚀</div>
           <div class="rocket r3">🚀</div>
+          <div class="coin c1"><img src="coin-float-1.png" alt=""></div>
+          <div class="coin c2"><img src="coin-float-2.png" alt=""></div>
+          <div class="coin c3"><img src="coin-float-3.png" alt=""></div>
+          <div class="coin c4"><img src="coin-float-4.png" alt=""></div>
         </div>
 
         <div class="hero-ui" aria-hidden="true">
@@ -498,10 +520,6 @@
           </div>
         </div>
 
-        <button class="sound-fab" id="soundFab" type="button">
-          <svg id="soundIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-          <span id="soundLabel">Audio OFF</span>
-        </button>
 
         <a class="hotspot hs-home" href="#home" aria-label="Home"></a>
         <a class="hotspot hs-tokenomics-top" href="#tokenomics" aria-label="Tokenomics"></a>
@@ -643,6 +661,53 @@
       </div>
     </section>
 
+
+    <section class="section" id="launch">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span></span> Launch Access</div>
+          <h2 class="section-title">Presale Rounds & Launch Rules</h2>
+          <p class="section-copy">Clear structure for early supporters. Keep these rules visible so buyers understand what happens before listing.</p>
+        </div>
+        <div class="launch-grid">
+          <div class="panel reveal reveal-left reveal-delay-1">
+            <div class="round-list">
+              <div class="round-card">
+                <div class="round-head"><strong>Round 1</strong><span class="pill">Early Access</span></div>
+                <p class="section-copy" style="margin:0">Reserved for earliest community supporters and presale participants.</p>
+                <div class="round-meta">
+                  <div class="quick-card"><strong>Best Price</strong><span>Entry tier</span></div>
+                  <div class="quick-card"><strong>Limited</strong><span>Spots / supply</span></div>
+                  <div class="quick-card"><strong>Pre-Launch</strong><span>Before listing</span></div>
+                </div>
+              </div>
+              <div class="round-card">
+                <div class="round-head"><strong>Round 2</strong><span class="pill" style="background:rgba(255,183,0,.12);border-color:rgba(255,183,0,.25);color:#ffd665">Public Access</span></div>
+                <p class="section-copy" style="margin:0">Opens after Round 1 and stays aligned with the official launch schedule.</p>
+                <div class="round-meta">
+                  <div class="quick-card"><strong>Next Tier</strong><span>Updated price</span></div>
+                  <div class="quick-card"><strong>Tracked</strong><span>Wallet registration</span></div>
+                  <div class="quick-card"><strong>Launch Ready</strong><span>Alerts included</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel reveal reveal-right reveal-delay-2">
+            <h3 style="margin:0 0 10px;font-size:22px;letter-spacing:-.02em">Important</h3>
+            <div class="notice-list">
+              <div class="notice-item"><strong style="display:block;margin-bottom:4px">Distribution</strong>Tokens purchased in presale are distributed according to the official launch schedule.</div>
+              <div class="notice-item"><strong style="display:block;margin-bottom:4px">Verification</strong>Each participant must register one wallet, one Telegram username and one X account.</div>
+              <div class="notice-item"><strong style="display:block;margin-bottom:4px">Buy Access</strong>DEX trading links are released only through the official Telegram and X channels at launch.</div>
+            </div>
+            <div class="actions" style="margin-top:18px">
+              <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+              <button class="btn btn-gold" type="button" id="buyLaunch">Launch Access</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section class="section" id="airdrop">
       <div class="container">
         <div class="section-head reveal">
@@ -694,7 +759,7 @@
         <button id="closeBuyDialog" style="width:38px;height:38px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;transition:background .18s">×</button>
       </div>
       <div style="height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);margin-bottom:16px;position:relative;z-index:1;"></div>
-      <p style="margin:0 0 20px;color:rgba(200,218,255,.8);line-height:1.7;position:relative;z-index:1;font-size:14px;">DEX listing activates at launch. Join Telegram and follow X to receive the first official launch alerts, trading links and buy access.</p>
+      <p style="margin:0 0 20px;color:rgba(200,218,255,.8);line-height:1.7;position:relative;z-index:1;font-size:14px;">DEX listing activates at launch. Round 1 and Round 2 participants should follow the official Telegram and X channels to receive launch alerts, trading links and distribution updates.</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;position:relative;z-index:1;">
         <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" style="min-height:50px;font-size:14px;letter-spacing:.01em">🚀 Join Telegram · Get Launch Alert</a>
         <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener" style="min-height:50px;font-size:14px;letter-spacing:.01em">𝕏 Follow @superfirulai</a>
@@ -759,6 +824,10 @@
     const closeBuy = () => buyDialog.close();
     document.getElementById("buyTop").addEventListener("click", openBuy);
     document.getElementById("buyCommunity").addEventListener("click", openBuy);
+    const buyDesktopNavBtn = document.getElementById("buyDesktopNav");
+    if (buyDesktopNavBtn) buyDesktopNavBtn.addEventListener("click", openBuy);
+    const buyLaunchBtn = document.getElementById("buyLaunch");
+    if (buyLaunchBtn) buyLaunchBtn.addEventListener("click", openBuy);
     document.getElementById("closeBuyDialog").addEventListener("click", closeBuy);
     const buyMobileBtn = document.getElementById("buyMobile");
     if (buyMobileBtn) buyMobileBtn.addEventListener("click", openBuy);
@@ -788,87 +857,6 @@
         if (!id) return;
         setTimeout(() => flashSection(id), 250);
       });
-    });
-
-    let soundEnabled = false;
-    let audioCtx = null;
-    let masterGain = null;
-    let ambientNodes = [];
-    let ambientStarted = false;
-    const soundFab = document.getElementById("soundFab");
-
-    function ensureAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (!masterGain) {
-        masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.0001;
-        masterGain.connect(audioCtx.destination);
-      }
-      if (audioCtx.state === "suspended") audioCtx.resume();
-    }
-
-    function createAmbientLayer(freq, type, gainValue, filterFreq) {
-      const osc = audioCtx.createOscillator();
-      const filter = audioCtx.createBiquadFilter();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      filter.type = "lowpass";
-      filter.frequency.value = filterFreq;
-      gain.gain.value = gainValue;
-      osc.connect(filter);
-      filter.connect(gain);
-      gain.connect(masterGain);
-      osc.start();
-      return { osc, filter, gain };
-    }
-
-    function startAmbient() {
-      if (ambientStarted) return;
-      ensureAudio();
-      ambientNodes = [
-        createAmbientLayer(110, "sine", 0.18, 260),
-        createAmbientLayer(164.81, "triangle", 0.10, 420),
-        createAmbientLayer(220, "sine", 0.06, 520)
-      ];
-      const lfo = audioCtx.createOscillator();
-      const lfoGain = audioCtx.createGain();
-      lfo.type = "sine";
-      lfo.frequency.value = 0.08;
-      lfoGain.gain.value = 16;
-      lfo.connect(lfoGain);
-      ambientNodes.forEach((node) => lfoGain.connect(node.filter.frequency));
-      lfo.start();
-      ambientNodes.push({ osc: lfo, filter: null, gain: lfoGain, isLfo: true });
-      ambientStarted = true;
-    }
-
-    function setAmbient(on) {
-      ensureAudio();
-      startAmbient();
-      const now = audioCtx.currentTime;
-      masterGain.gain.cancelScheduledValues(now);
-      masterGain.gain.setValueAtTime(masterGain.gain.value || 0.0001, now);
-      masterGain.gain.exponentialRampToValueAtTime(on ? 0.05 : 0.0001, now + (on ? 1.6 : 0.8));
-    }
-
-    const soundIconOnSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
-    const soundIconOffSVG = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>`;
-
-    soundFab.addEventListener("click", async () => {
-      soundEnabled = !soundEnabled;
-      ensureAudio();
-      await audioCtx.resume();
-      setAmbient(soundEnabled);
-      // Replace the whole icon wrapper content to avoid losing reference
-      const iconWrap = soundFab.querySelector('svg');
-      if (iconWrap) {
-        const tmp = document.createElement('div');
-        tmp.innerHTML = soundEnabled ? soundIconOnSVG : soundIconOffSVG;
-        iconWrap.replaceWith(tmp.firstChild);
-      }
-      document.getElementById("soundLabel").textContent = soundEnabled ? "Audio ON" : "Audio OFF";
-      soundFab.classList.toggle("is-on", soundEnabled);
     });
 
     // Ripple effect on quick-cards

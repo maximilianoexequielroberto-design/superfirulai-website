@@ -1,4 +1,5 @@
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
+const HANDLE_RE = /^[A-Za-z0-9_]{3,20}$/;
 
 function short(address) {
   return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "";
@@ -15,10 +16,10 @@ function getPhantomProvider() {
 
 function phantomHelpMessage() {
   if (isMobileDevice()) {
-    return `Phantom no está disponible en este navegador.<br><br>Abre esta página desde el navegador interno de la app Phantom.`;
+    return `Phantom no está disponible en este navegador.<br><br>Abrí esta página desde el navegador interno de la app Phantom.`;
   }
 
-  return `Phantom no está disponible.<br><br>Instala la extensión de Phantom y recarga la página.`;
+  return `Phantom no está disponible.<br><br>Instalá la extensión de Phantom y recargá la página.`;
 }
 
 function ensureTurnstileScript() {
@@ -35,22 +36,27 @@ function normalizeHandle(value) {
   return String(value || "").trim().replace(/^@/, "");
 }
 
-const HANDLE_RE = /^[A-Za-z0-9_]{3,20}$/;
-
 export function mountAirdropRegister(selector = "#airdrop-register") {
   ensureTurnstileScript();
   const root = document.querySelector(selector);
   if (!root) return;
 
   root.innerHTML = `
-    <div style="display:grid;gap:12px">
+    <div style="display:grid;gap:14px">
+      <div style="display:grid;gap:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <strong style="font-size:18px;letter-spacing:-.02em">Verified Registration</strong>
+          <span style="display:inline-flex;align-items:center;min-height:28px;padding:0 10px;border-radius:999px;background:rgba(27,136,255,.12);border:1px solid rgba(27,136,255,.24);font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#9bccff">One wallet per spot</span>
+        </div>
+        <div style="color:#9fb2da;font-size:13px;line-height:1.65">Connect Phantom, sign once, and finish the form with your Telegram and X usernames.</div>
+      </div>
       <button id="sf-connect" class="btn btn-blue" type="button">Connect Wallet</button>
-      <div id="sf-wallet" style="color:#b8c4e4;font-size:14px">Wallet not connected</div>
-      <input id="sf-telegram" autocomplete="off" placeholder="Telegram username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
-      <input id="sf-x" autocomplete="off" placeholder="X username" style="padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff" />
+      <div id="sf-wallet" style="color:#b8c4e4;font-size:14px;padding:12px 14px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)">Wallet not connected</div>
+      <input id="sf-telegram" autocomplete="off" placeholder="Telegram username" style="padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff;outline:none" />
+      <input id="sf-x" autocomplete="off" placeholder="X username" style="padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;color:#fff;outline:none" />
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
       <button id="sf-register" class="btn btn-gold" type="button">Register Airdrop</button>
-      <div id="sf-msg" style="color:#b8c4e4;font-size:14px;line-height:1.6"></div>
+      <div id="sf-msg" style="color:#b8c4e4;font-size:14px;line-height:1.6;min-height:24px"></div>
     </div>
   `;
 
@@ -65,10 +71,12 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const walletEl = root.querySelector("#sf-wallet");
   const connectBtn = root.querySelector("#sf-connect");
   const registerBtn = root.querySelector("#sf-register");
+  const telegramInput = root.querySelector("#sf-telegram");
+  const xInput = root.querySelector("#sf-x");
 
   function setMessage(text, isError = false) {
     msgEl.style.color = isError ? "#ffb4c2" : "#b8c4e4";
-    msgEl.textContent = text;
+    msgEl.innerHTML = text;
   }
 
   function getTurnstileToken() {
@@ -85,6 +93,12 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     walletEl.textContent = "Wallet not connected";
   }
 
+  [telegramInput, xInput].forEach((input) => {
+    input.addEventListener("blur", () => {
+      input.value = normalizeHandle(input.value);
+    });
+  });
+
   const provider = getPhantomProvider();
   if (provider?.on) {
     provider.on("disconnect", () => {
@@ -97,7 +111,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         return;
       }
       resetWalletState();
-      setMessage("Wallet changed. Please connect and sign again.", true);
+      setMessage("Wallet changed. Connect and sign again to keep your registration secure.", true);
     });
   }
 
@@ -145,23 +159,29 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   });
 
   registerBtn.addEventListener("click", async () => {
+    const oldText = registerBtn.textContent;
     try {
       if (!walletAddress || !signedMessage || !signature || !nonce || !timestamp || !challenge) {
         setMessage("Connect and sign your wallet first.", true);
         return;
       }
 
-      const telegram = normalizeHandle(root.querySelector("#sf-telegram").value);
-      const x = normalizeHandle(root.querySelector("#sf-x").value);
+      const telegram = normalizeHandle(telegramInput.value);
+      const x = normalizeHandle(xInput.value);
       const turnstileToken = getTurnstileToken();
+
+      telegramInput.value = telegram;
+      xInput.value = x;
 
       if (!HANDLE_RE.test(telegram)) {
         setMessage("Enter a valid Telegram username.", true);
+        telegramInput.focus();
         return;
       }
 
       if (!HANDLE_RE.test(x)) {
         setMessage("Enter a valid X username.", true);
+        xInput.focus();
         return;
       }
 
@@ -171,7 +191,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       }
 
       registerBtn.disabled = true;
-      const oldText = registerBtn.textContent;
       registerBtn.textContent = "Registering...";
 
       const resp = await fetch("/api/airdrop/register", {
@@ -190,19 +209,22 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         })
       });
 
-      const data = await resp.json();
+      const data = await resp.json().catch(() => ({}));
       setMessage(data.message || data.error || "Unexpected response", !resp.ok);
-      if (resp.ok) {
-        root.querySelector("#sf-telegram").value = "";
-        root.querySelector("#sf-x").value = "";
-      }
 
-      registerBtn.textContent = oldText;
-      registerBtn.disabled = false;
+      if (resp.ok) {
+        telegramInput.value = "";
+        xInput.value = "";
+        if (window.turnstile) {
+          const widget = root.querySelector(".cf-turnstile");
+          if (widget) window.turnstile.reset(widget);
+        }
+      }
     } catch (err) {
-      registerBtn.disabled = false;
-      registerBtn.textContent = "Register Airdrop";
       setMessage("Error registering the airdrop.", true);
+    } finally {
+      registerBtn.disabled = false;
+      registerBtn.textContent = oldText;
     }
   });
 }
