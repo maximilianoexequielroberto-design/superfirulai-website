@@ -866,6 +866,10 @@
       if (!inDialog) closeBuy();
     });
 
+    function fmt(n) { return Number(n).toLocaleString("en-US"); }
+    // Stats are handled by the plain script above (independent of this module)
+    // keeping fmt() here only for potential reuse
+
     const flashSection = (id) => {
       const el = document.getElementById(id);
       if (!el) return;
