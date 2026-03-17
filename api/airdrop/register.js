@@ -56,6 +56,13 @@ function verifyChallenge({ nonce, timestamp, challenge }) {
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(String(challenge || "")));
 }
 
+function getClientIp(req) {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (Array.isArray(forwarded)) return forwarded[0] || "";
+  if (typeof forwarded === "string") return forwarded.split(",")[0].trim();
+  return "";
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -73,6 +80,10 @@ export default async function handler(req, res) {
       challenge,
       turnstileToken
     } = req.body || {};
+
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({ error: "Supabase environment variables are missing" });
+    }
 
     if (!wallet || !telegram_username || !x_username || !signed_message || !signature || !nonce || !timestamp || !challenge || !turnstileToken) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -103,11 +114,10 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Signed message mismatch" });
     }
 
-    const turnstileOk = await verifyTurnstile(
-      turnstileToken,
-      req.headers["x-forwarded-for"] || ""
-    );
+    const clientIp = getClientIp(req);
+    const userAgent = String(req.headers["user-agent"] || "").slice(0, 500);
 
+    const turnstileOk = await verifyTurnstile(turnstileToken, clientIp);
     if (!turnstileOk) {
       return res.status(400).json({ error: "Captcha validation failed" });
     }
@@ -142,7 +152,9 @@ export default async function handler(req, res) {
       signature,
       nonce,
       turnstile_ok: true,
-      status: "pending"
+      status: "pending",
+      ip_address: clientIp || null,
+      user_agent: userAgent || null
     });
 
     if (error) {
