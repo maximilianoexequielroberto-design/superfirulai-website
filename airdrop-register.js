@@ -1,4 +1,4 @@
-const bs58 = window.bs58;
+import bs58 from "https://esm.sh/bs58@6.0.0";
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
 const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
@@ -180,11 +180,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       const encoded = new TextEncoder().encode(signedMessage);
       const sig = await provider.signMessage(encoded, "utf8");
-      const bs58Lib = window.bs58 || window.base58 || window.Base58;
-      if (!bs58Lib?.encode) {
-        throw new Error("bs58 library is not available on the page");
-      }
-      signature = bs58Lib.encode(sig.signature);
+      signature = bs58.encode(sig.signature);
 
       connectBtn.textContent = "Wallet Verified";
       connectBtn.disabled = true;
@@ -193,7 +189,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       setMsg("Wallet verified. Complete Telegram, X and captcha, then register your airdrop.", "ok");
     } catch (err) {
       connectBtn.disabled = false;
-      connectBtn.textContent = isMobileDevice() ? "Connect Wallet" : "Connect Wallet";
+      connectBtn.textContent = "Connect Wallet";
       setRegisterEnabled(false);
       setMsg(err?.message || "Could not connect or sign the wallet.", "error");
     }
