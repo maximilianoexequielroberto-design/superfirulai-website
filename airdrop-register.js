@@ -1,3 +1,4 @@
+const bs58 = window.bs58;
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
 const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
