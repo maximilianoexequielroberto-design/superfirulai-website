@@ -1,44 +1,55 @@
-# SuperFirulai ($FIRU)
+# SuperFirulai Production-Ready Site
 
-Production-ready base for:
-- verified airdrop registration
-- presale round registration by transaction hash
+This package includes:
+- premium landing page
+- verified airdrop with Phantom signature
+- Cloudflare Turnstile verification
 - Supabase persistence
-- Phantom signature verification
-- future FIRU distribution script
+- Round 1 / Round 2 purchase registration by TX hash
+- on-chain validation against Solana RPC
+- automatic SOL amount and FIRU allocation calculation
+- FIRU distribution base script using ATA
 
 ## Required environment variables
 
-### Shared
+Copy `.env.example` values into your Vercel project settings.
+
+Required:
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NONCE_SECRET`
 - `TURNSTILE_SECRET_KEY`
 - `SOLANA_RPC_URL`
 - `PROJECT_RECEIVE_WALLET`
-
-### Airdrop / frontend
-- `TELEGRAM_BOT_TOKEN` (optional)
-- `TELEGRAM_CHAT_ID` (optional)
-- `HOLDERS_COUNT` (optional)
-- `X_FOLLOWERS_COUNT` (optional)
-- `TOTAL_SUPPLY` (optional)
-
-### Rounds
-- `ROUND_1_ENABLED=true`
-- `ROUND_2_ENABLED=true`
 - `ROUND_1_TOKENS_PER_SOL`
 - `ROUND_2_TOKENS_PER_SOL`
-- `ROUND_1_MIN_SOL` (optional)
-- `ROUND_2_MIN_SOL` (optional)
 
-### Distribution script
+Optional:
+- `ROUND_1_ENABLED`
+- `ROUND_2_ENABLED`
+- `ROUND_1_MIN_SOL`
+- `ROUND_2_MIN_SOL`
+- `HOLDERS_COUNT`
+- `X_FOLLOWERS_COUNT`
+- `TOTAL_SUPPLY`
+- `TELEGRAM_MEMBERS_FALLBACK`
+- `TELEGRAM_BOT_TOKEN`
+- `TELEGRAM_CHAT_ID`
 - `TOKEN_MINT_ADDRESS`
 - `TREASURY_PRIVATE_KEY_JSON`
 
 ## Deploy
-1. Run `supabase/schema.sql` in Supabase SQL editor.
-2. Set the environment variables in Vercel.
-3. Deploy.
-4. Test airdrop registration.
-5. Test a round purchase using a real SOL transfer to `PROJECT_RECEIVE_WALLET`.
+
+1. Upload this project to GitHub.
+2. Import it in Vercel.
+3. Add the environment variables from `.env.example`.
+4. Run the SQL in `supabase/schema.sql`.
+5. Redeploy.
+
+## Notes
+
+- The airdrop flow requires Phantom + wallet signature + Turnstile captcha.
+- The round flow validates the submitted Solana transaction on-chain.
+- The sending wallet in the transaction must match the connected Phantom wallet.
+- The transaction must include a SOL transfer to `PROJECT_RECEIVE_WALLET`.
+- `scripts/distribute-firu.js` is meant to be run only after your token mint exists and you have funded the treasury.
