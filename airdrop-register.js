@@ -1,4 +1,42 @@
-const bs58 = window.bs58 || window.base58 || null;
+const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+
+function encodeBase58(input) {
+  const source = input instanceof Uint8Array ? input : Uint8Array.from(input || []);
+  if (!source.length) return "";
+
+  const digits = [0];
+
+  for (let i = 0; i < source.length; i++) {
+    let carry = source[i];
+
+    for (let j = 0; j < digits.length; j++) {
+      const value = digits[j] * 256 + carry;
+      digits[j] = value % 58;
+      carry = Math.floor(value / 58);
+    }
+
+    while (carry > 0) {
+      digits.push(carry % 58);
+      carry = Math.floor(carry / 58);
+    }
+  }
+
+  for (let i = 0; i < source.length && source[i] === 0; i++) {
+    digits.push(0);
+  }
+
+  return digits
+    .reverse()
+    .map((digit) => BASE58_ALPHABET[digit])
+    .join("");
+}
+
+const bs58 = {
+  encode(input) {
+    const native = window.bs58?.encode || window.base58?.encode;
+    return native ? native(input) : encodeBase58(input);
+  }
+};
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
 const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
@@ -200,10 +238,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
   connectBtn.addEventListener("click", async () => {
     try {
-      if (!bs58?.encode) {
-        throw new Error("bs58 library is not available on the page");
-      }
-
       connectBtn.disabled = true;
       connectBtn.textContent = "Checking Phantom...";
       setMsg("Checking wallet provider...", "warn");
