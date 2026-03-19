@@ -1,46 +1,44 @@
-# SuperFirulai — clean deploy package
+# SuperFirulai ($FIRU)
 
-Contenido incluido:
-- `index.html`
-- `airdrop-register.js`
-- `api/community-stats.js`
-- `api/airdrop/nonce.js`
-- `api/airdrop/register.js`
-- `api/round-register.js`
-- `package.json`
-- `supabase/schema.sql`
-- assets usados por la web actual
+Production-ready base for:
+- verified airdrop registration
+- presale round registration by transaction hash
+- Supabase persistence
+- Phantom signature verification
+- future FIRU distribution script
 
-Limpieza aplicada:
-- eliminados backups viejos de `index.html` y `airdrop-register.js`
-- eliminados assets que no usa la versión actual
-- eliminados archivos duplicados de documentación y SQL
-- quitado el botón visual de audio que ya no se usa
-- formulario del airdrop alineado a la UX final:
-  - Telegram: `t.me/ [usuario]`
-  - X: `@ [usuario]`
-  - solo username limpio
-- normalización reforzada en backend para evitar duplicados por `@`, `t.me/`, `x.com/` o links pegados
-- frontend usando `window.bs58 || window.base58` con el script cargado antes del módulo
+## Required environment variables
 
-Variables de entorno necesarias en Vercel:
+### Shared
 - `SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `TURNSTILE_SECRET_KEY`
 - `NONCE_SECRET`
-- `HOLDERS_COUNT`
-- `X_FOLLOWERS_COUNT`
-- `TOTAL_SUPPLY`
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_CHAT_ID`
-- `TELEGRAM_MEMBERS_FALLBACK`
+- `TURNSTILE_SECRET_KEY`
+- `SOLANA_RPC_URL`
+- `PROJECT_RECEIVE_WALLET`
 
-Base de datos:
-1. Abrí Supabase SQL Editor
-2. Ejecutá `supabase/schema.sql`
+### Airdrop / frontend
+- `TELEGRAM_BOT_TOKEN` (optional)
+- `TELEGRAM_CHAT_ID` (optional)
+- `HOLDERS_COUNT` (optional)
+- `X_FOLLOWERS_COUNT` (optional)
+- `TOTAL_SUPPLY` (optional)
 
-Notas:
-- `telegram_username` y `x_username` se guardan normalizados en minúsculas.
-- La tabla `airdrop_registrations` tiene `UNIQUE` para wallet, telegram, x y nonce.
-- El nonce vence a los 5 minutos.
-- El captcha se valida con Cloudflare Turnstile.
+### Rounds
+- `ROUND_1_ENABLED=true`
+- `ROUND_2_ENABLED=true`
+- `ROUND_1_TOKENS_PER_SOL`
+- `ROUND_2_TOKENS_PER_SOL`
+- `ROUND_1_MIN_SOL` (optional)
+- `ROUND_2_MIN_SOL` (optional)
+
+### Distribution script
+- `TOKEN_MINT_ADDRESS`
+- `TREASURY_PRIVATE_KEY_JSON`
+
+## Deploy
+1. Run `supabase/schema.sql` in Supabase SQL editor.
+2. Set the environment variables in Vercel.
+3. Deploy.
+4. Test airdrop registration.
+5. Test a round purchase using a real SOL transfer to `PROJECT_RECEIVE_WALLET`.
