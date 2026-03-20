@@ -1,57 +1,136 @@
-// CONFIG.JS CORREGIDO (TOKEN CAP)
 import { createClient } from "@supabase/supabase-js";
+import { PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
+const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
+const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
+
+async function getLivePrices() {
+  const resp = await fetch(PRICE_URL, {
+    headers: { accept: "application/json" }
+  });
+  const data = await resp.json();
+
+  return {
+    SOL: Number(data?.solana?.usd || 0),
+    USDT: Number(data?.tether?.usd || 0),
+    USDC: Number(data?.["usd-coin"]?.usd || 0)
+  };
+}
+
+function getAta(owner, mint) {
+  return getAssociatedTokenAddressSync(
+    new PublicKey(mint),
+    new PublicKey(owner),
+    false
+  ).toBase58();
+}
+
+function getDestinationAddress(symbol, owner, mint) {
+  const explicitUsdtAta = String(process.env.ROUND_RECEIVER_USDT_ATA || "").trim();
+  const explicitUsdcAta = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
+
+  if (symbol === "SOL") return owner;
+  if (symbol === "USDT") return explicitUsdtAta || getAta(owner, mint);
+  if (symbol === "USDC") return explicitUsdcAta || getAta(owner, mint);
+  return "";
+}
+
+function getRoundConfig(roundKey) {
+  const envPrefix = roundKey === "round1" ? "ROUND_1" : "ROUND_2";
+  const tokenCap = Number(process.env[`${envPrefix}_TOKEN_CAP`] || 0);
+
+  return {
+    enabled: String(process.env[`${envPrefix}_ENABLED`] || "true").toLowerCase() !== "false",
+    firuPriceUsd: Number(process.env[`${envPrefix}_FIRU_PRICE`] || 0),
+    tokenCap
+  };
+}
+
+async function getRaisedFiruByRound(round) {
+  const { data, error } = await supabase
+    .from("round_registrations")
+    .select("firu_allocation")
+    .eq("round", round);
+
+  if (error) throw error;
+
+  return (data || []).reduce((sum, row) => sum + Number(row?.firu_allocation || 0), 0);
+}
+
 export default async function handler(req, res) {
   try {
-    const ROUND_1_TOKEN_CAP = Number(process.env.ROUND_1_TOKEN_CAP || 0);
-    const ROUND_2_TOKEN_CAP = Number(process.env.ROUND_2_TOKEN_CAP || 0);
+    const projectReceiveWallet = String(
+      process.env.ROUND_RECEIVER_WALLET || process.env.PROJECT_RECEIVE_WALLET || ""
+    ).trim();
+    if (!projectReceiveWallet) {
+      return res.status(500).json({ error: "Project receive wallet is not configured" });
+    }
 
-    const { data } = await supabase
-      .from("round_registrations")
-      .select("round, firu_allocation");
+    const usdcMint = String(process.env.USDC_MINT_ADDRESS || DEFAULT_USDC_MINT).trim();
+    const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
+    const prices = await getLivePrices();
 
-    let raisedFiruRound1 = 0;
-    let raisedFiruRound2 = 0;
+    const [round1RaisedFiru, round2RaisedFiru] = await Promise.all([
+      getRaisedFiruByRound("round1"),
+      getRaisedFiruByRound("round2")
+    ]);
 
-    (data || []).forEach((row) => {
-      if (row.round === "round1") {
-        raisedFiruRound1 += Number(row.firu_allocation || 0);
-      }
-      if (row.round === "round2") {
-        raisedFiruRound2 += Number(row.firu_allocation || 0);
-      }
-    });
+    const round1 = getRoundConfig("round1");
+    const round2 = getRoundConfig("round2");
 
-    const remainingRound1 = Math.max(0, ROUND_1_TOKEN_CAP - raisedFiruRound1);
-    const remainingRound2 = Math.max(0, ROUND_2_TOKEN_CAP - raisedFiruRound2);
-
-    return res.json({
+    const payload = {
+      rpcUrl: process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+      projectReceiveWallet,
+      limits: {
+        minSol: Number(process.env.ROUND_MIN || 0),
+        maxSol: Number(process.env.ROUND_MAX || 0)
+      },
       rounds: {
         round1: {
-          enabled: process.env.ROUND_1_ENABLED === "true",
-          firuPriceUsd: Number(process.env.ROUND_1_FIRU_PRICE),
-          tokenCap: ROUND_1_TOKEN_CAP,
-          raisedFiru: raisedFiruRound1,
-          remainingFiru: remainingRound1,
-          soldOut: remainingRound1 <= 0
+          ...round1,
+          raisedFiru: Math.round(round1RaisedFiru),
+          remainingFiru: round1.tokenCap > 0 ? Math.max(Math.round(round1.tokenCap - round1RaisedFiru), 0) : null,
+          soldOut: round1.tokenCap > 0 ? round1RaisedFiru >= round1.tokenCap : false
         },
         round2: {
-          enabled: process.env.ROUND_2_ENABLED === "true",
-          firuPriceUsd: Number(process.env.ROUND_2_FIRU_PRICE),
-          tokenCap: ROUND_2_TOKEN_CAP,
-          raisedFiru: raisedFiruRound2,
-          remainingFiru: remainingRound2,
-          soldOut: remainingRound2 <= 0
+          ...round2,
+          raisedFiru: Math.round(round2RaisedFiru),
+          remainingFiru: round2.tokenCap > 0 ? Math.max(Math.round(round2.tokenCap - round2RaisedFiru), 0) : null,
+          soldOut: round2.tokenCap > 0 ? round2RaisedFiru >= round2.tokenCap : false
         }
-      }
-    });
+      },
+      tokens: [
+        {
+          symbol: "SOL",
+          mint: null,
+          livePriceUsd: prices.SOL,
+          destinationAddress: projectReceiveWallet
+        },
+        {
+          symbol: "USDT",
+          mint: usdtMint,
+          livePriceUsd: prices.USDT,
+          destinationAddress: getDestinationAddress("USDT", projectReceiveWallet, usdtMint)
+        },
+        {
+          symbol: "USDC",
+          mint: usdcMint,
+          livePriceUsd: prices.USDC,
+          destinationAddress: getDestinationAddress("USDC", projectReceiveWallet, usdcMint)
+        }
+      ]
+    };
 
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+    return res.status(200).json(payload);
+  } catch (error) {
+    console.error("round config error", error);
+    return res.status(500).json({ error: "Could not load round configuration" });
   }
 }
