@@ -9,6 +9,7 @@ import {
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
 const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
 const CONFIG_ENDPOINT = "/api/round/config";
+const TOKEN_ORDER = ["SOL", "USDT", "USDC"];
 
 function short(address) {
   return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "";
@@ -82,8 +83,8 @@ function injectStyles() {
     .sf-round-note.ok{color:#8bf0b2}
     .sf-round-note.warn{color:#ffd87d}
     .sf-round-note.error{color:#ffb2b2}
-    .sf-row{display:grid;grid-template-columns:1fr 160px;gap:12px}
-    .sf-row-amount{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .sf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .sf-row-tight{display:grid;grid-template-columns:1fr 180px 180px;gap:12px}
     .sf-field{display:grid;gap:8px}
     .sf-label{font-size:13px;font-weight:800;letter-spacing:.02em;color:#fff}
     .sf-handle-shell,.sf-input-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden}
@@ -99,7 +100,11 @@ function injectStyles() {
     .sf-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
     .sf-open-phantom{display:none}
     .sf-open-phantom.show{display:inline-flex}
-    @media (max-width:640px){.sf-row,.sf-summary,.sf-row-amount,.sf-action-grid{grid-template-columns:1fr}}
+    .sf-price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+    .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
+    .sf-metric span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -118,9 +123,23 @@ function getSelectedRoundMeta(config, value) {
   return rounds[value] || null;
 }
 
-function isPositiveAmount(value) {
-  const n = Number(value);
-  return Number.isFinite(n) && n > 0;
+function getTokenMeta(config, token) {
+  return config?.tokens?.find((item) => item.symbol === token) || null;
+}
+
+function formatCurrency(value, digits = 2) {
+  const n = Number(value || 0);
+  return n.toLocaleString("en-US", {
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits
+  });
+}
+
+function formatCompact(value, digits = 6) {
+  const n = Number(value || 0);
+  return n.toLocaleString("en-US", {
+    maximumFractionDigits: digits
+  });
 }
 
 export function mountRoundRegister(selector) {
@@ -130,16 +149,29 @@ export function mountRoundRegister(selector) {
   injectStyles();
   root.innerHTML = `
     <form class="sf-round-form" novalidate>
-      <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom or buy automatically with Phantom. Manual TX hash registration is still available.</div>
+      <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. Manual TX hash registration remains available for SOL, USDT and USDC.</div>
 
-      <div class="sf-row-amount">
+      <div class="sf-row-tight">
         <label class="sf-field">
-          <span class="sf-label">SOL amount</span>
+          <span class="sf-label">Payment token</span>
           <div class="sf-input-shell">
-            <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.50" />
+            <select class="sf-select" id="sfTokenSelect">
+              <option value="SOL">SOL</option>
+              <option value="USDT">USDT</option>
+              <option value="USDC">USDC</option>
+            </select>
           </div>
-          <span class="sf-help">For automatic purchase with Phantom. You can still paste a TX hash manually below.</span>
+          <span class="sf-help">Accepted on Solana only. Order: SOL, USDT, USDC.</span>
         </label>
+
+        <label class="sf-field">
+          <span class="sf-label">Amount</span>
+          <div class="sf-input-shell">
+            <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
+          </div>
+          <span class="sf-help">Use this for live estimate. Automatic buy is only available for SOL.</span>
+        </label>
+
         <label class="sf-field">
           <span class="sf-label">Round</span>
           <div class="sf-input-shell">
@@ -152,20 +184,27 @@ export function mountRoundRegister(selector) {
         </label>
       </div>
 
+      <div class="sf-price-grid">
+        <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
+        <div class="sf-metric"><strong>Estimated USD value</strong><span id="sfEstimatedUsd">-</span></div>
+        <div class="sf-metric"><strong>Estimated FIRU</strong><span id="sfEstimatedFiru">-</span></div>
+        <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
+      </div>
+
       <div class="sf-row">
         <label class="sf-field">
           <span class="sf-label">Transaction hash</span>
           <div class="sf-input-shell">
             <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the Solana transaction hash" />
           </div>
-          <span class="sf-help">Manual fallback: use the final confirmed payment transaction sent to the official project wallet.</span>
+          <span class="sf-help">Manual fallback for SOL, and the required flow for USDT and USDC.</span>
         </label>
         <label class="sf-field">
-          <span class="sf-label">Project wallet</span>
+          <span class="sf-label">Destination wallet / token account</span>
           <div class="sf-input-shell">
-            <input class="sf-input" id="sfProjectWallet" readonly />
+            <input class="sf-input" id="sfDestinationAddress" readonly />
           </div>
-          <span class="sf-help">This is the official wallet that receives SOL for the presale.</span>
+          <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
         </label>
       </div>
 
@@ -183,16 +222,16 @@ export function mountRoundRegister(selector) {
       </div>
 
       <div class="sf-summary">
-        <div class="sf-mini"><strong>Automatic buy</strong><span>Buy with Phantom and we will register the transaction automatically after confirmation.</span></div>
-        <div class="sf-mini"><strong>Manual fallback</strong><span>You can also send SOL from any wallet and paste the TX hash manually.</span></div>
-        <div class="sf-mini"><strong>No reuse</strong><span>Each transaction hash can only be registered once.</span></div>
+        <div class="sf-mini"><strong>Automatic SOL</strong><span>Use Phantom for one-click SOL payments and instant registration after confirmation.</span></div>
+        <div class="sf-mini"><strong>Manual stablecoins</strong><span>Send USDT or USDC on Solana, then paste the final transaction hash to register.</span></div>
+        <div class="sf-mini"><strong>Live price engine</strong><span>Allocation is calculated from the live market price at verification time.</span></div>
       </div>
 
       <div class="sf-round-actions">
         <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
         <div class="sf-action-grid">
-          <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy with Phantom</button>
+          <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
           <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
         </div>
       </div>
@@ -200,11 +239,16 @@ export function mountRoundRegister(selector) {
   `;
 
   const walletMsg = root.querySelector("#sfRoundWalletMsg");
+  const tokenEl = root.querySelector("#sfTokenSelect");
   const amountEl = root.querySelector("#sfBuyAmount");
   const txEl = root.querySelector("#sfTxHash");
   const roundEl = root.querySelector("#sfRoundSelect");
-  const projectWalletEl = root.querySelector("#sfProjectWallet");
+  const destinationEl = root.querySelector("#sfDestinationAddress");
+  const destinationShortEl = root.querySelector("#sfDestinationShort");
   const roundMetaEl = root.querySelector("#sfRoundMeta");
+  const liveTokenPriceEl = root.querySelector("#sfLiveTokenPrice");
+  const estimatedUsdEl = root.querySelector("#sfEstimatedUsd");
+  const estimatedFiruEl = root.querySelector("#sfEstimatedFiru");
   const tgEl = root.querySelector("#sfRoundTelegram");
   const xEl = root.querySelector("#sfRoundX");
   const connectBtn = root.querySelector("#sfRoundConnect");
@@ -233,30 +277,61 @@ export function mountRoundRegister(selector) {
       return;
     }
     const pieces = [];
-    if (meta.enabled) {
-      pieces.push("Open");
-    } else {
-      pieces.push("Closed");
-    }
-    if (meta.minSol > 0) {
-      pieces.push(`Min ${meta.minSol} SOL`);
-    }
-    if (meta.tokensPerSol > 0) {
-      pieces.push(`${Number(meta.tokensPerSol).toLocaleString("en-US")} FIRU per SOL`);
-    }
+    pieces.push(meta.enabled ? "Open" : "Closed");
+    pieces.push(`FIRU $${formatCompact(meta.firuPriceUsd, 6)}`);
+    pieces.push(`Min $${formatCurrency(roundConfig?.limits?.minUsd || 0, 0)}`);
+    pieces.push(`Max $${formatCurrency(roundConfig?.limits?.maxUsd || 0, 0)}`);
     roundMetaEl.textContent = pieces.join(" · ");
   }
 
-  function setReady() {
-    const amountReady = walletAddress && isPositiveAmount(amountEl.value) && getSelectedRoundMeta(roundConfig, roundEl.value)?.enabled;
-    const manualReady = walletAddress && txEl.value.trim() && roundEl.value;
-    autoBuyBtn.disabled = !amountReady;
-    submitBtn.disabled = !manualReady;
+  function updateTokenDetails() {
+    const token = getTokenMeta(roundConfig, tokenEl.value);
+    if (!token) {
+      destinationEl.value = "";
+      destinationShortEl.textContent = "-";
+      liveTokenPriceEl.textContent = "-";
+      estimatedUsdEl.textContent = "-";
+      estimatedFiruEl.textContent = "-";
+      return;
+    }
+
+    destinationEl.value = token.destinationAddress || "";
+    destinationShortEl.textContent = short(token.destinationAddress || "");
+    liveTokenPriceEl.textContent = `$${formatCompact(token.livePriceUsd, 6)}`;
+    updateEstimate();
   }
 
-  [amountEl, txEl, roundEl, tgEl, xEl].forEach((el) => el.addEventListener("input", () => {
+  function updateEstimate() {
+    const token = getTokenMeta(roundConfig, tokenEl.value);
+    const round = getSelectedRoundMeta(roundConfig, roundEl.value);
+    const amount = Number(amountEl.value || 0);
+
+    if (!token || !round || !Number.isFinite(amount) || amount <= 0) {
+      estimatedUsdEl.textContent = "-";
+      estimatedFiruEl.textContent = "-";
+      return;
+    }
+
+    const usdValue = amount * Number(token.livePriceUsd || 0);
+    const estimatedFiru = round.firuPriceUsd > 0 ? usdValue / Number(round.firuPriceUsd) : 0;
+
+    estimatedUsdEl.textContent = `$${formatCurrency(usdValue, 2)}`;
+    estimatedFiruEl.textContent = formatCompact(estimatedFiru, 0);
+  }
+
+  function setReady() {
+    const token = tokenEl.value;
+    const amountReady = walletAddress && token === "SOL" && Number(amountEl.value || 0) > 0 && getSelectedRoundMeta(roundConfig, roundEl.value)?.enabled;
+    const manualReady = txEl.value.trim().length > 20 && getSelectedRoundMeta(roundConfig, roundEl.value)?.enabled;
+    autoBuyBtn.disabled = !amountReady;
+    submitBtn.disabled = !manualReady;
+    autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
+  }
+
+  [tokenEl, amountEl, txEl, roundEl, tgEl, xEl].forEach((el) => el.addEventListener("input", () => {
     cleanSocialInputs();
     updateRoundMeta();
+    updateTokenDetails();
     setReady();
   }));
 
@@ -268,8 +343,8 @@ export function mountRoundRegister(selector) {
   (async () => {
     try {
       roundConfig = await fetchRoundConfig();
-      projectWalletEl.value = roundConfig.projectReceiveWallet || "";
       updateRoundMeta();
+      updateTokenDetails();
       setReady();
     } catch (err) {
       roundMetaEl.textContent = "Could not load round configuration.";
@@ -288,7 +363,7 @@ export function mountRoundRegister(selector) {
     const resp = await provider.connect({ onlyIfTrusted: false });
     walletAddress = resp.publicKey.toString();
     connectBtn.textContent = "Wallet Connected";
-    setMsg(`<strong>Wallet connected:</strong> ${short(walletAddress)}. You can buy automatically with Phantom or paste a TX hash manually.`, "ok");
+    setMsg(`<strong>Wallet connected:</strong> ${short(walletAddress)}. Use automatic buy for SOL or register any valid SOL / USDT / USDC transaction hash manually.`, "ok");
     setReady();
     return provider;
   }
@@ -309,14 +384,19 @@ export function mountRoundRegister(selector) {
 
   async function registerRoundPurchase(txHash) {
     cleanSocialInputs();
-    const round = roundEl.value;
-    const telegram = tgEl.value;
-    const x = xEl.value;
+    const payload = {
+      wallet: walletAddress || null,
+      tx_hash: txHash,
+      round: roundEl.value,
+      payment_token: tokenEl.value,
+      telegram: tgEl.value,
+      x: xEl.value
+    };
 
     const resp = await fetch("/api/round/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ wallet: walletAddress, tx_hash: txHash, round, telegram, x })
+      body: JSON.stringify(payload)
     });
 
     const data = await resp.json();
@@ -329,22 +409,26 @@ export function mountRoundRegister(selector) {
 
   autoBuyBtn.addEventListener("click", async () => {
     try {
+      if (tokenEl.value !== "SOL") {
+        throw new Error("Automatic buy is only available for SOL. Use manual TX registration for USDT and USDC.");
+      }
+
       await ensureConnected();
 
-      const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
-      if (!meta?.enabled) {
-        throw new Error("This round is currently closed.");
-      }
+      const round = getSelectedRoundMeta(roundConfig, roundEl.value);
+      const token = getTokenMeta(roundConfig, "SOL");
+      const amount = Number(amountEl.value || 0);
 
-      const amount = Number(amountEl.value);
-      if (!Number.isFinite(amount) || amount <= 0) {
-        throw new Error("Enter a valid SOL amount.");
+      if (!round?.enabled) throw new Error("This round is currently closed.");
+      if (!Number.isFinite(amount) || amount <= 0) throw new Error("Enter a valid SOL amount.");
+      if (!roundConfig?.projectReceiveWallet) throw new Error("Project wallet is not configured.");
+
+      const expectedUsd = amount * Number(token.livePriceUsd || 0);
+      if (expectedUsd < Number(roundConfig?.limits?.minUsd || 0)) {
+        throw new Error(`Minimum purchase is $${formatCurrency(roundConfig.limits.minUsd, 0)} equivalent.`);
       }
-      if (meta.minSol > 0 && amount < meta.minSol) {
-        throw new Error(`Minimum payment for ${roundEl.value.toUpperCase()} is ${meta.minSol} SOL.`);
-      }
-      if (!roundConfig?.projectReceiveWallet) {
-        throw new Error("Project wallet is not configured.");
+      if (expectedUsd > Number(roundConfig?.limits?.maxUsd || 0)) {
+        throw new Error(`Maximum purchase is $${formatCurrency(roundConfig.limits.maxUsd, 0)} equivalent.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -385,7 +469,7 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(signature);
 
       setMsg(
-        `<strong>Purchase registered.</strong> ${data.sol_amount} SOL verified · ${Number(data.firu_allocation || 0).toLocaleString("en-US")} FIRU allocated.`,
+        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · $${formatCurrency(data.payment_amount_usd, 2)} value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
         "ok"
       );
 
@@ -393,6 +477,7 @@ export function mountRoundRegister(selector) {
       submitBtn.textContent = "Registered";
       amountEl.disabled = true;
       txEl.disabled = true;
+      tokenEl.disabled = true;
       roundEl.disabled = true;
       tgEl.disabled = true;
       xEl.disabled = true;
@@ -400,7 +485,7 @@ export function mountRoundRegister(selector) {
       submitBtn.disabled = true;
     } catch (err) {
       autoBuyBtn.disabled = false;
-      autoBuyBtn.textContent = "Buy with Phantom";
+      autoBuyBtn.textContent = tokenEl.value === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
       setReady();
       setMsg(err?.message || "Could not complete the automatic Phantom purchase.", "error");
     }
@@ -408,10 +493,8 @@ export function mountRoundRegister(selector) {
 
   submitBtn.addEventListener("click", async () => {
     try {
-      await ensureConnected();
       cleanSocialInputs();
       const tx_hash = txEl.value.trim();
-
       if (!tx_hash || tx_hash.length < 20) {
         setMsg("Paste a valid transaction hash.", "error");
         return;
@@ -424,13 +507,14 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(tx_hash);
 
       setMsg(
-        `<strong>Purchase registered.</strong> ${data.sol_amount} SOL verified · ${Number(data.firu_allocation || 0).toLocaleString("en-US")} FIRU allocated.`,
+        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · $${formatCurrency(data.payment_amount_usd, 2)} value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
         "ok"
       );
 
       submitBtn.textContent = "Registered";
       amountEl.disabled = true;
       txEl.disabled = true;
+      tokenEl.disabled = true;
       roundEl.disabled = true;
       tgEl.disabled = true;
       xEl.disabled = true;

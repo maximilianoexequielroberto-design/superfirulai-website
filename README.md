@@ -53,3 +53,21 @@ Optional:
 - The sending wallet in the transaction must match the connected Phantom wallet.
 - The transaction must include a SOL transfer to `PROJECT_RECEIVE_WALLET`.
 - `scripts/distribute-firu.js` is meant to be run only after your token mint exists and you have funded the treasury.
+
+
+## Multitoken rounds
+
+The rounds flow now supports payments on Solana using these tokens in this order:
+
+1. SOL
+2. USDT
+3. USDC
+
+Allocation is calculated with live market pricing at verification time:
+
+- SOL uses live SOL/USD
+- USDT uses live USDT/USD
+- USDC uses live USDC/USD
+
+Formula:
+`FIRU allocation = (payment amount * live token price in USD) / FIRU price in USD`
