@@ -8,13 +8,18 @@ const supabase = createClient(
 );
 
 const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
-const PROJECT_RECEIVE_WALLET = String(process.env.PROJECT_RECEIVE_WALLET || "").trim();
+const PROJECT_RECEIVE_WALLET = String(
+  process.env.ROUND_RECEIVER_WALLET || process.env.PROJECT_RECEIVE_WALLET || ""
+).trim();
+const ROUND_RECEIVER_USDT_ATA = String(process.env.ROUND_RECEIVER_USDT_ATA || "").trim();
+const ROUND_RECEIVER_USDC_ATA = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
 const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
 const TX_TIMEOUT_MS = 15000;
 const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
+const SOL_EQ_EPSILON = 1e-9;
 
 function stripSpaces(value) {
   return String(value || "").trim().replace(/\s+/g, "");
@@ -47,6 +52,10 @@ function normalizeXHandle(value) {
   return firstSegment(cleaned).toLowerCase();
 }
 
+function getRoundCapSol(roundKey) {
+  return Number(process.env[`${roundKey}_CAP`] || 0);
+}
+
 function getRoundConfig(round) {
   const id = String(round || "").toLowerCase();
   const isRound1 = id === "round1" || id === "1";
@@ -54,9 +63,11 @@ function getRoundConfig(round) {
   if (!key) return null;
 
   return {
+    key,
     round: isRound1 ? "round1" : "round2",
     enabled: String(process.env[`${key}_ENABLED`] || "true").toLowerCase() !== "false",
-    firuPriceUsd: Number(process.env[`${key}_FIRU_PRICE`] || 0)
+    firuPriceUsd: Number(process.env[`${key}_FIRU_PRICE`] || 0),
+    capSol: getRoundCapSol(key)
   };
 }
 
@@ -101,6 +112,13 @@ function getAta(owner, mint) {
     new PublicKey(owner),
     false
   ).toBase58();
+}
+
+function getDestinationAddress(token, projectWallet, tokenMint) {
+  if (token === "SOL") return projectWallet;
+  if (token === "USDT") return ROUND_RECEIVER_USDT_ATA || getAta(projectWallet, tokenMint);
+  if (token === "USDC") return ROUND_RECEIVER_USDC_ATA || getAta(projectWallet, tokenMint);
+  return "";
 }
 
 function getAccountKeys(tx) {
@@ -160,8 +178,41 @@ function extractSplPayment(tx, destinationAta, mintAddress) {
   return (postRaw - preRaw) / Math.pow(10, decimals);
 }
 
-function formatAmount(num) {
-  return Number(num || 0).toFixed(6).replace(/0+$/, "").replace(/\.$/, "") || "0";
+function formatAmount(num, digits = 6) {
+  return Number(num || 0).toFixed(digits).replace(/0+$/, "").replace(/\.$/, "") || "0";
+}
+
+function getRowSolEquivalent(row, fallbackSolPriceUsd) {
+  const token = String(row?.payment_token || "").toUpperCase();
+  const paymentAmount = Number(row?.payment_amount || 0);
+  const paymentAmountUsd = Number(row?.payment_amount_usd || 0);
+  const rawValidation = row?.raw_validation || {};
+  const referenceSolPriceUsd = Number(
+    rawValidation?.referenceSolPriceUsd || rawValidation?.liveSolPriceUsd || fallbackSolPriceUsd || 0
+  );
+
+  if (token === "SOL") {
+    return paymentAmount > 0 ? paymentAmount : paymentAmountUsd > 0 && referenceSolPriceUsd > 0
+      ? paymentAmountUsd / referenceSolPriceUsd
+      : 0;
+  }
+
+  if (paymentAmountUsd > 0 && referenceSolPriceUsd > 0) {
+    return paymentAmountUsd / referenceSolPriceUsd;
+  }
+
+  return 0;
+}
+
+async function getRoundRaisedSol(round, fallbackSolPriceUsd) {
+  const { data, error } = await supabase
+    .from("round_registrations")
+    .select("payment_token,payment_amount,payment_amount_usd,raw_validation")
+    .eq("round", round);
+
+  if (error) throw error;
+
+  return (data || []).reduce((sum, row) => sum + getRowSolEquivalent(row, fallbackSolPriceUsd), 0);
 }
 
 export default async function handler(req, res) {
@@ -195,8 +246,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Round FIRU price is not configured" });
     }
 
-    const minUsd = Number(process.env.ROUND_MIN || 0);
-    const maxUsd = Number(process.env.ROUND_MAX || 0);
+    const minSol = Number(process.env.ROUND_MIN || 0);
+    const maxSol = Number(process.env.ROUND_MAX || 0);
 
     const txHash = String(tx_hash).trim();
     const telegramUsername = telegram ? normalizeTelegramHandle(telegram) : null;
@@ -241,7 +292,7 @@ export default async function handler(req, res) {
     const usdcMint = String(process.env.USDC_MINT_ADDRESS || DEFAULT_USDC_MINT).trim();
     const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
     const tokenMint = token === "USDT" ? usdtMint : token === "USDC" ? usdcMint : null;
-    const destinationAddress = token === "SOL" ? PROJECT_RECEIVE_WALLET : getAta(PROJECT_RECEIVE_WALLET, tokenMint);
+    const destinationAddress = getDestinationAddress(token, PROJECT_RECEIVE_WALLET, tokenMint);
 
     const paymentAmount = token === "SOL"
       ? extractSolPayment(tx, destinationAddress)
@@ -253,33 +304,60 @@ export default async function handler(req, res) {
 
     const livePrices = await fetchLivePrices();
     const tokenPriceUsd = Number(livePrices[token] || 0);
+    const solPriceUsd = Number(livePrices.SOL || 0);
 
     if (!(tokenPriceUsd > 0)) {
       return res.status(500).json({ error: `Live price for ${token} is unavailable` });
     }
+    if (!(solPriceUsd > 0)) {
+      return res.status(500).json({ error: "Live SOL price is unavailable" });
+    }
 
     const paymentAmountUsd = paymentAmount * tokenPriceUsd;
-    if (paymentAmountUsd < minUsd) {
-      return res.status(400).json({ error: `Minimum purchase is $${formatAmount(minUsd)}` });
+    const paymentAmountSolEquivalent = token === "SOL"
+      ? paymentAmount
+      : paymentAmountUsd / solPriceUsd;
+
+    if (paymentAmountSolEquivalent < minSol - SOL_EQ_EPSILON) {
+      return res.status(400).json({ error: `Minimum purchase is ${formatAmount(minSol)} SOL` });
     }
-    if (maxUsd > 0 && paymentAmountUsd > maxUsd) {
-      return res.status(400).json({ error: `Maximum purchase is $${formatAmount(maxUsd)}` });
+    if (maxSol > 0 && paymentAmountSolEquivalent > maxSol + SOL_EQ_EPSILON) {
+      return res.status(400).json({ error: `Maximum purchase is ${formatAmount(maxSol)} SOL` });
     }
 
-    const { data: walletTotals, error: walletTotalsError } = await supabase
-      .from("round_registrations")
-      .select("payment_amount_usd")
-      .eq("sender_wallet", senderWallet);
+    const roundRaisedSol = await getRoundRaisedSol(roundConfig.round, solPriceUsd);
+    const remainingSolBefore = Math.max(roundConfig.capSol - roundRaisedSol, 0);
 
-    if (walletTotalsError) throw walletTotalsError;
-    const previousUsd = (walletTotals || []).reduce((sum, row) => sum + Number(row.payment_amount_usd || 0), 0);
-    const newTotalUsd = previousUsd + paymentAmountUsd;
+    if (roundConfig.capSol > 0) {
+      if (roundRaisedSol >= roundConfig.capSol - SOL_EQ_EPSILON) {
+        return res.status(400).json({
+          error: `${roundConfig.round.toUpperCase()} is sold out`,
+          round_status: {
+            cap_sol: Number(roundConfig.capSol.toFixed(9)),
+            raised_sol: Number(roundRaisedSol.toFixed(9)),
+            remaining_sol: 0,
+            sold_out: true
+          }
+        });
+      }
 
-    if (maxUsd > 0 && newTotalUsd > maxUsd) {
-      return res.status(400).json({ error: `This wallet exceeds the maximum total purchase of $${formatAmount(maxUsd)}` });
+      if (paymentAmountSolEquivalent > remainingSolBefore + SOL_EQ_EPSILON) {
+        return res.status(400).json({
+          error: `Only ${formatAmount(remainingSolBefore, 9)} SOL remains in ${roundConfig.round.toUpperCase()}`,
+          round_status: {
+            cap_sol: Number(roundConfig.capSol.toFixed(9)),
+            raised_sol: Number(roundRaisedSol.toFixed(9)),
+            remaining_sol: Number(remainingSolBefore.toFixed(9)),
+            sold_out: false
+          }
+        });
+      }
     }
 
     const firuAllocation = paymentAmountUsd / roundConfig.firuPriceUsd;
+    const raisedSolAfter = roundRaisedSol + paymentAmountSolEquivalent;
+    const remainingSolAfter = roundConfig.capSol > 0 ? Math.max(roundConfig.capSol - raisedSolAfter, 0) : null;
+    const soldOutAfter = roundConfig.capSol > 0 ? remainingSolAfter <= SOL_EQ_EPSILON : false;
 
     const insertPayload = {
       wallet: inputWallet || senderWallet,
@@ -302,10 +380,19 @@ export default async function handler(req, res) {
         token,
         destinationAddress,
         tokenMint,
-        minUsd,
-        maxUsd,
+        minSol,
+        maxSol,
         senderWallet,
-        livePriceUsd: tokenPriceUsd
+        livePriceUsd: tokenPriceUsd,
+        liveSolPriceUsd: solPriceUsd,
+        referenceSolPriceUsd: solPriceUsd,
+        paymentAmountSolEquivalent,
+        roundCapSol: roundConfig.capSol,
+        roundRaisedSolBefore: roundRaisedSol,
+        roundRemainingSolBefore: remainingSolBefore,
+        roundRaisedSolAfter: raisedSolAfter,
+        roundRemainingSolAfter: remainingSolAfter,
+        soldOutAfter
       }
     };
 
@@ -320,14 +407,22 @@ export default async function handler(req, res) {
       wallet: inputWallet || senderWallet,
       sender_wallet: senderWallet,
       payment_token: token,
-      payment_amount: Number(formatAmount(paymentAmount)),
+      payment_amount: Number(formatAmount(paymentAmount, 9)),
       payment_amount_usd: Number(paymentAmountUsd.toFixed(6)),
+      payment_amount_sol_equivalent: Number(paymentAmountSolEquivalent.toFixed(9)),
       token_price_usd: Number(tokenPriceUsd.toFixed(6)),
+      sol_price_usd: Number(solPriceUsd.toFixed(6)),
       firu_price_usd: roundConfig.firuPriceUsd,
       firu_allocation: Math.round(firuAllocation),
       round: roundConfig.round,
       destination_address: destinationAddress,
-      tx_hash: txHash
+      tx_hash: txHash,
+      round_status: {
+        cap_sol: roundConfig.capSol > 0 ? Number(roundConfig.capSol.toFixed(9)) : null,
+        raised_sol: Number(raisedSolAfter.toFixed(9)),
+        remaining_sol: remainingSolAfter === null ? null : Number(remainingSolAfter.toFixed(9)),
+        sold_out: soldOutAfter
+      }
     });
   } catch (error) {
     console.error("round register error", error);

@@ -279,8 +279,11 @@ export function mountRoundRegister(selector) {
     const pieces = [];
     pieces.push(meta.enabled ? "Open" : "Closed");
     pieces.push(`FIRU $${formatCompact(meta.firuPriceUsd, 6)}`);
-    pieces.push(`Min $${formatCurrency(roundConfig?.limits?.minUsd || 0, 0)}`);
-    pieces.push(`Max $${formatCurrency(roundConfig?.limits?.maxUsd || 0, 0)}`);
+    pieces.push(`Min ${formatCompact(roundConfig?.limits?.minSol || 0, 4)} SOL`);
+    pieces.push(`Max ${formatCompact(roundConfig?.limits?.maxSol || 0, 4)} SOL`);
+    if (typeof meta.remainingSol === "number") {
+      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
+    }
     roundMetaEl.textContent = pieces.join(" · ");
   }
 
@@ -315,14 +318,15 @@ export function mountRoundRegister(selector) {
     const usdValue = amount * Number(token.livePriceUsd || 0);
     const estimatedFiru = round.firuPriceUsd > 0 ? usdValue / Number(round.firuPriceUsd) : 0;
 
-    estimatedUsdEl.textContent = `formatCurrency(usdValue, 2)`;
+    estimatedUsdEl.textContent = `$${formatCurrency(usdValue, 2)}`;
     estimatedFiruEl.textContent = formatCompact(estimatedFiru, 0);
   }
 
   function setReady() {
     const token = tokenEl.value;
-    const amountReady = walletAddress && token === "SOL" && Number(amountEl.value || 0) > 0 && getSelectedRoundMeta(roundConfig, roundEl.value)?.enabled;
-    const manualReady = txEl.value.trim().length > 20 && getSelectedRoundMeta(roundConfig, roundEl.value)?.enabled;
+    const selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value);
+    const amountReady = walletAddress && token === "SOL" && Number(amountEl.value || 0) > 0 && selectedRound?.enabled && !selectedRound?.soldOut;
+    const manualReady = txEl.value.trim().length > 20 && selectedRound?.enabled && !selectedRound?.soldOut;
     autoBuyBtn.disabled = !amountReady;
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
@@ -404,6 +408,17 @@ export function mountRoundRegister(selector) {
       throw new Error(data.error || "Round registration failed");
     }
 
+    if (data?.round_status) {
+      const meta = roundConfig?.rounds?.[roundEl.value];
+      if (meta) {
+        meta.raisedSol = data.round_status.raised_sol;
+        meta.remainingSol = data.round_status.remaining_sol;
+        meta.soldOut = Boolean(data.round_status.sold_out);
+      }
+      updateRoundMeta();
+      setReady();
+    }
+
     return data;
   }
 
@@ -419,16 +434,20 @@ export function mountRoundRegister(selector) {
       const token = getTokenMeta(roundConfig, "SOL");
       const amount = Number(amountEl.value || 0);
 
-      if (!round?.enabled) throw new Error("This round is currently closed.");
+      if (!round?.enabled || round?.soldOut) throw new Error(round?.soldOut ? "This round is sold out." : "This round is currently closed.");
       if (!Number.isFinite(amount) || amount <= 0) throw new Error("Enter a valid SOL amount.");
       if (!roundConfig?.projectReceiveWallet) throw new Error("Project wallet is not configured.");
 
-      const expectedUsd = amount * Number(token.livePriceUsd || 0);
-      if (expectedUsd < Number(roundConfig?.limits?.minUsd || 0)) {
-        throw new Error(`Minimum purchase is ${formatCurrency(roundConfig.limits.minUsd, 0)} reference units.`);
+      if (amount < Number(roundConfig?.limits?.minSol || 0)) {
+        throw new Error(`Minimum purchase is ${formatCompact(roundConfig.limits.minSol, 4)} SOL.`);
       }
-      if (expectedUsd > Number(roundConfig?.limits?.maxUsd || 0)) {
-        throw new Error(`Maximum purchase is ${formatCurrency(roundConfig.limits.maxUsd, 0)} reference units.`);
+      if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
+        throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
+      }
+      if (typeof round?.remainingSol === "number" && amount > Number(round.remainingSol || 0)) {
+        throw new Error(round.soldOut
+          ? "This round is sold out."
+          : `Only ${formatCompact(round.remainingSol, 4)} SOL remains in this round.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -467,6 +486,16 @@ export function mountRoundRegister(selector) {
 
       autoBuyBtn.textContent = "Registering...";
       const data = await registerRoundPurchase(signature);
+      if (data?.round_status) {
+        const meta = roundConfig?.rounds?.[roundEl.value];
+        if (meta) {
+          meta.raisedSol = data.round_status.raised_sol;
+          meta.remainingSol = data.round_status.remaining_sol;
+          meta.soldOut = Boolean(data.round_status.sold_out);
+        }
+      }
+      updateRoundMeta();
+      setReady();
 
       setMsg(
         `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
