@@ -46,7 +46,12 @@ create table if not exists public.round_registrations (
   project_wallet text not null,
   tx_hash text not null,
   round text not null,
-  sol_amount numeric(20,9) not null,
+  sol_amount numeric(20,9),
+  payment_token text not null default 'SOL',
+  payment_amount numeric(30,9) not null default 0,
+  payment_amount_usd numeric(30,9) not null default 0,
+  token_price_usd numeric(20,9) not null default 0,
+  firu_price_usd numeric(20,9) not null default 0,
   firu_allocation numeric(30,0) not null,
   telegram_username text,
   x_username text,
@@ -59,13 +64,25 @@ create table if not exists public.round_registrations (
 
   constraint round_registrations_tx_unique unique (tx_hash),
   constraint round_registrations_round_check check (round in ('round1', 'round2')),
-  constraint round_registrations_sol_positive check (sol_amount > 0),
+  constraint round_registrations_payment_token_check check (payment_token in ('SOL', 'USDT', 'USDC')),
+  constraint round_registrations_amount_positive check (payment_amount > 0),
+  constraint round_registrations_usd_positive check (payment_amount_usd > 0),
+  constraint round_registrations_price_positive check (token_price_usd > 0 and firu_price_usd > 0),
   constraint round_registrations_allocation_positive check (firu_allocation > 0),
   constraint round_registrations_tg_format check (telegram_username is null or telegram_username ~ '^[A-Za-z0-9_]{3,32}$'),
   constraint round_registrations_x_format check (x_username is null or x_username ~ '^[A-Za-z0-9_]{1,15}$')
 );
 
+alter table public.round_registrations
+  add column if not exists payment_token text not null default 'SOL',
+  add column if not exists payment_amount numeric(30,9) not null default 0,
+  add column if not exists payment_amount_usd numeric(30,9) not null default 0,
+  add column if not exists token_price_usd numeric(20,9) not null default 0,
+  add column if not exists firu_price_usd numeric(20,9) not null default 0;
+
 create index if not exists idx_round_wallet on public.round_registrations (wallet);
+create index if not exists idx_round_sender_wallet on public.round_registrations (sender_wallet);
+create index if not exists idx_round_payment_token on public.round_registrations (payment_token);
 create index if not exists idx_round_created_at on public.round_registrations (created_at desc);
 create index if not exists idx_round_distribution_tx on public.round_registrations (distribution_tx);
 
