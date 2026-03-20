@@ -41,17 +41,17 @@ export default async function handler(req, res) {
       rpcUrl: process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
       projectReceiveWallet,
       limits: {
-        minUsd: Number(process.env.ROUND_MIN_USD || 0),
-        maxUsd: Number(process.env.ROUND_MAX_USD || 0)
+        minUsd: Number(process.env.ROUND_MIN || 0),
+        maxUsd: Number(process.env.ROUND_MAX || 0)
       },
       rounds: {
         round1: {
           enabled: String(process.env.ROUND_1_ENABLED || "true").toLowerCase() !== "false",
-          firuPriceUsd: Number(process.env.ROUND_1_FIRU_PRICE_USD || 0)
+          firuPriceUsd: Number(process.env.ROUND_1_FIRU_PRICE || 0)
         },
         round2: {
           enabled: String(process.env.ROUND_2_ENABLED || "true").toLowerCase() !== "false",
-          firuPriceUsd: Number(process.env.ROUND_2_FIRU_PRICE_USD || 0)
+          firuPriceUsd: Number(process.env.ROUND_2_FIRU_PRICE || 0)
         }
       },
       tokens: [

@@ -56,7 +56,7 @@ function getRoundConfig(round) {
   return {
     round: isRound1 ? "round1" : "round2",
     enabled: String(process.env[`${key}_ENABLED`] || "true").toLowerCase() !== "false",
-    firuPriceUsd: Number(process.env[`${key}_FIRU_PRICE_USD`] || 0)
+    firuPriceUsd: Number(process.env[`${key}_FIRU_PRICE`] || 0)
   };
 }
 
@@ -195,8 +195,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Round FIRU price is not configured" });
     }
 
-    const minUsd = Number(process.env.ROUND_MIN_USD || 0);
-    const maxUsd = Number(process.env.ROUND_MAX_USD || 0);
+    const minUsd = Number(process.env.ROUND_MIN || 0);
+    const maxUsd = Number(process.env.ROUND_MAX || 0);
 
     const txHash = String(tx_hash).trim();
     const telegramUsername = telegram ? normalizeTelegramHandle(telegram) : null;
