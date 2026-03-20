@@ -7,7 +7,7 @@ This package includes:
 - Supabase persistence
 - Round 1 / Round 2 purchase registration by TX hash
 - on-chain validation against Solana RPC
-- automatic SOL amount and FIRU allocation calculation
+- automatic live payment valuation and FIRU allocation calculation
 - FIRU distribution base script using ATA
 
 ## Required environment variables
@@ -21,14 +21,14 @@ Required:
 - `TURNSTILE_SECRET_KEY`
 - `SOLANA_RPC_URL`
 - `PROJECT_RECEIVE_WALLET`
-- `ROUND_1_TOKENS_PER_SOL`
-- `ROUND_2_TOKENS_PER_SOL`
+- `ROUND_1_FIRU_PRICE`
+- `ROUND_2_FIRU_PRICE`
+- `ROUND_MIN`
+- `ROUND_MAX`
 
 Optional:
 - `ROUND_1_ENABLED`
 - `ROUND_2_ENABLED`
-- `ROUND_1_MIN_SOL`
-- `ROUND_2_MIN_SOL`
 - `HOLDERS_COUNT`
 - `X_FOLLOWERS_COUNT`
 - `TOTAL_SUPPLY`
@@ -51,7 +51,7 @@ Optional:
 - The airdrop flow requires Phantom + wallet signature + Turnstile captcha.
 - The round flow validates the submitted Solana transaction on-chain.
 - The sending wallet in the transaction must match the connected Phantom wallet.
-- The transaction must include a SOL transfer to `PROJECT_RECEIVE_WALLET`.
+- The transaction must include a valid payment transfer to the configured project destination wallet/ATA for SOL, USDT, or USDC.
 - `scripts/distribute-firu.js` is meant to be run only after your token mint exists and you have funded the treasury.
 
 

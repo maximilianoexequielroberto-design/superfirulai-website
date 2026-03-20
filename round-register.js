@@ -186,7 +186,7 @@ export function mountRoundRegister(selector) {
 
       <div class="sf-price-grid">
         <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
-        <div class="sf-metric"><strong>Estimated USD value</strong><span id="sfEstimatedUsd">-</span></div>
+        <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
         <div class="sf-metric"><strong>Estimated FIRU</strong><span id="sfEstimatedFiru">-</span></div>
         <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
       </div>
@@ -315,7 +315,7 @@ export function mountRoundRegister(selector) {
     const usdValue = amount * Number(token.livePriceUsd || 0);
     const estimatedFiru = round.firuPriceUsd > 0 ? usdValue / Number(round.firuPriceUsd) : 0;
 
-    estimatedUsdEl.textContent = `$${formatCurrency(usdValue, 2)}`;
+    estimatedUsdEl.textContent = `formatCurrency(usdValue, 2)`;
     estimatedFiruEl.textContent = formatCompact(estimatedFiru, 0);
   }
 
@@ -425,10 +425,10 @@ export function mountRoundRegister(selector) {
 
       const expectedUsd = amount * Number(token.livePriceUsd || 0);
       if (expectedUsd < Number(roundConfig?.limits?.minUsd || 0)) {
-        throw new Error(`Minimum purchase is $${formatCurrency(roundConfig.limits.minUsd, 0)} equivalent.`);
+        throw new Error(`Minimum purchase is ${formatCurrency(roundConfig.limits.minUsd, 0)} reference units.`);
       }
       if (expectedUsd > Number(roundConfig?.limits?.maxUsd || 0)) {
-        throw new Error(`Maximum purchase is $${formatCurrency(roundConfig.limits.maxUsd, 0)} equivalent.`);
+        throw new Error(`Maximum purchase is ${formatCurrency(roundConfig.limits.maxUsd, 0)} reference units.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -469,7 +469,7 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(signature);
 
       setMsg(
-        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · $${formatCurrency(data.payment_amount_usd, 2)} value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
+        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
         "ok"
       );
 
@@ -507,7 +507,7 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(tx_hash);
 
       setMsg(
-        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · $${formatCurrency(data.payment_amount_usd, 2)} value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
+        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
         "ok"
       );
 
