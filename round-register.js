@@ -15,37 +15,6 @@ function short(address) {
   return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "";
 }
 
-function stripSpaces(value) {
-  return String(value || "").trim().replace(/\s+/g, "");
-}
-
-function firstSegment(value) {
-  return String(value || "").split(/[/?#]/)[0] || "";
-}
-
-function normalizeTelegramHandle(value) {
-  let cleaned = stripSpaces(value)
-    .replace(/^https?:\/\//i, "")
-    .replace(/^www\./i, "")
-    .replace(/^t\.me\//i, "")
-    .replace(/^telegram\.me\//i, "")
-    .replace(/^@/, "")
-    .replace(/^\/+/, "");
-
-  return firstSegment(cleaned).toLowerCase();
-}
-
-function normalizeXHandle(value) {
-  let cleaned = stripSpaces(value)
-    .replace(/^https?:\/\//i, "")
-    .replace(/^www\./i, "")
-    .replace(/^(x\.com|twitter\.com)\//i, "")
-    .replace(/^@/, "")
-    .replace(/^\/+/, "");
-
-  return firstSegment(cleaned).toLowerCase();
-}
-
 function isMobileDevice() {
   return MOBILE_RE.test(navigator.userAgent || "");
 }
@@ -104,12 +73,6 @@ function injectStyles() {
     .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-metric span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
-    .sf-progress{padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
-    .sf-progress-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;margin-bottom:8px}
-    .sf-progress-head strong{color:#fff}
-    .sf-progress-head span{color:#9db7e8;font-weight:800}
-    .sf-progress-bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}
-    .sf-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#18a3ff,#ffd665);transition:width .4s ease}
     @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
@@ -156,16 +119,6 @@ export function mountRoundRegister(selector) {
   root.innerHTML = `
     <form class="sf-round-form" novalidate>
       <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. Manual TX hash registration remains available for SOL, USDT and USDC.</div>
-
-      <div class="sf-progress">
-        <div class="sf-progress-head">
-          <strong id="sfProgressText">Loading...</strong>
-          <span id="sfProgressPercent">0%</span>
-        </div>
-        <div class="sf-progress-bar">
-          <div class="sf-progress-fill" id="sfProgressFill"></div>
-        </div>
-      </div>
 
       <div class="sf-row-tight">
         <label class="sf-field">
@@ -224,19 +177,6 @@ export function mountRoundRegister(selector) {
         </label>
       </div>
 
-      <div class="sf-row">
-        <label class="sf-field">
-          <span class="sf-label">Telegram</span>
-          <div class="sf-handle-shell"><span class="sf-prefix">t.me/</span><input class="sf-input" id="sfRoundTelegram" placeholder="usuario" maxlength="32" /></div>
-          <span class="sf-help">Solo usuario, sin @ ni t.me/</span>
-        </label>
-        <label class="sf-field">
-          <span class="sf-label">X</span>
-          <div class="sf-handle-shell"><span class="sf-prefix">@</span><input class="sf-input" id="sfRoundX" placeholder="usuario" maxlength="15" /></div>
-          <span class="sf-help">Solo usuario, sin @ ni x.com/</span>
-        </label>
-      </div>
-
       <div class="sf-summary">
         <div class="sf-mini"><strong>Automatic SOL</strong><span>Use Phantom for one-click SOL payments and instant registration after confirmation.</span></div>
         <div class="sf-mini"><strong>Manual stablecoins</strong><span>Send USDT or USDC on Solana, then paste the final transaction hash to register.</span></div>
@@ -265,8 +205,6 @@ export function mountRoundRegister(selector) {
   const liveTokenPriceEl = root.querySelector("#sfLiveTokenPrice");
   const estimatedUsdEl = root.querySelector("#sfEstimatedUsd");
   const estimatedFiruEl = root.querySelector("#sfEstimatedFiru");
-  const tgEl = root.querySelector("#sfRoundTelegram");
-  const xEl = root.querySelector("#sfRoundX");
   const connectBtn = root.querySelector("#sfRoundConnect");
   const openBtn = root.querySelector("#sfRoundOpenPhantom");
   const autoBuyBtn = root.querySelector("#sfRoundAutoBuy");
@@ -281,11 +219,6 @@ export function mountRoundRegister(selector) {
     walletMsg.innerHTML = message;
   }
 
-  function cleanSocialInputs() {
-    tgEl.value = normalizeTelegramHandle(tgEl.value);
-    xEl.value = normalizeXHandle(xEl.value);
-  }
-
   function updateRoundMeta() {
     const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
     if (!meta) {
@@ -297,34 +230,10 @@ export function mountRoundRegister(selector) {
     pieces.push(`FIRU $${formatCompact(meta.firuPriceUsd, 6)}`);
     pieces.push(`Min ${formatCompact(roundConfig?.limits?.minSol || 0, 4)} SOL`);
     pieces.push(`Max ${formatCompact(roundConfig?.limits?.maxSol || 0, 4)} SOL`);
-    if (typeof meta.remainingFiru === "number" && typeof meta.tokenCap === "number") {
-      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`);
+    if (typeof meta.remainingSol === "number") {
+      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
     }
     roundMetaEl.textContent = pieces.join(" · ");
-  }
-
-  function updateProgress() {
-    const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
-    const textEl = root.querySelector("#sfProgressText");
-    const percentEl = root.querySelector("#sfProgressPercent");
-    const fillEl = root.querySelector("#sfProgressFill");
-
-    if (!meta || !textEl || !percentEl || !fillEl) return;
-
-    const sold = Number(meta.raisedFiru || 0);
-    const cap = Number(meta.tokenCap || 0);
-
-    if (!cap) {
-      textEl.textContent = "No cap configured";
-      percentEl.textContent = "0%";
-      fillEl.style.width = "0%";
-      return;
-    }
-
-    const percent = Math.min((sold / cap) * 100, 100);
-    textEl.textContent = `${sold.toLocaleString("en-US")} / ${cap.toLocaleString("en-US")} FIRU sold`;
-    percentEl.textContent = `${percent.toFixed(1)}%`;
-    fillEl.style.width = `${percent}%`;
   }
 
   function updateTokenDetails() {
@@ -335,7 +244,6 @@ export function mountRoundRegister(selector) {
       liveTokenPriceEl.textContent = "-";
       estimatedUsdEl.textContent = "-";
       estimatedFiruEl.textContent = "-";
-      updateProgress();
       return;
     }
 
@@ -343,7 +251,6 @@ export function mountRoundRegister(selector) {
     destinationShortEl.textContent = short(token.destinationAddress || "");
     liveTokenPriceEl.textContent = `$${formatCompact(token.livePriceUsd, 6)}`;
     updateEstimate();
-    updateProgress();
   }
 
   function updateEstimate() {
@@ -374,8 +281,7 @@ export function mountRoundRegister(selector) {
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
   }
 
-  [tokenEl, amountEl, txEl, roundEl, tgEl, xEl].forEach((el) => el.addEventListener("input", () => {
-    cleanSocialInputs();
+  [tokenEl, amountEl, txEl, roundEl].forEach((el) => el.addEventListener("input", () => {
     updateRoundMeta();
     updateTokenDetails();
     setReady();
@@ -391,7 +297,6 @@ export function mountRoundRegister(selector) {
       roundConfig = await fetchRoundConfig();
       updateRoundMeta();
       updateTokenDetails();
-      updateProgress();
       setReady();
     } catch (err) {
       roundMetaEl.textContent = "Could not load round configuration.";
@@ -430,14 +335,11 @@ export function mountRoundRegister(selector) {
   });
 
   async function registerRoundPurchase(txHash) {
-    cleanSocialInputs();
     const payload = {
       wallet: walletAddress || null,
       tx_hash: txHash,
       round: roundEl.value,
       payment_token: tokenEl.value,
-      telegram: tgEl.value,
-      x: xEl.value
     };
 
     const resp = await fetch("/api/round/register", {
@@ -454,12 +356,11 @@ export function mountRoundRegister(selector) {
     if (data?.round_status) {
       const meta = roundConfig?.rounds?.[roundEl.value];
       if (meta) {
-        meta.raisedFiru = data.round_status.raised_firu;
-        meta.remainingFiru = data.round_status.remaining_firu;
+        meta.raisedSol = data.round_status.raised_sol;
+        meta.remainingSol = data.round_status.remaining_sol;
         meta.soldOut = Boolean(data.round_status.sold_out);
       }
       updateRoundMeta();
-      updateProgress();
       setReady();
     }
 
@@ -475,6 +376,7 @@ export function mountRoundRegister(selector) {
       await ensureConnected();
 
       const round = getSelectedRoundMeta(roundConfig, roundEl.value);
+      const token = getTokenMeta(roundConfig, "SOL");
       const amount = Number(amountEl.value || 0);
 
       if (!round?.enabled || round?.soldOut) throw new Error(round?.soldOut ? "This round is sold out." : "This round is currently closed.");
@@ -486,6 +388,11 @@ export function mountRoundRegister(selector) {
       }
       if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
         throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
+      }
+      if (typeof round?.remainingSol === "number" && amount > Number(round.remainingSol || 0)) {
+        throw new Error(round.soldOut
+          ? "This round is sold out."
+          : `Only ${formatCompact(round.remainingSol, 4)} SOL remains in this round.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -524,8 +431,15 @@ export function mountRoundRegister(selector) {
 
       autoBuyBtn.textContent = "Registering...";
       const data = await registerRoundPurchase(signature);
+      if (data?.round_status) {
+        const meta = roundConfig?.rounds?.[roundEl.value];
+        if (meta) {
+          meta.raisedSol = data.round_status.raised_sol;
+          meta.remainingSol = data.round_status.remaining_sol;
+          meta.soldOut = Boolean(data.round_status.sold_out);
+        }
+      }
       updateRoundMeta();
-      updateProgress();
       setReady();
 
       setMsg(
@@ -539,8 +453,6 @@ export function mountRoundRegister(selector) {
       txEl.disabled = true;
       tokenEl.disabled = true;
       roundEl.disabled = true;
-      tgEl.disabled = true;
-      xEl.disabled = true;
       autoBuyBtn.disabled = true;
       submitBtn.disabled = true;
     } catch (err) {
@@ -553,8 +465,7 @@ export function mountRoundRegister(selector) {
 
   submitBtn.addEventListener("click", async () => {
     try {
-      cleanSocialInputs();
-      const tx_hash = txEl.value.trim();
+        const tx_hash = txEl.value.trim();
       if (!tx_hash || tx_hash.length < 20) {
         setMsg("Paste a valid transaction hash.", "error");
         return;
@@ -576,10 +487,7 @@ export function mountRoundRegister(selector) {
       txEl.disabled = true;
       tokenEl.disabled = true;
       roundEl.disabled = true;
-      tgEl.disabled = true;
-      xEl.disabled = true;
       autoBuyBtn.disabled = true;
-      updateProgress();
     } catch (err) {
       submitBtn.disabled = false;
       submitBtn.textContent = "Register TX Hash";
