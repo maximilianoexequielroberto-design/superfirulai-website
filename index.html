@@ -19,180 +19,85 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    /* ── TOKENS ── */
     :root{
-      --bg:#050d1f; --panel:rgba(10,17,38,.92); --line:rgba(255,255,255,.08);
-      --text:#f0f6ff; --muted:#8fa8d4; --blue:#1e90ff; --blue2:#0a5bdf;
-      --gold:#ffd060; --gold2:#ff9f00; --green:#09da7d;
-      --shadow:0 24px 60px rgba(0,0,0,.55); --max:1400px;
-      --nav-h:64px;
+      --bg:#050d1f;--panel:rgba(10,17,38,.92);--line:rgba(255,255,255,.08);
+      --text:#f0f6ff;--muted:#8fa8d4;--blue:#1e90ff;--blue2:#0a5bdf;
+      --gold:#ffd060;--gold2:#ff9f00;--green:#09da7d;
+      --shadow:0 24px 60px rgba(0,0,0,.55);--max:1400px;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{
-      color:var(--text);
-      font-family:'Inter',system-ui,sans-serif;
-      background:var(--bg);
-      overflow-x:hidden;
-      -webkit-font-smoothing:antialiased;
+      color:var(--text);font-family:'Inter',system-ui,sans-serif;
+      background:var(--bg);overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
     }
     a{text-decoration:none;color:inherit}
     button{font:inherit;cursor:pointer}
     img{display:block}
 
-    /* ── BACKGROUND ATMOSPHERE ── */
+    /* BG atmosphere */
     body::before{
       content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;
       background:url("superfirulai-desktop-1400x933.webp") center top/cover no-repeat;
-      filter:blur(40px) brightness(.18) saturate(1.1);
-      transform:scale(1.06);
+      filter:blur(42px) brightness(.17) saturate(1.1);transform:scale(1.07);
     }
     body::after{
       content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;
       background:
-        radial-gradient(ellipse 80% 50% at 20% 0%, rgba(30,144,255,.12), transparent),
-        radial-gradient(ellipse 60% 40% at 80% 5%, rgba(255,160,0,.10), transparent),
-        linear-gradient(180deg, rgba(5,13,31,.2), rgba(5,13,31,.85) 40%);
-    }
-
-    /* ── STICKY NAV ── */
-    .site-nav{
-      position:fixed;top:0;left:0;right:0;z-index:200;
-      height:var(--nav-h);
-      display:flex;align-items:center;
-      padding:0 20px;
-      transition:background .3s ease, border-color .3s ease, box-shadow .3s ease;
-      border-bottom:1px solid transparent;
-    }
-    .site-nav.scrolled{
-      background:rgba(4,9,22,.88);
-      backdrop-filter:blur(24px) saturate(1.6);
-      border-bottom-color:rgba(255,255,255,.07);
-      box-shadow:0 4px 24px rgba(0,0,0,.4);
-    }
-    .nav-inner{
-      width:100%;max-width:var(--max);margin:0 auto;
-      display:flex;align-items:center;gap:0;
-    }
-    .nav-logo{
-      display:flex;align-items:center;gap:10px;
-      font-family:'Barlow Condensed',sans-serif;
-      font-size:20px;font-weight:900;letter-spacing:.02em;
-      color:#fff;flex-shrink:0;margin-right:auto;
-    }
-    .nav-logo img{width:36px;height:36px;border-radius:10px}
-    .nav-logo span{color:var(--gold)}
-    .nav-links{
-      display:flex;align-items:center;gap:2px;
-      position:absolute;left:50%;transform:translateX(-50%);
-    }
-    .nav-links a{
-      padding:8px 14px;border-radius:10px;
-      font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-      color:rgba(200,220,255,.72);
-      transition:color .18s,background .18s;
-    }
-    .nav-links a:hover{color:#fff;background:rgba(255,255,255,.06)}
-    .nav-ctas{display:flex;align-items:center;gap:8px;flex-shrink:0}
-    .nav-btn{
-      display:inline-flex;align-items:center;justify-content:center;gap:7px;
-      height:38px;padding:0 16px;border-radius:12px;
-      font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
-      border:none;transition:transform .18s,box-shadow .18s,filter .18s;
-    }
-    .nav-btn:hover{transform:translateY(-1px)}
-    .nav-btn-tg{
-      background:linear-gradient(135deg,rgba(30,144,255,.22),rgba(10,91,223,.18));
-      border:1px solid rgba(30,144,255,.28);color:#6bb8ff;
-    }
-    .nav-btn-tg:hover{background:rgba(30,144,255,.3);color:#a0d4ff}
-    .nav-btn-buy{
-      background:linear-gradient(135deg,var(--gold),var(--gold2));
-      color:#1a0d00;
-      box-shadow:0 6px 20px rgba(255,160,0,.28);
-    }
-    .nav-btn-buy:hover{filter:brightness(1.08);box-shadow:0 10px 28px rgba(255,160,0,.38)}
-    /* hamburger */
-    .nav-hamburger{
-      display:none;width:40px;height:40px;border-radius:10px;
-      border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
-      align-items:center;justify-content:center;flex-direction:column;gap:5px;
-      margin-left:8px;
-    }
-    .nav-hamburger span{width:18px;height:2px;background:#b0c8f0;border-radius:2px;display:block;transition:.2s}
-    .nav-mobile-menu{
-      display:none;position:fixed;top:var(--nav-h);left:0;right:0;z-index:199;
-      background:rgba(4,9,22,.96);backdrop-filter:blur(24px);
-      border-bottom:1px solid rgba(255,255,255,.08);
-      padding:16px 20px 20px;
-      transform:translateY(-8px);opacity:0;pointer-events:none;
-      transition:transform .22s ease,opacity .22s ease;
-    }
-    .nav-mobile-menu.open{transform:translateY(0);opacity:1;pointer-events:auto}
-    .nav-mobile-links{display:grid;gap:4px;margin-bottom:14px}
-    .nav-mobile-links a{
-      padding:12px 16px;border-radius:12px;
-      font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-      color:rgba(200,220,255,.8);
-      transition:background .15s,color .15s;
-    }
-    .nav-mobile-links a:hover{background:rgba(255,255,255,.06);color:#fff}
-    .nav-mobile-ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .nav-mobile-ctas .nav-btn{height:46px;font-size:13px;border-radius:14px}
-
-    @media(max-width:900px){
-      .nav-links{display:none}
-      .nav-hamburger{display:flex}
-      .nav-mobile-menu{display:block}
-    }
-    @media(max-width:540px){
-      .nav-ctas{display:none}
+        radial-gradient(ellipse 80% 50% at 20% 0%,rgba(30,144,255,.11),transparent),
+        radial-gradient(ellipse 60% 40% at 80% 5%,rgba(255,160,0,.09),transparent),
+        linear-gradient(180deg,rgba(5,13,31,.15),rgba(5,13,31,.88) 42%);
     }
 
     /* ── HERO ── */
     .hero-section{
-      padding-top:var(--nav-h);
       position:relative;
+      width:100%;
     }
-    /* desktop */
+
+    /* DESKTOP */
     @media(min-width:821px){
       .hero-section{
-        padding:var(--nav-h) 0 0;
         min-height:100svh;
-        display:flex;flex-direction:column;
+        display:flex;flex-direction:column;align-items:center;justify-content:center;
+        padding:0;
       }
       .hero-stage{
-        flex:1;
-        width:100%;
         position:relative;
-        overflow:hidden;
+        width:100%;
+        /* Maintain image aspect ratio exactly — fills viewport width */
         aspect-ratio:1400/933;
-      }
-    }
-    /* mobile */
-    @media(max-width:820px){
-      .hero-section{
-        padding-top:var(--nav-h);
-        display:block;
-      }
-      .hero-stage{
-        width:100%;
-        aspect-ratio:2/3;
-        position:relative;
+        max-height:100svh;
         overflow:hidden;
+        /* image-rendering high quality */
+        image-rendering:high-quality;
       }
     }
+
+    /* MOBILE */
+    @media(max-width:820px){
+      .hero-section{display:block;}
+      .hero-stage{
+        position:relative;width:100%;
+        aspect-ratio:2/3;overflow:hidden;
+      }
+    }
+
+    /* blurred bg inside stage */
     .hero-stage::before{
-      content:"";position:absolute;inset:-3%;z-index:0;
+      content:"";position:absolute;inset:-4%;z-index:0;
       background:url("superfirulai-desktop-1400x933.webp") center center/cover no-repeat;
-      filter:blur(28px) brightness(.55) saturate(1.1);
+      filter:blur(30px) brightness(.52) saturate(1.12);
     }
     @media(max-width:820px){
       .hero-stage::before{
         background:url("superfirulai-mobile-900x1350.webp") center center/cover no-repeat;
-        filter:blur(22px) brightness(.5) saturate(1.1);
+        filter:blur(22px) brightness(.48) saturate(1.12);
       }
     }
+
+    /* The actual artwork */
     .hero-art{
       position:absolute;inset:0;z-index:1;
       display:block;width:100%;height:100%;
@@ -200,40 +105,71 @@
     .hero-art img{
       width:100%;height:100%;
       object-fit:contain;
+      /* 4K-style sharpening */
+      image-rendering:high-quality;
+      filter:brightness(1.06) contrast(1.04) saturate(1.1);
     }
-    @media(max-width:820px){
-      .hero-art img{object-fit:contain}
-    }
-    /* vignette edges */
+
+    /* Edge vignette */
     .hero-vignette{
       position:absolute;inset:0;z-index:2;pointer-events:none;
       background:
-        linear-gradient(90deg,rgba(5,13,31,.55) 0%,transparent 18%,transparent 82%,rgba(5,13,31,.45) 100%),
-        linear-gradient(180deg,rgba(5,13,31,.06) 0%,transparent 15%,transparent 80%,rgba(5,13,31,.6) 100%);
-    }
-    /* hero overlay buttons (match image) */
-    .hero-btns{
-      position:absolute;inset:0;z-index:3;pointer-events:none;
-    }
-    .hero-art-btn{
-      position:absolute;
-      pointer-events:auto;
-      background:transparent;border:none;padding:0;line-height:0;
-      cursor:pointer;
-      transform:translate(-50%,-50%);
-      transform-origin:center center;
-      transition:transform .3s cubic-bezier(.22,1,.36,1),filter .3s ease;
-      filter:drop-shadow(0 8px 20px rgba(0,0,0,.3));
-    }
-    .hero-art-btn:hover{transform:translate(-50%,-50%) scale(1.07);filter:drop-shadow(0 12px 28px rgba(0,0,0,.4)) brightness(1.08)}
-    .hero-art-btn img{width:100%;height:auto;pointer-events:none;user-select:none}
-    .hero-btn-tg{left:79.49%;top:3.66%;width:15.43%}
-    .hero-btn-buy{left:92.60%;top:3.66%;width:11.87%}
-    @media(max-width:820px){
-      .hero-btns{display:none}
+        linear-gradient(90deg,rgba(5,13,31,.45) 0%,transparent 12%,transparent 88%,rgba(5,13,31,.38) 100%),
+        linear-gradient(180deg,rgba(5,13,31,.04) 0%,transparent 8%,transparent 88%,rgba(5,13,31,.55) 100%);
     }
 
-    /* section below hero */
+    /* ── HOTSPOT OVERLAY BUTTONS (desktop) ── */
+    /* These sit exactly over the artwork nav buttons */
+    .hero-hotspots{
+      position:absolute;inset:0;z-index:10;
+    }
+    .hs{
+      position:absolute;
+      background:transparent;border:none;padding:0;
+      cursor:pointer;border-radius:8px;
+      /* subtle glow on hover only */
+      transition:background .18s,box-shadow .18s;
+    }
+    .hs:hover{
+      background:rgba(255,255,255,.07);
+      box-shadow:0 0 0 2px rgba(255,255,255,.22),0 0 14px rgba(30,144,255,.18);
+    }
+    .hs:active{background:rgba(255,255,255,.14)}
+
+    /* Positions match the artwork exactly */
+    .hs-home      {left:27.4%;top:.9%;width:5.2%;height:5.8%}
+    .hs-tokenomics{left:32.8%;top:.9%;width:10.7%;height:5.8%}
+    .hs-airdrop   {left:44.5%;top:.9%;width:7.8%;height:5.8%}
+    .hs-roadmap   {left:52.5%;top:.9%;width:7.6%;height:5.8%}
+    .hs-community {left:60.4%;top:.9%;width:8.9%;height:5.8%}
+    .hs-telegram  {left:71.8%;top:.4%;width:15.3%;height:6.6%}
+    .hs-buy       {left:87.2%;top:.4%;width:10.2%;height:6.6%}
+
+    /* X button — floats just to the left of Telegram */
+    .hs-x{
+      left:66.2%;top:.9%;width:5.0%;height:5.8%;
+      border-radius:12px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.14) !important;
+      display:flex;align-items:center;justify-content:center;
+      backdrop-filter:blur(8px);
+      transition:background .18s,box-shadow .18s,transform .18s;
+    }
+    .hs-x:hover{
+      background:rgba(255,255,255,.13);
+      box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 20px rgba(0,0,0,.4);
+      transform:translateY(-1px);
+    }
+    .hs-x svg{
+      width:52%;height:52%;
+      fill:rgba(220,235,255,.9);
+      pointer-events:none;
+      filter:drop-shadow(0 1px 4px rgba(0,0,0,.5));
+    }
+
+    @media(max-width:820px){.hero-hotspots{display:none}}
+
+    /* section quick-links below hero */
     .nav-sections{
       display:flex;align-items:center;justify-content:center;gap:8px;
       padding:14px 20px;flex-wrap:wrap;
@@ -243,20 +179,17 @@
       border-radius:999px;border:1px solid rgba(255,255,255,.08);
       background:rgba(10,17,38,.72);color:#c8dcff;
       font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-      transition:border-color .2s,background .2s,transform .2s;
-      backdrop-filter:blur(12px);
+      transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px);
     }
     .nav-sections a:hover{border-color:rgba(255,208,96,.4);background:rgba(15,24,54,.9);transform:translateY(-1px)}
 
     /* ── MOBILE BOTTOM NAV ── */
     .mobile-nav-bottom{
-      display:none;
-      position:fixed;bottom:0;left:0;right:0;z-index:150;
+      display:none;position:fixed;bottom:0;left:0;right:0;z-index:150;
       padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-      background:rgba(3,7,18,.88);
-      backdrop-filter:blur(28px) saturate(1.6);
-      border-top:1px solid rgba(255,255,255,.07);
-      box-shadow:0 -8px 30px rgba(0,0,0,.45);
+      background:rgba(3,7,18,.9);backdrop-filter:blur(28px) saturate(1.6);
+      border-top:1px solid rgba(255,255,255,.08);
+      box-shadow:0 -6px 28px rgba(0,0,0,.45);
     }
     .mobile-nav-bottom::before{
       content:"";position:absolute;top:0;left:15%;right:15%;height:1px;
@@ -270,24 +203,16 @@
       color:rgba(150,180,230,.65);font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
       min-height:54px;transition:background .18s,color .18s,transform .14s;
     }
-    .mobile-nav-btn:hover,.mobile-nav-btn:active{transform:scale(.95)}
+    .mobile-nav-btn:active{transform:scale(.95)}
     .mobile-nav-btn svg{width:20px;height:20px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
     .mnb-tg{border-color:rgba(30,144,255,.15);background:rgba(30,144,255,.07);color:rgba(100,195,255,.85)}
     .mnb-airdrop{border-color:rgba(99,102,241,.15);background:rgba(99,102,241,.07);color:rgba(155,160,255,.85)}
-    .mnb-buy{
-      background:linear-gradient(160deg,rgba(255,180,0,.22),rgba(255,110,0,.15));
-      border-color:rgba(255,180,0,.32);color:#ffc840;
-    }
-    .mnb-x{border-color:rgba(120,170,255,.12);background:rgba(120,170,255,.06);color:rgba(180,210,255,.85)}
-    .mnb-home{color:rgba(150,180,230,.65)}
-    @media(max-width:820px){
-      .mobile-nav-bottom{display:block}
-      body{padding-bottom:76px}
-    }
+    .mnb-buy{background:linear-gradient(160deg,rgba(255,180,0,.22),rgba(255,110,0,.15));border-color:rgba(255,180,0,.32);color:#ffc840}
+    .mnb-x svg{fill:currentColor;stroke:none}
+    @media(max-width:820px){.mobile-nav-bottom{display:block}body{padding-bottom:76px}}
 
     /* ── UTILITY ── */
-    .container{width:min(var(--max), calc(100% - 28px));margin:0 auto}
-    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+    .container{width:min(var(--max),calc(100% - 28px));margin:0 auto}
 
     /* ── SECTIONS ── */
     .section{padding:52px 0;position:relative}
@@ -312,28 +237,23 @@
     }
     .section-copy{margin:12px 0 0;max-width:68ch;color:var(--muted);line-height:1.75;font-size:15px}
 
-    /* ── PANELS ── */
+    /* PANELS */
     .panel{
       background:linear-gradient(160deg,rgba(10,18,44,.92),rgba(8,14,32,.78));
       border:1px solid rgba(255,255,255,.07);border-top-color:rgba(255,255,255,.13);
-      border-radius:24px;padding:24px;
-      box-shadow:var(--shadow);backdrop-filter:blur(18px);
+      border-radius:24px;padding:24px;box-shadow:var(--shadow);backdrop-filter:blur(18px);
       position:relative;overflow:hidden;
       transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
     }
-    .panel::after{
-      content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;
-      background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 28%);
-    }
+    .panel::after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.04),transparent 28%)}
     .panel:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.14);box-shadow:0 32px 80px rgba(0,0,0,.5)}
 
-    /* ── BUTTONS ── */
+    /* BUTTONS */
     .btn{
       display:inline-flex;align-items:center;justify-content:center;gap:8px;
       min-height:50px;padding:0 22px;border-radius:16px;
       font-weight:900;font-size:14px;letter-spacing:.05em;text-transform:uppercase;
-      border:1px solid rgba(255,255,255,.1);
-      box-shadow:var(--shadow);background:none;color:inherit;
+      border:1px solid rgba(255,255,255,.1);box-shadow:var(--shadow);background:none;color:inherit;
       transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
     }
     .btn:hover{transform:translateY(-2px);box-shadow:0 22px 50px rgba(0,0,0,.44)}
@@ -343,7 +263,7 @@
     .btn-dark{background:rgba(10,17,38,.9);color:#d8e8ff;border-color:rgba(255,255,255,.1)}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
 
-    /* ── STATS GRID ── */
+    /* STATS */
     .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     @media(max-width:700px){.quick-grid{grid-template-columns:1fr 1fr}}
     .quick-card{
@@ -351,138 +271,92 @@
       background:linear-gradient(160deg,rgba(14,22,50,.85),rgba(10,16,36,.7));
       border:1px solid rgba(255,255,255,.07);border-top-color:rgba(255,255,255,.13);
       backdrop-filter:blur(12px);position:relative;overflow:hidden;
-      cursor:pointer;transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+      cursor:pointer;transition:transform .2s,border-color .2s,box-shadow .2s;
       text-decoration:none;display:block;color:inherit;
     }
     .quick-card::before{content:"";position:absolute;top:0;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,rgba(100,180,255,.4),transparent)}
     .quick-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.16);box-shadow:0 16px 40px rgba(0,0,0,.4)}
     .quick-card:active{transform:scale(.97)}
-    .quick-card strong{
-      display:block;font-size:clamp(24px,2.8vw,38px);margin-bottom:6px;letter-spacing:-.03em;
-      background:linear-gradient(135deg,#fff 45%,#7eb8ff);
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-    }
+    .quick-card strong{display:block;font-size:clamp(24px,2.8vw,38px);margin-bottom:6px;letter-spacing:-.03em;background:linear-gradient(135deg,#fff 45%,#7eb8ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
     .quick-card span{color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase}
     .quick-card .ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.15);transform:scale(0);animation:rippleAnim .55s linear;pointer-events:none}
     @keyframes rippleAnim{to{transform:scale(5);opacity:0}}
 
-    /* ── ROUNDS GRID ── */
+    /* ROUNDS */
     .rounds-grid{display:grid;grid-template-columns:1.1fr 1.1fr .9fr;gap:18px}
     @media(max-width:960px){.rounds-grid{grid-template-columns:1fr}}
-    .round-badge{
-      display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;
-      font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
-      border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#c8e0ff;
-    }
+    .round-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#c8e0ff;}
     .round-badge span{width:8px;height:8px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold2));box-shadow:0 0 10px rgba(255,200,0,.5)}
-    .round-price{margin:18px 0 8px;font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,3.5vw,42px);font-weight:900;letter-spacing:-.01em}
+    .round-price{margin:18px 0 8px;font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,3.5vw,42px);font-weight:900}
     .round-note{color:#9db7df;line-height:1.65;font-size:14px}
     .round-list{margin:18px 0 0;padding:0;list-style:none;display:grid;gap:10px}
     .round-list li{display:flex;align-items:center;gap:10px;color:#dceaff;font-size:14px;font-weight:700}
-    .round-list li i{
-      display:inline-grid;place-items:center;width:22px;height:22px;border-radius:8px;
-      background:rgba(30,144,255,.16);border:1px solid rgba(30,144,255,.32);
-      font-style:normal;color:#5bb8ff;font-size:13px;flex-shrink:0;
-    }
+    .round-list li i{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:8px;background:rgba(30,144,255,.16);border:1px solid rgba(30,144,255,.32);font-style:normal;color:#5bb8ff;font-size:13px;flex-shrink:0;}
     .round-summary{display:grid;gap:14px}
-    .summary-mini{
-      padding:16px 18px 14px;border-radius:18px;
-      border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03);
-    }
-    .summary-mini strong{display:block;font-size:17px;margin-bottom:6px;letter-spacing:-.01em}
+    .summary-mini{padding:16px 18px 14px;border-radius:18px;border:1px solid rgba(255,255,255,.07);background:rgba(255,255,255,.03)}
+    .summary-mini strong{display:block;font-size:17px;margin-bottom:6px}
     .summary-mini span{display:block;color:var(--muted);font-size:13px;line-height:1.55}
 
-    /* ── TOKENOMICS ── */
+    /* TOKENOMICS */
     .token-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
     @media(max-width:900px){.token-grid-3{grid-template-columns:1fr}}
     .alloc-list{display:grid;gap:12px;margin-top:6px}
     .alloc-row{display:flex;align-items:center;gap:10px}
     .alloc-name{font-weight:800;color:#c8dcff;min-width:100px;font-size:13px}
     .bar{height:8px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;flex:1}
-    .fill{height:100%;border-radius:999px;position:relative}
+    .fill{height:100%;border-radius:999px}
     .alloc-row strong{min-width:36px;text-align:right;font-size:13px;color:#eef5ff;font-weight:900}
-    .token-img{
-      border-radius:20px;overflow:hidden;background:#050d1f;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .token-img img{width:100%;height:auto;display:block}
+    .token-img{border-radius:20px;overflow:hidden;background:#050d1f;display:flex;align-items:center;justify-content:center}
+    .token-img img{width:100%;height:auto;display:block;image-rendering:high-quality;filter:contrast(1.04) saturate(1.08)}
     .check-list{margin:20px 0 0;padding:0;list-style:none;display:grid;gap:10px}
     .check-list li{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#cddeff}
-    .check-list li i{
-      display:inline-flex;width:22px;height:22px;border-radius:8px;align-items:center;justify-content:center;
-      background:rgba(9,218,125,.16);border:1px solid rgba(9,218,125,.32);
-      font-style:normal;font-size:13px;color:var(--green);flex-shrink:0;
-    }
+    .check-list li i{display:inline-flex;width:22px;height:22px;border-radius:8px;align-items:center;justify-content:center;background:rgba(9,218,125,.16);border:1px solid rgba(9,218,125,.32);font-style:normal;font-size:13px;color:var(--green);flex-shrink:0;}
 
-    /* ── FEATURES / AIRDROP ── */
+    /* AIRDROP */
     .feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
     @media(max-width:860px){.feature-grid{grid-template-columns:1fr}}
     .steps{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media(max-width:640px){.steps{grid-template-columns:1fr}}
-    .step{
-      padding:18px;border-radius:20px;
-      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);
-    }
-    .step b{
-      display:grid;place-items:center;width:42px;height:42px;border-radius:14px;margin-bottom:12px;
-      background:linear-gradient(145deg,var(--blue),var(--blue2));
-      font-size:18px;font-weight:900;color:#fff;
-    }
+    .step{padding:18px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07)}
+    .step b{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;margin-bottom:12px;background:linear-gradient(145deg,var(--blue),var(--blue2));font-size:18px;font-weight:900;color:#fff;}
     .step strong{display:block;font-size:15px;margin-bottom:6px}
     .step p{color:var(--muted);font-size:13px;line-height:1.6}
+    .airdrop-kicker{display:grid;gap:6px;margin-bottom:20px}
+    .airdrop-kicker strong{font-size:18px;letter-spacing:-.02em}
+    .airdrop-kicker span{color:var(--muted);font-size:14px}
 
-    /* ── ROADMAP ── */
+    /* ROADMAP */
     .roadmap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     @media(max-width:860px){.roadmap-grid{grid-template-columns:1fr}}
-    .phase{
-      padding:24px;border-radius:24px;
-      background:linear-gradient(160deg,rgba(10,18,44,.92),rgba(8,14,32,.78));
-      border:1px solid rgba(255,255,255,.07);border-top-color:rgba(255,255,255,.12);
-      box-shadow:var(--shadow);position:relative;overflow:hidden;
-      transition:transform .25s ease,border-color .25s ease;
-    }
+    .phase{padding:24px;border-radius:24px;background:linear-gradient(160deg,rgba(10,18,44,.92),rgba(8,14,32,.78));border:1px solid rgba(255,255,255,.07);border-top-color:rgba(255,255,255,.12);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
     .phase::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.035),transparent 30%)}
     .phase:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.15)}
-    .phase-tag{
-      display:inline-flex;padding:6px 12px;border-radius:999px;
-      font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;
-    }
+    .phase-tag{display:inline-flex;padding:6px 12px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px}
     .phase-tag.active{background:rgba(9,218,125,.12);border:1px solid rgba(9,218,125,.28);color:var(--green)}
     .phase-tag.next{background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.28);color:#5bb8ff}
     .phase-tag.future{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:#7a98c8}
-    .phase h3{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;letter-spacing:-.01em;margin-bottom:10px}
+    .phase h3{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;margin-bottom:10px}
     .phase p{color:var(--muted);line-height:1.7;font-size:14px}
 
-    /* ── FINAL CTA ── */
+    /* FINAL CTA */
     .final-cta-grid{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:18px}
     @media(max-width:960px){.final-cta-grid{grid-template-columns:1fr}}
     .cta-points{display:grid;gap:14px}
+    .key-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
 
-    /* ── FOOTER ── */
-    .site-footer{
-      padding:28px 20px 40px;text-align:center;
-      color:#5a78a8;font-size:13px;letter-spacing:.04em;
-      border-top:1px solid rgba(255,255,255,.05);
-      background:linear-gradient(180deg,transparent,rgba(3,7,18,.5));
-    }
+    /* FOOTER */
+    .site-footer{padding:28px 20px 40px;text-align:center;color:#5a78a8;font-size:13px;letter-spacing:.04em;border-top:1px solid rgba(255,255,255,.05);background:linear-gradient(180deg,transparent,rgba(3,7,18,.5))}
     .site-footer strong{color:#7a98c8}
 
-    /* ── REVEAL ANIMATIONS ── */
-    .reveal{
-      opacity:0;transform:translateY(26px);
-      transition:opacity .65s cubic-bezier(.22,.8,.36,1),transform .65s cubic-bezier(.22,.8,.36,1);
-      will-change:opacity,transform;
-    }
+    /* REVEAL */
+    .reveal{opacity:0;transform:translateY(26px);transition:opacity .65s cubic-bezier(.22,.8,.36,1),transform .65s cubic-bezier(.22,.8,.36,1);will-change:opacity,transform}
     .reveal.reveal-left{transform:translateX(-28px)}
     .reveal.reveal-right{transform:translateX(28px)}
     .reveal.visible{opacity:1;transform:translate(0)}
     .reveal-d1{transition-delay:.08s}.reveal-d2{transition-delay:.16s}.reveal-d3{transition-delay:.24s}
 
-    /* ── BUY DIALOG ── */
-    dialog#buyDialog{
-      max-width:740px;width:calc(100% - 24px);
-      border:none;border-radius:28px;padding:0;background:transparent;color:inherit;
-    }
+    /* BUY DIALOG */
+    dialog#buyDialog{max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit}
     dialog#buyDialog::backdrop{background:rgba(2,5,18,.85);backdrop-filter:blur(14px)}
     .buy-shell{
       background:linear-gradient(160deg,#07122a 0%,#0d1e42 55%,#091530 100%);
@@ -491,28 +365,13 @@
       box-shadow:0 0 0 1px rgba(30,144,255,.1),0 48px 100px rgba(0,0,0,.65),0 0 80px rgba(30,144,255,.07);
       padding:28px;position:relative;overflow:hidden;
     }
-    .buy-shell::before{
-      content:"";position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(circle at 18% 0%,rgba(30,144,255,.2),transparent 32%),
-                 radial-gradient(circle at 82% 5%,rgba(255,180,0,.12),transparent 26%),
-                 linear-gradient(180deg,rgba(255,255,255,.03),transparent 20%);
-    }
+    .buy-shell::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at 18% 0%,rgba(30,144,255,.2),transparent 32%),radial-gradient(circle at 82% 5%,rgba(255,180,0,.12),transparent 26%),linear-gradient(180deg,rgba(255,255,255,.03),transparent 20%)}
     .buy-shell::after{content:"";position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,rgba(120,185,255,.55),transparent)}
-    .buy-badge{
-      display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;
-      padding:7px 12px;border-radius:999px;
-      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
-      font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
-    }
+    .buy-badge{display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase}
     .buy-badge span{width:7px;height:7px;border-radius:999px;background:linear-gradient(180deg,var(--gold),var(--gold2));box-shadow:0 0 10px rgba(255,190,0,.7);animation:pulse 2.4s ease-in-out infinite}
     @keyframes pulse{0%,100%{box-shadow:0 0 10px rgba(71,216,255,.9)}50%{box-shadow:0 0 20px rgba(71,216,255,1),0 0 30px rgba(71,216,255,.4)}}
     .dialog-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px;position:relative;z-index:1}
-    .dialog-close{
-      width:38px;height:38px;border-radius:12px;flex-shrink:0;
-      border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
-      color:#fff;font-size:20px;cursor:pointer;
-      display:grid;place-items:center;transition:background .18s;
-    }
+    .dialog-close{width:38px;height:38px;border-radius:12px;flex-shrink:0;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:#fff;font-size:20px;cursor:pointer;display:grid;place-items:center;transition:background .18s}
     .dialog-close:hover{background:rgba(255,255,255,.12)}
     .dialog-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);margin-bottom:16px;position:relative;z-index:1}
     .dialog-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;position:relative;z-index:1}
@@ -521,450 +380,398 @@
     .dialog-step strong{display:block;font-size:13px;margin-bottom:4px;color:#fff}
     .dialog-step span{display:block;font-size:12px;color:#8fb0d8;line-height:1.45}
 
-    /* ── MISC ── */
-    .airdrop-kicker{display:grid;gap:6px;margin-bottom:20px}
-    .airdrop-kicker strong{font-size:18px;letter-spacing:-.02em}
-    .airdrop-kicker span{color:var(--muted);font-size:14px}
-    .key-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-
     @media(max-width:600px){.section{padding:36px 0}.section-title{font-size:clamp(32px,9vw,50px)}}
     @media(prefers-reduced-motion:reduce){.reveal,.phase,.panel{animation:none;transition:none}}
   </style>
 </head>
 <body>
+<main>
 
-  <!-- ── STICKY NAVBAR ── -->
-  <header class="site-nav" id="siteNav">
-    <div class="nav-inner">
-      <a class="nav-logo" href="#home">
-        <img src="favicon.png" alt="SuperFirulai" />
-        Super<span>Firulai</span>
-      </a>
-      <nav class="nav-links" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <a href="#rounds">Rounds</a>
-        <a href="#tokenomics">Tokenomics</a>
-        <a href="#airdrop">Airdrop</a>
-        <a href="#roadmap">Roadmap</a>
-        <a href="#community">Community</a>
-      </nav>
-      <div class="nav-ctas">
-        <a class="nav-btn nav-btn-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.032 9.576c-.149.663-.54.825-1.094.514l-3-2.21-1.447 1.393c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L6.24 14.678l-2.94-.92c-.64-.198-.651-.64.134-.948l11.494-4.432c.534-.194 1.001.13.634 1.87z"/></svg>
-          Telegram
+  <!-- ── HERO (full screen, hotspot nav overlay) ── -->
+  <section class="hero-section" id="home">
+    <div class="hero-stage">
+
+      <picture class="hero-art">
+        <source media="(max-width:480px)"  srcset="superfirulai-mobile-480x720.webp" />
+        <source media="(max-width:820px)"  srcset="superfirulai-mobile-900x1350.webp" />
+        <source media="(max-width:1280px)" srcset="superfirulai-desktop-1200x800.webp" />
+        <source media="(min-width:1281px)" srcset="superfirulai-desktop-1400x933.webp" />
+        <img src="superfirulai-desktop-1400x933.webp"
+             alt="SuperFirulai $FIRU — Community memecoin on Solana"
+             fetchpriority="high"
+             decoding="async" />
+      </picture>
+
+      <div class="hero-vignette" aria-hidden="true"></div>
+
+      <!-- Desktop hotspot nav — sits over the buttons IN the artwork -->
+      <div class="hero-hotspots" role="navigation" aria-label="Main navigation">
+
+        <!-- Nav links (scroll to section) -->
+        <a class="hs hs-home"       href="#home"       aria-label="Home"></a>
+        <a class="hs hs-tokenomics" href="#tokenomics" aria-label="Tokenomics"></a>
+        <a class="hs hs-airdrop"    href="#airdrop"    aria-label="Airdrop"></a>
+        <a class="hs hs-roadmap"    href="#roadmap"    aria-label="Roadmap"></a>
+        <a class="hs hs-community"  href="#community"  aria-label="Community"></a>
+
+        <!-- X / Twitter — floats between Community and Telegram -->
+        <a class="hs hs-x"
+           href="https://x.com/superfirulai"
+           target="_blank" rel="noopener"
+           aria-label="Follow on X (Twitter)">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+          </svg>
         </a>
-        <button class="nav-btn nav-btn-buy" type="button" id="buyNav">💰 Buy $FIRU</button>
-      </div>
-      <button class="nav-hamburger" id="navHamburger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </header>
 
-  <!-- Mobile dropdown menu -->
-  <div class="nav-mobile-menu" id="navMobileMenu">
-    <nav class="nav-mobile-links">
-      <a href="#home" class="nav-mobile-link">Home</a>
-      <a href="#rounds" class="nav-mobile-link">Rounds</a>
-      <a href="#tokenomics" class="nav-mobile-link">Tokenomics</a>
-      <a href="#airdrop" class="nav-mobile-link">Airdrop</a>
-      <a href="#roadmap" class="nav-mobile-link">Roadmap</a>
-      <a href="#community" class="nav-mobile-link">Community</a>
-    </nav>
-    <div class="nav-mobile-ctas">
-      <a class="nav-btn nav-btn-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" style="height:46px;font-size:13px;border-radius:14px">
-        Telegram
-      </a>
-      <button class="nav-btn nav-btn-buy" type="button" id="buyNavMobile" style="height:46px;font-size:13px;border-radius:14px">
-        Buy $FIRU
-      </button>
+        <!-- Join Telegram -->
+        <a class="hs hs-telegram"
+           href="https://t.me/superfirulaicommunity"
+           target="_blank" rel="noopener"
+           aria-label="Join Telegram"></a>
+
+        <!-- Buy $FIRU -->
+        <button class="hs hs-buy" type="button" id="buyHero" aria-label="Buy $FIRU"></button>
+
+      </div>
     </div>
+  </section>
+
+  <!-- Quick section links (below hero, both desktop+mobile) -->
+  <div class="nav-sections">
+    <a href="#rounds">Rounds</a>
+    <a href="#tokenomics">Tokenomics</a>
+    <a href="#airdrop">Airdrop</a>
+    <a href="#roadmap">Roadmap</a>
+    <a href="#community">Community</a>
   </div>
 
-  <main>
-
-    <!-- ── HERO ── -->
-    <section class="hero-section" id="home">
-      <div class="hero-stage">
-        <picture class="hero-art">
-          <source media="(max-width:480px)"  srcset="superfirulai-mobile-480x720.webp" />
-          <source media="(max-width:820px)"  srcset="superfirulai-mobile-900x1350.webp" />
-          <source media="(max-width:1280px)" srcset="superfirulai-desktop-1200x800.webp" />
-          <source media="(min-width:1281px)" srcset="superfirulai-desktop-1400x933.webp" />
-          <img src="superfirulai-desktop-1400x933.webp" alt="SuperFirulai $FIRU — Community memecoin on Solana" />
-        </picture>
-        <div class="hero-vignette" aria-hidden="true"></div>
-        <!-- Overlay buttons (match positions in the artwork) -->
-        <div class="hero-btns" aria-label="Hero actions">
-          <a class="hero-art-btn hero-btn-tg"
-             href="https://t.me/superfirulaicommunity"
-             target="_blank" rel="noopener"
-             aria-label="Join Telegram"
-             style="position:absolute;left:79.49%;top:3.66%;width:15.43%;height:6%;transform:translate(-50%,-50%);border-radius:12px;background:rgba(0,0,0,0);display:block"></a>
-          <button class="hero-art-btn hero-btn-buy"
-             type="button" id="buyHeroOverlay"
-             aria-label="Buy FIRU"
-             style="position:absolute;left:92.60%;top:3.66%;width:11.87%;height:6%;transform:translate(-50%,-50%);border-radius:12px;background:rgba(0,0,0,0);border:none;display:block"></button>
-        </div>
+  <!-- ── ROUNDS ── -->
+  <section class="section" id="rounds">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span></span> Early Access Structure</div>
+        <h2 class="section-title">Official Launch Rounds</h2>
+        <p class="section-copy">A simple two-step presale path designed to reward early supporters first and keep launch expectations clear.</p>
       </div>
-    </section>
-
-    <!-- section quick-links below hero -->
-    <div class="nav-sections">
-      <a href="#rounds">Rounds</a>
-      <a href="#tokenomics">Tokenomics</a>
-      <a href="#airdrop">Airdrop</a>
-      <a href="#roadmap">Roadmap</a>
-      <a href="#community">Community</a>
-    </div>
-
-    <!-- ── ROUNDS ── -->
-    <section class="section" id="rounds">
-      <div class="container">
-        <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Early Access Structure</div>
-          <h2 class="section-title">Official Launch Rounds</h2>
-          <p class="section-copy">A simple two-step presale path designed to reward early supporters first and keep launch expectations clear.</p>
-        </div>
-        <div class="rounds-grid">
-          <div class="panel reveal reveal-d1">
-            <div class="round-badge"><span></span> Round 1 · Early Access</div>
-            <div class="round-price">Lowest Entry</div>
-            <p class="round-note">Built for the earliest supporters who move before broader market attention arrives.</p>
-            <ul class="round-list">
-              <li><i>✓</i> Priority access window</li>
-              <li><i>✓</i> Lowest round pricing</li>
-              <li><i>✓</i> Limited supply allocation</li>
-            </ul>
-            <div class="actions" style="margin-top:22px">
-              <button class="btn btn-gold" type="button" id="buyRound1">Buy Round 1</button>
-            </div>
-          </div>
-          <div class="panel reveal reveal-d2">
-            <div class="round-badge"><span></span> Round 2 · Public Presale</div>
-            <div class="round-price">Higher Demand</div>
-            <p class="round-note">Public access opens after early round, with higher price tier and limited remaining allocation.</p>
-            <ul class="round-list">
-              <li><i>✓</i> Public presale access</li>
-              <li><i>✓</i> Higher price tier</li>
-              <li><i>✓</i> Remaining allocation only</li>
-            </ul>
-            <div class="actions" style="margin-top:22px">
-              <button class="btn btn-dark" type="button" id="buyRound2">Buy Round 2</button>
-            </div>
-          </div>
-          <div class="panel reveal reveal-d3">
-            <div class="round-summary">
-              <div class="summary-mini"><strong>Launch delivery</strong><span>Tokens purchased during presale will be distributed according to the official launch schedule.</span></div>
-              <div class="summary-mini"><strong>Clear expectations</strong><span>No fake promises. A simple path from early access to launch.</span></div>
-              <div class="summary-mini"><strong>Best move now</strong><span>Join Telegram, register the airdrop, and stay ready for the first official access alert.</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── COMMUNITY / STATS ── -->
-    <section class="section" id="community">
-      <div class="container">
-        <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Live Community</div>
-          <h2 class="section-title">Community</h2>
-          <p class="section-copy">Fast-growing early community across Solana, Telegram and X. Real launch-focused momentum with clear entry points before public access opens.</p>
-        </div>
+      <div class="rounds-grid">
         <div class="panel reveal reveal-d1">
-          <div class="quick-grid">
-            <a class="quick-card" href="https://solscan.io" target="_blank" rel="noopener">
-              <strong id="statHolders">2,418</strong><span>Holders</span>
-            </a>
-            <a class="quick-card" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-              <strong id="statTelegram">24</strong><span>Telegram Members</span>
-            </a>
-            <a class="quick-card" href="https://x.com/superfirulai" target="_blank" rel="noopener">
-              <strong id="statX">61</strong><span>X Followers</span>
-            </a>
-            <a class="quick-card" href="#tokenomics">
-              <strong id="statSupply">1B</strong><span>Total Supply</span>
-            </a>
+          <div class="round-badge"><span></span> Round 1 · Early Access</div>
+          <div class="round-price">Lowest Entry</div>
+          <p class="round-note">Built for the earliest supporters who move before broader market attention arrives.</p>
+          <ul class="round-list">
+            <li><i>✓</i> Priority access window</li>
+            <li><i>✓</i> Lowest round pricing</li>
+            <li><i>✓</i> Limited supply allocation</li>
+          </ul>
+          <div class="actions" style="margin-top:22px">
+            <button class="btn btn-gold" type="button" id="buyRound1">Buy Round 1</button>
           </div>
+        </div>
+        <div class="panel reveal reveal-d2">
+          <div class="round-badge"><span></span> Round 2 · Public Presale</div>
+          <div class="round-price">Higher Demand</div>
+          <p class="round-note">Public access opens after early round, with higher price tier and limited remaining allocation.</p>
+          <ul class="round-list">
+            <li><i>✓</i> Public presale access</li>
+            <li><i>✓</i> Higher price tier</li>
+            <li><i>✓</i> Remaining allocation only</li>
+          </ul>
+          <div class="actions" style="margin-top:22px">
+            <button class="btn btn-dark" type="button" id="buyRound2">Buy Round 2</button>
+          </div>
+        </div>
+        <div class="panel reveal reveal-d3">
+          <div class="round-summary">
+            <div class="summary-mini"><strong>Launch delivery</strong><span>Tokens purchased during presale will be distributed according to the official launch schedule.</span></div>
+            <div class="summary-mini"><strong>Clear expectations</strong><span>No fake promises. A simple path from early access to launch.</span></div>
+            <div class="summary-mini"><strong>Best move now</strong><span>Join Telegram, register the airdrop, and stay ready for the first official access alert.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── COMMUNITY / STATS ── -->
+  <section class="section" id="community">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span></span> Live Community</div>
+        <h2 class="section-title">Community</h2>
+        <p class="section-copy">Fast-growing early community across Solana, Telegram and X. Real launch-focused momentum with clear entry points before public access opens.</p>
+      </div>
+      <div class="panel reveal reveal-d1">
+        <div class="quick-grid">
+          <a class="quick-card" href="https://solscan.io" target="_blank" rel="noopener">
+            <strong id="statHolders">2,418</strong><span>Holders</span>
+          </a>
+          <a class="quick-card" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+            <strong id="statTelegram">24</strong><span>Telegram Members</span>
+          </a>
+          <a class="quick-card" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+            <strong id="statX">61</strong><span>X Followers</span>
+          </a>
+          <a class="quick-card" href="#tokenomics">
+            <strong id="statSupply">1B</strong><span>Total Supply</span>
+          </a>
+        </div>
+        <div class="actions">
+          <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+          <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
+          <a class="btn btn-gold" href="#airdrop">Join Airdrop</a>
+          <button class="btn btn-dark" type="button" id="buyCommunity">Buy in Presale</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TOKENOMICS ── -->
+  <section class="section" id="tokenomics">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span></span> Official Allocation</div>
+        <h2 class="section-title">Tokenomics</h2>
+        <p class="section-copy">Official $FIRU distribution on Solana. Fixed supply, zero tax, and a structure built for liquidity, community growth and launch stability.</p>
+      </div>
+      <div class="token-grid-3">
+        <div class="panel reveal reveal-d1">
+          <div class="alloc-list">
+            <div class="alloc-row"><div class="alloc-name">Liquidity</div><div class="bar"><div class="fill" style="width:55%;background:linear-gradient(90deg,#1e90ff,#0a5bdf)"></div></div><strong>55%</strong></div>
+            <div class="alloc-row"><div class="alloc-name">Community</div><div class="bar"><div class="fill" style="width:20%;background:linear-gradient(90deg,#09da7d,#0f9d61)"></div></div><strong>20%</strong></div>
+            <div class="alloc-row"><div class="alloc-name">Marketing</div><div class="bar"><div class="fill" style="width:10%;background:linear-gradient(90deg,#ff8c1a,#ff6000)"></div></div><strong>10%</strong></div>
+            <div class="alloc-row"><div class="alloc-name">Team</div><div class="bar"><div class="fill" style="width:10%;background:linear-gradient(90deg,#ff5a7d,#d83462)"></div></div><strong>10%</strong></div>
+            <div class="alloc-row"><div class="alloc-name">Burn/Reserve</div><div class="bar"><div class="fill" style="width:5%;background:linear-gradient(90deg,#ffd060,#ff9f00)"></div></div><strong>5%</strong></div>
+          </div>
+          <ul class="check-list">
+            <li><i>✓</i> Community Driven</li>
+            <li><i>✓</i> Fixed Supply</li>
+            <li><i>✓</i> No Mint Authority</li>
+            <li><i>✓</i> Liquidity Locked</li>
+          </ul>
+        </div>
+        <div class="token-img reveal reveal-d2">
+          <img src="tokenomics.jpg" alt="SuperFirulai Tokenomics Chart" />
+        </div>
+        <div class="panel reveal reveal-d3">
+          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;margin-bottom:10px">Key Info</h3>
+          <p class="section-copy" style="margin-top:0;font-size:13px">Token on Solana. No buy/sell tax. Supply is fixed. Community allocation supports airdrops, early supporters and ecosystem growth.</p>
+          <div class="key-info-grid">
+            <div class="quick-card"><strong id="tokenSupply">1B</strong><span>Total Supply</span></div>
+            <div class="quick-card"><strong>0%</strong><span>Tax Buy/Sell</span></div>
+            <div class="quick-card"><strong>Solana</strong><span>Network</span></div>
+            <div class="quick-card"><strong>Rounds Live</strong><span>Presale Access</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── AIRDROP ── -->
+  <section class="section" id="airdrop">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span></span> Verified Access</div>
+        <h2 class="section-title">Join the Verified $FIRU Airdrop</h2>
+        <p class="section-copy">Connect your wallet, verify ownership, complete the captcha and register your social accounts to secure verified early access before launch.</p>
+        <div class="airdrop-kicker">
+          <strong>Free allocation for early supporters</strong>
+          <span>Limited spots available before the public launch phase begins.</span>
+        </div>
+      </div>
+      <div class="feature-grid">
+        <div class="panel reveal reveal-d1">
+          <div class="steps">
+            <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Use Phantom to connect your Solana wallet securely.</p></div>
+            <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership.</p></div>
+            <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to block spam and bots.</p></div>
+            <div class="step"><b>4</b><strong>Register</strong><p>Submit Telegram, X and wallet details to reserve your spot.</p></div>
+          </div>
+        </div>
+        <div class="panel reveal reveal-d2">
+          <div id="airdrop-register"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ROADMAP ── -->
+  <section class="section" id="roadmap">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="eyebrow"><span></span> Launch Path</div>
+        <h2 class="section-title">Roadmap</h2>
+        <p class="section-copy">A focused path from awareness to access to launch. Built to grow attention first, convert it into presale momentum, and arrive at launch with real community energy.</p>
+      </div>
+      <div class="roadmap-grid">
+        <div class="phase reveal reveal-d1">
+          <span class="phase-tag active">Phase 1 · Active</span>
+          <h3>Brand & Community Setup</h3>
+          <p>Website launch, premium branding rollout, Telegram and X growth, plus a verified airdrop campaign to attract the earliest supporters.</p>
+        </div>
+        <div class="phase reveal reveal-d2">
+          <span class="phase-tag next">Phase 2 · Next</span>
+          <h3>Presale & Market Push</h3>
+          <p>Round 1 and Round 2 access, strategic marketing, influencer exposure, social campaigns and conversion of the strongest early demand.</p>
+        </div>
+        <div class="phase reveal reveal-d3">
+          <span class="phase-tag future">Phase 3 · Soon</span>
+          <h3>Launch & Expansion</h3>
+          <p>Token launch on Solana, liquidity deployment, trading access, listings, and post-launch growth backed by the community already built.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FINAL CTA ── -->
+  <section class="section" id="join">
+    <div class="container">
+      <div class="final-cta-grid">
+        <div class="panel reveal">
+          <div class="eyebrow"><span></span> Final Call</div>
+          <h2 class="section-title" style="margin-bottom:12px">Secure your place before launch.</h2>
+          <p class="section-copy">Get in position before public momentum hits. Join the official rounds, lock your early access path, and stay ready for the first real trading window.</p>
           <div class="actions">
-            <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
-            <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
-            <a class="btn btn-gold" href="#airdrop">Join Airdrop</a>
-            <button class="btn btn-dark" type="button" id="buyCommunity">Buy in Presale</button>
+            <button class="btn btn-gold" type="button" id="buyFinal">Buy in Presale</button>
+            <a class="btn btn-blue" href="#airdrop">Join Airdrop</a>
           </div>
+        </div>
+        <div class="cta-points reveal reveal-d1">
+          <div class="summary-mini"><strong>Early access matters</strong><span>Round 1 and Round 2 are structured to reward the fastest community members first.</span></div>
+          <div class="summary-mini"><strong>Verified community flow</strong><span>Wallet verification, Telegram, X and captcha protection keep the airdrop cleaner.</span></div>
+          <div class="summary-mini"><strong>Built for conversion</strong><span>Premium visuals, stronger messaging and a direct route from first visit to real launch action.</span></div>
         </div>
       </div>
-    </section>
-
-    <!-- ── TOKENOMICS ── -->
-    <section class="section" id="tokenomics">
-      <div class="container">
-        <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Official Allocation</div>
-          <h2 class="section-title">Tokenomics</h2>
-          <p class="section-copy">Official $FIRU distribution on Solana. Fixed supply, zero tax, and a structure built for liquidity, community growth and launch stability.</p>
-        </div>
-        <div class="token-grid-3">
-          <div class="panel reveal reveal-d1">
-            <div class="alloc-list">
-              <div class="alloc-row"><div class="alloc-name">Liquidity</div><div class="bar"><div class="fill" style="width:55%;background:linear-gradient(90deg,#1e90ff,#0a5bdf)"></div></div><strong>55%</strong></div>
-              <div class="alloc-row"><div class="alloc-name">Community</div><div class="bar"><div class="fill" style="width:20%;background:linear-gradient(90deg,#09da7d,#0f9d61)"></div></div><strong>20%</strong></div>
-              <div class="alloc-row"><div class="alloc-name">Marketing</div><div class="bar"><div class="fill" style="width:10%;background:linear-gradient(90deg,#ff8c1a,#ff6000)"></div></div><strong>10%</strong></div>
-              <div class="alloc-row"><div class="alloc-name">Team</div><div class="bar"><div class="fill" style="width:10%;background:linear-gradient(90deg,#ff5a7d,#d83462)"></div></div><strong>10%</strong></div>
-              <div class="alloc-row"><div class="alloc-name">Burn/Reserve</div><div class="bar"><div class="fill" style="width:5%;background:linear-gradient(90deg,#ffd060,#ff9f00)"></div></div><strong>5%</strong></div>
-            </div>
-            <ul class="check-list">
-              <li><i>✓</i> Community Driven</li>
-              <li><i>✓</i> Fixed Supply</li>
-              <li><i>✓</i> No Mint Authority</li>
-              <li><i>✓</i> Liquidity Locked</li>
-            </ul>
-          </div>
-          <div class="token-img reveal reveal-d2">
-            <img src="tokenomics.jpg" alt="SuperFirulai Tokenomics Chart" />
-          </div>
-          <div class="panel reveal reveal-d3">
-            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;margin-bottom:10px">Key Info</h3>
-            <p class="section-copy" style="margin-top:0;font-size:13px">Token on Solana. No buy/sell tax. Supply is fixed. Community allocation supports airdrops, early supporters and ecosystem growth.</p>
-            <div class="key-info-grid">
-              <div class="quick-card"><strong id="tokenSupply">1B</strong><span>Total Supply</span></div>
-              <div class="quick-card"><strong>0%</strong><span>Tax Buy/Sell</span></div>
-              <div class="quick-card"><strong>Solana</strong><span>Network</span></div>
-              <div class="quick-card"><strong>Rounds Live</strong><span>Presale Access</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── AIRDROP ── -->
-    <section class="section" id="airdrop">
-      <div class="container">
-        <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Verified Access</div>
-          <h2 class="section-title">Join the Verified $FIRU Airdrop</h2>
-          <p class="section-copy">Connect your wallet, verify ownership, complete the captcha and register your social accounts to secure verified early access before launch.</p>
-          <div class="airdrop-kicker">
-            <strong>Free allocation for early supporters</strong>
-            <span>Limited spots available before the public launch phase begins.</span>
-          </div>
-        </div>
-        <div class="feature-grid">
-          <div class="panel reveal reveal-d1">
-            <div class="steps">
-              <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Use Phantom to connect your Solana wallet securely.</p></div>
-              <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership.</p></div>
-              <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to block spam and bots.</p></div>
-              <div class="step"><b>4</b><strong>Register</strong><p>Submit Telegram, X and wallet details to reserve your spot.</p></div>
-            </div>
-          </div>
-          <div class="panel reveal reveal-d2">
-            <div id="airdrop-register"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── ROADMAP ── -->
-    <section class="section" id="roadmap">
-      <div class="container">
-        <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Launch Path</div>
-          <h2 class="section-title">Roadmap</h2>
-          <p class="section-copy">A focused path from awareness to access to launch. Built to grow attention first, convert it into presale momentum, and arrive at launch with real community energy.</p>
-        </div>
-        <div class="roadmap-grid">
-          <div class="phase reveal reveal-d1">
-            <span class="phase-tag active">Phase 1 · Active</span>
-            <h3>Brand & Community Setup</h3>
-            <p>Website launch, premium branding rollout, Telegram and X growth, plus a verified airdrop campaign to attract the earliest supporters.</p>
-          </div>
-          <div class="phase reveal reveal-d2">
-            <span class="phase-tag next">Phase 2 · Next</span>
-            <h3>Presale & Market Push</h3>
-            <p>Round 1 and Round 2 access, strategic marketing, influencer exposure, social campaigns and conversion of the strongest early demand.</p>
-          </div>
-          <div class="phase reveal reveal-d3">
-            <span class="phase-tag future">Phase 3 · Soon</span>
-            <h3>Launch & Expansion</h3>
-            <p>Token launch on Solana, liquidity deployment, trading access, listings, and post-launch growth backed by the community already built.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── FINAL CTA ── -->
-    <section class="section" id="join">
-      <div class="container">
-        <div class="final-cta-grid">
-          <div class="panel reveal">
-            <div class="eyebrow"><span></span> Final Call</div>
-            <h2 class="section-title" style="margin-bottom:12px">Secure your place before launch.</h2>
-            <p class="section-copy">Get in position before public momentum hits. Join the official rounds, lock your early access path, and stay ready for the first real trading window.</p>
-            <div class="actions">
-              <button class="btn btn-gold" type="button" id="buyFinal">Buy in Presale</button>
-              <a class="btn btn-blue" href="#airdrop">Join Airdrop</a>
-            </div>
-          </div>
-          <div class="cta-points reveal reveal-d1">
-            <div class="summary-mini"><strong>Early access matters</strong><span>Round 1 and Round 2 are structured to reward the fastest community members first.</span></div>
-            <div class="summary-mini"><strong>Verified community flow</strong><span>Wallet verification, Telegram, X and captcha protection keep the airdrop cleaner.</span></div>
-            <div class="summary-mini"><strong>Built for conversion</strong><span>Premium visuals, stronger messaging and a direct route from first visit to real launch action.</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="site-footer">
-      <strong>SuperFirulai</strong> &nbsp;·&nbsp; $FIRU on Solana &nbsp;·&nbsp; Community Powered &nbsp;·&nbsp; © 2026
-    </footer>
-
-  </main>
-
-  <!-- ── MOBILE BOTTOM NAV ── -->
-  <nav class="mobile-nav-bottom" aria-label="Mobile navigation">
-    <div class="mobile-nav-grid">
-      <a class="mobile-nav-btn mnb-home" href="#home">
-        <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-        Home
-      </a>
-      <a class="mobile-nav-btn mnb-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>
-        Telegram
-      </a>
-      <button class="mobile-nav-btn mnb-buy" type="button" id="buyMobile">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9c0-1.66 1.34-3 3-3s3 1.34 3 3c0 3-6 3-6 6 0 1.66 1.34 3 3 3s3-1.34 3-3"/></svg>
-        Buy $FIRU
-      </button>
-      <a class="mobile-nav-btn mnb-airdrop" href="#airdrop">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-        Airdrop
-      </a>
-      <a class="mobile-nav-btn mnb-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-        X / Twitter
-      </a>
     </div>
-  </nav>
+  </section>
 
-  <!-- ── BUY DIALOG ── -->
-  <dialog id="buyDialog" style="max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
-    <div class="buy-shell">
-      <div class="buy-badge"><span></span> Presale Access</div>
-      <div class="dialog-header">
-        <div style="position:relative;z-index:1">
-          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Register Round 1 / Round 2</h3>
-          <p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">Send SOL to the official project wallet, then paste the confirmed transaction hash here. The system validates the payment on-chain and saves your FIRU allocation.</p>
-        </div>
-        <button class="dialog-close" id="closeBuyDialog" aria-label="Close">×</button>
+  <footer class="site-footer">
+    <strong>SuperFirulai</strong> &nbsp;·&nbsp; $FIRU on Solana &nbsp;·&nbsp; Community Powered &nbsp;·&nbsp; © 2026
+  </footer>
+
+</main>
+
+<!-- ── MOBILE BOTTOM NAV ── -->
+<nav class="mobile-nav-bottom" aria-label="Mobile navigation">
+  <div class="mobile-nav-grid">
+    <a class="mobile-nav-btn" href="#home">
+      <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Home
+    </a>
+    <a class="mobile-nav-btn mnb-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>
+      Telegram
+    </a>
+    <button class="mobile-nav-btn mnb-buy" type="button" id="buyMobile">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9c0-1.66 1.34-3 3-3s3 1.34 3 3c0 3-6 3-6 6 0 1.66 1.34 3 3 3s3-1.34 3-3"/></svg>
+      Buy $FIRU
+    </button>
+    <a class="mobile-nav-btn mnb-airdrop" href="#airdrop">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
+      Airdrop
+    </a>
+    <a class="mobile-nav-btn mnb-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+      X
+    </a>
+  </div>
+</nav>
+
+<!-- ── BUY DIALOG ── -->
+<dialog id="buyDialog" style="max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
+  <div class="buy-shell">
+    <div class="buy-badge"><span></span> Presale Access</div>
+    <div class="dialog-header">
+      <div style="position:relative;z-index:1">
+        <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Register Round 1 / Round 2</h3>
+        <p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">Send SOL to the official project wallet, then paste the confirmed transaction hash. The system validates on-chain and saves your FIRU allocation.</p>
       </div>
-      <div class="dialog-divider"></div>
-      <div class="dialog-steps">
-        <div class="dialog-step"><strong>1 · Send SOL</strong><span>Use the official treasury wallet published by the project.</span></div>
-        <div class="dialog-step"><strong>2 · Paste TX hash</strong><span>The transaction must be confirmed on Solana before submitting.</span></div>
-        <div class="dialog-step"><strong>3 · Allocation saved</strong><span>Your FIRU allocation is calculated automatically from the round price.</span></div>
-      </div>
-      <div id="round-register" style="position:relative;z-index:1"></div>
+      <button class="dialog-close" id="closeBuyDialog" aria-label="Close">&#x2715;</button>
     </div>
-  </dialog>
+    <div class="dialog-divider"></div>
+    <div class="dialog-steps">
+      <div class="dialog-step"><strong>1 · Send SOL</strong><span>Use the official treasury wallet published by the project.</span></div>
+      <div class="dialog-step"><strong>2 · Paste TX hash</strong><span>The transaction must be confirmed on Solana before submitting.</span></div>
+      <div class="dialog-step"><strong>3 · Allocation saved</strong><span>Your FIRU allocation is calculated automatically from the round price.</span></div>
+    </div>
+    <div id="round-register" style="position:relative;z-index:1"></div>
+  </div>
+</dialog>
 
-  <noscript><div style="max-width:960px;margin:16px auto;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0d162f;color:#fff">Enable JavaScript to use the airdrop registration form and live community stats.</div></noscript>
+<noscript><div style="max-width:960px;margin:16px auto;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0d162f;color:#fff">Enable JavaScript to use the airdrop registration form and live community stats.</div></noscript>
 
-  <!-- ── STATS ── -->
-  <script>
-  (function(){
-    var FB={holders:2418,telegramMembers:24,xFollowers:61,totalSupply:1000000000};
-    function fmt(n){return Number(n).toLocaleString("en-US")}
-    function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v}
-    function render(d){
-      set("statHolders",fmt(d.holders||FB.holders));
-      set("statTelegram",fmt(d.telegramMembers||FB.telegramMembers));
-      set("statX",fmt(d.xFollowers||FB.xFollowers));
-      var s=fmt(d.totalSupply||FB.totalSupply);
-      set("statSupply",s);set("tokenSupply",s);
-    }
-    fetch("/api/community-stats",{cache:"no-store"})
-      .then(function(r){if(!r.ok)throw 0;return r.json()})
-      .then(render).catch(function(){render(FB)});
-    window._renderStats=render;
-  })();
-  </script>
+<!-- STATS -->
+<script>
+(function(){
+  var FB={holders:2418,telegramMembers:24,xFollowers:61,totalSupply:1000000000};
+  function fmt(n){return Number(n).toLocaleString("en-US")}
+  function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v}
+  function render(d){
+    set("statHolders",fmt(d.holders||FB.holders));
+    set("statTelegram",fmt(d.telegramMembers||FB.telegramMembers));
+    set("statX",fmt(d.xFollowers||FB.xFollowers));
+    var s=fmt(d.totalSupply||FB.totalSupply);
+    set("statSupply",s);set("tokenSupply",s);
+  }
+  fetch("/api/community-stats",{cache:"no-store"})
+    .then(function(r){if(!r.ok)throw 0;return r.json()})
+    .then(render).catch(function(){render(FB)});
+  window._renderStats=render;
+})();
+</script>
 
-  <!-- ── MAIN JS ── -->
-  <script type="module">
-    import { mountAirdropRegister } from "./airdrop-register.js";
-    import { mountRoundRegister }   from "./round-register.js";
-    try {
-      mountAirdropRegister("#airdrop-register");
-      mountRoundRegister("#round-register");
-    } catch(e){ console.error("Mount failed",e) }
+<!-- MAIN JS -->
+<script type="module">
+  import { mountAirdropRegister } from "./airdrop-register.js";
+  import { mountRoundRegister }   from "./round-register.js";
+  try {
+    mountAirdropRegister("#airdrop-register");
+    mountRoundRegister("#round-register");
+  } catch(e){ console.error("Mount failed",e) }
 
-    /* ── Navbar scroll state ── */
-    const nav = document.getElementById("siteNav");
-    const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 10);
-    window.addEventListener("scroll", onScroll, {passive:true});
-    onScroll();
+  /* Buy dialog */
+  const dlg = document.getElementById("buyDialog");
+  const openBuy  = () => { if(dlg?.showModal) dlg.showModal() };
+  const closeBuy = () => { if(dlg?.close) dlg.close() };
+  ["buyHero","buyRound1","buyRound2","buyCommunity","buyMobile","buyFinal"]
+    .forEach(id => document.getElementById(id)?.addEventListener("click", openBuy));
+  document.getElementById("closeBuyDialog")?.addEventListener("click", closeBuy);
+  dlg?.addEventListener("click", e => {
+    const r = dlg.getBoundingClientRect();
+    if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right) closeBuy();
+  });
 
-    /* ── Hamburger menu ── */
-    const ham  = document.getElementById("navHamburger");
-    const menu = document.getElementById("navMobileMenu");
-    ham.addEventListener("click", () => menu.classList.toggle("open"));
-    document.querySelectorAll(".nav-mobile-link, .nav-mobile-ctas a").forEach(a => {
-      a.addEventListener("click", () => menu.classList.remove("open"));
+  /* Scroll reveal */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("visible"); io.unobserve(e.target) } });
+  }, { threshold:0.1, rootMargin:"0px 0px -36px 0px" });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  /* Ripple on stat cards */
+  document.querySelectorAll(".quick-card").forEach(card => {
+    card.addEventListener("click", e => {
+      const r = card.getBoundingClientRect();
+      const sz = Math.max(r.width, r.height) * 1.6;
+      const rip = document.createElement("span");
+      rip.className = "ripple";
+      rip.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px`;
+      card.appendChild(rip);
+      setTimeout(() => rip.remove(), 600);
     });
-    document.addEventListener("click", e => {
-      if (!nav.contains(e.target) && !menu.contains(e.target)) menu.classList.remove("open");
-    });
+  });
 
-    /* ── Buy dialog ── */
-    const dlg = document.getElementById("buyDialog");
-    const openBuy = () => { if(dlg && dlg.showModal) dlg.showModal() };
-    const closeBuy= () => { if(dlg && dlg.close) dlg.close() };
-
-    ["buyNav","buyNavMobile","buyHeroOverlay","buyRound1","buyRound2",
-     "buyCommunity","buyMobile","buyFinal"].forEach(id => {
-      const el = document.getElementById(id);
-      if(el) el.addEventListener("click", openBuy);
+  /* Smooth scroll + flash section */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener("click", () => {
+      const id = a.getAttribute("href").slice(1);
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.style.transition = "box-shadow .1s";
+        el.style.boxShadow = "0 0 0 2px rgba(255,255,255,.18),0 0 0 6px rgba(30,144,255,.15)";
+        setTimeout(() => { el.style.boxShadow=""; el.style.transition="" }, 900);
+      }, 300);
     });
-    document.getElementById("closeBuyDialog")?.addEventListener("click", closeBuy);
-    dlg?.addEventListener("click", e => {
-      const r = dlg.getBoundingClientRect();
-      if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right) closeBuy();
-    });
-
-    /* ── Flash section on anchor click ── */
-    document.querySelectorAll('a[href^="#"]').forEach(a => {
-      a.addEventListener("click", () => {
-        const id = a.getAttribute("href").slice(1);
-        setTimeout(() => {
-          const el = document.getElementById(id);
-          if(!el) return;
-          el.style.transition="box-shadow .1s";
-          el.style.boxShadow="0 0 0 2px rgba(255,255,255,.18), 0 0 0 6px rgba(30,144,255,.15)";
-          setTimeout(() => { el.style.boxShadow=""; el.style.transition="" }, 900);
-        }, 300);
-      });
-    });
-
-    /* ── Scroll reveal ── */
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add("visible"); io.unobserve(e.target) } });
-    }, { threshold:0.1, rootMargin:"0px 0px -36px 0px" });
-    document.querySelectorAll(".reveal").forEach(el => io.observe(el));
-
-    /* ── Ripple on stat cards ── */
-    document.querySelectorAll(".quick-card").forEach(card => {
-      card.addEventListener("click", e => {
-        const r = card.getBoundingClientRect();
-        const sz = Math.max(r.width, r.height) * 1.6;
-        const rip = document.createElement("span");
-        rip.className = "ripple";
-        rip.style.cssText = `width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px`;
-        card.appendChild(rip);
-        setTimeout(() => rip.remove(), 600);
-      });
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
