@@ -114,25 +114,18 @@
         linear-gradient(180deg,rgba(5,13,31,.04) 0%,transparent 8%,transparent 88%,rgba(5,13,31,.55) 100%);
     }
 
-    /* ── HOTSPOT OVERLAY BUTTONS (desktop) ── */
-    /* These sit exactly over the artwork nav buttons */
+    /* ── HOTSPOT OVERLAY BUTTONS (desktop) — 100% invisible, pure click areas ── */
     .hero-hotspots{
-      position:absolute;inset:0;z-index:10;
+      position:absolute;inset:0;z-index:10;pointer-events:none;
     }
     .hs{
       position:absolute;
       background:transparent;border:none;padding:0;
-      cursor:pointer;border-radius:8px;
-      /* subtle glow on hover only */
-      transition:background .18s,box-shadow .18s;
+      cursor:pointer;pointer-events:auto;
+      /* Zero visual presence — artwork already shows the buttons */
     }
-    .hs:hover{
-      background:rgba(255,255,255,.07);
-      box-shadow:0 0 0 2px rgba(255,255,255,.22),0 0 14px rgba(30,144,255,.18);
-    }
-    .hs:active{background:rgba(255,255,255,.14)}
 
-    /* Positions match the artwork exactly */
+    /* Positions matched to the artwork pixel-perfect */
     .hs-home      {left:27.4%;top:.9%;width:5.2%;height:5.8%}
     .hs-tokenomics{left:32.8%;top:.9%;width:10.7%;height:5.8%}
     .hs-airdrop   {left:44.5%;top:.9%;width:7.8%;height:5.8%}
@@ -141,29 +134,39 @@
     .hs-telegram  {left:71.8%;top:.4%;width:15.3%;height:6.6%}
     .hs-buy       {left:87.2%;top:.4%;width:10.2%;height:6.6%}
 
-    /* X button — floats just to the left of Telegram */
-    .hs-x{
-      left:66.2%;top:.9%;width:5.0%;height:5.8%;
-      border-radius:12px;
-      background:rgba(255,255,255,.06);
-      border:1px solid rgba(255,255,255,.14) !important;
-      display:flex;align-items:center;justify-content:center;
-      backdrop-filter:blur(8px);
-      transition:background .18s,box-shadow .18s,transform .18s;
+    /* X — fixed social pill anchored to bottom-right of hero stage */
+    .hero-x-pill{
+      position:absolute;
+      right:1.4%;bottom:3.2%;
+      z-index:11;
+      display:flex;align-items:center;gap:7px;
+      padding:8px 16px 8px 12px;
+      border-radius:999px;
+      background:rgba(8,14,34,.72);
+      border:1px solid rgba(255,255,255,.13);
+      backdrop-filter:blur(16px) saturate(1.4);
+      box-shadow:0 8px 24px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.07);
+      color:rgba(210,228,255,.9);
+      font-family:'Inter',system-ui,sans-serif;
+      font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+      text-decoration:none;
+      transition:background .2s,border-color .2s,transform .2s,box-shadow .2s;
+      cursor:pointer;
     }
-    .hs-x:hover{
-      background:rgba(255,255,255,.13);
-      box-shadow:0 0 0 1px rgba(255,255,255,.3),0 6px 20px rgba(0,0,0,.4);
-      transform:translateY(-1px);
+    .hero-x-pill:hover{
+      background:rgba(14,22,48,.88);
+      border-color:rgba(255,255,255,.26);
+      transform:translateY(-2px);
+      box-shadow:0 14px 32px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.1);
     }
-    .hs-x svg{
-      width:52%;height:52%;
-      fill:rgba(220,235,255,.9);
-      pointer-events:none;
-      filter:drop-shadow(0 1px 4px rgba(0,0,0,.5));
+    .hero-x-pill svg{
+      width:16px;height:16px;fill:currentColor;flex-shrink:0;
     }
 
-    @media(max-width:820px){.hero-hotspots{display:none}}
+    @media(max-width:820px){
+      .hero-hotspots{display:none}
+      .hero-x-pill{display:none}
+    }
 
     /* section quick-links below hero */
     .nav-sections{
@@ -410,16 +413,6 @@
         <a class="hs hs-roadmap"    href="#roadmap"    aria-label="Roadmap"></a>
         <a class="hs hs-community"  href="#community"  aria-label="Community"></a>
 
-        <!-- X / Twitter — floats between Community and Telegram -->
-        <a class="hs hs-x"
-           href="https://x.com/superfirulai"
-           target="_blank" rel="noopener"
-           aria-label="Follow on X (Twitter)">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-          </svg>
-        </a>
-
         <!-- Join Telegram -->
         <a class="hs hs-telegram"
            href="https://t.me/superfirulaicommunity"
@@ -430,6 +423,17 @@
         <button class="hs hs-buy" type="button" id="buyHero" aria-label="Buy $FIRU"></button>
 
       </div>
+
+      <!-- X / Twitter — elegant pill, bottom-right corner of hero -->
+      <a class="hero-x-pill"
+         href="https://x.com/superfirulai"
+         target="_blank" rel="noopener"
+         aria-label="Follow SuperFirulai on X">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+        Follow on X
+      </a>
     </div>
   </section>
 
