@@ -121,12 +121,13 @@
     .hotspot.fx-push::after{display:none}
     .hotspot.fx-zoomimg::before{
       content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:1;
-      opacity:0; background-repeat:no-repeat; transform:scale(1); transform-origin:center center;
-      transition:transform .22s cubic-bezier(.2,.9,.18,1), opacity .18s ease, filter .22s ease;
-      will-change:transform, opacity, filter;
+      opacity:1; background-repeat:no-repeat; transform:translateZ(0) scale(1); transform-origin:center center;
+      transition:transform .22s cubic-bezier(.2,.9,.18,1), filter .22s ease;
+      will-change:transform, filter;
+      backface-visibility:hidden;
     }
     .hotspot.fx-zoomimg:hover::before,.hotspot.fx-zoomimg:focus-visible::before{
-      opacity:1; transform:scale(1.08);
+      transform:translateZ(0) scale(1.055);
       filter:brightness(1.12) saturate(1.18) drop-shadow(0 12px 26px rgba(27,136,255,.24));
     }
     .hs-telegram-top:hover,.hs-telegram-top:focus-visible,
@@ -138,18 +139,24 @@
       background-image:url('superfirulai-desktop.webp');
       background-size:653.6% 1562.5%;
       background-position:84.77% .43%;
+      background-origin:border-box;
+      background-clip:padding-box;
       border-radius:24px;
     }
     .hs-buy-top.fx-zoomimg::before{
       background-image:url('superfirulai-desktop.webp');
       background-size:980.4% 1562.5%;
       background-position:97.10% .43%;
+      background-origin:border-box;
+      background-clip:padding-box;
       border-radius:24px;
     }
     .hs-telegram-main.fx-zoomimg::before{
       background-image:url('superfirulai-desktop.webp');
       background-size:565.0% 1351.4%;
       background-position:4.98% 46.33%;
+      background-origin:border-box;
+      background-clip:padding-box;
       border-radius:24px;
     }
     .hs-home{left:27.4%;top:0.9%;width:5.2%;height:5.5%}
