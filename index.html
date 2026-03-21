@@ -39,7 +39,7 @@
     body::before{
       content:""; position:fixed; inset:0; pointer-events:none; z-index:-2;
       background:url("superfirulai-desktop.webp") center top / cover no-repeat;
-      filter:blur(34px) brightness(.34) saturate(1.16) contrast(1.06); transform:scale(1.06); opacity:.92;
+      filter:blur(38px) brightness(.24) saturate(1.06); transform:scale(1.08); opacity:.86;
     }
     body::after{
       content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
@@ -59,16 +59,16 @@
     .hero-frame::before{
       content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
       background:
-        radial-gradient(circle at 20% 18%, rgba(58,170,255,.30), transparent 24%),
-        radial-gradient(circle at 78% 18%, rgba(255,200,55,.18), transparent 20%),
-        linear-gradient(180deg, rgba(4,8,20,.08) 0%, rgba(4,8,20,.02) 38%, rgba(4,8,20,.34) 100%);
+        radial-gradient(circle at 20% 18%, rgba(34,155,255,.20), transparent 22%),
+        radial-gradient(circle at 78% 18%, rgba(255,183,0,.12), transparent 18%),
+        linear-gradient(180deg, rgba(4,8,20,.16) 0%, rgba(4,8,20,.04) 40%, rgba(4,8,20,.42) 100%);
     }
     .hero-frame::after{
       content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
       box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), inset 0 -120px 120px rgba(3,7,19,.48);
     }
     .hero-frame picture,.hero-frame img{display:block;width:100%;height:auto}
-    .hero-frame img{filter:brightness(1.10) contrast(1.08) saturate(1.14)}
+    .hero-frame > picture > img{filter:brightness(1.08) contrast(1.07) saturate(1.1)}
     /* Mobile: use mobile image with cover — fills screen correctly */
     @media (max-width:820px){
       .hero{
@@ -91,13 +91,14 @@
         object-fit:cover;
         object-position:center top;
         display:block;
+        filter:brightness(1.07) contrast(1.06) saturate(1.08);
       }
     }
     .hero-ui{position:absolute; inset:0; z-index:6; pointer-events:none}
     .hero-chip{
       position:absolute; left:24px; top:22px; display:inline-flex; align-items:center; gap:8px;
       padding:9px 14px; border-radius:999px; border:1px solid rgba(255,255,255,.16);
-      background:rgba(7,12,30,.78); color:#fff; font-size:11px; font-weight:900; letter-spacing:.14em; box-shadow:0 10px 30px rgba(0,0,0,.38), 0 0 24px rgba(90,160,255,.10), inset 0 1px 0 rgba(255,255,255,.10);
+      background:rgba(6,10,24,.72); color:#fff; font-size:11px; font-weight:900; letter-spacing:.14em;
       text-transform:uppercase; backdrop-filter:blur(20px); box-shadow:0 8px 24px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.08);
     }
     .hero-chip span{display:inline-block; width:7px; height:7px; border-radius:999px; background:linear-gradient(180deg,#47d8ff,#1b88ff); box-shadow:0 0 10px rgba(71,216,255,.9); animation:chipPulse 2.4s ease-in-out infinite}
@@ -109,28 +110,42 @@
       background:linear-gradient(160deg, rgba(14,20,44,.74), rgba(8,12,28,.84));
       backdrop-filter:blur(22px) saturate(1.4); box-shadow:0 24px 52px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.07);
     }
-    .hero-copy strong,.hero-copy h1{display:block; font-size:clamp(15px,1.7vw,20px); margin:0 0 4px; letter-spacing:.01em; line-height:1.2; background:linear-gradient(90deg,#fff 55%,#90baff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text}
+    .hero-copy strong{display:block; font-size:clamp(15px,1.7vw,20px); margin-bottom:4px; letter-spacing:.01em; background:linear-gradient(90deg,#fff 55%,#90baff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text}
     .hero-copy p{margin:0; color:rgba(176,202,255,.78); line-height:1.55; font-size:12.5px; letter-spacing:.01em}
 
     .hotspot{
       position:absolute; display:block; border:none; background:transparent; cursor:pointer;
-      border-radius:16px; outline:none; transition:box-shadow .18s ease, transform .18s ease; z-index:8;
+      border-radius:16px; outline:none; transition:box-shadow .18s ease, transform .18s ease, opacity .18s ease; z-index:8;
     }
-    .hotspot:hover,.hotspot:focus-visible{box-shadow:0 0 0 2px rgba(255,255,255,.34), 0 0 0 7px rgba(27,136,255,.22), 0 0 26px rgba(255,214,101,.16); transform:translateY(-1px)}
-    .hs-home{left:27.4%;top:0.9%;width:5.2%;height:5.5%}
-    .hs-tokenomics-top{left:32.8%;top:0.9%;width:10.7%;height:5.5%}
-    .hs-airdrop-top{left:44.5%;top:0.9%;width:7.8%;height:5.5%}
-    .hs-roadmap-top{left:52.5%;top:0.9%;width:7.6%;height:5.5%}
-    .hs-community-top{left:60.4%;top:0.9%;width:8.9%;height:5.5%}
-    .hs-telegram-top{left:71.8%;top:0.4%;width:15.3%;height:6.4%}
-    .hs-buy-top{left:87.2%;top:0.4%;width:10.2%;height:6.4%}
-    .hs-telegram-main{left:4.1%;top:42.9%;width:17.7%;height:7.4%}
-    .hs-airdrop-main{left:21.9%;top:42.9%;width:20.0%;height:7.4%}
-    .hs-about{left:1.6%;top:62.6%;width:44.2%;height:25.0%}
-    .hs-howto{left:46.1%;top:62.5%;width:39.0%;height:25.1%}
-    .hs-roadmap{left:5.2%;top:86.6%;width:65.8%;height:12.2%}
-    .hs-tokenomics-panel{left:73.8%;top:8.7%;width:25.3%;height:39.6%}
-    .hs-metrics{left:14.0%;top:53.6%;width:67.7%;height:11.3%}
+    .hotspot:hover,.hotspot:focus-visible{box-shadow:0 0 0 2px rgba(255,255,255,.28), 0 0 0 6px rgba(27,136,255,.18); transform:translateY(-1px)}
+    .hotspot.fx-push{position:absolute; overflow:visible; isolation:isolate}
+    .hotspot.fx-push:hover,.hotspot.fx-push:focus-visible{box-shadow:none; transform:none}
+    .hotspot.fx-push::after{
+      content:attr(data-fx-label); position:absolute; left:50%; top:50%;
+      transform:translate(-50%,-50%) scale(.86); transform-origin:center center;
+      opacity:0; pointer-events:none; z-index:2;
+      font-size:clamp(12px,1.12vw,18px); font-weight:900; letter-spacing:.05em; white-space:nowrap;
+      color:#ffffff; text-transform:uppercase;
+      text-shadow:0 8px 26px rgba(27,136,255,.26), 0 2px 10px rgba(0,0,0,.34);
+      filter:blur(5px); transition:transform .22s cubic-bezier(.2,.9,.18,1), opacity .18s ease, filter .22s ease;
+    }
+    .hotspot.fx-push:hover::after,.hotspot.fx-push:focus-visible::after{
+      opacity:.98; filter:blur(0); transform:translate(-50%,-50%) scale(1.08);
+    }
+    .hs-home{left:26.8%;top:0.8%;width:6.7%;height:5.2%}
+    .hs-tokenomics-top{left:34.1%;top:0.8%;width:10.9%;height:5.2%}
+    .hs-airdrop-top{left:45.6%;top:0.8%;width:8.5%;height:5.2%}
+    .hs-roadmap-top{left:54.9%;top:0.8%;width:8.6%;height:5.2%}
+    .hs-community-top{left:64.0%;top:0.8%;width:10.7%;height:5.2%}
+    .hs-telegram-top{left:75.6%;top:0.8%;width:15.7%;height:5.2%}
+    .hs-buy-top{left:91.6%;top:0.8%;width:7.5%;height:5.2%}
+    .hs-telegram-main{left:3.0%;top:43.0%;width:20.0%;height:7.0%}
+    .hs-airdrop-main{left:23.3%;top:43.0%;width:22.0%;height:7.0%}
+    .hs-about{left:1.8%;top:62.0%;width:44.5%;height:23.5%}
+    .hs-howto{left:46.5%;top:62.0%;width:40.0%;height:23.5%}
+    .hs-roadmap{left:10.0%;top:90.0%;width:80.0%;height:8.0%}
+    .hs-tokenomics-panel{left:73.2%;top:9.0%;width:26.2%;height:39.5%}
+    .hs-metrics{left:15.0%;top:53.0%;width:66.5%;height:11.0%}
 
     .hero-decor{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:4}
     .rocket{
@@ -182,7 +197,7 @@
     .section-copy{margin:10px 0 0;max-width:72ch;color:var(--muted);line-height:1.75}
 
     .panel{
-      background:linear-gradient(180deg, rgba(14,24,50,.94), rgba(11,18,38,.80));
+      background:linear-gradient(180deg, rgba(12,20,42,.92), rgba(10,16,34,.76));
       border:1px solid rgba(255,255,255,.08); border-radius:26px; padding:22px; box-shadow:var(--shadow);
       backdrop-filter:blur(16px); position:relative; overflow:hidden; transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;
     }
@@ -291,7 +306,11 @@
     .final-cta .panel{padding:28px}
     .cta-points{display:grid;gap:12px}
     .cta-points .summary-mini strong{font-size:16px}
-    @media (max-width: 980px){.rounds-grid,.final-cta-grid{grid-template-columns:1fr}}
+    .hero-desktop-nav{position:absolute;top:22px;right:24px;z-index:9;display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(6,10,24,.62);backdrop-filter:blur(20px);box-shadow:0 8px 24px rgba(0,0,0,.36)}
+    .hero-desktop-nav a,.hero-desktop-nav button{display:inline-flex;align-items:center;justify-content:center;min-height:38px;padding:0 14px;border-radius:999px;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border:1px solid transparent;background:transparent;color:#d6e7ff;cursor:pointer}
+    .hero-desktop-nav a:hover,.hero-desktop-nav button:hover{background:rgba(255,255,255,.06)}
+    .hero-desktop-nav .nav-cta{background:linear-gradient(180deg,var(--gold),var(--gold2));color:#1d1200;box-shadow:0 10px 24px rgba(255,177,0,.22)}
+    @media (max-width: 980px){.rounds-grid,.final-cta-grid{grid-template-columns:1fr}.hero-desktop-nav{display:none}}
     @media (max-width: 820px){.hero-copy{max-width:min(86vw,420px);left:16px;right:16px;bottom:84px}.hero-chip{left:16px;top:16px}}
     .footer{padding:16px 0 34px;text-align:center;color:#9db0dc;font-size:14px}
 
@@ -320,6 +339,50 @@
     .buy-shell::after{content:""; position:absolute; top:0; left:10%; right:10%; height:1px; background:linear-gradient(90deg, transparent, rgba(120,185,255,.6), transparent)}
     .buy-badge{display:inline-flex; align-items:center; gap:8px; margin-bottom:18px; padding:7px 12px; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); font-size:10px; font-weight:900; letter-spacing:.14em; text-transform:uppercase}
     .buy-badge span{width:7px; height:7px; border-radius:999px; background:linear-gradient(180deg,#ffd665,#ffb100); box-shadow:0 0 10px rgba(255,210,72,.75); animation:chipPulse 2.4s ease-in-out infinite}
+
+    /* Mobile TOP nav bar */
+    .mobile-topnav{
+      display:none; position:fixed; top:0; left:0; right:0; z-index:101;
+      background:rgba(4,7,20,.92);
+      backdrop-filter:blur(28px) saturate(1.8);
+      border-bottom:1px solid rgba(255,255,255,.07);
+      box-shadow:0 4px 20px rgba(0,0,0,.4);
+    }
+    .mobile-topnav-scroll{
+      overflow-x:auto; white-space:nowrap;
+      scrollbar-width:none;
+      padding:8px 10px 8px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .mobile-topnav-scroll::-webkit-scrollbar{display:none}
+    .mobile-topnav-inner{
+      display:inline-flex; gap:5px; align-items:center;
+    }
+    .mtnav-btn{
+      display:inline-flex; align-items:center; gap:5px;
+      padding:6px 11px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.09);
+      background:rgba(255,255,255,.05);
+      color:rgba(160,185,230,.85); font-size:10px; font-weight:800;
+      letter-spacing:.05em; text-transform:uppercase;
+      cursor:pointer; text-decoration:none; white-space:nowrap;
+      transition:background .18s, color .18s;
+      flex-shrink:0;
+    }
+    .mtnav-btn:active{background:rgba(255,255,255,.14); transform:scale(.96)}
+    .mtnav-btn.is-tg{
+      background:rgba(27,136,255,.16); border-color:rgba(27,136,255,.32);
+      color:#5ab8ff;
+    }
+    .mtnav-btn.is-buy{
+      background:linear-gradient(135deg,rgba(255,183,0,.24),rgba(255,110,0,.16));
+      border-color:rgba(255,183,0,.4); color:#ffd060;
+    }
+    .mtnav-btn.is-x{
+      background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.12);
+      color:rgba(200,215,255,.9);
+    }
+
     /* Mobile nav bar — premium */
     .mobile-nav{
       display:none; position:fixed; bottom:0; left:0; right:0; z-index:100;
@@ -363,6 +426,7 @@
     @keyframes navSlideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
     @media (max-width: 820px){
       .mobile-nav{display:block;animation:navSlideUp .4s cubic-bezier(.22,1,.36,1) both}
+      .mobile-topnav{display:block}
       .hero-frame img{object-position:center top}
       .hero-decor .coin{display:none}
       .hero-decor .rocket{display:none}
@@ -376,8 +440,8 @@
         border-color:rgba(255,255,255,.08);
         backdrop-filter:blur(16px);
       }
-      .hero-copy strong,.hero-copy h1{
-        font-size:13px; margin:0 0 2px;
+      .hero-copy strong{
+        font-size:13px; margin-bottom:2px;
         -webkit-text-fill-color:unset; background:none; color:#fff; font-weight:800;
       }
       .hero-copy p{font-size:10px; line-height:1.4; color:rgba(160,195,255,.7); margin-top:2px}
@@ -390,34 +454,29 @@
     @media (max-width: 820px){
       body{padding-bottom:80px}
       .hero{margin-top:0}
-      .hero-frame{top:0 !important; height:100% !important}
+      .hero-frame{top:46px !important; height:calc(100svh - 46px) !important}
     }
     @media (max-width: 980px){
       .quick-grid,.token-grid,.feature-grid,.roadmap-grid{grid-template-columns:1fr}
       .steps{grid-template-columns:1fr}
     }
     @media (max-width: 820px){
-      .hero-chip{left:14px; top:12px; font-size:10px; padding:9px 12px}
-      .rocket{width:36px;height:36px;font-size:26px;opacity:.6}
-      .coin{width:52px !important;height:52px !important}
-      .coin.c1{left:1%;bottom:30%}
-      .coin.c2{right:1%;top:6%}
-      .coin.c3{right:1%;bottom:24%}
-      .coin.c4{left:1%;top:6%}
+
       .hs-home{left:0%;top:0%;width:0;height:0}
-      .hs-tokenomics-top{left:3.5%;top:14.6%;width:30.7%;height:4.6%}
-      .hs-airdrop-top{left:35.2%;top:14.6%;width:29.4%;height:4.6%}
-      .hs-roadmap-top{left:0%;top:0%;width:0;height:0}
-      .hs-community-top{left:0%;top:0%;width:0;height:0}
+      .hs-tokenomics-top{left:6.0%;top:25.3%;width:26.2%;height:24.8%}
+      .hs-airdrop-top{left:0%;top:0%;width:0;height:0}
+      .hs-roadmap-top{left:25.6%;top:82.7%;width:54.5%;height:7.8%}
+      .hs-community-top{left:57.3%;top:62.4%;width:16.9%;height:15.4%}
       .hs-telegram-top{left:0%;top:0%;width:0;height:0}
-      .hs-buy-top{left:3.6%;top:35.7%;width:30.7%;height:4.5%}
-      .hs-telegram-main{left:0%;top:0%;width:0;height:0}
+      .hs-buy-top{left:9.0%;top:49.7%;width:23.6%;height:7.4%}
+      .hs-telegram-main{left:57.8%;top:62.5%;width:17.0%;height:15.0%}
       .hs-airdrop-main{left:0%;top:0%;width:0;height:0}
       .hs-about{left:0%;top:0%;width:0;height:0}
-      .hs-howto{left:9.2%;top:58.0%;width:81.8%;height:11.5%}
-      .hs-roadmap{left:12.1%;top:79.8%;width:77.2%;height:8.2%}
-      .hs-tokenomics-panel{left:3.8%;top:20.8%;width:31.7%;height:18.6%}
-      .hs-metrics{left:7.8%;top:45.2%;width:84.8%;height:13.3%}
+      .hs-howto{left:19.0%;top:58.0%;width:62.5%;height:20.5%}
+      .hs-roadmap{left:12.0%;top:82.6%;width:74.0%;height:8.5%}
+      .hs-tokenomics-panel{left:5.5%;top:25.2%;width:27.0%;height:31.5%}
+      .hs-metrics{left:0%;top:0%;width:0;height:0}
+
     }
     @media (max-width: 720px){
       .container{width:min(var(--max), calc(100% - 16px))}
@@ -437,10 +496,173 @@
     .panel:nth-child(2),.phase:nth-child(2){animation-delay:.12s}
     .panel:nth-child(3),.phase:nth-child(3){animation-delay:.19s}
     @media (prefers-reduced-motion:reduce){.panel,.phase{animation:none}}
+  
+    .hero-ui,.hero-desktop-nav,.mobile-topnav,.hero-decor .rocket,.hero-decor .coin,.scroll-hint{display:none !important}
+    @media (max-width: 820px){
+      body{padding-bottom:0}
+      .mobile-nav{display:none !important}
+      .hero{height:100svh;min-height:100svh}
+      .hero-frame{top:0 !important;height:100svh !important}
+    }
+    .section.flash .panel,.section.flash .phase{box-shadow:0 0 0 2px rgba(255,255,255,.20), 0 0 0 6px rgba(27,136,255,.18), var(--shadow); transform:translateY(-2px)}
+    .round-live-box{
+      margin-top:18px;
+      padding:18px;
+      border-radius:22px;
+      background:linear-gradient(160deg, rgba(16,24,52,.82), rgba(10,16,36,.72));
+      border:1px solid rgba(255,255,255,.07);
+      border-top-color:rgba(255,255,255,.14);
+      box-shadow:var(--shadow);
+    }
+    .round-live-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+    .round-live-head strong{font-size:18px}
+    .round-live-sub{color:#a8bcdf;font-size:13px;line-height:1.5}
+    .round-live-bar{height:12px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden;margin:12px 0 10px}
+    .round-live-fill{height:100%;width:0%;background:linear-gradient(90deg,#18a3ff,#ffd665);transition:width .45s ease}
+    .round-live-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .round-live-mini{padding:12px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07)}
+    .round-live-mini strong{display:block;font-size:13px;margin-bottom:4px}
+    .round-live-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
+    @media (max-width:980px){.round-live-stats{grid-template-columns:1fr}}
+
+
+    /* --- Hero rebuild: interactive hotspots, premium hover, cleaner mobile --- */
+    .hero{min-height:100svh;display:grid;place-items:center;padding:0;position:relative;isolation:isolate}
+    .hero::before{
+      content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+      background:
+        radial-gradient(circle at 50% 26%, rgba(255,183,0,.12), transparent 22%),
+        radial-gradient(circle at 50% 60%, rgba(27,136,255,.10), transparent 28%),
+        linear-gradient(180deg, rgba(2,6,16,.06), rgba(2,6,16,.22));
+    }
+    .hero-frame{
+      position:relative; z-index:1; width:min(1780px,100vw); aspect-ratio:2048 / 1365;
+      max-height:100svh; overflow:hidden; background:#040915; isolation:isolate;
+      box-shadow:0 34px 88px rgba(0,0,0,.52);
+    }
+    .hero-frame picture{position:absolute; inset:0; display:block}
+    .hero-frame img{
+      width:100%; height:100%; display:block; object-fit:cover; object-position:center center;
+      filter:brightness(1.06) contrast(1.08) saturate(1.10);
+      transform:translateZ(0) scale(1.002);
+      image-rendering:auto;
+    }
+    .hero-frame::before{
+      content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(34,155,255,.16), transparent 21%),
+        radial-gradient(circle at 78% 18%, rgba(255,183,0,.10), transparent 17%),
+        linear-gradient(180deg, rgba(4,8,20,.06) 0%, rgba(4,8,20,.02) 42%, rgba(4,8,20,.24) 100%);
+    }
+    .hero-frame::after{
+      content:""; position:absolute; inset:0; z-index:2; pointer-events:none;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.04), inset 0 -56px 110px rgba(3,7,19,.28);
+    }
+    .hero-badge{
+      position:absolute; left:clamp(16px,2vw,28px); top:clamp(16px,2vw,28px); z-index:4;
+      display:inline-flex; align-items:center; gap:9px; padding:10px 15px; border-radius:999px;
+      background:rgba(7,12,28,.68); border:1px solid rgba(255,255,255,.12);
+      color:#f5fbff; font-size:11px; font-weight:900; letter-spacing:.14em; text-transform:uppercase;
+      backdrop-filter:blur(18px); box-shadow:0 10px 28px rgba(0,0,0,.32);
+    }
+    .hero-badge span{
+      display:inline-block; width:8px; height:8px; border-radius:999px;
+      background:linear-gradient(180deg,#47d8ff,#1b88ff);
+      box-shadow:0 0 14px rgba(71,216,255,.95);
+      animation:chipPulse 2.4s ease-in-out infinite;
+    }
+    .hero-copy{
+      position:absolute; left:clamp(16px,2vw,28px); bottom:clamp(16px,2vw,28px); z-index:4;
+      max-width:min(430px,31vw); padding:16px 18px; border-radius:22px;
+      border:1px solid rgba(255,255,255,.10); border-top-color:rgba(255,255,255,.16);
+      background:linear-gradient(160deg, rgba(10,16,34,.72), rgba(7,12,26,.82));
+      backdrop-filter:blur(18px) saturate(1.25);
+      box-shadow:0 18px 44px rgba(0,0,0,.34);
+    }
+    .hero-copy strong{
+      display:block; margin-bottom:6px; font-size:clamp(15px,1.7vw,21px); letter-spacing:.01em;
+      background:linear-gradient(90deg,#fff 58%,#99c1ff); -webkit-background-clip:text; background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
+    .hero-copy p{margin:0; color:rgba(182,206,255,.82); line-height:1.58; font-size:12.5px}
+
+    .hotspot{
+      position:absolute; display:block; border:none; background:transparent; cursor:pointer;
+      border-radius:18px; outline:none; z-index:5; isolation:isolate;
+      transition:transform .18s ease;
+    }
+    .hotspot::before{
+      content:""; position:absolute; inset:-2px; border-radius:inherit; pointer-events:none;
+      opacity:0; transform:scale(.97);
+      border:1px solid rgba(124,187,255,.34);
+      background:
+        linear-gradient(115deg, transparent 20%, rgba(255,255,255,.28) 50%, transparent 80%) 0 0 / 230% 100%,
+        radial-gradient(circle at center, rgba(27,136,255,.16), transparent 74%);
+      box-shadow:0 0 0 1px rgba(124,187,255,.08), 0 12px 36px rgba(0,0,0,.18), 0 0 34px rgba(27,136,255,.12);
+      transition:opacity .22s ease, transform .22s ease, background-position .72s cubic-bezier(.22,.8,.36,1), box-shadow .22s ease;
+    }
+    .hotspot::after{
+      content:attr(data-label); position:absolute; left:50%; top:-10px; pointer-events:none;
+      transform:translate(-50%, 10px) scale(.96); opacity:0;
+      padding:7px 12px; border-radius:999px; white-space:nowrap;
+      background:rgba(7,12,28,.92); border:1px solid rgba(255,255,255,.12);
+      color:#f5fbff; font-size:10px; font-weight:900; letter-spacing:.12em; text-transform:uppercase;
+      box-shadow:0 10px 26px rgba(0,0,0,.28);
+      transition:opacity .22s ease, transform .22s ease;
+    }
+    .hotspot--gold::before{
+      border-color:rgba(255,200,74,.44);
+      background:
+        linear-gradient(115deg, transparent 18%, rgba(255,248,214,.32) 50%, transparent 82%) 0 0 / 230% 100%,
+        radial-gradient(circle at center, rgba(255,183,0,.18), transparent 74%);
+      box-shadow:0 0 0 1px rgba(255,207,112,.08), 0 12px 36px rgba(0,0,0,.18), 0 0 34px rgba(255,177,0,.16);
+    }
+    .hotspot--blue::before{
+      border-color:rgba(83,180,255,.44);
+      background:
+        linear-gradient(115deg, transparent 18%, rgba(232,247,255,.32) 50%, transparent 82%) 0 0 / 230% 100%,
+        radial-gradient(circle at center, rgba(27,136,255,.20), transparent 74%);
+    }
+    .hotspot--pulse::before{opacity:.14; transform:scale(.992); animation:heroPulse 4.2s ease-in-out infinite}
+    .hotspot--pulse:hover::before,.hotspot--pulse:focus-visible::before{opacity:1}
+    @keyframes heroPulse{0%,100%{opacity:.10;transform:scale(.988)}50%{opacity:.22;transform:scale(1)}}
+    @media (hover:hover) and (pointer:fine){
+      .hotspot:hover,.hotspot:focus-visible{transform:translateY(-1px)}
+      .hotspot:hover::before,.hotspot:focus-visible::before{opacity:1; transform:scale(1); background-position:100% 0, 0 0}
+      .hotspot:hover::after,.hotspot:focus-visible::after{opacity:1; transform:translate(-50%, 0) scale(1)}
+    }
+    .hotspot:focus-visible{outline:none}
+
+    @media (max-width:820px){
+      body::before{background:url("superfirulai-mobile.webp") center center / cover no-repeat; filter:blur(36px) brightness(.26) saturate(1.08);}
+      .hero{padding:0 0 12px}
+      .hero-frame{
+        width:min(100vw, calc(100svh * .6666667));
+        aspect-ratio:2 / 3; max-height:100svh; box-shadow:0 24px 60px rgba(0,0,0,.42);
+      }
+      .hero-frame img{object-position:center top; filter:brightness(1.07) contrast(1.08) saturate(1.12)}
+      .hero-badge{top:12px; left:12px; padding:8px 12px; font-size:9px; letter-spacing:.12em}
+      .hero-copy{
+        left:12px; right:12px; bottom:12px; max-width:none; padding:12px 14px; border-radius:16px;
+        background:rgba(5,9,22,.78); backdrop-filter:blur(14px) saturate(1.18);
+      }
+      .hero-copy strong{font-size:13px; margin-bottom:4px}
+      .hero-copy p{font-size:10px; line-height:1.45}
+      .hotspot{border-radius:14px}
+      .hotspot::after{display:none}
+      .hotspot--pulse::before{opacity:.16}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .hero-badge span,.hotspot--pulse::before{animation:none}
+      .hotspot::before,.hotspot::after,.hotspot{transition:none}
+    }
+
+
   </style>
 </head>
 <body>
   <main>
+
     <section class="hero" id="home">
       <div class="hero-frame">
         <picture>
@@ -448,103 +670,85 @@
           <img src="superfirulai-desktop.webp" alt="SuperFirulai official hero" />
         </picture>
 
-        <div class="hero-decor" aria-hidden="true">
-          <div class="rocket r1">🚀</div>
-          <div class="rocket r2">🚀</div>
-          <div class="rocket r3">🚀</div>
+        <div class="hero-badge"><span></span> Round 1 Active · Interactive Hero</div>
+
+        <div class="hero-copy">
+          <strong>SuperFirulai ($FIRU) is live. Tap the artwork to jump straight into buy, airdrop, tokenomics or roadmap.</strong>
+          <p>Embedded hotspots, cleaner hover effects and a faster path into the presale flow — all without adding extra visual clutter on top of the hero.</p>
         </div>
 
-        <div class="hero-ui" aria-hidden="true">
-          <div class="hero-chip"><span></span> $FIRU — Solana</div>
-          <div class="hero-copy">
-            <h1>SuperFirulai ($FIRU). Early access to the next viral Solana meme coin.</h1>
-            <p>Enter before the public wave. Official rounds, verified airdrop access, and a premium launch flow built to turn early attention into real momentum.</p>
-          </div>
-        </div>
-
-        <a class="hotspot hs-home" href="#home" aria-label="Home"></a>
-        <a class="hotspot hs-tokenomics-top" href="#tokenomics" aria-label="Tokenomics"></a>
-        <a class="hotspot hs-airdrop-top" href="#airdrop" aria-label="Airdrop"></a>
-        <a class="hotspot hs-roadmap-top" href="#roadmap" aria-label="Roadmap"></a>
-        <a class="hotspot hs-community-top" href="#community" aria-label="Community"></a>
-        <a class="hotspot hs-telegram-top" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram"></a>
-        <button class="hotspot hs-buy-top" type="button" id="buyTop" aria-label="Buy $FIRU"></button>
-        <a class="hotspot hs-telegram-main" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram main"></a>
-        <a class="hotspot hs-airdrop-main" href="#airdrop" aria-label="Register Airdrop"></a>
-        <a class="hotspot hs-about" href="#community" aria-label="About SuperFirulai"></a>
-        <a class="hotspot hs-howto" href="#airdrop" aria-label="How to Buy"></a>
-        <a class="hotspot hs-roadmap" href="#roadmap" aria-label="Roadmap section"></a>
-        <a class="hotspot hs-tokenomics-panel" href="#tokenomics" aria-label="Tokenomics panel"></a>
-        <a class="hotspot hs-metrics" href="#community" aria-label="Community metrics"></a>
-
-        <a class="scroll-hint" href="#community">↓ Rounds · Community · Airdrop</a>
+        <a class="hotspot hs-home" href="#home" aria-label="Home" data-label="Home"></a>
+        <a class="hotspot hs-tokenomics-top" href="#tokenomics" aria-label="Tokenomics" data-label="Tokenomics"></a>
+        <a class="hotspot hs-airdrop-top" href="#airdrop" aria-label="Airdrop" data-label="Airdrop"></a>
+        <a class="hotspot hs-roadmap-top" href="#roadmap" aria-label="Roadmap" data-label="Roadmap"></a>
+        <a class="hotspot hs-community-top" href="#community" aria-label="Community" data-label="Community"></a>
+        <a class="hotspot hotspot--blue hs-telegram-top" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram" data-label="Telegram"></a>
+        <button class="hotspot hotspot--gold hotspot--pulse hs-buy-top" type="button" id="buyTop" aria-label="Buy $FIRU" data-label="Buy $FIRU"></button>
+        <a class="hotspot hotspot--blue hotspot--pulse hs-telegram-main" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram main" data-label="Join Telegram"></a>
+        <a class="hotspot hotspot--gold hotspot--pulse hs-airdrop-main" href="#airdrop" aria-label="Register Airdrop" data-label="Register Airdrop"></a>
+        <a class="hotspot hs-about" href="#community" aria-label="About SuperFirulai" data-label="About"></a>
+        <a class="hotspot hs-howto" href="#airdrop" aria-label="How to Buy" data-label="How to Buy"></a>
+        <a class="hotspot hs-roadmap" href="#roadmap" aria-label="Roadmap section" data-label="Roadmap"></a>
+        <a class="hotspot hs-tokenomics-panel" href="#tokenomics" aria-label="Tokenomics panel" data-label="Tokenomics"></a>
+        <a class="hotspot hs-metrics" href="#community" aria-label="Community metrics" data-label="Community"></a>
       </div>
     </section>
 
-    <!-- Fixed mobile BOTTOM navigation bar -->
-    <nav class="mobile-nav" aria-label="Quick navigation">
-      <div class="mobile-nav-inner">
-        <a class="mnav-btn is-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M21.5 4.5L2.5 11.5l7 2.5 2.5 7 3-5 5 3z"/><path d="M9.5 14l5-5"/></svg>
-          Telegram
-        </a>
-        <a class="mnav-btn is-airdrop" href="#airdrop">
-          <svg viewBox="0 0 24 24"><path d="M12 2L8 7h3v6H9l3 3 3-3h-2V7h3z"/><path d="M5 17h14M7 20h10"/></svg>
-          Airdrop
-        </a>
-        <a class="mnav-btn is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24"><path d="M4 4l16 16"/><path d="M20 4L4 20"/></svg>
-          Follow X
-        </a>
-        <a class="mnav-btn is-token" href="#tokenomics">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/><circle cx="12" cy="12" r="2" fill="currentColor" opacity=".4"/></svg>
-          Tokens
-        </a>
-        <button class="mnav-btn is-gold" type="button" id="buyMobile">
-          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>
-          Buy $FIRU
-        </button>
-      </div>
-    </nav>
 
+    
     <section class="section" id="rounds">
       <div class="container">
         <div class="section-head reveal">
           <div class="eyebrow"><span></span> Early Access Structure</div>
           <h2 class="section-title">Official Launch Rounds</h2>
-          <p class="section-copy">A simple two-step presale path designed to reward early supporters first and keep launch expectations clear.</p>
+          <p class="section-copy">Founder pricing in Round 1, fixed allocation per round, and automatic closure once the available FIRU is sold. The first buyers lock in the strongest entry price before the public tier opens.</p>
         </div>
         <div class="rounds-grid">
           <div class="panel round-card reveal reveal-left reveal-delay-1">
-            <div class="round-badge"><span></span> Round 1 · Early Access</div>
-            <div class="round-price">Lowest Entry</div>
-            <p class="round-note">Built for the earliest supporters who move before the broader market attention arrives.</p>
+            <div class="round-badge"><span></span> Round 1 · Founder Entry</div>
+            <div class="round-price">$0.0001</div>
+            <p class="round-note">The first 25,000,000 FIRU are offered at the lowest official entry price for the earliest supporters.</p>
             <ul class="round-list">
-              <li><i>✓</i> Priority access window</li>
-              <li><i>✓</i> Lowest round pricing</li>
-              <li><i>✓</i> Limited supply allocation</li>
+              <li><i>✓</i> 25,000,000 FIRU allocation</li>
+              <li><i>✓</i> 100% price advantage vs Round 2</li>
+              <li><i>✓</i> 0.1 SOL min / 1 SOL max</li>
             </ul>
           </div>
           <div class="panel round-card reveal reveal-delay-2">
             <div class="round-badge"><span></span> Round 2 · Public Presale</div>
-            <div class="round-price">Higher Demand</div>
-            <p class="round-note">Public access opens after the early round, with a higher price tier and limited remaining allocation.</p>
+            <div class="round-price">$0.0002</div>
+            <p class="round-note">Round 2 opens after Round 1 closes, preserving a clear founder tier followed by the public tier.</p>
             <ul class="round-list">
-              <li><i>✓</i> Public presale access</li>
-              <li><i>✓</i> Higher price tier</li>
-              <li><i>✓</i> Remaining allocation only</li>
+              <li><i>✓</i> 25,000,000 FIRU allocation</li>
+              <li><i>✓</i> Activated after Round 1 sells out</li>
+              <li><i>✓</i> Higher official price tier</li>
             </ul>
           </div>
           <div class="panel reveal reveal-right reveal-delay-3">
             <div class="round-summary">
-              <div class="summary-mini"><strong>Launch delivery</strong><span>Tokens purchased during presale will be distributed according to the official launch schedule.</span></div>
-              <div class="summary-mini"><strong>Clear expectations</strong><span>No fake promises, no confusing wording, just a simple path from early access to launch.</span></div>
-              <div class="summary-mini"><strong>Best move now</strong><span>Join Telegram, register the airdrop, and stay ready for the first official access alert.</span></div>
+              <div class="summary-mini"><strong>Automatic closure</strong><span>Each round closes automatically when the full FIRU allocation is sold.</span></div>
+              <div class="summary-mini"><strong>Multi-token access</strong><span>Users can participate using SOL, USDT or USDC on Solana.</span></div>
+              <div class="summary-mini"><strong>Founder advantage</strong><span>Round 1 buyers enter at half the Round 2 price, locking in the earliest tier.</span></div>
             </div>
+          </div>
+        </div>
+
+        <div class="round-live-box reveal reveal-delay-4">
+          <div class="round-live-head">
+            <strong id="roundLiveTitle">Round 1 Live Progress</strong>
+            <span id="roundLivePercent" class="round-live-sub">0%</span>
+          </div>
+          <div class="round-live-sub" id="roundLiveText">0 / 25,000,000 FIRU sold</div>
+          <div class="round-live-bar"><div class="round-live-fill" id="roundLiveFill"></div></div>
+          <div class="round-live-stats">
+            <div class="round-live-mini"><strong>Price</strong><span id="roundLivePrice">$0.0001</span></div>
+            <div class="round-live-mini"><strong>Remaining</strong><span id="roundLiveRemaining">25,000,000 FIRU</span></div>
+            <div class="round-live-mini"><strong>Status</strong><span id="roundLiveStatus">Live now</span></div>
           </div>
         </div>
       </div>
     </section>
+
 
     <section class="section is-hero-linked" id="community">
       <div class="container">
@@ -600,7 +804,7 @@
               <li style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#dce8ff"><span style="display:inline-flex;width:22px;height:22px;border-radius:8px;background:rgba(9,218,125,.18);border:1px solid rgba(9,218,125,.35);align-items:center;justify-content:center;font-size:13px;color:#09da7d">✓</span> Community Driven</li>
               <li style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#dce8ff"><span style="display:inline-flex;width:22px;height:22px;border-radius:8px;background:rgba(9,218,125,.18);border:1px solid rgba(9,218,125,.35);align-items:center;justify-content:center;font-size:13px;color:#09da7d">✓</span> Fixed Supply</li>
               <li style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#dce8ff"><span style="display:inline-flex;width:22px;height:22px;border-radius:8px;background:rgba(9,218,125,.18);border:1px solid rgba(9,218,125,.35);align-items:center;justify-content:center;font-size:13px;color:#09da7d">✓</span> No Mint</li>
-              <li style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#dce8ff"><span style="display:inline-flex;width:22px;height:22px;border-radius:8px;background:rgba(9,218,125,.18);border:1px solid rgba(9,218,125,.35);align-items:center;justify-content:center;font-size:13px;color:#09da7d">✓</span> Liquidity Locked</li>
+              <li style="display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;color:#dce8ff"><span style="display:inline-flex;width:22px;height:22px;border-radius:8px;background:rgba(9,218,125,.18);border:1px solid rgba(9,218,125,.35);align-items:center;justify-content:center;font-size:13px;color:#09da7d">✓</span> Liquidity-First Launch</li>
             </ul>
           </div>
 
@@ -842,6 +1046,44 @@
       }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
       els.forEach(el => io.observe(el));
     })();
+
+
+    async function loadRoundLiveProgress(){
+      try{
+        const resp = await fetch("/api/round/config", { cache:"no-store" });
+        const data = await resp.json();
+        if(!resp.ok) throw new Error(data?.error || "Could not load round config");
+
+        const activeRound = data?.rounds?.round1?.enabled ? data.rounds.round1 : data?.rounds?.round2;
+        const activeName = data?.rounds?.round1?.enabled ? "Round 1 Live Progress" : "Round 2 Live Progress";
+        if(!activeRound) return;
+
+        const sold = Number(activeRound.raisedFiru || 0);
+        const cap = Number(activeRound.tokenCap || 0);
+        const remaining = Number(activeRound.remainingFiru || 0);
+        const percent = cap > 0 ? Math.min((sold / cap) * 100, 100) : 0;
+
+        const titleEl = document.getElementById("roundLiveTitle");
+        const percentEl = document.getElementById("roundLivePercent");
+        const textEl = document.getElementById("roundLiveText");
+        const fillEl = document.getElementById("roundLiveFill");
+        const priceEl = document.getElementById("roundLivePrice");
+        const remainingEl = document.getElementById("roundLiveRemaining");
+        const statusEl = document.getElementById("roundLiveStatus");
+
+        if (titleEl) titleEl.textContent = activeName;
+        if (percentEl) percentEl.textContent = percent.toFixed(1) + "%";
+        if (textEl) textEl.textContent = sold.toLocaleString("en-US") + " / " + cap.toLocaleString("en-US") + " FIRU sold";
+        if (fillEl) fillEl.style.width = percent + "%";
+        if (priceEl) priceEl.textContent = "$" + Number(activeRound.firuPriceUsd || 0).toLocaleString("en-US", { minimumFractionDigits: 4, maximumFractionDigits: 6 });
+        if (remainingEl) remainingEl.textContent = remaining.toLocaleString("en-US") + " FIRU";
+        if (statusEl) statusEl.textContent = activeRound.soldOut ? "Sold out" : "Live now";
+      }catch(err){
+        console.error("Round live progress error", err);
+      }
+    }
+
+    loadRoundLiveProgress();
 
     // Stats are already initialized by the plain script above.
   </script>
