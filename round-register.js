@@ -73,7 +73,7 @@ function injectStyles() {
     .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-metric span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
-    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid{grid-template-columns:1fr}}
+    .sf-progress{padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)} .sf-progress-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;margin-bottom:8px} .sf-progress-head strong{color:#fff}.sf-progress-head span{color:#9db7e8;font-weight:800}.sf-progress-bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}.sf-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#18a3ff,#ffd665);transition:width .4s ease} @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -119,6 +119,8 @@ export function mountRoundRegister(selector) {
   root.innerHTML = `
     <form class="sf-round-form" novalidate>
       <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. Manual TX hash registration remains available for SOL, USDT and USDC.</div>
+
+      <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
       <div class="sf-row-tight">
         <label class="sf-field">
@@ -236,6 +238,21 @@ export function mountRoundRegister(selector) {
     roundMetaEl.textContent = pieces.join(" · ");
   }
 
+
+  function updateProgress() {
+    const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
+    const textEl = root.querySelector("#sfProgressText");
+    const percentEl = root.querySelector("#sfProgressPercent");
+    const fillEl = root.querySelector("#sfProgressFill");
+    if (!meta || !textEl || !percentEl || !fillEl) return;
+    const sold = Number(meta.raisedFiru || 0);
+    const cap = Number(meta.tokenCap || 0);
+    const percent = cap > 0 ? Math.min((sold / cap) * 100, 100) : 0;
+    textEl.textContent = sold.toLocaleString("en-US") + " / " + cap.toLocaleString("en-US") + " FIRU sold";
+    percentEl.textContent = percent.toFixed(1) + "%";
+    fillEl.style.width = percent + "%";
+  }
+
   function updateTokenDetails() {
     const token = getTokenMeta(roundConfig, tokenEl.value);
     if (!token) {
@@ -244,6 +261,7 @@ export function mountRoundRegister(selector) {
       liveTokenPriceEl.textContent = "-";
       estimatedUsdEl.textContent = "-";
       estimatedFiruEl.textContent = "-";
+      updateProgress();
       return;
     }
 
@@ -251,6 +269,7 @@ export function mountRoundRegister(selector) {
     destinationShortEl.textContent = short(token.destinationAddress || "");
     liveTokenPriceEl.textContent = `$${formatCompact(token.livePriceUsd, 6)}`;
     updateEstimate();
+    updateProgress();
   }
 
   function updateEstimate() {
@@ -297,6 +316,7 @@ export function mountRoundRegister(selector) {
       roundConfig = await fetchRoundConfig();
       updateRoundMeta();
       updateTokenDetails();
+      updateProgress();
       setReady();
     } catch (err) {
       roundMetaEl.textContent = "Could not load round configuration.";
@@ -361,6 +381,7 @@ export function mountRoundRegister(selector) {
         meta.soldOut = Boolean(data.round_status.sold_out);
       }
       updateRoundMeta();
+      updateProgress();
       setReady();
     }
 
@@ -440,6 +461,7 @@ export function mountRoundRegister(selector) {
         }
       }
       updateRoundMeta();
+      updateProgress();
       setReady();
 
       setMsg(
