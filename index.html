@@ -975,6 +975,26 @@
     try{mountAirdropRegister("#airdrop-register");mountRoundRegister("#round-register")}
     catch(e){console.error("mount",e)}
 
+    function enforceXBeforeTelegram(){
+      const root=document.querySelector("#airdrop-register");
+      if(!root) return;
+      const form=root.querySelector(".sf-airdrop-form");
+      const xField=root.querySelector("#sf-x")?.closest(".sf-field");
+      const tgField=root.querySelector("#sf-telegram")?.closest(".sf-field");
+      if(form&&xField&&tgField){
+        form.insertBefore(xField,tgField);
+      }
+      const msg=root.querySelector("#sf-msg");
+      if(msg&&msg.textContent){
+        msg.textContent=msg.textContent
+          .replace("Telegram, X and captcha","X, Telegram and captcha")
+          .replace("Telegram and X","X and Telegram")
+          .replace("Telegram, X","X, Telegram");
+      }
+    }
+    enforceXBeforeTelegram();
+    setTimeout(enforceXBeforeTelegram,0);
+
     /* Navbar scroll */
     const nb=document.getElementById("navbar");
     const onS=()=>nb.classList.toggle("scrolled",scrollY>8);
