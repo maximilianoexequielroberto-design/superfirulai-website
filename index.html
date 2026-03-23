@@ -62,7 +62,7 @@
 .navbar-inner{
   width:100%;max-width:var(--max);margin:0 auto;
   min-height:var(--nav-h);
-  display:flex;align-items:center;justify-content:center;gap:12px;
+  display:flex;align-items:center;justify-content:flex-start;gap:12px;
   padding:0 16px;
   border-radius:22px;
   background:transparent;
@@ -102,29 +102,36 @@
 
     /* Desktop links */
     .nav-links{
-      display:flex;align-items:center;gap:2px;
+      display:flex;align-items:center;gap:4px;
       position:static;left:auto;transform:none;
+      margin-left:86px;
     }
     .nav-links a{
-      padding:8px 14px;border-radius:10px;
-      font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
+      padding:9px 15px;border-radius:10px;
+      font-size:14px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
       color:rgba(228,238,255,.9);
       text-shadow:0 4px 18px rgba(0,0,0,.55);
       transition:color .18s,background .18s;white-space:nowrap;
     }
     .nav-links a:hover{color:#fff;background:rgba(255,255,255,.07)}
 
+
+    @media(max-width:1180px){
+      .nav-links{margin-left:42px}
+      .nav-links a{padding:8px 12px;font-size:13px}
+    }
+
     @media(min-width:941px){
-      .navbar-inner{padding:0 20px}
+      .navbar-inner{padding:0 22px}
       .nav-links,.nav-ctas{position:relative;z-index:1}
     }
 
     /* CTA buttons */
-    .nav-ctas{display:flex;align-items:center;gap:8px;flex-shrink:0;margin-left:4px}
+    .nav-ctas{display:flex;align-items:center;gap:10px;flex-shrink:0;margin-left:auto}
     .nav-btn{
       display:inline-flex;align-items:center;justify-content:center;gap:7px;
-      height:38px;padding:0 16px;border-radius:12px;
-      font-size:12px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;
+      height:40px;padding:0 17px;border-radius:12px;
+      font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
       border:none;white-space:nowrap;
       transition:transform .18s,filter .18s,box-shadow .18s;
     }
