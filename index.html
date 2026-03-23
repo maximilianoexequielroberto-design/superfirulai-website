@@ -143,12 +143,12 @@
     }
     .nav-btn:hover{transform:translateY(-1px)}
     .nav-btn-x{
-      display:none;
+      display:inline-flex;
       background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);
-      color:rgba(210,230,255,.85);width:38px;padding:0;border-radius:10px;
+      color:rgba(210,230,255,.92);padding:0 14px;border-radius:10px;min-width:54px;
     }
     .nav-btn-x:hover{background:rgba(255,255,255,.15);color:#fff}
-    .nav-btn-x svg{width:15px;height:15px;fill:currentColor}
+    .nav-btn-x svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
     .nav-btn-tg{
       background:linear-gradient(135deg,rgba(30,144,255,.28),rgba(10,91,223,.22));
       border:1px solid rgba(30,144,255,.35);color:#70c0ff;
@@ -515,7 +515,7 @@
     .phase h3{font-family:"Barlow Condensed",sans-serif;font-size:26px;font-weight:900;margin-bottom:10px}
     .phase p{color:var(--muted);line-height:1.7;font-size:14px}
 
-    .final-cta-grid{display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:18px}
+    .final-cta-grid{display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:18px}
     @media(max-width:960px){.final-cta-grid{grid-template-columns:1fr}}
     .cta-points{display:grid;gap:14px}
     .key-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
@@ -582,6 +582,7 @@
            target="_blank" rel="noopener"
            aria-label="Follow on X">
           <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          X
         </a>
         <a class="nav-btn nav-btn-tg"
            href="https://t.me/superfirulaicommunity"
@@ -838,12 +839,10 @@
             <h2 class="section-title" style="margin-bottom:12px">Keep the flow simple before launch.</h2>
             <p class="section-copy">First understand the airdrop, then register your wallet, and finally follow the official claim date after launch. One clear path is easier for users to trust and follow.</p>
             <div class="actions">
-              <button class="btn btn-gold" type="button" id="buyFinal">Buy $FIRU</button>
               <a class="btn btn-blue" href="#register">Register Access</a>
             </div>
           </div>
           <div class="cta-points reveal reveal-d1">
-            <div class="summary-mini"><strong>Correct order matters</strong><span>Airdrop first, registration second, claim later after launch.</span></div>
             <div class="summary-mini"><strong>Cleaner registration</strong><span>Wallet verification, Telegram, X and captcha protection help keep the list more organized.</span></div>
             <div class="summary-mini"><strong>Built for conversion</strong><span>Premium visuals, stronger messaging and a direct route from first visit to real launch action.</span></div>
           </div>
