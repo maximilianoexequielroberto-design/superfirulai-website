@@ -926,21 +926,31 @@
   <!-- ── BUY DIALOG ── -->
   <dialog id="buyDialog" style="max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
     <div class="buy-shell">
-      <div class="buy-badge"><span></span> Official Buy Access</div>
+      <div class="buy-badge"><span></span> Official Launch Rounds</div>
       <div class="dialog-header">
         <div style="position:relative;z-index:1">
-          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Buy $FIRU · Round 1 and Round 2</h3>
-          <p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">When the official buy window opens, send SOL to the project wallet and paste the confirmed transaction hash. The system checks the transaction on-chain and saves your FIRU allocation for the selected round.</p>
+          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Buy $FIRU · Phase 2 Launch</h3>
+          <p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">Buy access belongs to Phase 2. Round 1 and Round 2 will open only after the official announcement on X and Telegram, so this window stays simple and focused until launch details are live.</p>
         </div>
         <button class="dialog-close" id="closeDlg" aria-label="Close">&#x2715;</button>
       </div>
       <div class="dialog-divider"></div>
       <div class="dialog-steps">
-        <div class="dialog-step"><strong>1 · Send SOL</strong><span>Use the official treasury wallet published by the project.</span></div>
-        <div class="dialog-step"><strong>2 · Paste TX hash</strong><span>The transaction must be confirmed on Solana before submitting.</span></div>
-        <div class="dialog-step"><strong>3 · Allocation saved</strong><span>Your FIRU allocation is calculated automatically from the round price.</span></div>
+        <div class="dialog-step"><strong>1 · Follow official updates</strong><span>X and Telegram will announce when the buy rounds are officially open.</span></div>
+        <div class="dialog-step"><strong>2 · Prepare wallet and SOL</strong><span>Keep a personal Solana wallet ready before Phase 2 begins.</span></div>
+        <div class="dialog-step"><strong>3 · Join Round 1 or Round 2</strong><span>The two buy rounds stay inside the launch phase, not mixed with the airdrop and claim flow.</span></div>
       </div>
-      <div id="round-register" style="position:relative;z-index:1"></div>
+      <div style="position:relative;z-index:1;display:grid;gap:14px">
+        <div class="summary-mini" style="background:rgba(255,255,255,.045)">
+          <strong style="display:block;margin-bottom:6px">Why this stays separate</strong>
+          <span style="display:block;color:#9db7df;line-height:1.7">Airdrop, registration and claim remain the main path. Buy access is kept as Phase 2 information so visitors do not confuse launch rounds with claim.</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <a class="btn btn-blue" href="#roadmap" onclick="document.getElementById('buyDialog')?.close()">View Roadmap</a>
+          <a class="btn btn-dark" href="https://x.com" target="_blank" rel="noopener">Follow on X</a>
+          <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+        </div>
+      </div>
     </div>
   </dialog>
 
@@ -971,8 +981,7 @@
 
   <script type="module">
     import { mountAirdropRegister } from "./airdrop-register.js";
-    import { mountRoundRegister }   from "./round-register.js";
-    try{mountAirdropRegister("#airdrop-register");mountRoundRegister("#round-register")}
+    try{mountAirdropRegister("#airdrop-register")}
     catch(e){console.error("mount",e)}
 
     function enforceXBeforeTelegram(){
