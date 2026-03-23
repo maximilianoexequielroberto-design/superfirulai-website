@@ -436,6 +436,8 @@
     .btn-gold:hover{filter:brightness(1.06);box-shadow:0 20px 44px rgba(255,160,0,.35)}
     .btn-dark{background:rgba(10,17,38,.9);color:#d8e8ff;border-color:rgba(255,255,255,.1)}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+    .btn-ico{width:16px;height:16px;display:inline-block;flex:0 0 16px}
+    .btn-ico svg{width:16px;height:16px;display:block;fill:currentColor}
 
     .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     @media(max-width:700px){.quick-grid{grid-template-columns:1fr 1fr}}
@@ -795,10 +797,15 @@
             </a>
           </div>
           <div class="actions">
-            <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
-            <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
+            <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+              <span class="btn-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></span>
+              Follow on X
+            </a>
+            <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+              <span class="btn-ico" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg></span>
+              Join Telegram
+            </a>
             <a class="btn btn-gold" href="#register">Register Access</a>
-            <button class="btn btn-dark" type="button" id="buyCom">Buy $FIRU</button>
           </div>
         </div>
       </div>
