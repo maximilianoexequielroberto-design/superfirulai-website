@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SuperFirulai $FIRU — The Community Powered Memecoin on Solana</title>
-  <meta name="description" content="SuperFirulai ($FIRU) is the community-powered memecoin on Solana. Early presale rounds, verified airdrop, 0% tax, fixed supply. Join the movement before launch." />
-  <meta property="og:title" content="SuperFirulai $FIRU — Community Memecoin on Solana" />
-  <meta property="og:description" content="Join SuperFirulai early. Presale rounds, verified airdrop, tokenomics and community launch on Solana." />
+  <title>SuperFirulai $FIRU — Buy, Claim and Join the Community on Solana</title>
+  <meta name="description" content="SuperFirulai ($FIRU) is the community-powered memecoin on Solana. Buy early, prepare for manual claim, review tokenomics and register for verified access before launch." />
+  <meta property="og:title" content="SuperFirulai $FIRU — Buy, Claim and Join the Community on Solana" />
+  <meta property="og:description" content="Buy $FIRU early, explore the manual claim flow, review tokenomics and register for verified access on Solana." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="/superfirulai-banner.webp" />
+  <meta property="og:image" content="/superfirulai-social.webp" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SuperFirulai $FIRU — Community Memecoin on Solana" />
-  <meta name="twitter:description" content="Join SuperFirulai early. Presale rounds, verified airdrop and community launch on Solana." />
-  <meta name="twitter:image" content="/superfirulai-banner.webp" />
+  <meta name="twitter:title" content="SuperFirulai $FIRU — Buy, Claim and Join the Community on Solana" />
+  <meta name="twitter:description" content="Buy $FIRU early, explore the manual claim flow, review tokenomics and register for verified access on Solana." />
+  <meta name="twitter:image" content="/superfirulai-social.webp" />
   <meta name="theme-color" content="#050d1f" />
   <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
     /* ── GLOBAL BG ── */
     body::before{
       content:"";position:fixed;inset:0;pointer-events:none;z-index:-2;
-      background:url("superfirulai-desktop.png") center top/cover no-repeat;
+      background:url("superfirulai-hero-final.webp") center top/cover no-repeat;
       filter:blur(42px) brightness(.16) saturate(1.1);transform:scale(1.07);
     }
     body::after{
@@ -184,7 +184,7 @@
 
     /* Desktop */
     @media(min-width:821px){
-      .hero-wrap{padding-top:0}
+      .hero-wrap{padding-top:var(--nav-h)}
       .hero-stage{
         position:relative;
         width:100%;
@@ -206,6 +206,7 @@
       position:absolute;inset:0;
       width:100%;height:100%;
       object-fit:cover;
+      object-position:center top;
       image-rendering:high-quality;
       filter:brightness(1.04) contrast(1.03) saturate(1.08);
     }
@@ -462,6 +463,12 @@
     .airdrop-kicker strong{font-size:18px;letter-spacing:-.02em}
     .airdrop-kicker span{color:var(--muted);font-size:14px}
 
+
+    .claim-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
+    @media(max-width:960px){.claim-grid{grid-template-columns:1fr}}
+    .claim-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+    @media(max-width:720px){.claim-steps{grid-template-columns:1fr}}
+    .claim-points{display:grid;gap:12px;margin:18px 0 0}
     .roadmap-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
     @media(max-width:860px){.roadmap-grid{grid-template-columns:1fr}}
     .phase{padding:24px;border-radius:24px;background:linear-gradient(160deg,rgba(10,18,44,.92),rgba(8,14,32,.78));border:1px solid rgba(255,255,255,.07);border-top-color:rgba(255,255,255,.12);box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .25s,border-color .25s}
@@ -537,11 +544,11 @@
       <!-- Desktop links -->
       <nav class="nav-links" aria-label="Main navigation">
         <a href="#home">Home</a>
+        <a href="#claim">Claim</a>
         <a href="#rounds">Rounds</a>
         <a href="#tokenomics">Tokenomics</a>
-        <a href="#airdrop">Airdrop</a>
+        <a href="#register">Register</a>
         <a href="#roadmap">Roadmap</a>
-        <a href="#community">Community</a>
       </nav>
 
       <!-- Desktop CTAs -->
@@ -574,11 +581,11 @@
   <div class="nav-mobile" id="navMobile">
     <nav class="nav-mobile-links">
       <a href="#home">Home</a>
+      <a href="#claim">Claim</a>
       <a href="#rounds">Rounds</a>
       <a href="#tokenomics">Tokenomics</a>
-      <a href="#airdrop">Airdrop</a>
+      <a href="#register">Register</a>
       <a href="#roadmap">Roadmap</a>
-      <a href="#community">Community</a>
     </nav>
     <div class="nav-mobile-ctas">
       <a class="nav-btn nav-btn-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
@@ -593,56 +600,63 @@
     ══════════════════════════════════ -->
     <section class="hero-wrap" id="home">
       <div class="hero-stage">
-
-        <!-- Clean image — desktop / mobile -->
         <picture>
           <source media="(max-width:820px)" srcset="superfirulai-mobile.webp" />
-          <img src="superfirulai-desktop.png"
-               alt="SuperFirulai $FIRU — Community memecoin on Solana"
+          <img src="superfirulai-hero-final.webp"
+               alt="SuperFirulai $FIRU hero artwork"
                fetchpriority="high" decoding="async" />
         </picture>
-
-        <!-- Invisible cover where old nav was -->
-        <div class="hero-nav-cover" aria-hidden="true"></div>
-
-        <!-- ── Live stat numbers overlaid on the image ── -->
-        <div class="hero-stats" aria-hidden="true">
-          <div class="hero-stat">
-            <span class="hero-stat-num" id="statHolders">—</span>
-          </div>
-          <div class="hero-stat">
-            <span class="hero-stat-num" id="statTelegram">—</span>
-          </div>
-          <div class="hero-stat" style="width:clamp(110px,13vw,180px)">
-            <span class="hero-stat-num" id="statX">—</span>
-          </div>
-        </div>
-
-        <!-- ── Hero action buttons ── -->
-        <div class="hero-ctas">
-          <a class="hero-btn hero-btn-tg"
-             href="https://t.me/superfirulaicommunity"
-             target="_blank" rel="noopener">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>
-            Join Telegram
-          </a>
-          <a class="hero-btn hero-btn-airdrop" href="#airdrop">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 12V22H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/></svg>
-            Register Airdrop
-          </a>
-        </div>
-
       </div>
     </section>
 
     <!-- Quick section links -->
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;flex-wrap:wrap;">
+      <a href="#claim" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Claim</a>
       <a href="#rounds" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Rounds</a>
       <a href="#tokenomics" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Tokenomics</a>
-      <a href="#airdrop" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Airdrop</a>
-      <a href="#roadmap" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Roadmap</a>
+      <a href="#register" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Register</a>
       <a href="#community" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Community</a>
+      <a href="#roadmap" style="display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px)">Roadmap</a>
     </div>
+
+    <!-- ── CLAIM ── -->
+    <section class="section" id="claim">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span></span> Manual Claim Flow</div>
+          <h2 class="section-title">Claim $FIRU</h2>
+          <p class="section-copy">Claim is a manual distribution model where each user connects a wallet and claims tokens directly on the website. It helps focus the allocation on real users, lowers cost versus blind airdrops and reduces invalid-wallet mistakes.</p>
+        </div>
+        <div class="claim-grid">
+          <div class="panel reveal reveal-d1">
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">How the claim works</h3>
+            <p class="section-copy" style="margin-top:0">The flow is simple: connect a compatible Solana wallet, press the claim button when the campaign is live, and receive $FIRU in the connected wallet.</p>
+            <div class="claim-steps">
+              <div class="step"><b>1</b><strong>Connect wallet</strong><p>Use a personal Solana wallet such as Phantom, Solflare or Backpack.</p></div>
+              <div class="step"><b>2</b><strong>Press Claim</strong><p>Claim manually on the website instead of receiving a blind token drop.</p></div>
+              <div class="step"><b>3</b><strong>Receive $FIRU</strong><p>Eligible users receive tokens in the same wallet used during the claim flow.</p></div>
+            </div>
+          </div>
+          <div class="panel reveal reveal-d2">
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">Why this model is stronger</h3>
+            <div class="claim-points">
+              <div class="summary-mini"><strong>Real users claim</strong><span>Only people who connect and complete the flow receive tokens.</span></div>
+              <div class="summary-mini"><strong>Lower cost</strong><span>Manual claim is typically cheaper than sending tokens to every submitted wallet.</span></div>
+              <div class="summary-mini"><strong>Cleaner distribution</strong><span>Connected wallets help avoid invalid addresses and reduce delivery errors.</span></div>
+            </div>
+            <ul class="check-list">
+              <li><i>✓</i> Recommended wallets: Phantom, Solflare and Backpack</li>
+              <li><i>✓</i> Avoid exchange deposit addresses</li>
+              <li><i>✓</i> Anti multi-claim protection is recommended</li>
+            </ul>
+            <div class="actions">
+              <button class="btn btn-gold" type="button" id="buyClaim">Buy $FIRU</button>
+              <a class="btn btn-blue" href="#register">Register Access</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- ── ROUNDS ── -->
     <section class="section" id="rounds">
@@ -650,7 +664,7 @@
         <div class="section-head reveal">
           <div class="eyebrow"><span></span> Early Access Structure</div>
           <h2 class="section-title">Official Launch Rounds</h2>
-          <p class="section-copy">A simple two-step presale path designed to reward early supporters first and keep launch expectations clear.</p>
+          <p class="section-copy">A simple two-step access path for early supporters who want to buy before the broader public phase begins.</p>
         </div>
         <div class="rounds-grid">
           <div class="panel reveal reveal-d1">
@@ -683,7 +697,7 @@
             <div class="round-summary">
               <div class="summary-mini"><strong>Launch delivery</strong><span>Tokens purchased during presale will be distributed according to the official launch schedule.</span></div>
               <div class="summary-mini"><strong>Clear expectations</strong><span>No fake promises. A simple path from early access to launch.</span></div>
-              <div class="summary-mini"><strong>Best move now</strong><span>Join Telegram, register the airdrop, and stay ready for the first official access alert.</span></div>
+              <div class="summary-mini"><strong>Best move now</strong><span>Review the claim flow, register early access, and stay ready for the first official buy window.</span></div>
             </div>
           </div>
         </div>
@@ -716,7 +730,7 @@
           <div class="actions">
             <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
             <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
-            <a class="btn btn-gold" href="#airdrop">Join Airdrop</a>
+            <a class="btn btn-gold" href="#register">Register Access</a>
             <button class="btn btn-dark" type="button" id="buyCom">Buy in Presale</button>
           </div>
         </div>
@@ -729,7 +743,7 @@
         <div class="section-head reveal">
           <div class="eyebrow"><span></span> Official Allocation</div>
           <h2 class="section-title">Tokenomics</h2>
-          <p class="section-copy">Official $FIRU distribution on Solana. Fixed supply, zero tax, and a structure built for liquidity, community growth and launch stability.</p>
+          <p class="section-copy">Official $FIRU distribution on Solana. Fixed supply, zero tax, and a structure built for liquidity, community growth, claim campaigns and launch stability.</p>
         </div>
         <div class="token-grid-3">
           <div class="panel reveal reveal-d1">
@@ -752,37 +766,37 @@
           </div>
           <div class="panel reveal reveal-d3">
             <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;margin-bottom:10px">Key Info</h3>
-            <p class="section-copy" style="margin-top:0;font-size:13px">Token on Solana. No buy/sell tax. Fixed supply. Community allocation supports airdrops, early supporters and ecosystem growth.</p>
+            <p class="section-copy" style="margin-top:0;font-size:13px">Token on Solana. No buy or sell tax. Fixed supply. Community allocation can support claim campaigns, early supporters and ecosystem growth.</p>
             <div class="key-info-grid">
               <div class="quick-card"><strong>1B</strong><span>Total Supply</span></div>
               <div class="quick-card"><strong>0%</strong><span>Tax Buy/Sell</span></div>
               <div class="quick-card"><strong>Solana</strong><span>Network</span></div>
-              <div class="quick-card"><strong>Rounds Live</strong><span>Presale Access</span></div>
+              <div class="quick-card"><strong>Manual Claim</strong><span>Community Flow</span></div>
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ── AIRDROP ── -->
-    <section class="section" id="airdrop">
+    <!-- ── REGISTER ── -->
+    <section class="section" id="register">
       <div class="container">
         <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Verified Access</div>
-          <h2 class="section-title">Join the Verified $FIRU Airdrop</h2>
-          <p class="section-copy">Connect your wallet, verify ownership, complete the captcha and register your social accounts to secure verified early access before launch.</p>
+          <div class="eyebrow"><span></span> Verified Registration</div>
+          <h2 class="section-title">Register for Early Access</h2>
+          <p class="section-copy">This verified form is separate from the manual claim flow. Use it to submit wallet and community details, confirm ownership and keep your place organized for future access updates.</p>
           <div class="airdrop-kicker">
-            <strong>Free allocation for early supporters</strong>
-            <span>Limited spots available before the public launch phase begins.</span>
+            <strong>Use a personal Solana wallet</strong>
+            <span>Phantom, Solflare and Backpack are recommended. Avoid exchange deposit addresses.</span>
           </div>
         </div>
         <div class="feature-grid">
           <div class="panel reveal reveal-d1">
             <div class="steps">
-              <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Use Phantom to connect your Solana wallet securely.</p></div>
-              <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership.</p></div>
-              <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to block spam and bots.</p></div>
-              <div class="step"><b>4</b><strong>Register</strong><p>Submit Telegram, X and wallet details to reserve your spot.</p></div>
+              <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Connect a compatible Solana wallet securely from your own device.</p></div>
+              <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership before submitting.</p></div>
+              <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to reduce spam, bots and duplicate attempts.</p></div>
+              <div class="step"><b>4</b><strong>Submit Details</strong><p>Send wallet, Telegram and X details to keep your access registration in order.</p></div>
             </div>
           </div>
           <div class="panel reveal reveal-d2"><div id="airdrop-register"></div></div>
@@ -799,7 +813,7 @@
           <p class="section-copy">A focused path from awareness to access to launch. Built to grow attention first, convert it into presale momentum, and arrive at launch with real community energy.</p>
         </div>
         <div class="roadmap-grid">
-          <div class="phase reveal reveal-d1"><span class="phase-tag active">Phase 1 · Active</span><h3>Brand & Community Setup</h3><p>Website launch, premium branding rollout, Telegram and X growth, plus a verified airdrop campaign to attract the earliest supporters.</p></div>
+          <div class="phase reveal reveal-d1"><span class="phase-tag active">Phase 1 · Active</span><h3>Brand & Community Setup</h3><p>Website launch, premium branding rollout, Telegram and X growth, plus a verified registration campaign and a future manual claim flow for the earliest supporters.</p></div>
           <div class="phase reveal reveal-d2"><span class="phase-tag next">Phase 2 · Next</span><h3>Presale & Market Push</h3><p>Round 1 and Round 2 access, strategic marketing, influencer exposure, social campaigns and conversion of the strongest early demand.</p></div>
           <div class="phase reveal reveal-d3"><span class="phase-tag future">Phase 3 · Soon</span><h3>Launch & Expansion</h3><p>Token launch on Solana, liquidity deployment, trading access, listings, and post-launch growth backed by the community already built.</p></div>
         </div>
@@ -813,15 +827,15 @@
           <div class="panel reveal">
             <div class="eyebrow"><span></span> Final Call</div>
             <h2 class="section-title" style="margin-bottom:12px">Secure your place before launch.</h2>
-            <p class="section-copy">Get in position before public momentum hits. Join the official rounds, lock your early access path, and stay ready for the first real trading window.</p>
+            <p class="section-copy">Get in position before public momentum hits. Review the claim model, join the official rounds, and register early so your wallet is ready when the next access window opens.</p>
             <div class="actions">
               <button class="btn btn-gold" type="button" id="buyFinal">Buy in Presale</button>
-              <a class="btn btn-blue" href="#airdrop">Join Airdrop</a>
+              <a class="btn btn-blue" href="#register">Register Access</a>
             </div>
           </div>
           <div class="cta-points reveal reveal-d1">
             <div class="summary-mini"><strong>Early access matters</strong><span>Round 1 and Round 2 are structured to reward the fastest community members first.</span></div>
-            <div class="summary-mini"><strong>Verified community flow</strong><span>Wallet verification, Telegram, X and captcha protection keep the airdrop cleaner.</span></div>
+            <div class="summary-mini"><strong>Verified community flow</strong><span>Wallet verification, Telegram, X and captcha protection help keep registration cleaner.</span></div>
             <div class="summary-mini"><strong>Built for conversion</strong><span>Premium visuals, stronger messaging and a direct route from first visit to real launch action.</span></div>
           </div>
         </div>
@@ -840,17 +854,17 @@
       <a class="mnav" href="#home">
         <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Home
       </a>
-      <a class="mnav mnav-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>Telegram
+      <a class="mnav mnav-airdrop" href="#claim">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>Claim
       </a>
       <button class="mnav mnav-buy" type="button" id="buyMob">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9c0-1.66 1.34-3 3-3s3 1.34 3 3c0 3-6 3-6 6 0 1.66 1.34 3 3 3s3-1.34 3-3"/></svg>Buy $FIRU
       </button>
-      <a class="mnav mnav-airdrop" href="#airdrop">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>Airdrop
+      <a class="mnav mnav-tg" href="#register">
+        <svg viewBox="0 0 24 24"><path d="M21 7H3v10h18V7z"/><path d="M7 11h10M7 14h6"/></svg>Register
       </a>
-      <a class="mnav" href="https://x.com/superfirulai" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="currentColor" style="stroke:none"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>X
+      <a class="mnav" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>Telegram
       </a>
     </div>
   </nav>
@@ -876,7 +890,7 @@
     </div>
   </dialog>
 
-  <noscript><div style="max-width:960px;margin:16px auto;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0d162f;color:#fff">Enable JavaScript to use the airdrop registration form and live community stats.</div></noscript>
+  <noscript><div style="max-width:960px;margin:16px auto;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0d162f;color:#fff">Enable JavaScript to use the registration form and live community stats.</div></noscript>
 
   <!-- STATS -->
   <script>
@@ -932,7 +946,7 @@
     const dlg=document.getElementById("buyDialog");
     const open=()=>{if(dlg?.showModal)dlg.showModal()};
     const close=()=>{if(dlg?.close)dlg.close()};
-    ["buyNav","buyNavMob","buyR1","buyR2","buyCom","buyMob","buyFinal"]
+    ["buyNav","buyNavMob","buyR1","buyR2","buyCom","buyMob","buyFinal","buyClaim"]
       .forEach(id=>document.getElementById(id)?.addEventListener("click",open));
     document.getElementById("closeDlg")?.addEventListener("click",close);
     dlg?.addEventListener("click",e=>{
