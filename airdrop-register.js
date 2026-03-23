@@ -182,7 +182,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
       <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Airdrop</button>
-      <div id="sf-msg" class="sf-wallet-note">Connect your wallet, sign the message, then complete Telegram, X and captcha.</div>
+      <div id="sf-msg" class="sf-wallet-note">Connect your wallet, sign the message, then complete X, Telegram and captcha.</div>
     </div>
   `;
 
@@ -290,7 +290,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       connectBtn.disabled = true;
       showOpenInPhantom(false);
       setRegisterEnabled(true);
-      setMsg("Wallet verified. Complete Telegram, X and captcha, then register your airdrop.", "ok");
+      setMsg("Wallet verified. Complete X, Telegram and captcha, then register your airdrop.", "ok");
     } catch (err) {
       connectBtn.disabled = false;
       connectBtn.textContent = "Connect Wallet";
@@ -312,7 +312,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       const turnstileToken = getTurnstileToken(root);
 
       if (!telegram || !x || !turnstileToken) {
-        setMsg("Complete Telegram, X and the captcha.", "error");
+        setMsg("Complete X, Telegram and the captcha.", "error");
         return;
       }
 
