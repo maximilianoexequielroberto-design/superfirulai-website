@@ -567,9 +567,7 @@
       <!-- Desktop links -->
       <nav class="nav-links" aria-label="Main navigation">
   <a href="#home">Home</a>
-  <a href="#airdrop">Airdrop</a>
-  <a href="#register">Register</a>
-  <a href="#claim">Claim</a>
+  <a href="#airdrop" data-open-airdrop>Airdrop</a>
   <a href="#tokenomics">Tokenomics</a>
   <a href="#community">Community</a>
   <a href="#roadmap">Roadmap</a>
@@ -605,9 +603,7 @@
   <div class="nav-mobile" id="navMobile">
     <nav class="nav-mobile-links">
   <a href="#home">Home</a>
-  <a href="#airdrop">Airdrop</a>
-  <a href="#register">Register</a>
-  <a href="#claim">Claim</a>
+  <a href="#airdrop" data-open-airdrop>Airdrop</a>
   <a href="#tokenomics">Tokenomics</a>
   <a href="#community">Community</a>
   <a href="#roadmap">Roadmap</a>
@@ -640,7 +636,7 @@
         <div class="section-head reveal">
           <div class="eyebrow"><span></span> Airdrop Flow</div>
           <h2 class="section-title">Airdrop → Register → Claim</h2>
-          <p class="section-copy">The airdrop flow is simple and ordered: first the campaign is announced, then users register their wallet and details, and finally approved users claim manually after the official $FIRU launch. This keeps the process cleaner, clearer and easier to trust.</p>
+          <p class="section-copy">The airdrop flow is simple and ordered: open the airdrop guide, choose the correct step, register your wallet, and claim manually after the official $FIRU launch. This keeps the process cleaner, clearer and easier to trust.</p>
         </div>
         <div class="claim-grid">
           <div class="panel reveal reveal-d1">
@@ -820,7 +816,7 @@
         </div>
         <div class="roadmap-grid">
           <div class="phase reveal reveal-d1"><span class="phase-tag active">Phase 1 · Active</span><h3>Airdrop & Registration</h3><p>Website launch, community growth, wallet verification and clean registration for eligible users before claim opens.</p></div>
-          <div class="phase reveal reveal-d2"><span class="phase-tag next">Phase 2 · Next</span><h3>Presale Rounds</h3><p>Phase 2 contains the two buy rounds: Round 1 for earliest access and Round 2 for the wider presale before launch.</p></div>
+          <div class="phase reveal reveal-d2"><span class="phase-tag next">Phase 2 · Next</span><h3>Launch Rounds</h3><p>Phase 2 contains the two buy rounds inside one stage: Round 1 for earliest access and Round 2 for the wider presale before launch.</p></div>
           <div class="phase reveal reveal-d3"><span class="phase-tag future">Phase 3 · Soon</span><h3>Launch & Claim</h3><p>$FIRU launches on Solana, liquidity goes live, and approved users can claim through the official website once claim is enabled.</p></div>
         </div>
       </div>
@@ -860,20 +856,50 @@
       <a class="mnav" href="#home">
         <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Home
       </a>
-      <a class="mnav mnav-airdrop" href="#airdrop">
+      <a class="mnav mnav-airdrop" href="#airdrop" data-open-airdrop>
         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>Airdrop
       </a>
       <button class="mnav mnav-buy" type="button" id="buyMob">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9c0-1.66 1.34-3 3-3s3 1.34 3 3c0 3-6 3-6 6 0 1.66 1.34 3 3 3s3-1.34 3-3"/></svg>Buy $FIRU
       </button>
-      <a class="mnav mnav-tg" href="#register">
-        <svg viewBox="0 0 24 24"><path d="M21 7H3v10h18V7z"/><path d="M7 11h10M7 14h6"/></svg>Register
+      <a class="mnav mnav-tg" href="#community">
+        <svg viewBox="0 0 24 24"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg>Community
       </a>
-      <a class="mnav" href="#claim">
-        <svg viewBox="0 0 24 24"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>Claim
+      <a class="mnav" href="#roadmap">
+        <svg viewBox="0 0 24 24"><path d="M5 19V5"/><path d="M5 6h10l-2 4 2 4H5"/><path d="M5 19h14"/></svg>Roadmap
       </a>
     </div>
   </nav>
+
+  <!-- ── AIRDROP DIALOG ── -->
+  <dialog id="airdropDialog" style="max-width:760px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
+    <div class="buy-shell">
+      <div class="buy-badge"><span></span> Official Airdrop Flow</div>
+      <div class="dialog-header">
+        <div style="position:relative;z-index:1">
+          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(28px,5vw,40px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Airdrop · Register · Claim</h3>
+          <p style="margin:8px 0 0;color:rgba(200,218,255,.82);line-height:1.65;font-size:14px;max-width:560px">This keeps the process simple: first users join the airdrop, then they register their wallet, and finally approved users claim manually after the official $FIRU launch.</p>
+        </div>
+        <button class="dialog-close" id="closeAirdropDlg" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="dialog-divider"></div>
+      <div class="dialog-steps">
+        <div class="dialog-step"><strong>1 · Join the airdrop</strong><span>Read the guide, confirm the process and choose the correct next step.</span></div>
+        <div class="dialog-step"><strong>2 · Register wallet</strong><span>Complete verification, submit your wallet and keep your access organized.</span></div>
+        <div class="dialog-step"><strong>3 · Claim after launch</strong><span>Once claim opens officially, approved users return and claim $FIRU manually.</span></div>
+      </div>
+      <div style="position:relative;z-index:1;display:grid;gap:14px">
+        <div class="summary-mini" style="background:rgba(255,255,255,.045)">
+          <strong style="display:block;margin-bottom:6px">Why this is better</strong>
+          <span style="display:block;color:#9db7df;line-height:1.7">Visitors understand the order in one place and do not get pushed down the page without context. Register and Claim stay available inside the same window, but each action still goes to its correct section.</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <a class="btn btn-blue" href="#register" data-airdrop-action>Register Now</a>
+          <a class="btn btn-dark" href="#claim" data-airdrop-action>Claim After Launch</a>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <!-- ── BUY DIALOG ── -->
   <dialog id="buyDialog" style="max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
@@ -946,6 +972,27 @@
       if(!nb.contains(e.target)&&!mob.contains(e.target)){
         mob.classList.remove("open");ham.classList.remove("open");
       }
+    });
+
+    /* Airdrop dialog */
+    const airdropDlg=document.getElementById("airdropDialog");
+    const openAirdrop=()=>{if(airdropDlg?.showModal)airdropDlg.showModal()};
+    const closeAirdrop=()=>{if(airdropDlg?.close)airdropDlg.close()};
+    document.querySelectorAll('[data-open-airdrop]').forEach(el=>{
+      el.addEventListener('click',e=>{
+        e.preventDefault();
+        mob.classList.remove("open");
+        ham.classList.remove("open");
+        openAirdrop();
+      });
+    });
+    document.getElementById("closeAirdropDlg")?.addEventListener("click",closeAirdrop);
+    document.querySelectorAll('[data-airdrop-action]').forEach(el=>{
+      el.addEventListener('click',()=>closeAirdrop());
+    });
+    airdropDlg?.addEventListener("click",e=>{
+      const r=airdropDlg.getBoundingClientRect();
+      if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right)closeAirdrop();
     });
 
     /* Buy dialog */
