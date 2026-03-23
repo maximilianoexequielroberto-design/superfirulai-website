@@ -195,9 +195,14 @@
       transition:background .15s,color .15s;
     }
     .nav-mobile-links a:hover{background:rgba(255,255,255,.07);color:#fff}
-    .nav-mobile-ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .nav-mobile-ctas{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
     .nav-mobile-ctas .nav-btn{height:48px;font-size:13px;border-radius:14px}
 
+
+    @media(max-width:560px){
+      .nav-mobile-ctas{grid-template-columns:1fr 1fr}
+      .nav-mobile-ctas .nav-btn-buy{grid-column:1 / -1}
+    }
     @media(max-width:940px){
       .navbar-inner{justify-content:flex-end;gap:0}
       .nav-links{display:none}
@@ -612,6 +617,10 @@
   <a href="#roadmap">Roadmap</a>
 </nav>
     <div class="nav-mobile-ctas">
+      <a class="nav-btn nav-btn-x" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="Follow on X">
+        <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        X
+      </a>
       <a class="nav-btn nav-btn-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
       <button class="nav-btn nav-btn-buy" type="button" id="buyNavMob">Buy $FIRU</button>
     </div>
@@ -694,7 +703,7 @@
               <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Connect a compatible Solana wallet securely from your own device.</p></div>
               <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership before submitting.</p></div>
               <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to reduce spam, bots and duplicate attempts.</p></div>
-              <div class="step"><b>4</b><strong>Submit Details</strong><p>Send wallet, Telegram and X details to keep your access registration in order.</p></div>
+              <div class="step"><b>4</b><strong>Submit Details</strong><p>Send wallet, X and Telegram details to keep your access registration in order.</p></div>
             </div>
           </div>
           <div class="panel reveal reveal-d2"><div id="airdrop-register"></div></div>
@@ -724,7 +733,7 @@
             <div class="claim-points">
               <div class="summary-mini"><strong>Not immediate</strong><span>Register first. Claim comes later.</span></div>
               <div class="summary-mini"><strong>Manual process</strong><span>No blind airdrop to every submitted wallet.</span></div>
-              <div class="summary-mini"><strong>Official updates</strong><span>Telegram and X will confirm when claim opens.</span></div>
+              <div class="summary-mini"><strong>Official updates</strong><span>X and Telegram will confirm when claim opens.</span></div>
             </div>
             <div class="actions">
               <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
@@ -782,18 +791,18 @@
         <div class="section-head reveal">
           <div class="eyebrow"><span></span> Live Community</div>
           <h2 class="section-title">Community</h2>
-          <p class="section-copy">Fast-growing early community across Solana, Telegram and X. Real launch-focused momentum with clear entry points before public access opens.</p>
+          <p class="section-copy">Fast-growing early community across Solana, X and Telegram. Real launch-focused momentum with clear entry points before public access opens.</p>
         </div>
         <div class="panel reveal reveal-d1">
           <div class="quick-grid">
             <a class="quick-card" href="https://solscan.io" target="_blank" rel="noopener">
               <strong id="cHolders">2,418</strong><span>Holders</span>
             </a>
-            <a class="quick-card" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-              <strong id="cTelegram">24</strong><span>Telegram Members</span>
-            </a>
             <a class="quick-card" href="https://x.com/superfirulai" target="_blank" rel="noopener">
               <strong id="cX">61</strong><span>X Followers</span>
+            </a>
+            <a class="quick-card" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+              <strong id="cTelegram">24</strong><span>Telegram Members</span>
             </a>
             <a class="quick-card" href="#tokenomics">
               <strong id="cSupply">1B</strong><span>Total Supply</span>
@@ -843,7 +852,7 @@
             </div>
           </div>
           <div class="cta-points reveal reveal-d1">
-            <div class="summary-mini"><strong>Cleaner registration</strong><span>Wallet verification, Telegram, X and captcha protection help keep the list more organized.</span></div>
+            <div class="summary-mini"><strong>Cleaner registration</strong><span>Wallet verification, X, Telegram and captcha protection help keep the list more organized.</span></div>
             <div class="summary-mini"><strong>Built for conversion</strong><span>Premium visuals, stronger messaging and a direct route from first visit to real launch action.</span></div>
           </div>
         </div>
