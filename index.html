@@ -3,18 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SuperFirulai $FIRU — Airdrop, Register and Join the Community on Solana</title>
-  <meta name="description" content="SuperFirulai ($FIRU) is the community-powered memecoin on Solana. Explore the official airdrop flow, register early, review tokenomics and join the community before launch." />
-  <meta property="og:title" content="SuperFirulai $FIRU — Airdrop, Register and Join the Community on Solana" />
-  <meta property="og:description" content="Explore the official airdrop flow, register for access, review tokenomics and join the SuperFirulai community on Solana." />
+  <title>SuperFirulai $FIRU — Buy, Claim and Join the Community on Solana</title>
+  <meta name="description" content="SuperFirulai ($FIRU) is the community-powered memecoin on Solana. Buy early, prepare for manual claim, review tokenomics and register for verified access before launch." />
+  <meta property="og:title" content="SuperFirulai $FIRU — Buy, Claim and Join the Community on Solana" />
+  <meta property="og:description" content="Buy $FIRU early, explore the manual claim flow, review tokenomics and register for verified access on Solana." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/superfirulai-social.webp" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SuperFirulai $FIRU — Airdrop, Register and Join the Community on Solana" />
-  <meta name="twitter:description" content="Explore the official airdrop flow, register for access, review tokenomics and join the SuperFirulai community on Solana." />
+  <meta name="twitter:title" content="SuperFirulai $FIRU — Buy, Claim and Join the Community on Solana" />
+  <meta name="twitter:description" content="Buy $FIRU early, explore the manual claim flow, review tokenomics and register for verified access on Solana." />
   <meta name="twitter:image" content="/superfirulai-social.webp" />
   <meta name="theme-color" content="#050d1f" />
-  <link rel="icon" type="image/png" href="favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -36,6 +35,7 @@
     a{text-decoration:none;color:inherit}
     button{font:inherit;cursor:pointer}
     img{display:block}
+    section[id]{scroll-margin-top:120px}
 
     /* ── GLOBAL BG ── */
     body::before{
@@ -51,33 +51,42 @@
     }
 
     /* ══════════════════════════════════
-       NAVBAR — fixed, premium glass
-    ══════════════════════════════════ */
-    .navbar{
-      position:fixed;top:0;left:0;right:0;z-index:500;
-      height:var(--nav-h);
-      display:flex;align-items:center;
-      padding:0 24px;
-      transition:background .3s,border-color .3s,box-shadow .3s;
-      border-bottom:1px solid transparent;
-    }
-    .navbar.scrolled{
-      background:rgba(3,7,20,.90);
-      backdrop-filter:blur(28px) saturate(1.7);
-      border-bottom-color:rgba(255,255,255,.07);
-      box-shadow:0 4px 28px rgba(0,0,0,.45);
-    }
-    .navbar-inner{
-      width:100%;max-width:var(--max);margin:0 auto;
-      display:flex;align-items:center;
-    }
+   NAVBAR — floating, cleaner and lower
+══════════════════════════════════ */
+.navbar{
+  position:fixed;top:18px;left:0;right:0;z-index:500;
+  display:flex;align-items:center;
+  padding:0 20px;
+  transition:transform .3s ease;
+}
+.navbar-inner{
+  width:100%;max-width:var(--max);margin:0 auto;
+  min-height:var(--nav-h);
+  display:flex;align-items:center;
+  padding:0 16px;
+  border-radius:22px;
+  background:rgba(7,13,31,.36);
+  backdrop-filter:blur(16px) saturate(1.2);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 14px 34px rgba(0,0,0,.24);
+  transition:background .3s,border-color .3s,box-shadow .3s,backdrop-filter .3s;
+}
+.navbar.scrolled .navbar-inner{
+  background:rgba(3,7,20,.78);
+  backdrop-filter:blur(24px) saturate(1.45);
+  border-color:rgba(255,255,255,.1);
+  box-shadow:0 18px 42px rgba(0,0,0,.42);
+}
+@media(max-width:820px){
+  .navbar{top:12px;padding:0 12px}
+  .navbar-inner{min-height:58px;border-radius:18px;padding:0 12px}
+}
 
-    /* Logo */
+/* Logo */
     .nav-logo{
-      display:flex;align-items:center;gap:10px;
+      display:flex;align-items:center;gap:0;
       flex-shrink:0;margin-right:auto;
     }
-    .nav-logo img{width:38px;height:38px;border-radius:10px;flex-shrink:0}
     .nav-logo-text{
       font-family:"Barlow Condensed",sans-serif;
       font-size:21px;font-weight:900;line-height:1;
@@ -101,12 +110,6 @@
       transition:color .18s,background .18s;white-space:nowrap;
     }
     .nav-links a:hover{color:#fff;background:rgba(255,255,255,.07)}
-    .nav-link-button{
-      padding:8px 14px;border-radius:10px;border:none;background:transparent;
-      font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-      color:rgba(200,220,255,.72);transition:color .18s,background .18s;white-space:nowrap;
-    }
-    .nav-link-button:hover{color:#fff;background:rgba(255,255,255,.07)}
 
     /* CTA buttons */
     .nav-ctas{display:flex;align-items:center;gap:8px;flex-shrink:0}
@@ -170,13 +173,6 @@
       transition:background .15s,color .15s;
     }
     .nav-mobile-links a:hover{background:rgba(255,255,255,.07);color:#fff}
-    .nav-mobile-link-button{
-      width:100%;text-align:left;
-      padding:12px 16px;border-radius:12px;border:none;background:transparent;
-      font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-      color:rgba(190,215,255,.8);transition:background .15s,color .15s;
-    }
-    .nav-mobile-link-button:hover{background:rgba(255,255,255,.07);color:#fff}
     .nav-mobile-ctas{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .nav-mobile-ctas .nav-btn{height:48px;font-size:13px;border-radius:14px}
 
@@ -192,12 +188,12 @@
     ══════════════════════════════════ */
     .hero-wrap{
       position:relative;
-      padding-top:var(--nav-h);
+      padding-top:0;
     }
 
     /* Desktop */
     @media(min-width:821px){
-      .hero-wrap{padding-top:var(--nav-h)}
+      .hero-wrap{padding-top:0}
       .hero-stage{
         position:relative;
         width:100%;
@@ -418,22 +414,6 @@
     .btn-dark{background:rgba(10,17,38,.9);color:#d8e8ff;border-color:rgba(255,255,255,.1)}
     .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
 
-    .quick-nav-strip{
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      padding:14px 20px;flex-wrap:wrap;
-    }
-    .quick-pill{
-      display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.08);background:rgba(10,17,38,.72);color:#c8dcff;
-      font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
-      transition:border-color .2s,background .2s,transform .2s;backdrop-filter:blur(12px);
-    }
-    .quick-pill:hover{transform:translateY(-1px);background:rgba(16,25,56,.82);border-color:rgba(255,255,255,.16)}
-    .quick-pill-airdrop{
-      background:linear-gradient(145deg,rgba(30,144,255,.22),rgba(10,91,223,.16));
-      border:1px solid rgba(30,144,255,.28);
-      color:#d8ecff;
-    }
     .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
     @media(max-width:700px){.quick-grid{grid-template-columns:1fr 1fr}}
     .quick-card{
@@ -524,36 +504,6 @@
     .reveal.visible{opacity:1;transform:translate(0)}
     .reveal-d1{transition-delay:.08s}.reveal-d2{transition-delay:.16s}.reveal-d3{transition-delay:.24s}
 
-    dialog#airdropDialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit}
-    dialog#airdropDialog::backdrop{background:rgba(2,5,18,.84);backdrop-filter:blur(16px)}
-    .airdrop-shell{
-      background:linear-gradient(160deg,#07122a 0%,#0d1e42 55%,#091530 100%);
-      border:1px solid rgba(255,255,255,.12);border-top-color:rgba(255,255,255,.22);
-      border-radius:28px;padding:28px;position:relative;overflow:hidden;
-      box-shadow:0 48px 100px rgba(0,0,0,.65);
-    }
-    .airdrop-shell::before{
-      content:"";position:absolute;inset:0;pointer-events:none;
-      background:radial-gradient(circle at 18% 0%,rgba(30,144,255,.2),transparent 32%),
-                 radial-gradient(circle at 82% 5%,rgba(255,180,0,.12),transparent 26%),
-                 linear-gradient(180deg,rgba(255,255,255,.03),transparent 20%);
-    }
-    .airdrop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
-    @media(max-width:620px){.airdrop-grid{grid-template-columns:1fr}}
-    .airdrop-card{
-      position:relative;z-index:1;
-      padding:16px;border-radius:18px;background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.08);
-    }
-    .airdrop-card b{
-      display:inline-grid;place-items:center;width:28px;height:28px;border-radius:10px;
-      margin-bottom:12px;background:rgba(30,144,255,.16);border:1px solid rgba(30,144,255,.32);font-size:13px;
-    }
-    .airdrop-card strong{display:block;font-size:16px;margin-bottom:6px}
-    .airdrop-card p{color:#8fb0d8;font-size:13px;line-height:1.55}
-    .airdrop-actions{display:flex;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
-    .btn-soft{background:rgba(255,255,255,.06);color:#d8e8ff;border-color:rgba(255,255,255,.12)}
-
     /* BUY DIALOG */
     dialog#buyDialog{max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit}
     dialog#buyDialog::backdrop{background:rgba(2,5,18,.87);backdrop-filter:blur(16px)}
@@ -593,7 +543,6 @@
 
       <!-- Logo -->
       <a class="nav-logo" href="#home" aria-label="SuperFirulai home">
-        <img src="favicon.png" alt="SuperFirulai" />
         <div>
           <div class="nav-logo-text">Super<span>Firulai</span></div>
           <span class="nav-logo-sub">$FIRU</span>
@@ -602,12 +551,13 @@
 
       <!-- Desktop links -->
       <nav class="nav-links" aria-label="Main navigation">
-        <a href="#home">Home</a>
-        <button class="nav-link-button" type="button" id="airdropNav">Airdrop</button>
-        <a href="#tokenomics">Tokenomics</a>
-        <a href="#community">Community</a>
-        <a href="#roadmap">Roadmap</a>
-      </nav>
+  <a href="#claim">Claim</a>
+  <a href="#register">Register</a>
+  <a href="#tokenomics">Tokenomics</a>
+  <a href="#community">Community</a>
+  <a href="#rounds">Rounds</a>
+  <a href="#roadmap">Roadmap</a>
+</nav>
 
       <!-- Desktop CTAs -->
       <div class="nav-ctas">
@@ -638,12 +588,13 @@
   <!-- Mobile dropdown -->
   <div class="nav-mobile" id="navMobile">
     <nav class="nav-mobile-links">
-      <a href="#home">Home</a>
-      <button class="nav-link-button nav-mobile-link-button" type="button" id="airdropNavMob">Airdrop</button>
-      <a href="#tokenomics">Tokenomics</a>
-      <a href="#community">Community</a>
-      <a href="#roadmap">Roadmap</a>
-    </nav>
+  <a href="#claim">Claim</a>
+  <a href="#register">Register</a>
+  <a href="#tokenomics">Tokenomics</a>
+  <a href="#community">Community</a>
+  <a href="#rounds">Rounds</a>
+  <a href="#roadmap">Roadmap</a>
+</nav>
     <div class="nav-mobile-ctas">
       <a class="nav-btn nav-btn-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
       <button class="nav-btn nav-btn-buy" type="button" id="buyNavMob">Buy $FIRU</button>
@@ -666,104 +617,118 @@
       </div>
     </section>
 
-    <!-- Quick section links -->
-    <div class="quick-nav-strip">
-      <button class="quick-pill quick-pill-airdrop" type="button" id="airdropQuick">Airdrop Guide</button>
-      <a class="quick-pill" href="#register">Register</a>
-      <a class="quick-pill" href="#tokenomics">Tokenomics</a>
-      <a class="quick-pill" href="#community">Community</a>
-      <a class="quick-pill" href="#roadmap">Roadmap</a>
-    </div>
-
-    <!-- ── AIRDROP ── -->
-
-    <section class="section" id="airdrop">
+    <!-- ── CLAIM ── -->
+    <section class="section" id="claim">
       <div class="container">
         <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Official Airdrop Flow</div>
-          <h2 class="section-title">Airdrop → Register → Claim</h2>
-          <p class="section-copy">Airdrop is the single starting point. First the user registers and gets verified. Then the project validates eligible wallets. After the official $FIRU launch, claim opens for approved users.</p>
+          <div class="eyebrow"><span></span> Manual Claim Flow</div>
+          <h2 class="section-title">Claim $FIRU</h2>
+          <p class="section-copy">Claim is a manual distribution model where each user connects a wallet and claims tokens directly on the website. It focuses the allocation on real users, lowers cost versus blind airdrops and reduces invalid-wallet mistakes. Registration and claim are separate steps.</p>
         </div>
         <div class="claim-grid">
           <div class="panel reveal reveal-d1">
-            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">How it works</h3>
-            <p class="section-copy" style="margin-top:0">Keep the process simple and clear for every user.</p>
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">How the claim works</h3>
+            <p class="section-copy" style="margin-top:0">The flow is simple: connect a compatible Solana wallet, press the claim button when the campaign is live, and receive $FIRU in the connected wallet.</p>
             <div class="claim-steps">
-              <div class="step"><b>1</b><strong>Register</strong><p>Connect a personal Solana wallet, verify ownership and submit the required details.</p></div>
-              <div class="step"><b>2</b><strong>Wait for Launch</strong><p>The team reviews submissions, filters invalid entries and announces the official launch timeline.</p></div>
-              <div class="step"><b>3</b><strong>Claim</strong><p>After launch, approved users return to the website and manually claim $FIRU.</p></div>
+              <div class="step"><b>1</b><strong>Connect wallet</strong><p>Use a personal Solana wallet such as Phantom, Solflare or Backpack.</p></div>
+              <div class="step"><b>2</b><strong>Press Claim</strong><p>Claim manually on the website instead of receiving a blind token drop.</p></div>
+              <div class="step"><b>3</b><strong>Receive $FIRU</strong><p>Eligible users receive tokens in the same wallet used during the claim flow.</p></div>
             </div>
           </div>
           <div class="panel reveal reveal-d2">
-            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">Why this is cleaner</h3>
+            <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">Why this model is stronger</h3>
             <div class="claim-points">
-              <div class="summary-mini"><strong>One clear path</strong><span>No confusion between buying, registering and claiming. The order is explicit from the start.</span></div>
-              <div class="summary-mini"><strong>Better validation</strong><span>Registration happens first, so bots, duplicates and invalid wallets can be filtered before claim opens.</span></div>
-              <div class="summary-mini"><strong>Safer expectations</strong><span>Claim opens after the official launch. The exact date can be announced later without forcing a fixed promise today.</span></div>
+              <div class="summary-mini"><strong>Real users claim</strong><span>Only people who connect and complete the flow receive tokens.</span></div>
+              <div class="summary-mini"><strong>Lower cost</strong><span>Manual claim is typically cheaper than sending tokens to every submitted wallet.</span></div>
+              <div class="summary-mini"><strong>Cleaner distribution</strong><span>Connected wallets help avoid invalid addresses and reduce delivery errors.</span></div>
             </div>
             <ul class="check-list">
               <li><i>✓</i> Recommended wallets: Phantom, Solflare and Backpack</li>
               <li><i>✓</i> Avoid exchange deposit addresses</li>
-              <li><i>✓</i> Claim opens after the official $FIRU launch</li>
+              <li><i>✓</i> Anti multi-claim protection is recommended</li>
             </ul>
             <div class="actions">
-              <a class="btn btn-blue" href="#register">Register Now</a>
-              <button class="btn btn-dark" type="button" id="claimSoonBtn">Claim After Launch</button>
+              <button class="btn btn-gold" type="button" id="buyClaim">Buy $FIRU</button>
+              <a class="btn btn-blue" href="#register">Register Access</a>
             </div>
           </div>
+    </div>
+    <div class="panel reveal reveal-d3" style="margin-top:18px">
+      <div class="eyebrow"><span></span> Claim Timing</div>
+      <p class="section-copy" style="margin-top:0;max-width:none">Claim will open after the official $FIRU launch. The exact claim date will be announced on the official channels once it is confirmed, so the site stays clear without promising a day too early.</p>
+    </div>
+  </div>
+</section>
+
+
+
+    <!-- ── REGISTER ── -->
+    <section class="section" id="register">
+      <div class="container">
+        <div class="section-head reveal">
+          <div class="eyebrow"><span></span> Verified Registration</div>
+          <h2 class="section-title">Register for Early Access</h2>
+          <p class="section-copy">This verified form is separate from the manual claim flow. Use it to submit wallet and community details, confirm ownership and keep your place organized for future access updates. Registering does not unlock claim immediately.</p>
+          <div class="airdrop-kicker">
+            <strong>Use a personal Solana wallet</strong>
+            <span>Phantom, Solflare and Backpack are recommended. Avoid exchange deposit addresses. Claim opens later, after launch is officially announced.</span>
+          </div>
+        </div>
+        <div class="feature-grid">
+          <div class="panel reveal reveal-d1">
+            <div class="steps">
+              <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Connect a compatible Solana wallet securely from your own device.</p></div>
+              <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership before submitting.</p></div>
+              <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to reduce spam, bots and duplicate attempts.</p></div>
+              <div class="step"><b>4</b><strong>Submit Details</strong><p>Send wallet, Telegram and X details to keep your access registration in order.</p></div>
+            </div>
+          </div>
+          <div class="panel reveal reveal-d2"><div id="airdrop-register"></div></div>
         </div>
       </div>
     </section>
 
-    <!-- ── LAUNCH ACCESS ── -->
-    <section class="section" id="launch">
+    <!-- ── ROUNDS ── -->
+    <section class="section" id="rounds">
       <div class="container">
         <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Launch Access</div>
-          <h2 class="section-title">Two rounds, one launch phase</h2>
-          <p class="section-copy">To keep the page cleaner, launch access is summarized in one place. Round 1 and Round 2 both belong to the same launch phase and stay available through the main buy button.</p>
+          <div class="eyebrow"><span></span> Early Access Structure</div>
+          <h2 class="section-title">Official Launch Rounds</h2>
+          <p class="section-copy">A simple two-step access path for early supporters who want to buy before the broader public phase begins.</p>
         </div>
-        <div class="panel reveal reveal-d1">
-          <div class="roadmap-grid">
-            <div class="summary-mini"><strong>Round 1</strong><span>Early access window for the fastest supporters.</span></div>
-            <div class="summary-mini"><strong>Round 2</strong><span>Public presale phase after the first round closes.</span></div>
-            <div class="summary-mini"><strong>Launch order</strong><span>Airdrop registration first, launch rounds next, claim after launch.</span></div>
+        <div class="rounds-grid">
+          <div class="panel reveal reveal-d1">
+            <div class="round-badge"><span></span> Round 1 · Early Access</div>
+            <div class="round-price">Lowest Entry</div>
+            <p class="round-note">Built for the earliest supporters who move before broader market attention arrives.</p>
+            <ul class="round-list">
+              <li><i>✓</i> Priority access window</li>
+              <li><i>✓</i> Lowest round pricing</li>
+              <li><i>✓</i> Limited supply allocation</li>
+            </ul>
+            <div class="actions" style="margin-top:22px">
+              <button class="btn btn-gold" type="button" id="buyR1">Buy Round 1</button>
+            </div>
           </div>
-          <div class="actions">
-            <button class="btn btn-gold" type="button" id="buyLaunch">Buy $FIRU</button>
+          <div class="panel reveal reveal-d2">
+            <div class="round-badge"><span></span> Round 2 · Public Presale</div>
+            <div class="round-price">Higher Demand</div>
+            <p class="round-note">Public access opens after early round, with higher price tier and limited remaining allocation.</p>
+            <ul class="round-list">
+              <li><i>✓</i> Public presale access</li>
+              <li><i>✓</i> Higher price tier</li>
+              <li><i>✓</i> Remaining allocation only</li>
+            </ul>
+            <div class="actions" style="margin-top:22px">
+              <button class="btn btn-dark" type="button" id="buyR2">Buy Round 2</button>
+            </div>
           </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ── COMMUNITY ── -->
-    <section class="section" id="community">
-      <div class="container">
-        <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Live Community</div>
-          <h2 class="section-title">Community</h2>
-          <p class="section-copy">Fast-growing early community across Solana, Telegram and X. Real launch-focused momentum with clear entry points before public access opens.</p>
-        </div>
-        <div class="panel reveal reveal-d1">
-          <div class="quick-grid">
-            <a class="quick-card" href="https://solscan.io" target="_blank" rel="noopener">
-              <strong id="cHolders">2,418</strong><span>Holders</span>
-            </a>
-            <a class="quick-card" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-              <strong id="cTelegram">24</strong><span>Telegram Members</span>
-            </a>
-            <a class="quick-card" href="https://x.com/superfirulai" target="_blank" rel="noopener">
-              <strong id="cX">61</strong><span>X Followers</span>
-            </a>
-            <a class="quick-card" href="#tokenomics">
-              <strong id="cSupply">1B</strong><span>Total Supply</span>
-            </a>
-          </div>
-          <div class="actions">
-            <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
-            <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
-            <a class="btn btn-blue" href="#register">Register Now</a>
-            <button class="btn btn-gold" type="button" id="buyCom">Buy $FIRU</button>
+          <div class="panel reveal reveal-d3">
+            <div class="round-summary">
+              <div class="summary-mini"><strong>Launch delivery</strong><span>Tokens purchased during presale will be distributed according to the official launch schedule.</span></div>
+              <div class="summary-mini"><strong>Clear expectations</strong><span>No fake promises. A simple path from early access to launch.</span></div>
+              <div class="summary-mini"><strong>Best move now</strong><span>Review the claim flow, register early access, and stay ready for the first official buy window.</span></div>
+            </div>
           </div>
         </div>
       </div>
@@ -810,28 +775,35 @@
       </div>
     </section>
 
-    <!-- ── REGISTER ── -->
-    <section class="section" id="register">
+    <!-- ── COMMUNITY ── -->
+    <section class="section" id="community">
       <div class="container">
         <div class="section-head reveal">
-          <div class="eyebrow"><span></span> Verified Registration</div>
-          <h2 class="section-title">Register for the Airdrop</h2>
-          <p class="section-copy">This is the first required action in the airdrop flow. Register now to submit your wallet, verify ownership and keep your place organized before claim opens after launch.</p>
-          <div class="airdrop-kicker">
-            <strong>Use a personal Solana wallet</strong>
-            <span>Phantom, Solflare and Backpack are recommended. Avoid exchange deposit addresses.</span>
-          </div>
+          <div class="eyebrow"><span></span> Live Community</div>
+          <h2 class="section-title">Community</h2>
+          <p class="section-copy">Fast-growing early community across Solana, Telegram and X. Real launch-focused momentum with clear entry points before public access opens.</p>
         </div>
-        <div class="feature-grid">
-          <div class="panel reveal reveal-d1">
-            <div class="steps">
-              <div class="step"><b>1</b><strong>Connect Wallet</strong><p>Connect a compatible Solana wallet securely from your own device.</p></div>
-              <div class="step"><b>2</b><strong>Sign Message</strong><p>Sign a short message to verify wallet ownership before submitting.</p></div>
-              <div class="step"><b>3</b><strong>Verify Captcha</strong><p>Complete the captcha to reduce spam, bots and duplicate attempts.</p></div>
-              <div class="step"><b>4</b><strong>Submit Details</strong><p>Send wallet, Telegram and X details to keep your access registration in order.</p></div>
-            </div>
+        <div class="panel reveal reveal-d1">
+          <div class="quick-grid">
+            <a class="quick-card" href="https://solscan.io" target="_blank" rel="noopener">
+              <strong id="cHolders">2,418</strong><span>Holders</span>
+            </a>
+            <a class="quick-card" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+              <strong id="cTelegram">24</strong><span>Telegram Members</span>
+            </a>
+            <a class="quick-card" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+              <strong id="cX">61</strong><span>X Followers</span>
+            </a>
+            <a class="quick-card" href="#tokenomics">
+              <strong id="cSupply">1B</strong><span>Total Supply</span>
+            </a>
           </div>
-          <div class="panel reveal reveal-d2"><div id="airdrop-register"></div></div>
+          <div class="actions">
+            <a class="btn btn-blue" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+            <a class="btn btn-dark" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
+            <a class="btn btn-gold" href="#register">Register Access</a>
+            <button class="btn btn-dark" type="button" id="buyCom">Buy in Presale</button>
+          </div>
         </div>
       </div>
     </section>
@@ -842,12 +814,12 @@
         <div class="section-head reveal">
           <div class="eyebrow"><span></span> Launch Path</div>
           <h2 class="section-title">Roadmap</h2>
-          <p class="section-copy">A simpler path with the correct order: community and airdrop first, launch rounds next, then claim and post-launch growth.</p>
+          <p class="section-copy">A focused path from awareness to access to launch. Built to grow attention first, convert it into presale momentum, and arrive at launch with real community energy.</p>
         </div>
         <div class="roadmap-grid">
-          <div class="phase reveal reveal-d1"><span class="phase-tag active">Phase 1 · Active</span><h3>Community & Airdrop</h3><p>Grow the brand, bring in the community, open registration, verify wallets and prepare the eligible base before launch.</p></div>
-          <div class="phase reveal reveal-d2"><span class="phase-tag next">Phase 2 · Next</span><h3>Launch & Rounds</h3><p>Run Round 1 and Round 2 inside the same launch phase, push marketing and open the main buy flow for early supporters.</p></div>
-          <div class="phase reveal reveal-d3"><span class="phase-tag future">Phase 3 · Soon</span><h3>Claim & Growth</h3><p>After the official launch, approved users claim $FIRU and the project moves into listings, expansion and long-term community growth.</p></div>
+          <div class="phase reveal reveal-d1"><span class="phase-tag active">Phase 1 · Active</span><h3>Brand & Community Setup</h3><p>Website launch, premium branding rollout, Telegram and X growth, plus a verified registration campaign and a future manual claim flow for the earliest supporters.</p></div>
+          <div class="phase reveal reveal-d2"><span class="phase-tag next">Phase 2 · Next</span><h3>Presale & Market Push</h3><p>Round 1 and Round 2 access, strategic marketing, influencer exposure, social campaigns and conversion of the strongest early demand.</p></div>
+          <div class="phase reveal reveal-d3"><span class="phase-tag future">Phase 3 · Soon</span><h3>Launch & Expansion</h3><p>Token launch on Solana, liquidity deployment, trading access, listings, and post-launch growth backed by the community already built.</p></div>
         </div>
       </div>
     </section>
@@ -858,17 +830,17 @@
         <div class="final-cta-grid">
           <div class="panel reveal">
             <div class="eyebrow"><span></span> Final Call</div>
-            <h2 class="section-title" style="margin-bottom:12px">Keep the flow simple before launch.</h2>
-            <p class="section-copy">Start with the airdrop guide, complete registration, and keep your wallet ready for launch. Buy remains available through the main button, while claim opens only after the official launch.</p>
+            <h2 class="section-title" style="margin-bottom:12px">Secure your place before launch.</h2>
+            <p class="section-copy">Get in position before public momentum hits. Review the claim model, join the official rounds, and register early so your wallet is ready when the next access window opens.</p>
             <div class="actions">
-              <a class="btn btn-blue" href="#register">Register Now</a>
-              <button class="btn btn-gold" type="button" id="buyFinal">Buy $FIRU</button>
+              <button class="btn btn-gold" type="button" id="buyFinal">Buy in Presale</button>
+              <a class="btn btn-blue" href="#register">Register Access</a>
             </div>
           </div>
           <div class="cta-points reveal reveal-d1">
-            <div class="summary-mini"><strong>Airdrop first</strong><span>Users understand the order immediately: airdrop, register, then claim after launch.</span></div>
-            <div class="summary-mini"><strong>Launch stays simple</strong><span>Round 1 and Round 2 remain inside the launch phase instead of competing with the main airdrop message.</span></div>
-            <div class="summary-mini"><strong>Cleaner conversion</strong><span>The page keeps one clear route from first visit to registration and later claim.</span></div>
+            <div class="summary-mini"><strong>Early access matters</strong><span>Round 1 and Round 2 are structured to reward the fastest community members first.</span></div>
+            <div class="summary-mini"><strong>Verified community flow</strong><span>Wallet verification, Telegram, X and captcha protection help keep registration cleaner.</span></div>
+            <div class="summary-mini"><strong>Built for conversion</strong><span>Premium visuals, stronger messaging and a direct route from first visit to real launch action.</span></div>
           </div>
         </div>
       </div>
@@ -886,9 +858,9 @@
       <a class="mnav" href="#home">
         <svg viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>Home
       </a>
-      <button class="mnav mnav-airdrop" type="button" id="airdropMob">
-        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>Airdrop
-      </button>
+      <a class="mnav mnav-airdrop" href="#claim">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg>Claim
+      </a>
       <button class="mnav mnav-buy" type="button" id="buyMob">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M9 9c0-1.66 1.34-3 3-3s3 1.34 3 3c0 3-6 3-6 6 0 1.66 1.34 3 3 3s3-1.34 3-3"/></svg>Buy $FIRU
       </button>
@@ -900,30 +872,6 @@
       </a>
     </div>
   </nav>
-
-  <!-- ── AIRDROP DIALOG ── -->
-  <dialog id="airdropDialog">
-    <div class="airdrop-shell">
-      <div class="buy-badge"><span></span> Official $FIRU Airdrop</div>
-      <div class="dialog-header">
-        <div style="position:relative;z-index:1">
-          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Airdrop → Register → Claim</h3>
-          <p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:560px">Keep the user journey in one clear place. Register first, wait for the official launch, then claim $FIRU when claim opens for approved wallets.</p>
-        </div>
-        <button class="dialog-close" id="closeAirdropDlg" aria-label="Close">&#x2715;</button>
-      </div>
-      <div class="dialog-divider"></div>
-      <div class="airdrop-grid">
-        <div class="airdrop-card"><b>1</b><strong>Register</strong><p>Connect a personal Solana wallet, verify ownership and complete the registration form.</p></div>
-        <div class="airdrop-card"><b>2</b><strong>Wait for Launch</strong><p>The project reviews submissions and announces the official launch timing on the official channels.</p></div>
-        <div class="airdrop-card"><b>3</b><strong>Claim</strong><p>After launch, approved users return to the website and manually claim their $FIRU.</p></div>
-      </div>
-      <div class="airdrop-actions">
-        <a class="btn btn-blue" href="#register" data-airdrop-close>Register Now</a>
-        <a class="btn btn-soft" href="#airdrop" data-airdrop-close>Claim After Launch</a>
-      </div>
-    </div>
-  </dialog>
 
   <!-- ── BUY DIALOG ── -->
   <dialog id="buyDialog" style="max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
@@ -989,7 +937,7 @@
       const o=mob.classList.toggle("open");
       ham.classList.toggle("open",o);
     });
-    document.querySelectorAll(".nav-mobile-links a,.nav-mobile-links button,.nav-mobile-ctas .nav-btn").forEach(a=>{
+    document.querySelectorAll(".nav-mobile-links a,.nav-mobile-ctas .nav-btn").forEach(a=>{
       a.addEventListener("click",()=>{mob.classList.remove("open");ham.classList.remove("open")});
     });
     document.addEventListener("click",e=>{
@@ -998,31 +946,11 @@
       }
     });
 
-    /* Airdrop dialog */
-    const airdropDlg=document.getElementById("airdropDialog");
-    const openAirdrop=()=>{
-      mob.classList.remove("open");ham.classList.remove("open");
-      if(airdropDlg?.showModal)airdropDlg.showModal();
-    };
-    const closeAirdrop=()=>{if(airdropDlg?.close)airdropDlg.close()};
-    ["airdropNav","airdropNavMob","airdropQuick","airdropMob"].forEach(id=>{
-      document.getElementById(id)?.addEventListener("click",openAirdrop);
-    });
-    document.getElementById("claimSoonBtn")?.addEventListener("click",openAirdrop);
-    document.getElementById("closeAirdropDlg")?.addEventListener("click",closeAirdrop);
-    document.querySelectorAll("[data-airdrop-close]").forEach(el=>{
-      el.addEventListener("click",()=>closeAirdrop());
-    });
-    airdropDlg?.addEventListener("click",e=>{
-      const r=airdropDlg.getBoundingClientRect();
-      if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right)closeAirdrop();
-    });
-
     /* Buy dialog */
     const dlg=document.getElementById("buyDialog");
     const open=()=>{if(dlg?.showModal)dlg.showModal()};
     const close=()=>{if(dlg?.close)dlg.close()};
-    ["buyNav","buyNavMob","buyLaunch","buyCom","buyMob","buyFinal"]
+    ["buyNav","buyNavMob","buyR1","buyR2","buyCom","buyMob","buyFinal","buyClaim"]
       .forEach(id=>document.getElementById(id)?.addEventListener("click",open));
     document.getElementById("closeDlg")?.addEventListener("click",close);
     dlg?.addEventListener("click",e=>{
