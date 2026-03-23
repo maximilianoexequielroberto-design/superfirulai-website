@@ -65,10 +65,10 @@
   display:flex;align-items:center;
   padding:0 16px;
   border-radius:22px;
-  background:rgba(7,13,31,.36);
-  backdrop-filter:blur(16px) saturate(1.2);
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:0 14px 34px rgba(0,0,0,.24);
+  background:transparent;
+  backdrop-filter:none;
+  border:none;
+  box-shadow:none;
   transition:background .3s,border-color .3s,box-shadow .3s,backdrop-filter .3s;
 }
 .navbar.scrolled .navbar-inner{
@@ -90,12 +90,14 @@
     .nav-logo-text{
       font-family:"Barlow Condensed",sans-serif;
       font-size:21px;font-weight:900;line-height:1;
+      text-shadow:0 4px 18px rgba(0,0,0,.55);
     }
     .nav-logo-text span{color:var(--gold)}
     .nav-logo-sub{
       font-size:11px;font-weight:700;letter-spacing:.12em;
-      color:rgba(255,208,96,.7);text-transform:uppercase;line-height:1;
+      color:rgba(255,208,96,.78);text-transform:uppercase;line-height:1;
       display:block;margin-top:2px;
+      text-shadow:0 4px 18px rgba(0,0,0,.55);
     }
 
     /* Desktop links */
@@ -106,7 +108,8 @@
     .nav-links a{
       padding:8px 14px;border-radius:10px;
       font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-      color:rgba(200,220,255,.72);
+      color:rgba(228,238,255,.9);
+      text-shadow:0 4px 18px rgba(0,0,0,.55);
       transition:color .18s,background .18s;white-space:nowrap;
     }
     .nav-links a:hover{color:#fff;background:rgba(255,255,255,.07)}
@@ -551,6 +554,7 @@
 
       <!-- Desktop links -->
       <nav class="nav-links" aria-label="Main navigation">
+  <a href="#home">Home</a>
   <a href="#claim">Claim</a>
   <a href="#register">Register</a>
   <a href="#tokenomics">Tokenomics</a>
@@ -588,6 +592,7 @@
   <!-- Mobile dropdown -->
   <div class="nav-mobile" id="navMobile">
     <nav class="nav-mobile-links">
+  <a href="#home">Home</a>
   <a href="#claim">Claim</a>
   <a href="#register">Register</a>
   <a href="#tokenomics">Tokenomics</a>
