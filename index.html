@@ -103,8 +103,8 @@
     /* Desktop links */
     .nav-links{
       display:flex;align-items:center;gap:4px;
-      position:static;left:auto;transform:none;
-      margin-left:86px;
+      position:absolute;left:50%;transform:translateX(-50%);
+      margin:0;
     }
     .nav-links a{
       padding:9px 15px;border-radius:10px;
@@ -117,13 +117,12 @@
 
 
     @media(max-width:1180px){
-      .nav-links{margin-left:42px}
       .nav-links a{padding:8px 12px;font-size:13px}
     }
 
     @media(min-width:941px){
-      .navbar-inner{padding:0 22px}
-      .nav-links,.nav-ctas{position:relative;z-index:1}
+      .navbar-inner{padding:0 22px;position:relative}
+      .nav-links,.nav-ctas{z-index:1}
     }
 
     /* CTA buttons */
