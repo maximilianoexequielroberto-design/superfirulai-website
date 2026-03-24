@@ -747,6 +747,7 @@
               </a>
               <a class="btn btn-gold" href="#register">Register Access</a>
             </div>
+            <div id="airdrop-claim-status"></div>
           </div>
         </div>
       </div>
@@ -973,7 +974,8 @@
   <script type="module">
     import { mountAirdropRegister } from "./airdrop-register.js";
     import { mountRoundRegister }   from "./round-register.js";
-    try{mountAirdropRegister("#airdrop-register");mountRoundRegister("#round-register")}
+    import { mountClaimStatus }     from "./claim-status.js";
+    try{mountAirdropRegister("#airdrop-register");mountRoundRegister("#round-register");mountClaimStatus("#airdrop-claim-status")}
     catch(e){console.error("mount",e)}
 
     function enforceXBeforeTelegram(){
