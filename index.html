@@ -613,6 +613,7 @@
           <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M21.9 4.5L18.6 19.8c-.2.9-.8 1.2-1.6.7l-4.4-3.2-2.1 2c-.2.2-.5.3-.8.3l.3-4.5L18 7.6c.4-.4-.1-.5-.6-.2L5.7 14.9 1.4 13.5c-.9-.3-.9-.9.2-1.3L20.5 3.1c.8-.3 1.6.2 1.4 1.4z"/></svg>
           Telegram
         </a>
+        <button class="nav-btn nav-btn-buy" type="button" id="buyNav">💰 Buy $FIRU</button>
       </div>
 
       <!-- Hamburger -->
@@ -637,6 +638,7 @@
         X
       </a>
       <a class="nav-btn nav-btn-tg" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
+      <button class="nav-btn nav-btn-buy" type="button" id="buyNavMob">Buy $FIRU</button>
     </div>
   </div>
 
@@ -879,6 +881,27 @@
     </div>
   </dialog>
 
+  <!-- ── BUY DIALOG ── -->
+  <dialog id="buyDialog" style="max-width:740px;width:calc(100% - 24px);border:none;border-radius:28px;padding:0;background:transparent;color:inherit;">
+    <div class="buy-shell">
+      <div class="buy-badge"><span></span> Buy $FIRU</div>
+      <div class="dialog-header">
+        <div style="position:relative;z-index:1">
+          <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Buy $FIRU · Round 1 and Round 2</h3>
+          <p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">When the official buy window opens, send SOL to the project wallet and paste the confirmed transaction hash. The system checks the transaction on-chain and saves your FIRU allocation for the selected round.</p>
+        </div>
+        <button class="dialog-close" id="closeDlg" aria-label="Close">&#x2715;</button>
+      </div>
+      <div class="dialog-divider"></div>
+      <div class="dialog-steps">
+        <div class="dialog-step"><strong>1 · Choose your round</strong><span>Round 1 opens first, then Round 2 if enabled.</span></div>
+        <div class="dialog-step"><strong>2 · Send SOL</strong><span>Use the wallet shown by the app and then paste the confirmed tx hash.</span></div>
+        <div class="dialog-step"><strong>3 · Allocation saved</strong><span>Your FIRU allocation is calculated automatically from the round price.</span></div>
+      </div>
+      <div id="round-register" style="position:relative;z-index:1"></div>
+    </div>
+  </dialog>
+
 
   <noscript><div style="max-width:960px;margin:16px auto;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0d162f;color:#fff">Enable JavaScript to use wallet registration and claim status.</div></noscript>
 
@@ -886,10 +909,12 @@
   <script type="module">
     import { mountAirdropRegister } from "./airdrop-register.js";
     import { mountClaimStatus }     from "./claim-status.js";
+    import { mountRoundRegister }   from "./round-register.js";
 
     try{
       mountAirdropRegister("#airdrop-register");
       mountClaimStatus("#airdrop-claim-status");
+      mountRoundRegister("#round-register");
     } catch(e){
       console.error("mount",e)
     }
@@ -951,6 +976,23 @@
     airdropDlg?.addEventListener("click",e=>{
       const r=airdropDlg.getBoundingClientRect();
       if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right)closeAirdrop();
+    });
+
+    const dlg=document.getElementById("buyDialog");
+    const openBuy=()=>{if(dlg?.showModal)dlg.showModal()};
+    const closeBuy=()=>{if(dlg?.close)dlg.close()};
+    ["buyNav","buyNavMob"].forEach(id=>{
+      document.getElementById(id)?.addEventListener("click",e=>{
+        e.preventDefault();
+        mob.classList.remove("open");
+        ham.classList.remove("open");
+        openBuy();
+      });
+    });
+    document.getElementById("closeDlg")?.addEventListener("click",closeBuy);
+    dlg?.addEventListener("click",e=>{
+      const r=dlg.getBoundingClientRect();
+      if(e.clientY<r.top||e.clientY>r.bottom||e.clientX<r.left||e.clientX>r.right)closeBuy();
     });
 
     const io=new IntersectionObserver(en=>{
