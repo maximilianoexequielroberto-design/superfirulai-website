@@ -476,6 +476,7 @@ export function mountRoundRegister(selector) {
   });
 
   openBtn.addEventListener("click", openInPhantom);
+  if (openBtn) openBtn.textContent = "Continue in Phantom";
   if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
     openBtn.classList.add("show");
   }
@@ -510,6 +511,13 @@ export function mountRoundRegister(selector) {
 
     if (!provider) {
       openBtn.classList.add("show");
+
+      if (isMobileDevice()) {
+        setMsg("<strong>Opening Phantom...</strong> If Phantom is installed, the app should open now. After it opens, continue from Phantom's in-app browser.", "warn");
+        openInPhantom();
+        throw new Error("Opening Phantom...");
+      }
+
       throw new Error("Phantom wallet was not found on this device.");
     }
 
@@ -527,8 +535,13 @@ export function mountRoundRegister(selector) {
       connectBtn.textContent = "Connecting...";
       await ensureConnected();
     } catch (err) {
-      connectBtn.textContent = "Connect Wallet";
-      setMsg(err?.message || "Could not connect the wallet.", "error");
+      if (err?.message === "Opening Phantom...") {
+        connectBtn.textContent = "Open in Phantom";
+        setReady();
+      } else {
+        connectBtn.textContent = "Connect Wallet";
+        setMsg(err?.message || "Could not connect the wallet.", "error");
+      }
     } finally {
       connectBtn.disabled = false;
       if (walletAddress) connectBtn.textContent = "Wallet Connected";
