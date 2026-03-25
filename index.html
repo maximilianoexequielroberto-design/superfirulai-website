@@ -942,8 +942,17 @@
     });
 
     const dlg=document.getElementById("buyDialog");
-    const openBuy=()=>{if(dlg?.showModal)dlg.showModal()};
+    const openBuy=()=>{if(dlg?.showModal&&!dlg.open)dlg.showModal()};
     const closeBuy=()=>{if(dlg?.close)dlg.close()};
+
+    const openBuyFromHash=()=>{
+      if(window.location.hash==="#rounds"){
+        setTimeout(()=>openBuy(), 180);
+      }
+    };
+    openBuyFromHash();
+    window.addEventListener("hashchange", openBuyFromHash);
+    if(new URLSearchParams(window.location.search).get("buy")==="1"){ setTimeout(()=>openBuy(),180); }
     ["buyNav","buyNavMob"].forEach(id=>{
       document.getElementById(id)?.addEventListener("click",e=>{
         e.preventDefault();

@@ -20,11 +20,13 @@ function isMobileDevice() {
 }
 
 function isInPhantomBrowser() {
-  return !!(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
+  const ua = navigator.userAgent || "";
+  return !!(window.phantom?.solana?.isPhantom || window.solana?.isPhantom || /Phantom/i.test(ua));
 }
 
 function currentUrl() {
-  return window.location.href.split("#")[0] + "#rounds";
+  const base = window.location.href.split("#")[0].split("?")[0];
+  return `${base}?buy=1#rounds`;
 }
 
 function openInPhantom() {
@@ -470,7 +472,7 @@ export function mountRoundRegister(selector) {
   })();
 
   if (isMobileDevice() && isInPhantomBrowser()) {
-    setMsg("<strong>Inside Phantom.</strong> Tap Connect Wallet below, or wait a moment while we try to connect automatically.", "warn");
+    setMsg("<strong>Inside Phantom.</strong> The buy modal is ready. Tap Connect Wallet below, or wait a moment while we try to connect automatically.", "warn");
     setTimeout(async () => {
       if (walletAddress) return;
       try {
