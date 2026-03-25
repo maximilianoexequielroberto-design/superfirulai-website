@@ -181,8 +181,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       </div>
 
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
-      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Airdrop</button>
-      <div id="sf-msg" class="sf-wallet-note">Connect your wallet, sign the message, then complete X, Telegram and captcha.</div>
+      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Access</button>
+      <div id="sf-msg" class="sf-wallet-note">Use one personal wallet, sign the message, then complete X, Telegram and captcha.</div>
     </div>
   `;
 
