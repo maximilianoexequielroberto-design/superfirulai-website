@@ -103,18 +103,13 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
       ctaEl.innerHTML = `
         <div class="sf-claim-inline">
           <span class="sf-btn-disabled" aria-disabled="true">CLAIM AFTER LAUNCH</span>
-          <a class="btn btn-dark" href="#register">VIEW STATUS</a>
         </div>
       `;
       return;
     }
 
     if (state === "pending") {
-      ctaEl.innerHTML = `
-        <div class="sf-claim-inline">
-          <a class="btn btn-dark" href="#register">VIEW STATUS</a>
-        </div>
-      `;
+      ctaEl.innerHTML = ``;
       return;
     }
 
