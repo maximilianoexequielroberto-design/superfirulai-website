@@ -1,4 +1,3 @@
-// SUPERFIRULAI ROUND REGISTER FIX v2 - stable min/max based on SOL price
 import {
   Connection,
   PublicKey,
@@ -260,8 +259,8 @@ export function mountRoundRegister(selector) {
   function getTokenLimits(selectedToken) {
     const minSol = Number(roundConfig?.limits?.minSol || 0);
     const maxSol = Number(roundConfig?.limits?.maxSol || 0);
-    const solToken = getTokenMeta(roundConfig, "SOL");
-    const solPrice = Number(solToken?.livePriceUsd || 0);
+    const token = getTokenMeta(roundConfig, selectedToken);
+    const live = Number(token?.livePriceUsd || 0);
 
     if (selectedToken === "SOL") {
       return {
@@ -273,8 +272,8 @@ export function mountRoundRegister(selector) {
     }
 
     return {
-      min: minSol * solPrice,
-      max: maxSol * solPrice,
+      min: minSol * live,
+      max: maxSol * live,
       suffix: selectedToken,
       decimals: 2,
     };
@@ -324,9 +323,9 @@ export function mountRoundRegister(selector) {
       if (selectedToken === "SOL") {
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
       } else {
-        const solToken = getTokenMeta(roundConfig, "SOL");
-        const solPrice = Number(solToken?.livePriceUsd || 0);
-        const remainingStable = Number(meta.remainingSol || 0) * solPrice;
+        const token = getTokenMeta(roundConfig, selectedToken);
+        const live = Number(token?.livePriceUsd || 0);
+        const remainingStable = Number(meta.remainingSol || 0) * live;
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
       }
     }
@@ -373,6 +372,8 @@ export function mountRoundRegister(selector) {
     destinationEl.value = token.destinationAddress || "";
     destinationShortEl.textContent = short(token.destinationAddress || "");
     liveTokenPriceEl.textContent = `$${formatCompact(token.livePriceUsd, 6)}`;
+    const limits = getTokenLimits(selectedToken);
+    amountEl.placeholder = formatCompact(limits.min, limits.decimals);
     if (hashWarningEl) {
       if (selectedToken === "SOL") {
         hashWarningEl.innerHTML = `<div><strong>SOL options:</strong> use Phantom automatic buy for the fastest flow, or paste a confirmed transaction hash as manual fallback.</div><div>For USDT and USDC, hash submission stays required until stablecoin automatic payments are enabled.</div>`;
@@ -392,7 +393,11 @@ export function mountRoundRegister(selector) {
     if (!token || !round || !Number.isFinite(amount) || amount <= 0) {
       estimatedUsdEl.textContent = "-";
       estimatedFiruEl.textContent = "-";
-      if (amountValidationEl) amountValidationEl.textContent = "";
+      if (amountValidationEl) {
+        amountValidationEl.textContent = "";
+        amountValidationEl.style.color = "";
+      }
+      amountEl.style.borderColor = "";
       return;
     }
 
@@ -401,9 +406,21 @@ export function mountRoundRegister(selector) {
 
     estimatedUsdEl.textContent = `$${formatCurrency(usdValue, 2)}`;
     estimatedFiruEl.textContent = formatCompact(estimatedFiru, 0);
+    const validation = getAmountValidation();
     if (amountValidationEl) {
-      amountValidationEl.textContent = getAmountValidation();
-      amountValidationEl.style.color = amountValidationEl.textContent ? "#ffb2b2" : "#8bf0b2";
+      if (validation) {
+        amountValidationEl.textContent = validation;
+        amountValidationEl.style.color = "#ff6b6b";
+        amountEl.style.borderColor = "#ff6b6b";
+      } else if (amount > 0) {
+        amountValidationEl.textContent = "✔ Valid amount";
+        amountValidationEl.style.color = "#4ade80";
+        amountEl.style.borderColor = "#4ade80";
+      } else {
+        amountValidationEl.textContent = "";
+        amountValidationEl.style.color = "";
+        amountEl.style.borderColor = "";
+      }
     }
   }
 
@@ -418,7 +435,27 @@ export function mountRoundRegister(selector) {
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
     submitBtn.textContent = token === "SOL" ? "Register TX Hash" : `Register ${token} TX Hash`;
+
+    if (autoBuyBtn.disabled) {
+      autoBuyBtn.style.opacity = "0.5";
+      autoBuyBtn.style.cursor = "not-allowed";
+    } else {
+      autoBuyBtn.style.opacity = "1";
+      autoBuyBtn.style.cursor = "pointer";
+    }
+
+    if (submitBtn.disabled) {
+      submitBtn.style.opacity = "0.5";
+      submitBtn.style.cursor = "not-allowed";
+    } else {
+      submitBtn.style.opacity = "1";
+      submitBtn.style.cursor = "pointer";
+    }
   }
+
+  amountEl.addEventListener("input", () => {
+    amountEl.value = amountEl.value.replace(/[^0-9.]/g, "");
+  });
 
   [tokenEl, amountEl, txEl, roundEl].forEach((el) => el.addEventListener("input", () => {
     updateRoundMeta();
@@ -447,7 +484,7 @@ export function mountRoundRegister(selector) {
     openBtn.classList.add("show");
   }
 
-  async function refreshRoundConfig(showError = false) {
+  (async () => {
     try {
       roundConfig = await fetchRoundConfig();
       updateRoundMeta();
@@ -455,17 +492,10 @@ export function mountRoundRegister(selector) {
       updateProgress();
       setReady();
     } catch (err) {
-      if (showError) {
-        roundMetaEl.textContent = "Could not load round configuration.";
-        setMsg(err?.message || "Could not load round configuration.", "error");
-      }
+      roundMetaEl.textContent = "Could not load round configuration.";
+      setMsg(err?.message || "Could not load round configuration.", "error");
     }
-  }
-
-  refreshRoundConfig(true);
-  setInterval(() => {
-    refreshRoundConfig(false);
-  }, 30000);
+  })();
 
   async function ensureConnected() {
     provider = provider || await getPhantomProvider();
