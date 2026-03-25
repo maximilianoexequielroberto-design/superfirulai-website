@@ -25,7 +25,8 @@ function currentUrl() {
 
 function openInPhantom() {
   const target = encodeURIComponent(currentUrl());
-  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}`;
+  const ref = encodeURIComponent(window.location.origin);
+  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}?ref=${ref}`;
 }
 
 async function getPhantomProvider() {
@@ -477,6 +478,7 @@ export function mountRoundRegister(selector) {
 
   openBtn.addEventListener("click", openInPhantom);
   if (openBtn) openBtn.textContent = "Continue in Phantom";
+  if (isMobileDevice()) connectBtn.textContent = "Continue in Phantom";
   if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
     openBtn.classList.add("show");
   }
@@ -518,7 +520,7 @@ export function mountRoundRegister(selector) {
         throw new Error("Opening Phantom...");
       }
 
-      throw new Error("Phantom wallet was not found on this device.");
+      throw new Error(isMobileDevice() ? "Open Phantom to continue." : "Phantom wallet was not found on this device.");
     }
 
     const resp = await provider.connect({ onlyIfTrusted: false });
@@ -530,13 +532,20 @@ export function mountRoundRegister(selector) {
   }
 
   connectBtn.addEventListener("click", async () => {
+    if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
+      connectBtn.textContent = "Opening Phantom...";
+      openBtn.classList.add("show");
+      openInPhantom();
+      return;
+    }
+
     try {
       connectBtn.disabled = true;
       connectBtn.textContent = "Connecting...";
       await ensureConnected();
     } catch (err) {
       if (err?.message === "Opening Phantom...") {
-        connectBtn.textContent = "Open in Phantom";
+        connectBtn.textContent = "Continue in Phantom";
         setReady();
       } else {
         connectBtn.textContent = "Connect Wallet";
