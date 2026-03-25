@@ -259,8 +259,8 @@ export function mountRoundRegister(selector) {
   function getTokenLimits(selectedToken) {
     const minSol = Number(roundConfig?.limits?.minSol || 0);
     const maxSol = Number(roundConfig?.limits?.maxSol || 0);
-    const token = getTokenMeta(roundConfig, selectedToken);
-    const live = Number(token?.livePriceUsd || 0);
+    const solToken = getTokenMeta(roundConfig, "SOL");
+    const solPriceUsd = Number(solToken?.livePriceUsd || 0);
 
     if (selectedToken === "SOL") {
       return {
@@ -272,8 +272,8 @@ export function mountRoundRegister(selector) {
     }
 
     return {
-      min: minSol * live,
-      max: maxSol * live,
+      min: minSol * solPriceUsd,
+      max: maxSol * solPriceUsd,
       suffix: selectedToken,
       decimals: 2,
     };
@@ -323,9 +323,9 @@ export function mountRoundRegister(selector) {
       if (selectedToken === "SOL") {
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
       } else {
-        const token = getTokenMeta(roundConfig, selectedToken);
-        const live = Number(token?.livePriceUsd || 0);
-        const remainingStable = Number(meta.remainingSol || 0) * live;
+        const solToken = getTokenMeta(roundConfig, "SOL");
+        const solPriceUsd = Number(solToken?.livePriceUsd || 0);
+        const remainingStable = Number(meta.remainingSol || 0) * solPriceUsd;
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
       }
     }
@@ -458,6 +458,20 @@ export function mountRoundRegister(selector) {
       setMsg(err?.message || "Could not load round configuration.", "error");
     }
   })();
+
+  setInterval(async () => {
+    try {
+      if (!roundConfig) return;
+      const freshConfig = await fetchRoundConfig();
+      roundConfig = freshConfig;
+      updateRoundMeta();
+      updateTokenDetails();
+      updateProgress();
+      setReady();
+    } catch {
+      // Keep the last known config if the refresh fails.
+    }
+  }, 30000);
 
   async function ensureConnected() {
     provider = provider || await getPhantomProvider();
