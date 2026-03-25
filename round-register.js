@@ -235,6 +235,17 @@ export function mountRoundRegister(selector) {
   let walletAddress = "";
   let roundConfig = null;
 
+  function applyMobileUx() {
+    if (!isMobileDevice()) return;
+    connectBtn.textContent = "Open in Phantom";
+    openBtn.textContent = "Open in Phantom App";
+    openBtn.classList.add("show");
+    setMsg(
+      "<strong>📱 Mobile detected.</strong> Tap <strong>Open in Phantom</strong>, then finish the purchase inside Phantom's in-app browser. Stay inside Phantom to connect and sign.",
+      "warn"
+    );
+  }
+
 
   function copyToClipboardWithFallback(value) {
     if (navigator.clipboard?.writeText) {
@@ -477,10 +488,9 @@ export function mountRoundRegister(selector) {
   });
 
   openBtn.addEventListener("click", openInPhantom);
-  if (openBtn) openBtn.textContent = "Continue in Phantom";
-  if (isMobileDevice()) connectBtn.textContent = "Continue in Phantom";
+  if (openBtn) openBtn.textContent = "Open in Phantom App";
   if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
-    openBtn.classList.add("show");
+    applyMobileUx();
   }
 
   (async () => {
@@ -490,6 +500,8 @@ export function mountRoundRegister(selector) {
       updateTokenDetails();
       updateProgress();
       setReady();
+      if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) applyMobileUx();
+      if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) applyMobileUx();
     } catch (err) {
       roundMetaEl.textContent = "Could not load round configuration.";
       setMsg(err?.message || "Could not load round configuration.", "error");
@@ -515,12 +527,12 @@ export function mountRoundRegister(selector) {
       openBtn.classList.add("show");
 
       if (isMobileDevice()) {
-        setMsg("<strong>Opening Phantom...</strong> If Phantom is installed, the app should open now. After it opens, continue from Phantom's in-app browser.", "warn");
+        setMsg("<strong>Opening Phantom...</strong> Continue inside Phantom's in-app browser to connect and sign.", "warn");
         openInPhantom();
         throw new Error("Opening Phantom...");
       }
 
-      throw new Error(isMobileDevice() ? "Open Phantom to continue." : "Phantom wallet was not found on this device.");
+      throw new Error("Phantom wallet was not found on this device.");
     }
 
     const resp = await provider.connect({ onlyIfTrusted: false });
@@ -535,6 +547,10 @@ export function mountRoundRegister(selector) {
     if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
       connectBtn.textContent = "Opening Phantom...";
       openBtn.classList.add("show");
+      setMsg(
+        "<strong>Opening Phantom...</strong> Once Phantom opens, stay there and continue from Phantom's in-app browser.",
+        "warn"
+      );
       openInPhantom();
       return;
     }
@@ -545,10 +561,10 @@ export function mountRoundRegister(selector) {
       await ensureConnected();
     } catch (err) {
       if (err?.message === "Opening Phantom...") {
-        connectBtn.textContent = "Continue in Phantom";
+        connectBtn.textContent = "Open in Phantom";
         setReady();
       } else {
-        connectBtn.textContent = "Connect Wallet";
+        connectBtn.textContent = isMobileDevice() ? "Open in Phantom" : "Connect Wallet";
         setMsg(err?.message || "Could not connect the wallet.", "error");
       }
     } finally {
