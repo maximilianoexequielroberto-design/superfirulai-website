@@ -147,7 +147,7 @@ export function mountRoundRegister(selector) {
           <div class="sf-input-shell">
             <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
           </div>
-          <span class="sf-help">Use this for live estimate. Automatic buy is only available for SOL right now.</span>
+          <span class="sf-help" id="sfAmountHint">Use this for live estimate. Automatic buy is only available for SOL right now.</span><span class="sf-help" id="sfAmountRange">Loading limits...</span><span class="sf-help" id="sfAmountValidation"></span>
         </label>
 
         <label class="sf-field">
@@ -219,6 +219,9 @@ export function mountRoundRegister(selector) {
   const hashWarningEl = root.querySelector("#sfHashWarning");
   const destinationShortEl = root.querySelector("#sfDestinationShort");
   const roundMetaEl = root.querySelector("#sfRoundMeta");
+  const amountHintEl = root.querySelector("#sfAmountHint");
+  const amountRangeEl = root.querySelector("#sfAmountRange");
+  const amountValidationEl = root.querySelector("#sfAmountValidation");
   const liveTokenPriceEl = root.querySelector("#sfLiveTokenPrice");
   const estimatedUsdEl = root.querySelector("#sfEstimatedUsd");
   const estimatedFiruEl = root.querySelector("#sfEstimatedFiru");
@@ -231,6 +234,72 @@ export function mountRoundRegister(selector) {
   let walletAddress = "";
   let roundConfig = null;
 
+
+  function copyToClipboardWithFallback(value) {
+    if (navigator.clipboard?.writeText) {
+      return navigator.clipboard.writeText(value).catch(() => fallbackCopy(value));
+    }
+    return fallbackCopy(value);
+  }
+
+  function fallbackCopy(value) {
+    const area = document.createElement("textarea");
+    area.value = value;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.top = "-9999px";
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(area);
+    if (!ok) throw new Error("copy_failed");
+  }
+
+  function getTokenLimits(selectedToken) {
+    const minSol = Number(roundConfig?.limits?.minSol || 0);
+    const maxSol = Number(roundConfig?.limits?.maxSol || 0);
+    const token = getTokenMeta(roundConfig, selectedToken);
+    const live = Number(token?.livePriceUsd || 0);
+
+    if (selectedToken === "SOL") {
+      return {
+        min: minSol,
+        max: maxSol,
+        suffix: "SOL",
+        decimals: 4,
+      };
+    }
+
+    return {
+      min: minSol * live,
+      max: maxSol * live,
+      suffix: selectedToken,
+      decimals: 2,
+    };
+  }
+
+  function getAmountValidation() {
+    const selectedToken = tokenEl.value;
+    const amount = Number(amountEl.value || 0);
+    const selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value);
+
+    if (!selectedRound?.enabled || selectedRound?.soldOut) {
+      return selectedRound?.soldOut ? "This round is sold out." : "This round is currently closed.";
+    }
+
+    if (!Number.isFinite(amount) || amount <= 0) return "";
+
+    const limits = getTokenLimits(selectedToken);
+    if (amount < limits.min) {
+      return `Minimum amount for ${limits.suffix} is ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}.`;
+    }
+    if (amount > limits.max) {
+      return `Maximum amount for ${limits.suffix} is ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
+    }
+    return "";
+  }
+
   function setMsg(message, tone = "warn") {
     walletMsg.className = `sf-round-note ${tone}`;
     walletMsg.innerHTML = message;
@@ -238,19 +307,37 @@ export function mountRoundRegister(selector) {
 
   function updateRoundMeta() {
     const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
+    const selectedToken = tokenEl.value;
     if (!meta) {
       roundMetaEl.textContent = "Round config unavailable.";
+      if (amountRangeEl) amountRangeEl.textContent = "Limits unavailable.";
       return;
     }
     const pieces = [];
     pieces.push(meta.enabled ? "Open" : "Closed");
     pieces.push(`FIRU $${formatCompact(meta.firuPriceUsd, 6)}`);
-    pieces.push(`Min ${formatCompact(roundConfig?.limits?.minSol || 0, 4)} SOL`);
-    pieces.push(`Max ${formatCompact(roundConfig?.limits?.maxSol || 0, 4)} SOL`);
+    const limits = getTokenLimits(selectedToken);
+    pieces.push(`Min ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}`);
+    pieces.push(`Max ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}`);
     if (typeof meta.remainingSol === "number") {
-      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
+      if (selectedToken === "SOL") {
+        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
+      } else {
+        const token = getTokenMeta(roundConfig, selectedToken);
+        const live = Number(token?.livePriceUsd || 0);
+        const remainingStable = Number(meta.remainingSol || 0) * live;
+        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
+      }
     }
     roundMetaEl.textContent = pieces.join(" · ");
+    if (amountRangeEl) {
+      amountRangeEl.textContent = `Allowed range: ${formatCompact(limits.min, limits.decimals)} ${limits.suffix} to ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
+    }
+    if (amountHintEl) {
+      amountHintEl.textContent = selectedToken === "SOL"
+        ? "Automatic buy is available for SOL. USDT and USDC still require the confirmed transaction hash."
+        : `${selectedToken} uses manual registration: send funds on Solana, then paste the confirmed transaction hash.`;
+    }
   }
 
 
@@ -304,6 +391,7 @@ export function mountRoundRegister(selector) {
     if (!token || !round || !Number.isFinite(amount) || amount <= 0) {
       estimatedUsdEl.textContent = "-";
       estimatedFiruEl.textContent = "-";
+      if (amountValidationEl) amountValidationEl.textContent = "";
       return;
     }
 
@@ -312,13 +400,19 @@ export function mountRoundRegister(selector) {
 
     estimatedUsdEl.textContent = `$${formatCurrency(usdValue, 2)}`;
     estimatedFiruEl.textContent = formatCompact(estimatedFiru, 0);
+    if (amountValidationEl) {
+      amountValidationEl.textContent = getAmountValidation();
+      amountValidationEl.style.color = amountValidationEl.textContent ? "#ffb2b2" : "#8bf0b2";
+    }
   }
 
   function setReady() {
     const token = tokenEl.value;
     const selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value);
-    const amountReady = walletAddress && token === "SOL" && Number(amountEl.value || 0) > 0 && selectedRound?.enabled && !selectedRound?.soldOut;
-    const manualReady = txEl.value.trim().length > 20 && selectedRound?.enabled && !selectedRound?.soldOut;
+    const amount = Number(amountEl.value || 0);
+    const amountInvalid = Boolean(getAmountValidation());
+    const amountReady = walletAddress && token === "SOL" && Number.isFinite(amount) && amount > 0 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
+    const manualReady = txEl.value.trim().length > 20 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
     autoBuyBtn.disabled = !amountReady;
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
@@ -335,7 +429,7 @@ export function mountRoundRegister(selector) {
     const value = destinationEl.value.trim();
     if (!value) return;
     try {
-      await navigator.clipboard.writeText(value);
+      await copyToClipboardWithFallback(value);
       copyDestinationBtn.textContent = "Copied!";
       copyDestinationBtn.classList.add("copied");
       setTimeout(() => {
