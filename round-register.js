@@ -55,6 +55,13 @@ function injectStyles() {
     .sf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     .sf-row-tight{display:grid;grid-template-columns:1fr 180px 180px;gap:12px}
     .sf-field{display:grid;gap:8px}
+    .sf-copy-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden}
+    .sf-copy-shell .sf-input{flex:1;min-width:0}
+    .sf-copy-btn{flex:0 0 auto;min-width:110px;height:52px;border:none;border-left:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#fff;font:inherit;font-weight:800;cursor:pointer;transition:background .18s ease,color .18s ease}
+    .sf-copy-btn:hover{background:rgba(255,255,255,.1)}
+    .sf-copy-btn.copied{background:rgba(33,203,126,.18);color:#8bf0b2}
+    .sf-hash-warning{display:grid;gap:8px;padding:14px 16px;border-radius:16px;background:rgba(255,216,125,.08);border:1px solid rgba(255,216,125,.22);color:#ffe39d;font-size:13px;line-height:1.55}
+    .sf-hash-warning strong{color:#fff}
     .sf-label{font-size:13px;font-weight:800;letter-spacing:.02em;color:#fff}
     .sf-handle-shell,.sf-input-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden}
     .sf-prefix{flex:0 0 auto;padding:0 14px;height:52px;display:inline-flex;align-items:center;justify-content:center;color:#8fb3ff;font-weight:800;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
@@ -118,7 +125,7 @@ export function mountRoundRegister(selector) {
   injectStyles();
   root.innerHTML = `
     <form class="sf-round-form" novalidate>
-      <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. Manual TX hash registration remains available for SOL, USDT and USDC.</div>
+      <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
 
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
@@ -140,7 +147,7 @@ export function mountRoundRegister(selector) {
           <div class="sf-input-shell">
             <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
           </div>
-          <span class="sf-help">Use this for live estimate. Automatic buy is only available for SOL.</span>
+          <span class="sf-help">Use this for live estimate. Automatic buy is only available for SOL right now.</span>
         </label>
 
         <label class="sf-field">
@@ -166,23 +173,29 @@ export function mountRoundRegister(selector) {
         <label class="sf-field">
           <span class="sf-label">Transaction hash</span>
           <div class="sf-input-shell">
-            <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the Solana transaction hash" />
+            <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the confirmed Solana transaction hash" />
           </div>
-          <span class="sf-help">Manual fallback for SOL, and the required flow for USDT and USDC.</span>
+          <span class="sf-help">For USDT and USDC this step is required. Without submitting the hash, the payment is not automatically registered.</span>
         </label>
         <label class="sf-field">
           <span class="sf-label">Destination wallet / token account</span>
-          <div class="sf-input-shell">
+          <div class="sf-copy-shell">
             <input class="sf-input" id="sfDestinationAddress" readonly />
+            <button type="button" class="sf-copy-btn" id="sfCopyDestination">Copy</button>
           </div>
           <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
         </label>
       </div>
 
+      <div class="sf-hash-warning" id="sfHashWarning">
+        <div><strong>USDT / USDC important:</strong> after sending funds, paste the confirmed transaction hash to complete and register the payment.</div>
+        <div>Payments sent without submitting the transaction hash will not be automatically processed.</div>
+      </div>
+
       <div class="sf-summary">
-        <div class="sf-mini"><strong>Automatic SOL</strong><span>Use Phantom for one-click SOL payments and instant registration after confirmation.</span></div>
-        <div class="sf-mini"><strong>Manual stablecoins</strong><span>Send USDT or USDC on Solana, then paste the final transaction hash to register.</span></div>
-        <div class="sf-mini"><strong>Live price engine</strong><span>Allocation is calculated from the live market price at verification time.</span></div>
+        <div class="sf-mini"><strong>Automatic SOL</strong><span>Connect Phantom, confirm the payment and let the app register the purchase automatically.</span></div>
+        <div class="sf-mini"><strong>Stablecoin flow</strong><span>Copy the official USDT or USDC destination, send funds on Solana, then paste the confirmed transaction hash.</span></div>
+        <div class="sf-mini"><strong>Live allocation</strong><span>Your FIRU allocation is calculated automatically from the verified payment and the active round price.</span></div>
       </div>
 
       <div class="sf-round-actions">
@@ -202,6 +215,8 @@ export function mountRoundRegister(selector) {
   const txEl = root.querySelector("#sfTxHash");
   const roundEl = root.querySelector("#sfRoundSelect");
   const destinationEl = root.querySelector("#sfDestinationAddress");
+  const copyDestinationBtn = root.querySelector("#sfCopyDestination");
+  const hashWarningEl = root.querySelector("#sfHashWarning");
   const destinationShortEl = root.querySelector("#sfDestinationShort");
   const roundMetaEl = root.querySelector("#sfRoundMeta");
   const liveTokenPriceEl = root.querySelector("#sfLiveTokenPrice");
@@ -254,13 +269,15 @@ export function mountRoundRegister(selector) {
   }
 
   function updateTokenDetails() {
-    const token = getTokenMeta(roundConfig, tokenEl.value);
+    const selectedToken = tokenEl.value;
+    const token = getTokenMeta(roundConfig, selectedToken);
     if (!token) {
       destinationEl.value = "";
       destinationShortEl.textContent = "-";
       liveTokenPriceEl.textContent = "-";
       estimatedUsdEl.textContent = "-";
       estimatedFiruEl.textContent = "-";
+      if (hashWarningEl) hashWarningEl.style.display = "grid";
       updateProgress();
       return;
     }
@@ -268,6 +285,13 @@ export function mountRoundRegister(selector) {
     destinationEl.value = token.destinationAddress || "";
     destinationShortEl.textContent = short(token.destinationAddress || "");
     liveTokenPriceEl.textContent = `$${formatCompact(token.livePriceUsd, 6)}`;
+    if (hashWarningEl) {
+      if (selectedToken === "SOL") {
+        hashWarningEl.innerHTML = `<div><strong>SOL options:</strong> use Phantom automatic buy for the fastest flow, or paste a confirmed transaction hash as manual fallback.</div><div>For USDT and USDC, hash submission stays required until stablecoin automatic payments are enabled.</div>`;
+      } else {
+        hashWarningEl.innerHTML = `<div><strong>${selectedToken} required flow:</strong> copy the official destination, send ${selectedToken} on Solana, then paste the confirmed transaction hash to complete and register the payment.</div><div>Payments sent without submitting the transaction hash will not be automatically processed.</div>`;
+      }
+    }
     updateEstimate();
     updateProgress();
   }
@@ -298,6 +322,7 @@ export function mountRoundRegister(selector) {
     autoBuyBtn.disabled = !amountReady;
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
+    submitBtn.textContent = token === "SOL" ? "Register TX Hash" : `Register ${token} TX Hash`;
   }
 
   [tokenEl, amountEl, txEl, roundEl].forEach((el) => el.addEventListener("input", () => {
@@ -305,6 +330,22 @@ export function mountRoundRegister(selector) {
     updateTokenDetails();
     setReady();
   }));
+
+  copyDestinationBtn?.addEventListener("click", async () => {
+    const value = destinationEl.value.trim();
+    if (!value) return;
+    try {
+      await navigator.clipboard.writeText(value);
+      copyDestinationBtn.textContent = "Copied!";
+      copyDestinationBtn.classList.add("copied");
+      setTimeout(() => {
+        copyDestinationBtn.textContent = "Copy";
+        copyDestinationBtn.classList.remove("copied");
+      }, 1400);
+    } catch {
+      setMsg("Could not copy the destination address. Copy it manually.", "error");
+    }
+  });
 
   openBtn.addEventListener("click", openInPhantom);
   if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
@@ -335,7 +376,7 @@ export function mountRoundRegister(selector) {
     const resp = await provider.connect({ onlyIfTrusted: false });
     walletAddress = resp.publicKey.toString();
     connectBtn.textContent = "Wallet Connected";
-    setMsg(`<strong>Wallet connected:</strong> ${short(walletAddress)}. Use automatic buy for SOL or register any valid SOL / USDT / USDC transaction hash manually.`, "ok");
+    setMsg(`<strong>Wallet connected:</strong> ${short(walletAddress)}. Use automatic buy for SOL, or for USDT / USDC send funds on Solana and register the confirmed transaction hash.`, "ok");
     setReady();
     return provider;
   }
@@ -495,7 +536,7 @@ export function mountRoundRegister(selector) {
 
       submitBtn.disabled = true;
       submitBtn.textContent = "Validating...";
-      setMsg("Checking the transaction on Solana and registering your purchase...", "warn");
+      setMsg(`Checking the ${tokenEl.value} transaction on Solana and registering your purchase...`, "warn");
 
       const data = await registerRoundPurchase(tx_hash);
 
