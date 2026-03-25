@@ -60,6 +60,10 @@ create table if not exists public.round_registrations (
   raw_validation jsonb,
   distribution_tx text,
   distribution_sent_at timestamptz,
+  delivery_status text not null default 'pending',
+  delivery_tx text,
+  delivered_at timestamptz,
+  delivery_notes text,
   created_at timestamptz not null default now(),
 
   constraint round_registrations_tx_unique unique (tx_hash),
@@ -70,7 +74,8 @@ create table if not exists public.round_registrations (
   constraint round_registrations_price_positive check (token_price_usd > 0 and firu_price_usd > 0),
   constraint round_registrations_allocation_positive check (firu_allocation > 0),
   constraint round_registrations_tg_format check (telegram_username is null or telegram_username ~ '^[A-Za-z0-9_]{3,32}$'),
-  constraint round_registrations_x_format check (x_username is null or x_username ~ '^[A-Za-z0-9_]{1,15}$')
+  constraint round_registrations_x_format check (x_username is null or x_username ~ '^[A-Za-z0-9_]{1,15}$'),
+  constraint round_registrations_delivery_status_check check (delivery_status in ('pending', 'processing', 'delivered', 'failed', 'cancelled'))
 );
 
 alter table public.round_registrations
@@ -78,7 +83,80 @@ alter table public.round_registrations
   add column if not exists payment_amount numeric(30,9) not null default 0,
   add column if not exists payment_amount_usd numeric(30,9) not null default 0,
   add column if not exists token_price_usd numeric(20,9) not null default 0,
-  add column if not exists firu_price_usd numeric(20,9) not null default 0;
+  add column if not exists firu_price_usd numeric(20,9) not null default 0,
+  add column if not exists delivery_status text not null default 'pending',
+  add column if not exists delivery_tx text,
+  add column if not exists delivered_at timestamptz,
+  add column if not exists delivery_notes text;
+
+update public.round_registrations
+set delivery_status = case
+  when coalesce(distribution_tx, delivery_tx) is not null or coalesce(distribution_sent_at, delivered_at) is not null then 'delivered'
+  else 'pending'
+end
+where delivery_status is null
+   or delivery_status not in ('pending', 'processing', 'delivered', 'failed', 'cancelled');
+
+
+
+do $$
+begin
+  if not exists (
+    select 1
+    from pg_constraint
+    where conname = 'round_registrations_delivery_status_check'
+  ) then
+    alter table public.round_registrations
+      add constraint round_registrations_delivery_status_check
+      check (delivery_status in ('pending', 'processing', 'delivered', 'failed', 'cancelled'));
+  end if;
+end $$;
+
+create index if not exists idx_round_delivery_status on public.round_registrations (delivery_status);
+create index if not exists idx_round_delivery_tx on public.round_registrations (delivery_tx);
+create index if not exists idx_round_delivered_at on public.round_registrations (delivered_at desc);
+
+create or replace view public.v_round_pending_delivery as
+select
+  id,
+  wallet,
+  sender_wallet,
+  round,
+  payment_token,
+  payment_amount,
+  payment_amount_usd,
+  firu_allocation,
+  tx_hash,
+  created_at,
+  delivery_status
+from public.round_registrations
+where delivery_status in ('pending', 'processing', 'failed')
+order by created_at asc;
+
+create or replace view public.v_round_delivered as
+select
+  id,
+  wallet,
+  sender_wallet,
+  round,
+  payment_token,
+  payment_amount,
+  payment_amount_usd,
+  firu_allocation,
+  tx_hash,
+  delivery_tx,
+  delivered_at,
+  delivery_status,
+  created_at
+from public.round_registrations
+where delivery_status = 'delivered'
+order by delivered_at desc nulls last, created_at desc;
+
+create or replace view public.v_round_delivery_status_counts as
+select delivery_status, count(*)::bigint as total
+from public.round_registrations
+group by delivery_status
+order by delivery_status;
 
 create index if not exists idx_round_wallet on public.round_registrations (wallet);
 create index if not exists idx_round_sender_wallet on public.round_registrations (sender_wallet);
