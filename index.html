@@ -667,7 +667,6 @@
 <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">First 100 approved wallets</h3>
 <p class="section-copy" style="margin-top:0">20,000 $FIRU for each of the first 100 approved wallets.</p>
 <div class="claim-points">
-<div class="summary-mini"><strong>20,000 $FIRU</strong><span>per approved wallet.</span></div>
 <div class="summary-mini"><strong>Eligibility</strong><span>Only the first 100 approved wallets qualify.</span></div>
 
 </div>
@@ -714,9 +713,7 @@
 <div class="panel reveal reveal-d1">
 <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;margin-bottom:10px">Claim rules</h3>
 <div class="claim-points">
-<div class="summary-mini"><strong>Approved only</strong><span>Only approved wallets can claim.</span></div>
-
-<div class="summary-mini"><strong>After launch</strong><span>Claim opens after the official launch.</span></div>
+<div class="summary-mini"><strong>Only approved wallets can claim.</strong><span>Claim opens after the official launch.</span></div>
 </div>
 <div class="compact-note"><strong>Status check:</strong> connect your wallet on the right to see if it is pending, approved, rejected or already claimed.</div>
 </div>
@@ -766,7 +763,7 @@
 <div class="section-head reveal">
 <div class="eyebrow"><span></span> Official Channels</div>
 <h2 class="section-title">Stay on the official channels</h2>
-<p class="section-copy">Follow the official channels for launch news and the claim date.</p>
+<p class="section-copy">Join the community and stay updated. Get early information, participate in events and access exclusive opportunities.</p>
 </div>
 <div class="channel-grid" style="grid-template-columns:repeat(2,1fr)">
 <a class="channel-card reveal reveal-d1" href="https://x.com/superfirulai" rel="noopener" target="_blank">
@@ -855,14 +852,14 @@
 <div class="dialog-header">
 <div style="position:relative;z-index:1">
 <h3 style="font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,38px);font-weight:900;letter-spacing:-.01em;background:linear-gradient(135deg,#fff 50%,#7db4ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Buy $FIRU · Rounds</h3>
-<p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">When the official buy window opens, send SOL to the project wallet and paste the confirmed transaction hash. The system checks the transaction on-chain and saves your FIRU allocation for the selected round.</p>
+<p style="margin:8px 0 0;color:rgba(200,218,255,.8);line-height:1.6;font-size:14px;max-width:540px">SOL: Connect Phantom and complete the purchase automatically.<br/>USDT / USDC: 1. Copy the destination wallet 2. Send funds on Solana 3. Paste the transaction hash 4. Register your payment.</p>
 </div>
 <button aria-label="Close" class="dialog-close" id="closeDlg">✕</button>
 </div>
 <div class="dialog-divider"></div>
 <div class="dialog-steps">
 <div class="dialog-step"><strong>1 · Choose your round</strong><span>Round 1 opens first, then Round 2 if enabled.</span></div>
-<div class="dialog-step"><strong>2 · Send SOL</strong><span>Use the wallet shown by the app and then paste the confirmed tx hash.</span></div>
+<div class="dialog-step"><strong>2 · Complete the payment</strong><span>SOL uses Phantom automatic purchase. USDT / USDC use copy, send, paste hash and register.</span></div>
 <div class="dialog-step"><strong>3 · Allocation saved</strong><span>Your FIRU allocation is calculated automatically from the round price.</span></div>
 </div>
 <div id="round-register" style="position:relative;z-index:1"></div>
@@ -870,9 +867,9 @@
 </dialog>
 <noscript><div style="max-width:960px;margin:16px auto;padding:12px 16px;border:1px solid rgba(255,255,255,.12);border-radius:16px;background:#0d162f;color:#fff">Enable JavaScript to use wallet registration and claim status.</div></noscript>
 <script type="module">
-    import { mountAirdropRegister } from "./airdrop-register.js?v=mobilefix2";
-    import { mountClaimStatus }     from "./claim-status.js?v=mobilefix2";
-    import { mountRoundRegister }   from "./round-register.js?v=mobilefix2";
+    import { mountAirdropRegister } from "./airdrop-register.js";
+    import { mountClaimStatus }     from "./claim-status.js";
+    import { mountRoundRegister }   from "./round-register.js";
 
     try{
       mountAirdropRegister("#airdrop-register");
@@ -942,17 +939,8 @@
     });
 
     const dlg=document.getElementById("buyDialog");
-    const openBuy=()=>{if(dlg?.showModal&&!dlg.open)dlg.showModal()};
+    const openBuy=()=>{if(dlg?.showModal)dlg.showModal()};
     const closeBuy=()=>{if(dlg?.close)dlg.close()};
-
-    const openBuyFromHash=()=>{
-      if(window.location.hash==="#rounds"){
-        setTimeout(()=>openBuy(), 180);
-      }
-    };
-    openBuyFromHash();
-    window.addEventListener("hashchange", openBuyFromHash);
-    if(new URLSearchParams(window.location.search).get("buy")==="1"){ setTimeout(()=>openBuy(),180); }
     ["buyNav","buyNavMob"].forEach(id=>{
       document.getElementById(id)?.addEventListener("click",e=>{
         e.preventDefault();
