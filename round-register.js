@@ -81,6 +81,13 @@ function injectStyles() {
     .sf-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
     .sf-open-phantom{display:none}
     .sf-open-phantom.show{display:inline-flex}
+    .sf-trust-bar{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;padding:12px;border-radius:16px;background:linear-gradient(180deg,rgba(255,214,101,.10),rgba(24,163,255,.08));border:1px solid rgba(255,255,255,.10)}
+    .sf-trust-item{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
+    .sf-trust-item strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
+    .sf-trust-item span{display:block;color:#cfe0ff;font-size:12px;line-height:1.45}
+    .sf-stable-guide{display:none;gap:8px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:#dce7ff;font-size:13px;line-height:1.55}
+    .sf-stable-guide.show{display:grid}
+    .sf-open-phantom.show{display:inline-flex}
     .sf-price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
@@ -131,6 +138,12 @@ export function mountRoundRegister(selector) {
   root.innerHTML = `
     <form class="sf-round-form" novalidate>
       <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
+
+      <div class="sf-trust-bar" id="sfTrustBar">
+        <div class="sf-trust-item"><strong id="sfTrustHeadline">Live round status</strong><span id="sfTrustCopy">Loading live pricing and round availability...</span></div>
+        <div class="sf-trust-item"><strong>Official destination</strong><span>Only use the address shown in this form on Solana.</span></div>
+        <div class="sf-trust-item"><strong>Allocation policy</strong><span>Your FIRU allocation is calculated automatically from the verified payment.</span></div>
+      </div>
 
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
@@ -186,10 +199,18 @@ export function mountRoundRegister(selector) {
           <span class="sf-label">Destination wallet / token account</span>
           <div class="sf-copy-shell">
             <input class="sf-input" id="sfDestinationAddress" readonly />
-            <button type="button" class="sf-copy-btn" id="sfCopyDestination">Copy</button>
+            <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY WALLET ADDRESS</button>
           </div>
           <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
         </label>
+      </div>
+
+      <div class="sf-stable-guide" id="sfStableGuide">
+        <div><strong>How it works:</strong></div>
+        <div>1. Copy the official destination address.</div>
+        <div>2. Send funds on Solana.</div>
+        <div>3. Paste the confirmed transaction hash.</div>
+        <div>4. Register the payment to lock your allocation.</div>
       </div>
 
       <div class="sf-hash-warning" id="sfHashWarning">
@@ -221,7 +242,10 @@ export function mountRoundRegister(selector) {
   const roundEl = root.querySelector("#sfRoundSelect");
   const destinationEl = root.querySelector("#sfDestinationAddress");
   const copyDestinationBtn = root.querySelector("#sfCopyDestination");
+  const stableGuideEl = root.querySelector("#sfStableGuide");
   const hashWarningEl = root.querySelector("#sfHashWarning");
+  const trustHeadlineEl = root.querySelector("#sfTrustHeadline");
+  const trustCopyEl = root.querySelector("#sfTrustCopy");
   const destinationShortEl = root.querySelector("#sfDestinationShort");
   const roundMetaEl = root.querySelector("#sfRoundMeta");
   const amountHintEl = root.querySelector("#sfAmountHint");
@@ -258,6 +282,7 @@ export function mountRoundRegister(selector) {
     if (phantomMobile) {
       if (tokenEl) tokenEl.value = "SOL";
       if (txField) txField.style.display = "none";
+      if (stableGuideEl) stableGuideEl.classList.remove("show");
       if (hashWarningEl) hashWarningEl.style.display = "none";
       if (submitBtn) submitBtn.style.display = "none";
       if (destField) destField.style.display = "none";
@@ -272,6 +297,7 @@ export function mountRoundRegister(selector) {
 
     if (token === "SOL") {
       if (txField) txField.style.display = "none";
+      if (stableGuideEl) stableGuideEl.classList.remove("show");
       if (hashWarningEl) hashWarningEl.style.display = "none";
       if (submitBtn) submitBtn.style.display = "none";
       if (destField) destField.style.display = "";
@@ -288,6 +314,7 @@ export function mountRoundRegister(selector) {
 
     if (token === "USDT" || token === "USDC") {
       if (txField) txField.style.display = "";
+      if (stableGuideEl) stableGuideEl.classList.add("show");
       if (hashWarningEl) hashWarningEl.style.display = "grid";
       if (submitBtn) submitBtn.style.display = "";
       if (destField) destField.style.display = "";
@@ -366,6 +393,41 @@ export function mountRoundRegister(selector) {
     }
     return "";
   }
+  function updateTrustBar() {
+    if (!trustHeadlineEl || !trustCopyEl) return;
+    const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
+    const token = tokenEl.value;
+    const limits = getTokenLimits(token);
+
+    if (!meta) {
+      trustHeadlineEl.textContent = "Live round status";
+      trustCopyEl.textContent = "Loading live pricing and round availability...";
+      return;
+    }
+
+    const sold = Number(meta.raisedFiru || 0);
+    const cap = Number(meta.tokenCap || 0);
+    const pct = cap > 0 ? (sold / cap) * 100 : 0;
+
+    if (!meta.enabled) {
+      trustHeadlineEl.textContent = "Round currently closed";
+      trustCopyEl.textContent = "This round is not accepting registrations right now.";
+      return;
+    }
+
+    if (meta.soldOut) {
+      trustHeadlineEl.textContent = "Round sold out";
+      trustCopyEl.textContent = "This round is full. Switch rounds to continue.";
+      return;
+    }
+
+    trustHeadlineEl.textContent = pct >= 70 ? "Limited allocation remaining" : "Live round status";
+    trustCopyEl.textContent =
+      pct >= 70
+        ? `Round ${roundEl.value === "round1" ? "1" : "2"} is ${pct.toFixed(1)}% filled. Current range: ${formatCompact(limits.min, limits.decimals)}–${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`
+        : `Round ${roundEl.value === "round1" ? "1" : "2"} is open. Current range: ${formatCompact(limits.min, limits.decimals)}–${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
+  }
+
 
   function setMsg(message, tone = "warn") {
     walletMsg.className = `sf-round-note ${tone}`;
@@ -404,8 +466,9 @@ export function mountRoundRegister(selector) {
     if (amountHintEl) {
       amountHintEl.textContent = selectedToken === "SOL"
         ? "Automatic buy is available for SOL. USDT and USDC still require the confirmed transaction hash."
-        : `${selectedToken} uses manual registration: send funds on Solana, then paste the confirmed transaction hash.`;
+        : `${selectedToken} uses manual registration: copy the destination, send funds on Solana, then paste the confirmed transaction hash.`;
     }
+    updateTrustBar();
   }
 
 
@@ -518,12 +581,12 @@ export function mountRoundRegister(selector) {
     if (!value) return;
     try {
       await copyToClipboardWithFallback(value);
-      copyDestinationBtn.textContent = "Copied!";
+      copyDestinationBtn.textContent = "✔ COPIED";
       copyDestinationBtn.classList.add("copied");
       setTimeout(() => {
-        copyDestinationBtn.textContent = "Copy";
+        copyDestinationBtn.textContent = "COPY WALLET ADDRESS";
         copyDestinationBtn.classList.remove("copied");
-      }, 1400);
+      }, 1600);
     } catch {
       setMsg("Could not copy the destination address. Copy it manually.", "error");
     }
@@ -543,6 +606,7 @@ export function mountRoundRegister(selector) {
       updateTokenDetails();
       updateProgress();
       setReady();
+      updateTrustBar();
     } catch (err) {
       roundMetaEl.textContent = "Could not load round configuration.";
       setMsg(err?.message || "Could not load round configuration.", "error");
@@ -714,7 +778,7 @@ export function mountRoundRegister(selector) {
       setReady();
 
       setMsg(
-        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
+        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated. Your allocation is now reserved for distribution after launch.`,
         "ok"
       );
 
@@ -749,7 +813,7 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(tx_hash);
 
       setMsg(
-        `<strong>Purchase registered.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated.`,
+        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated. Your allocation is now reserved for distribution after launch.`,
         "ok"
       );
 
