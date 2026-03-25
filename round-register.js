@@ -19,13 +19,18 @@ function isMobileDevice() {
   return MOBILE_RE.test(navigator.userAgent || "");
 }
 
+function isInPhantomBrowser() {
+  return !!(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
+}
+
 function currentUrl() {
   return window.location.href.split("#")[0] + "#rounds";
 }
 
 function openInPhantom() {
   const target = encodeURIComponent(currentUrl());
-  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}`;
+  const ref = encodeURIComponent(window.location.origin);
+  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}?ref=${ref}`;
 }
 
 async function getPhantomProvider() {
@@ -70,14 +75,12 @@ function injectStyles() {
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
     .sf-round-actions{display:grid;gap:10px}
     .sf-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .sf-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+    .sf-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px} .sf-round-actions{order:2} .sf-summary{order:3}
     .sf-mini{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-mini strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
     .sf-open-phantom{display:none}
     .sf-open-phantom.show{display:inline-flex}
-    .sf-hidden{display:none !important}
-    .sf-single-action{grid-template-columns:1fr !important}
     .sf-price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
     .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
@@ -231,44 +234,52 @@ export function mountRoundRegister(selector) {
   const openBtn = root.querySelector("#sfRoundOpenPhantom");
   const autoBuyBtn = root.querySelector("#sfRoundAutoBuy");
   const submitBtn = root.querySelector("#sfRoundSubmit");
-  const actionGrid = root.querySelector(".sf-action-grid");
-  const txField = txEl?.closest(".sf-field");
+
+  const txFieldWrap = txEl?.closest(".sf-field");
   const summaryCards = Array.from(root.querySelectorAll(".sf-summary .sf-mini"));
 
   let provider = null;
   let walletAddress = "";
   let roundConfig = null;
 
-  function updateUiForToken() {
-    const token = tokenEl.value;
-    const isSol = token === "SOL";
+  function applyContextualUi() {
+    const selectedToken = tokenEl?.value || "SOL";
+    const phantomMobile = isMobileDevice() && isInPhantomBrowser();
+    const mobileOutsidePhantom = isMobileDevice() && !isInPhantomBrowser();
 
-    // Summary cards
-    if (summaryCards[0]) summaryCards[0].style.display = isSol ? "" : "none"; // Automatic SOL
-    if (summaryCards[1]) summaryCards[1].style.display = isSol ? "" : ""; // Stablecoin flow always useful
-    if (summaryCards[2]) summaryCards[2].style.display = "";
+    if (openBtn) openBtn.textContent = "Open in Phantom App";
 
-    // Button layout
-    if (actionGrid) {
-      actionGrid.classList.toggle("sf-single-action", !isSol);
-    }
+    // Summary cards: show only what helps for the selected flow
+    if (summaryCards[0]) summaryCards[0].style.display = selectedToken === "SOL" ? "" : "none";   // Automatic SOL
+    if (summaryCards[1]) summaryCards[1].style.display = selectedToken === "SOL" ? "none" : "";   // Stablecoin flow
+    if (summaryCards[2]) summaryCards[2].style.display = "";                                       // Live allocation
 
-    if (isSol) {
-      connectBtn.classList.remove("sf-hidden");
-      if (isMobileDevice()) {
-        openBtn.classList.add("show");
+    if (selectedToken === "SOL") {
+      if (txFieldWrap) txFieldWrap.style.display = "none";
+      if (hashWarningEl) hashWarningEl.style.display = "none";
+      if (submitBtn) submitBtn.style.display = "none";
+
+      if (connectBtn) connectBtn.style.display = phantomMobile || !isMobileDevice() ? "" : "none";
+      if (openBtn) openBtn.style.display = mobileOutsidePhantom ? "" : "none";
+      if (autoBuyBtn) autoBuyBtn.style.display = phantomMobile || !isMobileDevice() ? "" : "none";
+
+      if (amountHintEl) {
+        amountHintEl.textContent = phantomMobile
+          ? "Phantom mobile mode: connect your wallet and continue with the automatic SOL purchase below."
+          : "Automatic buy is available for SOL. Use Phantom to complete the purchase directly.";
       }
-      autoBuyBtn.classList.remove("sf-hidden");
-      submitBtn.classList.remove("sf-hidden");
-      submitBtn.textContent = "Register TX Hash";
-      if (txField) txField.style.display = "";
     } else {
-      connectBtn.classList.add("sf-hidden");
-      openBtn.classList.remove("show");
-      autoBuyBtn.classList.add("sf-hidden");
-      submitBtn.classList.remove("sf-hidden");
-      submitBtn.textContent = `Register ${token} TX Hash`;
-      if (txField) txField.style.display = "";
+      if (txFieldWrap) txFieldWrap.style.display = "";
+      if (hashWarningEl) hashWarningEl.style.display = "grid";
+      if (submitBtn) submitBtn.style.display = "";
+
+      if (connectBtn) connectBtn.style.display = "none";
+      if (openBtn) openBtn.style.display = "none";
+      if (autoBuyBtn) autoBuyBtn.style.display = "none";
+
+      if (amountHintEl) {
+        amountHintEl.textContent = `${selectedToken} uses manual registration: copy the destination, send funds on Solana, then paste the confirmed transaction hash below.`;
+      }
     }
   }
 
@@ -344,6 +355,7 @@ export function mountRoundRegister(selector) {
   }
 
   function updateRoundMeta() {
+    applyContextualUi();
     const meta = getSelectedRoundMeta(roundConfig, roundEl.value);
     const selectedToken = tokenEl.value;
     if (!meta) {
@@ -397,7 +409,6 @@ export function mountRoundRegister(selector) {
     const selectedToken = tokenEl.value;
     const limits = getTokenLimits(selectedToken);
     amountEl.placeholder = formatCompact(limits.min, limits.decimals);
-    updateUiForToken();
     const token = getTokenMeta(roundConfig, selectedToken);
     if (!token) {
       destinationEl.value = "";
@@ -415,9 +426,9 @@ export function mountRoundRegister(selector) {
     liveTokenPriceEl.textContent = `$${formatCompact(token.livePriceUsd, 6)}`;
     if (hashWarningEl) {
       if (selectedToken === "SOL") {
-        hashWarningEl.innerHTML = `<div><strong>SOL automatic flow:</strong> connect Phantom and confirm the payment for the fastest checkout.</div><div>You can still use the confirmed transaction hash as a manual fallback if needed.</div>`;
+        hashWarningEl.innerHTML = `<div><strong>SOL options:</strong> use Phantom automatic buy for the fastest flow, or paste a confirmed transaction hash as manual fallback.</div><div>For USDT and USDC, hash submission stays required until stablecoin automatic payments are enabled.</div>`;
       } else {
-        hashWarningEl.innerHTML = `<div><strong>${selectedToken} manual flow:</strong> copy the official destination, send ${selectedToken} on Solana, then paste the confirmed transaction hash to complete and register the payment.</div><div>Payments sent without submitting the transaction hash will not be automatically processed.</div>`;
+        hashWarningEl.innerHTML = `<div><strong>${selectedToken} required flow:</strong> copy the official destination, send ${selectedToken} on Solana, then paste the confirmed transaction hash to complete and register the payment.</div><div>Payments sent without submitting the transaction hash will not be automatically processed.</div>`;
       }
     }
     updateEstimate();
@@ -442,12 +453,25 @@ export function mountRoundRegister(selector) {
     estimatedUsdEl.textContent = `$${formatCurrency(usdValue, 2)}`;
     estimatedFiruEl.textContent = formatCompact(estimatedFiru, 0);
     if (amountValidationEl) {
-      amountValidationEl.textContent = getAmountValidation();
-      amountValidationEl.style.color = amountValidationEl.textContent ? "#ffb2b2" : "#8bf0b2";
+      const validation = getAmountValidation();
+      amountValidationEl.textContent = validation;
+
+      if (validation) {
+        amountValidationEl.style.color = "#ff6b6b";
+        amountEl.style.borderColor = "#ff6b6b";
+      } else if (amount > 0) {
+        amountValidationEl.textContent = "✔ Valid amount";
+        amountValidationEl.style.color = "#4ade80";
+        amountEl.style.borderColor = "#4ade80";
+      } else {
+        amountValidationEl.textContent = "";
+        amountEl.style.borderColor = "";
+      }
     }
   }
 
   function setReady() {
+    applyContextualUi();
     const token = tokenEl.value;
     const selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value);
     const amount = Number(amountEl.value || 0);
@@ -456,31 +480,15 @@ export function mountRoundRegister(selector) {
     const manualReady = txEl.value.trim().length > 20 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
     autoBuyBtn.disabled = !amountReady;
     submitBtn.disabled = !manualReady;
-    autoBuyBtn.textContent = "Buy SOL with Phantom";
+    autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
     submitBtn.textContent = token === "SOL" ? "Register TX Hash" : `Register ${token} TX Hash`;
-    updateUiForToken();
 
-    if (autoBuyBtn.disabled) {
-      autoBuyBtn.style.opacity = "0.5";
-      autoBuyBtn.style.cursor = "not-allowed";
-    } else {
-      autoBuyBtn.style.opacity = "1";
-      autoBuyBtn.style.cursor = "pointer";
-    }
-
-    if (submitBtn.disabled) {
-      submitBtn.style.opacity = "0.5";
-      submitBtn.style.cursor = "not-allowed";
-    } else {
-      submitBtn.style.opacity = "1";
-      submitBtn.style.cursor = "pointer";
-    }
+    if (token === "SOL" && submitBtn) submitBtn.style.display = "none";
+    if (token !== "SOL" && submitBtn) submitBtn.style.display = "";
+    if (token !== "SOL" && autoBuyBtn) autoBuyBtn.style.display = "none";
   }
 
   [tokenEl, amountEl, txEl, roundEl].forEach((el) => el.addEventListener("input", () => {
-    if (el === amountEl) {
-      amountEl.value = amountEl.value.replace(/[^0-9.]/g, "");
-    }
     updateRoundMeta();
     updateTokenDetails();
     setReady();
@@ -503,30 +511,48 @@ export function mountRoundRegister(selector) {
   });
 
   openBtn.addEventListener("click", openInPhantom);
-  openBtn.textContent = "Open in Phantom App";
-  if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
+  if (isMobileDevice() && !isInPhantomBrowser()) {
     openBtn.classList.add("show");
+    openBtn.textContent = "OPEN IN PHANTOM APP";
+    connectBtn.textContent = "OPEN IN PHANTOM";
+    setMsg("<strong>📱 Mobile detected.</strong> Open Phantom and continue inside Phantom's in-app browser to connect your wallet and complete the purchase.", "warn");
   }
 
   (async () => {
     try {
       roundConfig = await fetchRoundConfig();
+      applyContextualUi();
       updateRoundMeta();
       updateTokenDetails();
       updateProgress();
       setReady();
-      updateUiForToken();
     } catch (err) {
       roundMetaEl.textContent = "Could not load round configuration.";
       setMsg(err?.message || "Could not load round configuration.", "error");
     }
   })();
 
+  if (isMobileDevice() && isInPhantomBrowser()) {
+    setMsg("<strong>Inside Phantom.</strong> Tap Connect Wallet below, or wait a moment while we try to connect automatically.", "warn");
+    setTimeout(async () => {
+      if (walletAddress) return;
+      try {
+        await ensureConnected();
+      } catch (_) {
+        // user can still connect manually
+      }
+    }, 900);
+  }
+
   async function ensureConnected() {
     provider = provider || await getPhantomProvider();
 
     if (!provider) {
-      openBtn.classList.add("show");
+      if (isMobileDevice()) {
+        openBtn.classList.add("show");
+        openBtn.textContent = "OPEN IN PHANTOM APP";
+        throw new Error("Open Phantom to continue.");
+      }
       throw new Error("Phantom wallet was not found on this device.");
     }
 
@@ -539,12 +565,18 @@ export function mountRoundRegister(selector) {
   }
 
   connectBtn.addEventListener("click", async () => {
+    if (isMobileDevice() && !isInPhantomBrowser()) {
+      connectBtn.textContent = "OPENING PHANTOM...";
+      openInPhantom();
+      return;
+    }
+
     try {
       connectBtn.disabled = true;
       connectBtn.textContent = "Connecting...";
       await ensureConnected();
     } catch (err) {
-      connectBtn.textContent = "Connect Wallet";
+      connectBtn.textContent = isMobileDevice() && !isInPhantomBrowser() ? "OPEN IN PHANTOM" : "Connect Wallet";
       setMsg(err?.message || "Could not connect the wallet.", "error");
     } finally {
       connectBtn.disabled = false;
