@@ -31,8 +31,8 @@ async function main() {
 
   const { data, error } = await supabase
     .from("round_registrations")
-    .select("id, wallet, firu_allocation")
-    .is("distribution_tx", null)
+    .select("id, wallet, firu_allocation, delivery_status")
+    .in("delivery_status", ["pending", "failed"])
     .gt("firu_allocation", 0)
     .order("created_at", { ascending: true });
 
@@ -43,47 +43,78 @@ async function main() {
   }
 
   for (const row of data) {
-    const destinationOwner = new PublicKey(row.wallet);
-    const destinationAta = await getAssociatedTokenAddress(mint, destinationOwner);
+    try {
+      if (!row.wallet) {
+        console.log(`Skipping row ${row.id}: wallet missing.`);
+        continue;
+      }
 
-    const transaction = new Transaction();
-    const destinationInfo = await connection.getAccountInfo(destinationAta);
-    if (!destinationInfo) {
+      const { error: markProcessingError } = await supabase
+        .from("round_registrations")
+        .update({ delivery_status: "processing", delivery_notes: null })
+        .eq("id", row.id);
+
+      if (markProcessingError) throw markProcessingError;
+
+      const destinationOwner = new PublicKey(row.wallet);
+      const destinationAta = await getAssociatedTokenAddress(mint, destinationOwner);
+
+      const transaction = new Transaction();
+      const destinationInfo = await connection.getAccountInfo(destinationAta);
+      if (!destinationInfo) {
+        transaction.add(
+          createAssociatedTokenAccountInstruction(
+            treasury.publicKey,
+            destinationAta,
+            destinationOwner,
+            mint,
+            TOKEN_PROGRAM_ID,
+            ASSOCIATED_TOKEN_PROGRAM_ID
+          )
+        );
+      }
+
+      const amount = BigInt(Math.round(Number(row.firu_allocation) * 10 ** mintInfo.decimals));
       transaction.add(
-        createAssociatedTokenAccountInstruction(
-          treasury.publicKey,
+        createTransferInstruction(
+          treasuryAta,
           destinationAta,
-          destinationOwner,
-          mint,
-          TOKEN_PROGRAM_ID,
-          ASSOCIATED_TOKEN_PROGRAM_ID
+          treasury.publicKey,
+          amount,
+          [],
+          TOKEN_PROGRAM_ID
         )
       );
+
+      const signature = await sendAndConfirmTransaction(connection, transaction, [treasury], {
+        commitment: "confirmed"
+      });
+
+      const deliveredAt = new Date().toISOString();
+      const { error: updateError } = await supabase
+        .from("round_registrations")
+        .update({
+          distribution_tx: signature,
+          distribution_sent_at: deliveredAt,
+          delivery_tx: signature,
+          delivered_at: deliveredAt,
+          delivery_status: "delivered",
+          delivery_notes: null
+        })
+        .eq("id", row.id);
+
+      if (updateError) throw updateError;
+      console.log(`Distributed ${row.firu_allocation} FIRU to ${row.wallet}: ${signature}`);
+    } catch (error) {
+      console.error(`Delivery failed for row ${row.id}:`, error?.message || error);
+      await supabase
+        .from("round_registrations")
+        .update({
+          delivery_status: "failed",
+          delivery_notes: error?.message || String(error)
+        })
+        .eq("id", row.id);
     }
-
-    const amount = BigInt(Math.round(Number(row.firu_allocation) * 10 ** mintInfo.decimals));
-    transaction.add(
-      createTransferInstruction(
-        treasuryAta,
-        destinationAta,
-        treasury.publicKey,
-        amount,
-        [],
-        TOKEN_PROGRAM_ID
-      )
-    );
-
-    const signature = await sendAndConfirmTransaction(connection, transaction, [treasury], {
-      commitment: "confirmed"
-    });
-
-    const { error: updateError } = await supabase
-      .from("round_registrations")
-      .update({ distribution_tx: signature, distribution_sent_at: new Date().toISOString() })
-      .eq("id", row.id);
-
-    if (updateError) throw updateError;
-    console.log(`Distributed ${row.firu_allocation} FIRU to ${row.wallet}: ${signature}`);
   }
 }
 
