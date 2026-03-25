@@ -1,3 +1,4 @@
+// SUPERFIRULAI ROUND REGISTER FIX v2 - stable min/max based on SOL price
 import {
   Connection,
   PublicKey,
@@ -260,7 +261,7 @@ export function mountRoundRegister(selector) {
     const minSol = Number(roundConfig?.limits?.minSol || 0);
     const maxSol = Number(roundConfig?.limits?.maxSol || 0);
     const solToken = getTokenMeta(roundConfig, "SOL");
-    const solPriceUsd = Number(solToken?.livePriceUsd || 0);
+    const solPrice = Number(solToken?.livePriceUsd || 0);
 
     if (selectedToken === "SOL") {
       return {
@@ -272,8 +273,8 @@ export function mountRoundRegister(selector) {
     }
 
     return {
-      min: minSol * solPriceUsd,
-      max: maxSol * solPriceUsd,
+      min: minSol * solPrice,
+      max: maxSol * solPrice,
       suffix: selectedToken,
       decimals: 2,
     };
@@ -324,8 +325,8 @@ export function mountRoundRegister(selector) {
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
       } else {
         const solToken = getTokenMeta(roundConfig, "SOL");
-        const solPriceUsd = Number(solToken?.livePriceUsd || 0);
-        const remainingStable = Number(meta.remainingSol || 0) * solPriceUsd;
+        const solPrice = Number(solToken?.livePriceUsd || 0);
+        const remainingStable = Number(meta.remainingSol || 0) * solPrice;
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
       }
     }
@@ -446,7 +447,7 @@ export function mountRoundRegister(selector) {
     openBtn.classList.add("show");
   }
 
-  (async () => {
+  async function refreshRoundConfig(showError = false) {
     try {
       roundConfig = await fetchRoundConfig();
       updateRoundMeta();
@@ -454,23 +455,16 @@ export function mountRoundRegister(selector) {
       updateProgress();
       setReady();
     } catch (err) {
-      roundMetaEl.textContent = "Could not load round configuration.";
-      setMsg(err?.message || "Could not load round configuration.", "error");
+      if (showError) {
+        roundMetaEl.textContent = "Could not load round configuration.";
+        setMsg(err?.message || "Could not load round configuration.", "error");
+      }
     }
-  })();
+  }
 
-  setInterval(async () => {
-    try {
-      if (!roundConfig) return;
-      const freshConfig = await fetchRoundConfig();
-      roundConfig = freshConfig;
-      updateRoundMeta();
-      updateTokenDetails();
-      updateProgress();
-      setReady();
-    } catch {
-      // Keep the last known config if the refresh fails.
-    }
+  refreshRoundConfig(true);
+  setInterval(() => {
+    refreshRoundConfig(false);
   }, 30000);
 
   async function ensureConnected() {
