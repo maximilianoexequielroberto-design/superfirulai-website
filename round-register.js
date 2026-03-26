@@ -716,7 +716,6 @@ export function mountRoundRegister(selector) {
       await ensureConnected();
 
       const round = getSelectedRoundMeta(roundConfig, roundEl.value);
-      const token = getTokenMeta(roundConfig, "SOL");
       const amount = Number(amountEl.value || 0);
 
       if (!round?.enabled || round?.soldOut) throw new Error(round?.soldOut ? "This round is sold out." : "This round is currently closed.");
@@ -729,26 +728,30 @@ export function mountRoundRegister(selector) {
       if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
         throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
       }
+
       const estimatedFiru = getEstimatedFiruForAmount("SOL", amount, round);
       if (typeof round?.remainingFiru === "number" && estimatedFiru > Number(round.remainingFiru || 0)) {
         const remainingSol = getRemainingPaymentEquivalent("SOL", round);
-        throw new Error(round.soldOut
-          ? "This round is sold out."
-          : remainingSol !== null
-            ? `Only ${formatCompact(remainingSol, 4)} SOL remains in this round at the current price.`
-            : `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`);
+        throw new Error(
+          round.soldOut
+            ? "This round is sold out."
+            : remainingSol !== null
+              ? `Only ${formatCompact(remainingSol, 4)} SOL remains in this round at the current price.`
+              : `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`
+        );
       }
 
       autoBuyBtn.disabled = true;
       autoBuyBtn.textContent = "Preparing...";
       setMsg("Preparing Phantom transaction...", "warn");
 
-      const connection = new Connection(roundConfig.rpcUrl || "https://api.mainnet-beta.solana.com", "processed");
+      const connection = new Connection(roundConfig.rpcUrl || "https://api.mainnet-beta.solana.com", "confirmed");
       const sender = new PublicKey(walletAddress);
       const recipient = new PublicKey(roundConfig.projectReceiveWallet);
+      const lamports = Math.round(amount * LAMPORTS_PER_SOL);
 
       async function buildAutoBuyTransaction() {
-        const latest = await connection.getLatestBlockhash("processed");
+        const latest = await connection.getLatestBlockhash("confirmed");
         const tx = new Transaction({
           feePayer: sender,
           recentBlockhash: latest.blockhash
@@ -756,89 +759,62 @@ export function mountRoundRegister(selector) {
           SystemProgram.transfer({
             fromPubkey: sender,
             toPubkey: recipient,
-            lamports: Math.round(amount * LAMPORTS_PER_SOL)
+            lamports
           })
         );
         return { tx, latest };
       }
 
-      autoBuyBtn.textContent = "Simulating...";
-      const { tx: simulationTx } = await buildAutoBuyTransaction();
-      const simulation = await connection.simulateTransaction(simulationTx, {
-        sigVerify: false,
-        replaceRecentBlockhash: true,
-        commitment: "processed"
-      });
+      let latest;
+      let tx;
 
-      if (simulation?.value?.err) {
-        const logs = Array.isArray(simulation.value.logs) ? simulation.value.logs.join(" | ") : "";
-        const reason = logs || JSON.stringify(simulation.value.err);
-        throw new Error(`Phantom blocked this transaction during simulation: ${reason}`);
+      autoBuyBtn.textContent = "Checking...";
+      try {
+        const built = await buildAutoBuyTransaction();
+        tx = built.tx;
+        latest = built.latest;
+
+        const simulation = await connection.simulateTransaction(tx, {
+          sigVerify: false,
+          replaceRecentBlockhash: true,
+          commitment: "confirmed"
+        });
+
+        if (simulation?.value?.err) {
+          const logs = Array.isArray(simulation.value.logs) ? simulation.value.logs.join(" | ") : "";
+          const reason = logs || JSON.stringify(simulation.value.err);
+          throw new Error(`Simulation failed: ${reason}`);
+        }
+      } catch (simulationError) {
+        const rawSimulationMessage = String(simulationError?.message || "");
+        if (!/invalid arguments/i.test(rawSimulationMessage)) {
+          throw simulationError;
+        }
+        const built = await buildAutoBuyTransaction();
+        tx = built.tx;
+        latest = built.latest;
       }
 
       autoBuyBtn.textContent = "Waiting for approval...";
-      const { tx: signableTx, latest } = await buildAutoBuyTransaction();
+      let signature = "";
 
-      let signedTx;
-      if (typeof provider.signTransaction === "function") {
-        signedTx = await provider.signTransaction(signableTx);
-      } else if (typeof provider.signAndSendTransaction === "function") {
-        const fallback = await provider.signAndSendTransaction(signableTx);
-        const signature = fallback?.signature;
-        if (!signature) {
-          throw new Error("Wallet did not return a transaction signature.");
-        }
-        txEl.value = signature;
-        autoBuyBtn.textContent = "Confirming...";
-        setMsg("Transaction sent. Waiting for confirmation on Solana...", "warn");
-
-        await connection.confirmTransaction(
-          {
-            signature,
-            blockhash: latest.blockhash,
-            lastValidBlockHeight: latest.lastValidBlockHeight
-          },
-          "confirmed"
-        );
-
-        autoBuyBtn.textContent = "Registering...";
-        const data = await registerRoundPurchase(signature);
-        if (data?.round_status) {
-          const meta = roundConfig?.rounds?.[roundEl.value];
-          if (meta) {
-            meta.raisedFiru = data.round_status.raised_firu;
-            meta.remainingFiru = data.round_status.remaining_firu;
-            meta.soldOut = Boolean(data.round_status.sold_out);
-          }
-        }
-        updateRoundMeta();
-        updateProgress();
-        setReady();
-
-        setMsg(
-          `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated. Your allocation is now reserved for distribution after launch.`,
-          "ok"
-        );
-
-        autoBuyBtn.textContent = "Purchased";
-        submitBtn.textContent = "Registered";
-        amountEl.disabled = true;
-        txEl.disabled = true;
-        tokenEl.disabled = true;
-        roundEl.disabled = true;
-        autoBuyBtn.disabled = true;
-        submitBtn.disabled = true;
-        return;
+      if (typeof provider.signAndSendTransaction === "function") {
+        const sent = await provider.signAndSendTransaction(tx);
+        signature = sent?.signature || "";
+      } else if (typeof provider.signTransaction === "function") {
+        const signedTx = await provider.signTransaction(tx);
+        signature = await connection.sendRawTransaction(signedTx.serialize(), {
+          skipPreflight: false,
+          preflightCommitment: "confirmed",
+          maxRetries: 3
+        });
       } else {
         throw new Error("This wallet does not support transaction signing.");
       }
 
-      autoBuyBtn.textContent = "Broadcasting...";
-      const signature = await connection.sendRawTransaction(signedTx.serialize(), {
-        skipPreflight: false,
-        preflightCommitment: "processed",
-        maxRetries: 3
-      });
+      if (!signature) {
+        throw new Error("Wallet did not return a transaction signature.");
+      }
 
       txEl.value = signature;
       autoBuyBtn.textContent = "Confirming...";
@@ -855,6 +831,7 @@ export function mountRoundRegister(selector) {
 
       autoBuyBtn.textContent = "Registering...";
       const data = await registerRoundPurchase(signature);
+
       if (data?.round_status) {
         const meta = roundConfig?.rounds?.[roundEl.value];
         if (meta) {
@@ -863,6 +840,7 @@ export function mountRoundRegister(selector) {
           meta.soldOut = Boolean(data.round_status.sold_out);
         }
       }
+
       updateRoundMeta();
       updateProgress();
       setReady();
@@ -884,15 +862,20 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.disabled = false;
       autoBuyBtn.textContent = tokenEl.value === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
       setReady();
+
       const rawMessage = String(err?.message || "");
       let message = rawMessage || "Could not complete the automatic Phantom purchase.";
+
       if (/user rejected|rejected the request|4001/i.test(rawMessage)) {
         message = "The wallet request was rejected before signing.";
-      } else if (/could not safely simulate|blocked this transaction during simulation/i.test(rawMessage)) {
+      } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
         message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
+      } else if (/invalid arguments/i.test(rawMessage)) {
+        message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
       } else if (/insufficient/i.test(rawMessage)) {
         message = "Insufficient SOL balance for the purchase amount plus network fee.";
       }
+
       setMsg(message, "error");
     }
   });
