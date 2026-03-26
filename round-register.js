@@ -6,8 +6,13 @@ import {
   LAMPORTS_PER_SOL
 } from "https://esm.sh/@solana/web3.js@1.98.4";
 
+import {
+  shortAddress,
+  openInPreferredWallet,
+  getPreferredSolanaProvider
+} from "./wallet-provider.js";
+
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
-const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
 const CONFIG_ENDPOINT = "/api/round/config";
 const TOKEN_ORDER = ["SOL", "USDT", "USDC"];
 
@@ -21,29 +26,6 @@ function isMobileDevice() {
 
 function isInPhantomBrowser() {
   return Boolean(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
-}
-
-function currentUrl() {
-  return window.location.href.split("#")[0] + "#rounds";
-}
-
-function openInPhantom() {
-  const target = encodeURIComponent(currentUrl());
-  const ref = encodeURIComponent(window.location.origin);
-  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}?ref=${ref}`;
-}
-
-async function getPhantomProvider() {
-  const direct = window.phantom?.solana || window.solana;
-  if (direct?.isPhantom) return direct;
-
-  for (let i = 0; i < 25; i++) {
-    const provider = window.phantom?.solana || window.solana;
-    if (provider?.isPhantom) return provider;
-    await new Promise((resolve) => setTimeout(resolve, 120));
-  }
-
-  return null;
 }
 
 function injectStyles() {
@@ -373,6 +355,25 @@ export function mountRoundRegister(selector) {
     };
   }
 
+  function getEstimatedFiruForAmount(selectedToken, amount, selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value)) {
+    const token = getTokenMeta(roundConfig, selectedToken);
+    if (!token || !selectedRound) return 0;
+
+    const usdValue = Number(amount || 0) * Number(token.livePriceUsd || 0);
+    return selectedRound.firuPriceUsd > 0 ? usdValue / Number(selectedRound.firuPriceUsd) : 0;
+  }
+
+  function getRemainingPaymentEquivalent(selectedToken, selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value)) {
+    if (!selectedRound || typeof selectedRound.remainingFiru !== "number") return null;
+    if (!(selectedRound.firuPriceUsd > 0)) return null;
+
+    const token = getTokenMeta(roundConfig, selectedToken);
+    const tokenPriceUsd = Number(token?.livePriceUsd || 0);
+    if (!(tokenPriceUsd > 0)) return null;
+
+    return (Number(selectedRound.remainingFiru || 0) * Number(selectedRound.firuPriceUsd || 0)) / tokenPriceUsd;
+  }
+
   function getAmountValidation() {
     const selectedToken = tokenEl.value;
     const amount = Number(amountEl.value || 0);
@@ -391,6 +392,16 @@ export function mountRoundRegister(selector) {
     if (amount > limits.max) {
       return `Maximum amount for ${limits.suffix} is ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
     }
+
+    const estimatedFiru = getEstimatedFiruForAmount(selectedToken, amount, selectedRound);
+    if (typeof selectedRound.remainingFiru === "number" && estimatedFiru > Number(selectedRound.remainingFiru || 0)) {
+      const remainingPayment = getRemainingPaymentEquivalent(selectedToken, selectedRound);
+      if (remainingPayment !== null) {
+        return `Only ${formatCompact(remainingPayment, limits.decimals)} ${selectedToken} remains in this round at the current price.`;
+      }
+      return `Only ${formatCompact(selectedRound.remainingFiru, 0)} FIRU remains in this round.`;
+    }
+
     return "";
   }
   function updateTrustBar() {
@@ -449,15 +460,8 @@ export function mountRoundRegister(selector) {
     const limits = getTokenLimits(selectedToken);
     pieces.push(`Min ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}`);
     pieces.push(`Max ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}`);
-    if (typeof meta.remainingSol === "number") {
-      if (selectedToken === "SOL") {
-        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
-      } else {
-        const solToken = getTokenMeta(roundConfig, "SOL");
-        const solPrice = Number(solToken?.livePriceUsd || 0);
-        const remainingStable = Number(meta.remainingSol || 0) * solPrice;
-        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
-      }
+    if (typeof meta.remainingFiru === "number") {
+      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`);
     }
     roundMetaEl.textContent = pieces.join(" · ");
     if (amountRangeEl) {
@@ -691,8 +695,8 @@ export function mountRoundRegister(selector) {
     if (data?.round_status) {
       const meta = roundConfig?.rounds?.[roundEl.value];
       if (meta) {
-        meta.raisedSol = data.round_status.raised_sol;
-        meta.remainingSol = data.round_status.remaining_sol;
+        meta.raisedFiru = data.round_status.raised_firu;
+        meta.remainingFiru = data.round_status.remaining_firu;
         meta.soldOut = Boolean(data.round_status.sold_out);
       }
       updateRoundMeta();
@@ -725,10 +729,14 @@ export function mountRoundRegister(selector) {
       if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
         throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
       }
-      if (typeof round?.remainingSol === "number" && amount > Number(round.remainingSol || 0)) {
+      const estimatedFiru = getEstimatedFiruForAmount("SOL", amount, round);
+      if (typeof round?.remainingFiru === "number" && estimatedFiru > Number(round.remainingFiru || 0)) {
+        const remainingSol = getRemainingPaymentEquivalent("SOL", round);
         throw new Error(round.soldOut
           ? "This round is sold out."
-          : `Only ${formatCompact(round.remainingSol, 4)} SOL remains in this round.`);
+          : remainingSol !== null
+            ? `Only ${formatCompact(remainingSol, 4)} SOL remains in this round at the current price.`
+            : `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -770,8 +778,8 @@ export function mountRoundRegister(selector) {
       if (data?.round_status) {
         const meta = roundConfig?.rounds?.[roundEl.value];
         if (meta) {
-          meta.raisedSol = data.round_status.raised_sol;
-          meta.remainingSol = data.round_status.remaining_sol;
+          meta.raisedFiru = data.round_status.raised_firu;
+          meta.remainingFiru = data.round_status.remaining_firu;
           meta.soldOut = Boolean(data.round_status.sold_out);
         }
       }
