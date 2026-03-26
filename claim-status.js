@@ -1,35 +1,5 @@
-const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
-const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
+import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
-function short(address) {
-  return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "";
-}
-
-function isMobileDevice() {
-  return MOBILE_RE.test(navigator.userAgent || "");
-}
-
-function currentUrl() {
-  return window.location.href.split("#")[0] + "#claim";
-}
-
-function openInPhantom() {
-  const target = encodeURIComponent(currentUrl());
-  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}`;
-}
-
-async function getPhantomProvider() {
-  const direct = window.phantom?.solana || window.solana;
-  if (direct?.isPhantom) return direct;
-
-  for (let i = 0; i < 25; i++) {
-    const provider = window.phantom?.solana || window.solana;
-    if (provider?.isPhantom) return provider;
-    await new Promise((resolve) => setTimeout(resolve, 120));
-  }
-
-  return null;
-}
 
 function injectStyles() {
   if (document.getElementById("sf-claim-status-styles")) return;
@@ -85,7 +55,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     statusEl.innerHTML = html;
   }
 
-  function showOpenInPhantom(show) {
+  function showOpenWalletButton(show) {
     openPhantomBtn.style.display = show ? "inline-flex" : "none";
   }
 
@@ -143,38 +113,40 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     return data;
   }
 
-  openPhantomBtn.addEventListener("click", openInPhantom);
+  openPhantomBtn.addEventListener("click", () => openInPreferredWallet("#claim"));
 
   connectBtn.addEventListener("click", async () => {
     try {
       connectBtn.disabled = true;
-      connectBtn.textContent = "Checking Phantom...";
+      connectBtn.textContent = "Checking wallet...";
       setStatusMessage("Checking wallet provider...", "warn");
 
-      const provider = await getPhantomProvider();
+      const preferredWallet = await getPreferredSolanaProvider();
+      const provider = preferredWallet?.provider;
+      const providerLabel = preferredWallet?.name || "wallet";
       if (!provider) {
         if (isMobileDevice()) {
           connectBtn.disabled = false;
-          connectBtn.textContent = "Open in Phantom";
-          connectBtn.onclick = openInPhantom;
-          showOpenInPhantom(false);
-          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside Phantom, then tap Connect Wallet again.", "warn");
-          setStatusMessage("Phantom is not available in this browser. Open the page inside Phantom and try again.", "warn");
+          connectBtn.textContent = "Open in Wallet";
+          connectBtn.onclick = () => openInPreferredWallet("#claim");
+          showOpenWalletButton(false);
+          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser, then tap Connect Wallet again.", "warn");
+          setStatusMessage("No wallet provider is available in this browser. Open the page inside Phantom or use a desktop wallet extension and try again.", "warn");
           return;
         }
 
         connectBtn.disabled = false;
         connectBtn.textContent = "Retry Wallet Detection";
         connectBtn.onclick = () => window.location.reload();
-        setWalletMessage("<strong>Phantom not found.</strong> Install or enable the Phantom extension, then reload the page.", "error");
-        setStatusMessage("Phantom is not available in this browser.", "error");
+        setWalletMessage("<strong>No compatible wallet found.</strong> Install or enable Phantom, Backpack or Solflare, then reload the page.", "error");
+        setStatusMessage("No compatible wallet provider is available in this browser.", "error");
         return;
       }
 
       connectBtn.textContent = "Connecting...";
       const connectRes = await provider.connect();
       const walletAddress = connectRes.publicKey.toString();
-      setWalletMessage(`<strong>Wallet connected:</strong> ${short(walletAddress)}`, "ok");
+      setWalletMessage(`<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}`, "ok");
       setStatusMessage("Checking wallet status...", "warn");
 
       const data = await checkClaimStatus(walletAddress);
@@ -196,7 +168,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
       connectBtn.textContent = "Wallet Checked";
       connectBtn.disabled = true;
-      showOpenInPhantom(false);
+      showOpenWalletButton(false);
     } catch (err) {
       connectBtn.disabled = false;
       connectBtn.textContent = "Connect Wallet";
@@ -204,7 +176,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     }
   });
 
-  if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
-    showOpenInPhantom(true);
+  if (isMobileDevice() && !getAvailableSolanaWallets().length) {
+    showOpenWalletButton(true);
   }
 }

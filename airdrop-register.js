@@ -39,16 +39,8 @@ const bs58 = {
 };
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
-const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
-const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
+import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
-function short(address) {
-  return address ? `${address.slice(0, 4)}...${address.slice(-4)}` : "";
-}
-
-function isMobileDevice() {
-  return MOBILE_RE.test(navigator.userAgent || "");
-}
 
 function ensureTurnstileScript() {
   if (document.querySelector('script[data-turnstile="1"]')) return;
@@ -84,27 +76,6 @@ function injectStyles() {
   document.head.appendChild(style);
 }
 
-function currentUrl() {
-  return window.location.href.split("#")[0] + "#airdrop";
-}
-
-function openInPhantom() {
-  const target = encodeURIComponent(currentUrl());
-  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}`;
-}
-
-async function getPhantomProvider() {
-  const direct = window.phantom?.solana || window.solana;
-  if (direct?.isPhantom) return direct;
-
-  for (let i = 0; i < 25; i++) {
-    const provider = window.phantom?.solana || window.solana;
-    if (provider?.isPhantom) return provider;
-    await new Promise((resolve) => setTimeout(resolve, 120));
-  }
-
-  return null;
-}
 
 function getTurnstileToken(root) {
   return (
@@ -217,7 +188,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     msgEl.textContent = text;
   }
 
-  function showOpenInPhantom(show) {
+  function showOpenWalletButton(show) {
     openPhantomBtn.style.display = show ? "inline-flex" : "none";
   }
 
@@ -234,38 +205,40 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     xEl.value = normalizeXHandle(xEl.value);
   });
 
-  openPhantomBtn.addEventListener("click", openInPhantom);
+  openPhantomBtn.addEventListener("click", () => openInPreferredWallet("#airdrop"));
 
   connectBtn.addEventListener("click", async () => {
     try {
       connectBtn.disabled = true;
-      connectBtn.textContent = "Checking Phantom...";
+      connectBtn.textContent = "Checking wallet...";
       setMsg("Checking wallet provider...", "warn");
 
-      const provider = await getPhantomProvider();
+      const preferredWallet = await getPreferredSolanaProvider();
+      const provider = preferredWallet?.provider;
+      const providerLabel = preferredWallet?.name || "wallet";
       if (!provider) {
         if (isMobileDevice()) {
           connectBtn.disabled = false;
-          connectBtn.textContent = "Open in Phantom";
-          connectBtn.onclick = openInPhantom;
-          showOpenInPhantom(false);
-          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside Phantom, then tap Connect Wallet again.", "warn");
-          setMsg("Phantom is not available in this browser. Open the page inside Phantom and try again.", "warn");
+          connectBtn.textContent = "Open in Wallet";
+          connectBtn.onclick = () => openInPreferredWallet("#airdrop");
+          showOpenWalletButton(false);
+          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser, then tap Connect Wallet again.", "warn");
+          setMsg("No wallet provider is available in this browser. Open the page inside Phantom or use a desktop wallet extension and try again.", "warn");
           return;
         }
 
         connectBtn.disabled = false;
         connectBtn.textContent = "Retry Wallet Detection";
         connectBtn.onclick = () => window.location.reload();
-        setWalletMessage("<strong>Phantom not found.</strong> Install or enable the Phantom extension, then reload the page.", "error");
-        setMsg("Phantom is not available in this browser.", "error");
+        setWalletMessage("<strong>No compatible wallet found.</strong> Install or enable Phantom, Backpack or Solflare, then reload the page.", "error");
+        setMsg("No compatible wallet provider is available in this browser.", "error");
         return;
       }
 
       connectBtn.textContent = "Connecting...";
       const connectRes = await provider.connect();
       walletAddress = connectRes.publicKey.toString();
-      setWalletMessage(`<strong>Wallet connected:</strong> ${short(walletAddress)}`, "ok");
+      setWalletMessage(`<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}`, "ok");
 
       const nonceResp = await fetch("/api/airdrop/nonce", { cache: "no-store" });
       const nonceData = await nonceResp.json();
@@ -288,7 +261,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       connectBtn.textContent = "Wallet Verified";
       connectBtn.disabled = true;
-      showOpenInPhantom(false);
+      showOpenWalletButton(false);
       setRegisterEnabled(true);
       setMsg("Wallet verified. Complete X, Telegram and captcha, then register your airdrop.", "ok");
     } catch (err) {
@@ -353,7 +326,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     }
   });
 
-  if (isMobileDevice() && !(window.phantom?.solana?.isPhantom || window.solana?.isPhantom)) {
-    showOpenInPhantom(true);
+  if (isMobileDevice() && !getAvailableSolanaWallets().length) {
+    showOpenWalletButton(true);
   }
 }

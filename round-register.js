@@ -592,8 +592,8 @@ export function mountRoundRegister(selector) {
     }
   });
 
-  openBtn.addEventListener("click", openInPhantom);
-  openBtn.textContent = "Open in Phantom App";
+  openBtn.addEventListener("click", () => openInPreferredWallet("#buy"));
+  openBtn.textContent = "Open in Wallet App";
   if (isMobileDevice() && !isInPhantomBrowser()) {
     openBtn.classList.add("show");
   }
@@ -625,15 +625,17 @@ export function mountRoundRegister(selector) {
   }, 30000);
 
   async function ensureConnected() {
-    provider = provider || await getPhantomProvider();
+    const preferredWallet = provider ? { provider, name: provider?.isPhantom ? "Phantom" : provider?.isBackpack ? "Backpack" : provider?.isSolflare ? "Solflare" : "Wallet" } : await getPreferredSolanaProvider();
+    provider = preferredWallet?.provider;
+    const providerLabel = preferredWallet?.name || "wallet";
 
     if (!provider) {
       if (isMobileDevice() && !isInPhantomBrowser()) {
         openBtn.classList.add("show");
-        openInPhantom();
+        openInPreferredWallet("#buy");
         throw new Error("Opening Phantom...");
       }
-      throw new Error("Phantom wallet was not found on this device.");
+      throw new Error("No compatible wallet was found on this device.");
     }
 
     const resp = await provider.connect({ onlyIfTrusted: false });
@@ -641,8 +643,8 @@ export function mountRoundRegister(selector) {
     connectBtn.textContent = "Wallet Connected";
     setMsg(
       isMobileDevice() && isInPhantomBrowser()
-        ? `<strong>Wallet connected:</strong> ${short(walletAddress)}. Phantom mode is active. Continue with the automatic SOL purchase below.`
-        : `<strong>Wallet connected:</strong> ${short(walletAddress)}. Use automatic buy for SOL, or for USDT / USDC send funds on Solana and register the confirmed transaction hash.`,
+        ? `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Wallet mode is active. Continue with the automatic SOL purchase below.`
+        : `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Use automatic buy for SOL, or for USDT / USDC send funds on Solana and register the confirmed transaction hash.`,
       "ok"
     );
     setReady();
