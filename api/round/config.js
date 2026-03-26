@@ -9,7 +9,7 @@ const supabase = createClient(
 
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
-const PUBLIC_BROWSER_RPC_URL = "https://api.mainnet-beta.solana.com";
+const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
 const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
 
 function getFallbackPrices() {
@@ -82,7 +82,14 @@ function getRoundConfig(roundKey) {
 }
 
 function getPublicRpcUrl() {
-  return PUBLIC_BROWSER_RPC_URL;
+  const publicRpcUrl = String(
+    process.env.SOLANA_RPC_URL_PUBLIC ||
+    process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
+    process.env.SOLANA_RPC_URL ||
+    DEFAULT_PUBLIC_RPC_URL
+  ).trim();
+
+  return publicRpcUrl || DEFAULT_PUBLIC_RPC_URL;
 }
 
 async function getRaisedFiruByRound(round) {
