@@ -6,10 +6,13 @@ import {
   LAMPORTS_PER_SOL
 } from "https://esm.sh/@solana/web3.js@1.98.4";
 
-import { getPreferredSolanaProvider, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+import {
+  shortAddress,
+  openInPreferredWallet,
+  getPreferredSolanaProvider
+} from "./wallet-provider.js";
 
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
-const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
 const CONFIG_ENDPOINT = "/api/round/config";
 const TOKEN_ORDER = ["SOL", "USDT", "USDC"];
 
@@ -23,29 +26,6 @@ function isMobileDevice() {
 
 function isInPhantomBrowser() {
   return Boolean(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
-}
-
-function currentUrl() {
-  return window.location.href.split("#")[0] + "#rounds";
-}
-
-function openInPhantom() {
-  const target = encodeURIComponent(currentUrl());
-  const ref = encodeURIComponent(window.location.origin);
-  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}?ref=${ref}`;
-}
-
-async function getPhantomProvider() {
-  const direct = window.phantom?.solana || window.solana;
-  if (direct?.isPhantom) return direct;
-
-  for (let i = 0; i < 25; i++) {
-    const provider = window.phantom?.solana || window.solana;
-    if (provider?.isPhantom) return provider;
-    await new Promise((resolve) => setTimeout(resolve, 120));
-  }
-
-  return null;
 }
 
 function injectStyles() {
@@ -83,8 +63,6 @@ function injectStyles() {
     .sf-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
     .sf-open-phantom{display:none}
     .sf-open-phantom.show{display:inline-flex}
-    .sf-wallet-tools{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-    .sf-wallet-tools.show{display:grid}
     .sf-trust-bar{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;padding:12px;border-radius:16px;background:linear-gradient(180deg,rgba(255,214,101,.10),rgba(24,163,255,.08));border:1px solid rgba(255,255,255,.10)}
     .sf-trust-item{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
     .sf-trust-item strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
@@ -132,41 +110,6 @@ function formatCompact(value, digits = 6) {
   return n.toLocaleString("en-US", {
     maximumFractionDigits: digits
   });
-}
-
-function getEstimatedFiruForAmount(roundConfig, roundValue, tokenValue, amountValue) {
-  const token = getTokenMeta(roundConfig, tokenValue);
-  const round = getSelectedRoundMeta(roundConfig, roundValue);
-  const amount = Number(amountValue || 0);
-
-  if (!token || !round || !Number.isFinite(amount) || amount <= 0) return 0;
-
-  const usdValue = amount * Number(token.livePriceUsd || 0);
-  return round.firuPriceUsd > 0 ? usdValue / Number(round.firuPriceUsd) : 0;
-}
-
-async function simulateSolTransfer(connection, transaction) {
-  try {
-    const simulation = await connection.simulateTransaction(transaction, {
-      sigVerify: false,
-      replaceRecentBlockhash: true,
-      commitment: "confirmed"
-    });
-
-    if (simulation?.value?.err) {
-      const logs = Array.isArray(simulation?.value?.logs) ? simulation.value.logs.join(" | ") : "";
-      throw new Error(logs || JSON.stringify(simulation.value.err));
-    }
-  } catch (error) {
-    const message = String(error?.message || error || "");
-    if (/insufficient/i.test(message)) {
-      throw new Error("Insufficient SOL balance to complete this purchase and pay the network fee.");
-    }
-    if (/blockhash/i.test(message)) {
-      throw new Error("Could not prepare the Solana transaction. Please try again.");
-    }
-    throw new Error("Phantom could not safely simulate this transaction yet. Please try again in a few seconds.");
-  }
 }
 
 export function mountRoundRegister(selector) {
@@ -266,10 +209,6 @@ export function mountRoundRegister(selector) {
       <div class="sf-round-actions">
         <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
-        <div id="sfRoundWalletTools" class="sf-wallet-tools">
-          <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
-          <button type="button" class="btn btn-dark" id="sfRoundSwitchWallet">Disconnect & Change Wallet</button>
-        </div>
         <div class="sf-action-grid">
           <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
           <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
@@ -299,9 +238,6 @@ export function mountRoundRegister(selector) {
   const estimatedFiruEl = root.querySelector("#sfEstimatedFiru");
   const connectBtn = root.querySelector("#sfRoundConnect");
   const openBtn = root.querySelector("#sfRoundOpenPhantom");
-  const walletToolsEl = root.querySelector("#sfRoundWalletTools");
-  const disconnectBtn = root.querySelector("#sfRoundDisconnect");
-  const switchWalletBtn = root.querySelector("#sfRoundSwitchWallet");
   const autoBuyBtn = root.querySelector("#sfRoundAutoBuy");
   const submitBtn = root.querySelector("#sfRoundSubmit");
 
@@ -313,23 +249,6 @@ export function mountRoundRegister(selector) {
   let provider = null;
   let walletAddress = "";
   let roundConfig = null;
-
-  function showWalletTools(show) {
-    walletToolsEl?.classList.toggle("show", Boolean(show));
-  }
-
-  async function disconnectCurrentWallet() {
-    try {
-      if (provider?.disconnect) {
-        await provider.disconnect();
-      }
-    } catch (_) {}
-    provider = null;
-    walletAddress = "";
-    connectBtn.textContent = "Connect Wallet";
-    showWalletTools(false);
-    setReady();
-  }
 
   function applyContextualUi() {
     const token = tokenEl?.value || "SOL";
@@ -436,6 +355,25 @@ export function mountRoundRegister(selector) {
     };
   }
 
+  function getEstimatedFiruForAmount(selectedToken, amount, selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value)) {
+    const token = getTokenMeta(roundConfig, selectedToken);
+    if (!token || !selectedRound) return 0;
+
+    const usdValue = Number(amount || 0) * Number(token.livePriceUsd || 0);
+    return selectedRound.firuPriceUsd > 0 ? usdValue / Number(selectedRound.firuPriceUsd) : 0;
+  }
+
+  function getRemainingPaymentEquivalent(selectedToken, selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value)) {
+    if (!selectedRound || typeof selectedRound.remainingFiru !== "number") return null;
+    if (!(selectedRound.firuPriceUsd > 0)) return null;
+
+    const token = getTokenMeta(roundConfig, selectedToken);
+    const tokenPriceUsd = Number(token?.livePriceUsd || 0);
+    if (!(tokenPriceUsd > 0)) return null;
+
+    return (Number(selectedRound.remainingFiru || 0) * Number(selectedRound.firuPriceUsd || 0)) / tokenPriceUsd;
+  }
+
   function getAmountValidation() {
     const selectedToken = tokenEl.value;
     const amount = Number(amountEl.value || 0);
@@ -454,6 +392,16 @@ export function mountRoundRegister(selector) {
     if (amount > limits.max) {
       return `Maximum amount for ${limits.suffix} is ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
     }
+
+    const estimatedFiru = getEstimatedFiruForAmount(selectedToken, amount, selectedRound);
+    if (typeof selectedRound.remainingFiru === "number" && estimatedFiru > Number(selectedRound.remainingFiru || 0)) {
+      const remainingPayment = getRemainingPaymentEquivalent(selectedToken, selectedRound);
+      if (remainingPayment !== null) {
+        return `Only ${formatCompact(remainingPayment, limits.decimals)} ${selectedToken} remains in this round at the current price.`;
+      }
+      return `Only ${formatCompact(selectedRound.remainingFiru, 0)} FIRU remains in this round.`;
+    }
+
     return "";
   }
   function updateTrustBar() {
@@ -513,21 +461,7 @@ export function mountRoundRegister(selector) {
     pieces.push(`Min ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}`);
     pieces.push(`Max ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}`);
     if (typeof meta.remainingFiru === "number") {
-      if (selectedToken === "SOL") {
-        const solToken = getTokenMeta(roundConfig, "SOL");
-        const solPrice = Number(solToken?.livePriceUsd || 0);
-        const remainingSol = solPrice > 0 && Number(meta.firuPriceUsd || 0) > 0
-          ? (Number(meta.remainingFiru || 0) * Number(meta.firuPriceUsd || 0)) / solPrice
-          : null;
-        pieces.push(meta.soldOut
-          ? "Sold out"
-          : remainingSol === null
-            ? `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`
-            : `Remaining ${formatCompact(remainingSol, 4)} SOL`);
-      } else {
-        const remainingStable = Number(meta.remainingFiru || 0) * Number(meta.firuPriceUsd || 0);
-        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
-      }
+      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`);
     }
     roundMetaEl.textContent = pieces.join(" · ");
     if (amountRangeEl) {
@@ -710,8 +644,7 @@ export function mountRoundRegister(selector) {
 
     const resp = await provider.connect({ onlyIfTrusted: false });
     walletAddress = resp.publicKey.toString();
-    connectBtn.textContent = short(walletAddress);
-    showWalletTools(true);
+    connectBtn.textContent = "Wallet Connected";
     setMsg(
       isMobileDevice() && isInPhantomBrowser()
         ? `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Wallet mode is active. Continue with the automatic SOL purchase below.`
@@ -736,23 +669,8 @@ export function mountRoundRegister(selector) {
       }
     } finally {
       connectBtn.disabled = false;
-      if (walletAddress) connectBtn.textContent = short(walletAddress);
+      if (walletAddress) connectBtn.textContent = "Wallet Connected";
     }
-  });
-
-  disconnectBtn.addEventListener("click", async () => {
-    await disconnectCurrentWallet();
-    setMsg("Wallet disconnected. Connect again with the same or another account before continuing.", "warn");
-  });
-
-  switchWalletBtn.addEventListener("click", async () => {
-    await disconnectCurrentWallet();
-    if (isMobileDevice() && !isInPhantomBrowser()) {
-      openInPreferredWallet("#buy");
-      setMsg("Open Phantom, switch account there, then return and tap Connect Wallet again.", "warn");
-      return;
-    }
-    setMsg("Open Phantom, switch account there, then tap Connect Wallet again.", "warn");
   });
 
   async function registerRoundPurchase(txHash) {
@@ -811,48 +729,114 @@ export function mountRoundRegister(selector) {
       if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
         throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
       }
-      const estimatedFiru = getEstimatedFiruForAmount(roundConfig, roundEl.value, "SOL", amount);
+      const estimatedFiru = getEstimatedFiruForAmount("SOL", amount, round);
       if (typeof round?.remainingFiru === "number" && estimatedFiru > Number(round.remainingFiru || 0)) {
-        const solToken = getTokenMeta(roundConfig, "SOL");
-        const solPrice = Number(solToken?.livePriceUsd || 0);
-        const remainingSol = solPrice > 0 && Number(round.firuPriceUsd || 0) > 0
-          ? (Number(round.remainingFiru || 0) * Number(round.firuPriceUsd || 0)) / solPrice
-          : null;
-
+        const remainingSol = getRemainingPaymentEquivalent("SOL", round);
         throw new Error(round.soldOut
           ? "This round is sold out."
-          : remainingSol === null
-            ? `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`
-            : `Only ${formatCompact(remainingSol, 4)} SOL remains in this round.`);
+          : remainingSol !== null
+            ? `Only ${formatCompact(remainingSol, 4)} SOL remains in this round at the current price.`
+            : `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`);
       }
 
       autoBuyBtn.disabled = true;
       autoBuyBtn.textContent = "Preparing...";
       setMsg("Preparing Phantom transaction...", "warn");
 
-      const connection = new Connection(roundConfig.rpcUrl || "https://api.mainnet-beta.solana.com", "confirmed");
-      const recentBlockhash = await connection.getLatestBlockhash("confirmed");
+      const connection = new Connection(roundConfig.rpcUrl || "https://api.mainnet-beta.solana.com", "processed");
+      const sender = new PublicKey(walletAddress);
+      const recipient = new PublicKey(roundConfig.projectReceiveWallet);
 
-      const transaction = new Transaction({
-        feePayer: new PublicKey(walletAddress),
-        recentBlockhash: recentBlockhash.blockhash
-      }).add(
-        SystemProgram.transfer({
-          fromPubkey: new PublicKey(walletAddress),
-          toPubkey: new PublicKey(roundConfig.projectReceiveWallet),
-          lamports: Math.round(amount * LAMPORTS_PER_SOL)
-        })
-      );
+      async function buildAutoBuyTransaction() {
+        const latest = await connection.getLatestBlockhash("processed");
+        const tx = new Transaction({
+          feePayer: sender,
+          recentBlockhash: latest.blockhash
+        }).add(
+          SystemProgram.transfer({
+            fromPubkey: sender,
+            toPubkey: recipient,
+            lamports: Math.round(amount * LAMPORTS_PER_SOL)
+          })
+        );
+        return { tx, latest };
+      }
 
-      autoBuyBtn.textContent = "Checking...";
-      setMsg("Checking the Solana transfer before requesting your signature...", "warn");
-      await simulateSolTransfer(connection, transaction);
+      autoBuyBtn.textContent = "Simulating...";
+      const { tx: simulationTx } = await buildAutoBuyTransaction();
+      const simulation = await connection.simulateTransaction(simulationTx, {
+        sigVerify: false,
+        replaceRecentBlockhash: true,
+        commitment: "processed"
+      });
+
+      if (simulation?.value?.err) {
+        const logs = Array.isArray(simulation.value.logs) ? simulation.value.logs.join(" | ") : "";
+        const reason = logs || JSON.stringify(simulation.value.err);
+        throw new Error(`Phantom blocked this transaction during simulation: ${reason}`);
+      }
 
       autoBuyBtn.textContent = "Waiting for approval...";
-      const signedTransaction = await provider.signTransaction(transaction);
-      const signature = await connection.sendRawTransaction(signedTransaction.serialize(), {
+      const { tx: signableTx, latest } = await buildAutoBuyTransaction();
+
+      let signedTx;
+      if (typeof provider.signTransaction === "function") {
+        signedTx = await provider.signTransaction(signableTx);
+      } else if (typeof provider.signAndSendTransaction === "function") {
+        const fallback = await provider.signAndSendTransaction(signableTx);
+        const signature = fallback?.signature;
+        if (!signature) {
+          throw new Error("Wallet did not return a transaction signature.");
+        }
+        txEl.value = signature;
+        autoBuyBtn.textContent = "Confirming...";
+        setMsg("Transaction sent. Waiting for confirmation on Solana...", "warn");
+
+        await connection.confirmTransaction(
+          {
+            signature,
+            blockhash: latest.blockhash,
+            lastValidBlockHeight: latest.lastValidBlockHeight
+          },
+          "confirmed"
+        );
+
+        autoBuyBtn.textContent = "Registering...";
+        const data = await registerRoundPurchase(signature);
+        if (data?.round_status) {
+          const meta = roundConfig?.rounds?.[roundEl.value];
+          if (meta) {
+            meta.raisedFiru = data.round_status.raised_firu;
+            meta.remainingFiru = data.round_status.remaining_firu;
+            meta.soldOut = Boolean(data.round_status.sold_out);
+          }
+        }
+        updateRoundMeta();
+        updateProgress();
+        setReady();
+
+        setMsg(
+          `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated. Your allocation is now reserved for distribution after launch.`,
+          "ok"
+        );
+
+        autoBuyBtn.textContent = "Purchased";
+        submitBtn.textContent = "Registered";
+        amountEl.disabled = true;
+        txEl.disabled = true;
+        tokenEl.disabled = true;
+        roundEl.disabled = true;
+        autoBuyBtn.disabled = true;
+        submitBtn.disabled = true;
+        return;
+      } else {
+        throw new Error("This wallet does not support transaction signing.");
+      }
+
+      autoBuyBtn.textContent = "Broadcasting...";
+      const signature = await connection.sendRawTransaction(signedTx.serialize(), {
         skipPreflight: false,
-        preflightCommitment: "confirmed",
+        preflightCommitment: "processed",
         maxRetries: 3
       });
 
@@ -863,8 +847,8 @@ export function mountRoundRegister(selector) {
       await connection.confirmTransaction(
         {
           signature,
-          blockhash: recentBlockhash.blockhash,
-          lastValidBlockHeight: recentBlockhash.lastValidBlockHeight
+          blockhash: latest.blockhash,
+          lastValidBlockHeight: latest.lastValidBlockHeight
         },
         "confirmed"
       );
@@ -900,7 +884,15 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.disabled = false;
       autoBuyBtn.textContent = tokenEl.value === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
       setReady();
-      const message = err?.message || "Could not complete the automatic Phantom purchase.";
+      const rawMessage = String(err?.message || "");
+      let message = rawMessage || "Could not complete the automatic Phantom purchase.";
+      if (/user rejected|rejected the request|4001/i.test(rawMessage)) {
+        message = "The wallet request was rejected before signing.";
+      } else if (/could not safely simulate|blocked this transaction during simulation/i.test(rawMessage)) {
+        message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
+      } else if (/insufficient/i.test(rawMessage)) {
+        message = "Insufficient SOL balance for the purchase amount plus network fee.";
+      }
       setMsg(message, "error");
     }
   });
