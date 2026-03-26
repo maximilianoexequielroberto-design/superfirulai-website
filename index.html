@@ -745,7 +745,58 @@
     .section-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
     @media(max-width:900px){.route-grid,.channel-grid{grid-template-columns:1fr}}
 
-
+  
+    /* ── Desktop navbar fix ── */
+    @media(min-width:821px){
+      .navbar{padding:0 0;left:0;right:0}
+      .navbar-inner{
+        background:transparent !important;
+        border:none !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        justify-content:flex-start;
+        gap:0;
+        padding:0 20px;
+        max-width:100%;
+      }
+      .navbar.scrolled .navbar-inner{
+        background:rgba(3,7,20,.72) !important;
+        backdrop-filter:blur(24px) saturate(1.4) !important;
+        border-color:rgba(255,255,255,.08) !important;
+        box-shadow:0 18px 42px rgba(0,0,0,.34) !important;
+      }
+      .nav-brand{display:none !important}
+      .nav-links{
+        position:static;
+        display:flex;
+        align-items:center;
+        justify-content:flex-end;
+        gap:20px;
+        left:auto;right:auto;
+        transform:none;
+        flex:1;
+        margin-left:270px;
+        margin-right:16px;
+      }
+      .nav-links a{
+        display:inline-flex;align-items:center;justify-content:center;
+        height:42px;padding:0 12px;border-radius:10px;
+        font-size:15px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+        color:rgba(228,238,255,.9);
+        background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+        text-shadow:none;white-space:nowrap;
+        transition:color .18s,background .18s,border-color .18s;
+      }
+      .nav-links a:hover{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.14);color:#fff}
+      .nav-ctas{
+        position:static;
+        flex:0 0 auto;
+        margin-left:0;
+        display:flex;align-items:center;gap:8px;
+      }
+      .nav-btn{height:42px;font-size:15px;border-radius:10px;padding:0 14px}
+      .nav-btn-buy{margin-left:8px;padding:0 22px;min-width:auto}
+    }
     .hero-proof{max-width:1180px;margin:-8px auto 0;padding:0 18px 6px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .proof-card{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 40px rgba(0,0,0,.18);backdrop-filter:blur(20px)}
     .proof-card strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:22px;color:#fff;margin-bottom:4px}
