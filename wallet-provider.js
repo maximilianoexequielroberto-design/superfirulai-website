@@ -46,3 +46,20 @@ export async function getPreferredSolanaProvider() {
 
   return null;
 }
+
+
+export function getWalletLabel(provider) {
+  if (!provider) return "Wallet";
+  if (provider.isPhantom) return "Phantom";
+  if (provider.isBackpack) return "Backpack";
+  if (provider.isSolflare) return "Solflare";
+  return "Wallet";
+}
+
+export async function disconnectSolanaWallet(provider) {
+  try {
+    if (provider?.disconnect) {
+      await provider.disconnect();
+    }
+  } catch (_) {}
+}

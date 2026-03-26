@@ -39,7 +39,7 @@ const bs58 = {
 };
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
-import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+import { disconnectSolanaWallet, getAvailableSolanaWallets, getPreferredSolanaProvider, getWalletLabel, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
 
 function ensureTurnstileScript() {
@@ -72,6 +72,8 @@ function injectStyles() {
     .sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
     .sf-btn-stack{display:grid;gap:10px}
+    .sf-wallet-actions{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .sf-wallet-actions.show{display:grid}
   `;
   document.head.appendChild(style);
 }
@@ -129,6 +131,10 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <div class="sf-btn-stack">
           <button id="sf-connect" class="btn btn-blue" type="button">Connect Wallet</button>
           <button id="sf-open-phantom" class="btn btn-dark" type="button" style="display:none">Open in Phantom</button>
+          <div id="sf-wallet-actions" class="sf-wallet-actions">
+            <button id="sf-disconnect" class="btn btn-dark" type="button">Disconnect</button>
+            <button id="sf-switch-wallet" class="btn btn-dark" type="button">Use Another Wallet</button>
+          </div>
         </div>
         <div id="sf-wallet" class="sf-wallet-note warn">Wallet not connected</div>
       </div>
@@ -163,9 +169,14 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   let nonce = "";
   let timestamp = "";
   let challenge = "";
+  let connectedProvider = null;
+  let connectedProviderLabel = "Wallet";
 
   const connectBtn = root.querySelector("#sf-connect");
   const openPhantomBtn = root.querySelector("#sf-open-phantom");
+  const walletActionsEl = root.querySelector("#sf-wallet-actions");
+  const disconnectBtn = root.querySelector("#sf-disconnect");
+  const switchWalletBtn = root.querySelector("#sf-switch-wallet");
   const registerBtn = root.querySelector("#sf-register");
   const msgEl = root.querySelector("#sf-msg");
   const walletEl = root.querySelector("#sf-wallet");
@@ -192,6 +203,27 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     openPhantomBtn.style.display = show ? "inline-flex" : "none";
   }
 
+  function showWalletActions(show) {
+    walletActionsEl.classList.toggle("show", Boolean(show));
+  }
+
+  function resetWalletState(message = "Wallet not connected") {
+    walletAddress = "";
+    signedMessage = "";
+    signature = "";
+    nonce = "";
+    timestamp = "";
+    challenge = "";
+    connectedProvider = null;
+    connectedProviderLabel = "Wallet";
+    connectBtn.disabled = false;
+    connectBtn.textContent = "Connect Wallet";
+    connectBtn.onclick = null;
+    showWalletActions(false);
+    setRegisterEnabled(false);
+    setWalletMessage(message, "warn");
+  }
+
   function cleanInputs() {
     telegramEl.value = normalizeTelegramHandle(telegramEl.value);
     xEl.value = normalizeXHandle(xEl.value);
@@ -215,7 +247,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       const preferredWallet = await getPreferredSolanaProvider();
       const provider = preferredWallet?.provider;
-      const providerLabel = preferredWallet?.name || "wallet";
+      const providerLabel = preferredWallet?.name || getWalletLabel(preferredWallet?.provider);
       if (!provider) {
         if (isMobileDevice()) {
           connectBtn.disabled = false;
@@ -237,6 +269,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       connectBtn.textContent = "Connecting...";
       const connectRes = await provider.connect();
+      connectedProvider = provider;
+      connectedProviderLabel = providerLabel;
       walletAddress = connectRes.publicKey.toString();
       setWalletMessage(`<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}`, "ok");
 
@@ -259,17 +293,33 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       const sig = await provider.signMessage(encoded, "utf8");
       signature = bs58.encode(sig.signature);
 
-      connectBtn.textContent = "Wallet Verified";
+      connectBtn.textContent = shortAddress(walletAddress);
       connectBtn.disabled = true;
+      showWalletActions(true);
       showOpenWalletButton(false);
       setRegisterEnabled(true);
       setMsg("Wallet verified. Complete X, Telegram and captcha, then register your airdrop.", "ok");
     } catch (err) {
-      connectBtn.disabled = false;
-      connectBtn.textContent = "Connect Wallet";
-      setRegisterEnabled(false);
+      resetWalletState("Wallet not connected");
       setMsg(err?.message || "Could not connect or sign the wallet.", "error");
     }
+  });
+
+  disconnectBtn.addEventListener("click", async () => {
+    await disconnectSolanaWallet(connectedProvider);
+    resetWalletState("Wallet disconnected");
+    setMsg("Wallet disconnected. You can connect again with the same or another account.", "warn");
+  });
+
+  switchWalletBtn.addEventListener("click", async () => {
+    await disconnectSolanaWallet(connectedProvider);
+    resetWalletState("Choose another wallet account and connect again.");
+    if (isMobileDevice()) {
+      openInPreferredWallet("#airdrop");
+      setMsg("Open your wallet, switch account there, then come back and tap Connect Wallet again.", "warn");
+      return;
+    }
+    setMsg("Open Phantom, Backpack or Solflare, switch account there, then tap Connect Wallet again.", "warn");
   });
 
   registerBtn.addEventListener("click", async () => {

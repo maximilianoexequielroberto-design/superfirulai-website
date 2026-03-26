@@ -6,13 +6,8 @@ import {
   LAMPORTS_PER_SOL
 } from "https://esm.sh/@solana/web3.js@1.98.4";
 
-import {
-  shortAddress,
-  openInPreferredWallet,
-  getPreferredSolanaProvider
-} from "./wallet-provider.js";
-
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
+const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
 const CONFIG_ENDPOINT = "/api/round/config";
 const TOKEN_ORDER = ["SOL", "USDT", "USDC"];
 
@@ -26,6 +21,29 @@ function isMobileDevice() {
 
 function isInPhantomBrowser() {
   return Boolean(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
+}
+
+function currentUrl() {
+  return window.location.href.split("#")[0] + "#rounds";
+}
+
+function openInPhantom() {
+  const target = encodeURIComponent(currentUrl());
+  const ref = encodeURIComponent(window.location.origin);
+  window.location.href = `${PHANTOM_DEEPLINK_BASE}${target}?ref=${ref}`;
+}
+
+async function getPhantomProvider() {
+  const direct = window.phantom?.solana || window.solana;
+  if (direct?.isPhantom) return direct;
+
+  for (let i = 0; i < 25; i++) {
+    const provider = window.phantom?.solana || window.solana;
+    if (provider?.isPhantom) return provider;
+    await new Promise((resolve) => setTimeout(resolve, 120));
+  }
+
+  return null;
 }
 
 function injectStyles() {
@@ -63,6 +81,8 @@ function injectStyles() {
     .sf-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
     .sf-open-phantom{display:none}
     .sf-open-phantom.show{display:inline-flex}
+    .sf-wallet-tools{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .sf-wallet-tools.show{display:grid}
     .sf-trust-bar{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:10px;padding:12px;border-radius:16px;background:linear-gradient(180deg,rgba(255,214,101,.10),rgba(24,163,255,.08));border:1px solid rgba(255,255,255,.10)}
     .sf-trust-item{padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06)}
     .sf-trust-item strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
@@ -209,6 +229,10 @@ export function mountRoundRegister(selector) {
       <div class="sf-round-actions">
         <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
+        <div id="sfRoundWalletTools" class="sf-wallet-tools">
+          <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+          <button type="button" class="btn btn-dark" id="sfRoundSwitchWallet">Use Another Wallet</button>
+        </div>
         <div class="sf-action-grid">
           <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
           <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
@@ -238,6 +262,9 @@ export function mountRoundRegister(selector) {
   const estimatedFiruEl = root.querySelector("#sfEstimatedFiru");
   const connectBtn = root.querySelector("#sfRoundConnect");
   const openBtn = root.querySelector("#sfRoundOpenPhantom");
+  const walletToolsEl = root.querySelector("#sfRoundWalletTools");
+  const disconnectBtn = root.querySelector("#sfRoundDisconnect");
+  const switchWalletBtn = root.querySelector("#sfRoundSwitchWallet");
   const autoBuyBtn = root.querySelector("#sfRoundAutoBuy");
   const submitBtn = root.querySelector("#sfRoundSubmit");
 
@@ -355,25 +382,6 @@ export function mountRoundRegister(selector) {
     };
   }
 
-  function getEstimatedFiruForAmount(selectedToken, amount, selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value)) {
-    const token = getTokenMeta(roundConfig, selectedToken);
-    if (!token || !selectedRound) return 0;
-
-    const usdValue = Number(amount || 0) * Number(token.livePriceUsd || 0);
-    return selectedRound.firuPriceUsd > 0 ? usdValue / Number(selectedRound.firuPriceUsd) : 0;
-  }
-
-  function getRemainingPaymentEquivalent(selectedToken, selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value)) {
-    if (!selectedRound || typeof selectedRound.remainingFiru !== "number") return null;
-    if (!(selectedRound.firuPriceUsd > 0)) return null;
-
-    const token = getTokenMeta(roundConfig, selectedToken);
-    const tokenPriceUsd = Number(token?.livePriceUsd || 0);
-    if (!(tokenPriceUsd > 0)) return null;
-
-    return (Number(selectedRound.remainingFiru || 0) * Number(selectedRound.firuPriceUsd || 0)) / tokenPriceUsd;
-  }
-
   function getAmountValidation() {
     const selectedToken = tokenEl.value;
     const amount = Number(amountEl.value || 0);
@@ -392,16 +400,6 @@ export function mountRoundRegister(selector) {
     if (amount > limits.max) {
       return `Maximum amount for ${limits.suffix} is ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
     }
-
-    const estimatedFiru = getEstimatedFiruForAmount(selectedToken, amount, selectedRound);
-    if (typeof selectedRound.remainingFiru === "number" && estimatedFiru > Number(selectedRound.remainingFiru || 0)) {
-      const remainingPayment = getRemainingPaymentEquivalent(selectedToken, selectedRound);
-      if (remainingPayment !== null) {
-        return `Only ${formatCompact(remainingPayment, limits.decimals)} ${selectedToken} remains in this round at the current price.`;
-      }
-      return `Only ${formatCompact(selectedRound.remainingFiru, 0)} FIRU remains in this round.`;
-    }
-
     return "";
   }
   function updateTrustBar() {
@@ -460,8 +458,15 @@ export function mountRoundRegister(selector) {
     const limits = getTokenLimits(selectedToken);
     pieces.push(`Min ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}`);
     pieces.push(`Max ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}`);
-    if (typeof meta.remainingFiru === "number") {
-      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`);
+    if (typeof meta.remainingSol === "number") {
+      if (selectedToken === "SOL") {
+        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
+      } else {
+        const solToken = getTokenMeta(roundConfig, "SOL");
+        const solPrice = Number(solToken?.livePriceUsd || 0);
+        const remainingStable = Number(meta.remainingSol || 0) * solPrice;
+        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
+      }
     }
     roundMetaEl.textContent = pieces.join(" · ");
     if (amountRangeEl) {
@@ -644,7 +649,8 @@ export function mountRoundRegister(selector) {
 
     const resp = await provider.connect({ onlyIfTrusted: false });
     walletAddress = resp.publicKey.toString();
-    connectBtn.textContent = "Wallet Connected";
+    connectBtn.textContent = short(walletAddress);
+    showWalletTools(true);
     setMsg(
       isMobileDevice() && isInPhantomBrowser()
         ? `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Wallet mode is active. Continue with the automatic SOL purchase below.`
@@ -669,8 +675,23 @@ export function mountRoundRegister(selector) {
       }
     } finally {
       connectBtn.disabled = false;
-      if (walletAddress) connectBtn.textContent = "Wallet Connected";
+      if (walletAddress) connectBtn.textContent = short(walletAddress);
     }
+  });
+
+  disconnectBtn.addEventListener("click", async () => {
+    await disconnectCurrentWallet();
+    setMsg("Wallet disconnected. Connect again with the same or another account before continuing.", "warn");
+  });
+
+  switchWalletBtn.addEventListener("click", async () => {
+    await disconnectCurrentWallet();
+    if (isMobileDevice() && !isInPhantomBrowser()) {
+      openInPhantom();
+      setMsg("Open Phantom, switch account there, then return and tap Connect Wallet again.", "warn");
+      return;
+    }
+    setMsg("Open Phantom, switch account there, then tap Connect Wallet again.", "warn");
   });
 
   async function registerRoundPurchase(txHash) {
@@ -695,8 +716,8 @@ export function mountRoundRegister(selector) {
     if (data?.round_status) {
       const meta = roundConfig?.rounds?.[roundEl.value];
       if (meta) {
-        meta.raisedFiru = data.round_status.raised_firu;
-        meta.remainingFiru = data.round_status.remaining_firu;
+        meta.raisedSol = data.round_status.raised_sol;
+        meta.remainingSol = data.round_status.remaining_sol;
         meta.soldOut = Boolean(data.round_status.sold_out);
       }
       updateRoundMeta();
@@ -729,14 +750,10 @@ export function mountRoundRegister(selector) {
       if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
         throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
       }
-      const estimatedFiru = getEstimatedFiruForAmount("SOL", amount, round);
-      if (typeof round?.remainingFiru === "number" && estimatedFiru > Number(round.remainingFiru || 0)) {
-        const remainingSol = getRemainingPaymentEquivalent("SOL", round);
+      if (typeof round?.remainingSol === "number" && amount > Number(round.remainingSol || 0)) {
         throw new Error(round.soldOut
           ? "This round is sold out."
-          : remainingSol !== null
-            ? `Only ${formatCompact(remainingSol, 4)} SOL remains in this round at the current price.`
-            : `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`);
+          : `Only ${formatCompact(round.remainingSol, 4)} SOL remains in this round.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -778,8 +795,8 @@ export function mountRoundRegister(selector) {
       if (data?.round_status) {
         const meta = roundConfig?.rounds?.[roundEl.value];
         if (meta) {
-          meta.raisedFiru = data.round_status.raised_firu;
-          meta.remainingFiru = data.round_status.remaining_firu;
+          meta.raisedSol = data.round_status.raised_sol;
+          meta.remainingSol = data.round_status.remaining_sol;
           meta.soldOut = Boolean(data.round_status.sold_out);
         }
       }

@@ -1,4 +1,4 @@
-import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+import { disconnectSolanaWallet, getAvailableSolanaWallets, getPreferredSolanaProvider, getWalletLabel, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
 
 function injectStyles() {
@@ -15,6 +15,8 @@ function injectStyles() {
     .sf-claim-note.warn{color:#ffd87d}
     .sf-claim-note.error{color:#ffb2b2}
     .sf-claim-actions{display:flex;flex-wrap:wrap;gap:10px}
+    .sf-claim-wallet-tools{display:none;flex-wrap:wrap;gap:10px}
+    .sf-claim-wallet-tools.show{display:flex}
     .sf-claim-inline{display:flex;flex-wrap:wrap;gap:10px}
     .sf-btn-disabled{display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:14px;border:1px solid rgba(255,216,77,.28);background:rgba(255,216,77,.18);color:rgba(255,255,255,.72);font-weight:800;letter-spacing:.04em;cursor:not-allowed}
   `;
@@ -32,6 +34,10 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
       <div class="sf-claim-actions">
         <button id="sf-claim-connect" class="btn btn-blue" type="button">Connect Wallet</button>
         <button id="sf-claim-open-phantom" class="btn btn-dark" type="button" style="display:none">Open in Phantom</button>
+        <div id="sf-claim-wallet-tools" class="sf-claim-wallet-tools">
+          <button id="sf-claim-disconnect" class="btn btn-dark" type="button">Disconnect</button>
+          <button id="sf-claim-switch" class="btn btn-dark" type="button">Use Another Wallet</button>
+        </div>
       </div>
       <div id="sf-claim-wallet" class="sf-claim-note warn">Connect the same wallet used during registration.</div>
       <div id="sf-claim-status" class="sf-claim-note">After connecting, the site will check if your wallet is not registered, pending, approved, rejected or already claimed.</div>
@@ -41,6 +47,9 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
   const connectBtn = root.querySelector("#sf-claim-connect");
   const openPhantomBtn = root.querySelector("#sf-claim-open-phantom");
+  const walletToolsEl = root.querySelector("#sf-claim-wallet-tools");
+  const disconnectBtn = root.querySelector("#sf-claim-disconnect");
+  const switchBtn = root.querySelector("#sf-claim-switch");
   const walletEl = root.querySelector("#sf-claim-wallet");
   const statusEl = root.querySelector("#sf-claim-status");
   const ctaEl = root.querySelector("#sf-claim-cta");
@@ -55,8 +64,24 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     statusEl.innerHTML = html;
   }
 
+  let connectedProvider = null;
+
   function showOpenWalletButton(show) {
     openPhantomBtn.style.display = show ? "inline-flex" : "none";
+  }
+
+  function showWalletTools(show) {
+    walletToolsEl.classList.toggle("show", Boolean(show));
+  }
+
+  function resetWalletUi(message = "Connect the same wallet used during registration.") {
+    connectedProvider = null;
+    connectBtn.disabled = false;
+    connectBtn.textContent = "Connect Wallet";
+    connectBtn.onclick = null;
+    showWalletTools(false);
+    setWalletMessage(message, "warn");
+    ctaEl.innerHTML = "";
   }
 
   function renderCta(state, data) {
@@ -123,7 +148,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
       const preferredWallet = await getPreferredSolanaProvider();
       const provider = preferredWallet?.provider;
-      const providerLabel = preferredWallet?.name || "wallet";
+      const providerLabel = preferredWallet?.name || getWalletLabel(preferredWallet?.provider);
       if (!provider) {
         if (isMobileDevice()) {
           connectBtn.disabled = false;
@@ -145,6 +170,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
       connectBtn.textContent = "Connecting...";
       const connectRes = await provider.connect();
+      connectedProvider = provider;
       const walletAddress = connectRes.publicKey.toString();
       setWalletMessage(`<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}`, "ok");
       setStatusMessage("Checking wallet status...", "warn");
@@ -166,14 +192,31 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
         setStatusMessage(`<strong>${data.message}</strong>`, "warn");
       }
 
-      connectBtn.textContent = "Wallet Checked";
+      connectBtn.textContent = shortAddress(walletAddress);
       connectBtn.disabled = true;
+      showWalletTools(true);
       showOpenWalletButton(false);
     } catch (err) {
-      connectBtn.disabled = false;
-      connectBtn.textContent = "Connect Wallet";
+      resetWalletUi();
       setStatusMessage(err?.message || "Could not check claim status.", "error");
     }
+  });
+
+  disconnectBtn.addEventListener("click", async () => {
+    await disconnectSolanaWallet(connectedProvider);
+    resetWalletUi("Wallet disconnected");
+    setStatusMessage("Wallet disconnected. Connect again with the same or another account to check claim status.", "warn");
+  });
+
+  switchBtn.addEventListener("click", async () => {
+    await disconnectSolanaWallet(connectedProvider);
+    resetWalletUi("Choose another wallet account and connect again.");
+    if (isMobileDevice()) {
+      openInPreferredWallet("#claim");
+      setStatusMessage("Open your wallet, switch account there, then tap Connect Wallet again.", "warn");
+      return;
+    }
+    setStatusMessage("Open Phantom, Backpack or Solflare, switch account there, then tap Connect Wallet again.", "warn");
   });
 
   if (isMobileDevice() && !getAvailableSolanaWallets().length) {
