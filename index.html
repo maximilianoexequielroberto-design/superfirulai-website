@@ -746,16 +746,36 @@
         box-shadow:0 18px 42px rgba(0,0,0,.34) !important;
       }
       .nav-brand{display:none !important}
-      /* Nav links: start after hero logo area, evenly spaced */
+      /* Nav links: spread evenly across all available space */
       .nav-links{
         position:static;
         display:flex;
         align-items:center;
-        gap:4px;
+        justify-content:space-evenly;
+        gap:0;
         left:auto;right:auto;
         transform:none;
-        flex:0 0 auto;
-        margin-left:280px;
+        flex:1;
+        margin-left:16px;
+        margin-right:16px;
+      }
+      .nav-links a{
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        height:42px;
+        padding:0 16px;
+        border-radius:10px;
+        font-size:16px;
+        font-weight:800;
+        letter-spacing:.05em;
+        text-transform:uppercase;
+        color:rgba(228,238,255,.9);
+        background:rgba(255,255,255,.04);
+        border:1px solid rgba(255,255,255,.07);
+        text-shadow:none;
+        white-space:nowrap;
+        transition:color .18s,background .18s,border-color .18s;
       }
       .nav-links a{
         display:inline-flex;
