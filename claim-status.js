@@ -51,7 +51,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
         <button id="sf-claim-open-phantom" class="btn btn-dark" type="button" style="display:none">Open in Phantom</button>
         <div id="sf-claim-wallet-tools" class="sf-claim-wallet-tools">
           <button id="sf-claim-disconnect" class="btn btn-dark" type="button">Disconnect</button>
-          <button id="sf-claim-switch" class="btn btn-dark" type="button">Use Another Wallet</button>
+          <button id="sf-claim-switch" class="btn btn-dark" type="button">Disconnect & Change Wallet</button>
         </div>
       </div>
       <div id="sf-claim-wallet" class="sf-claim-note warn">Connect the same wallet used during registration.</div>

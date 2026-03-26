@@ -148,7 +148,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <button id="sf-open-phantom" class="btn btn-dark" type="button" style="display:none">Open in Phantom</button>
           <div id="sf-wallet-actions" class="sf-wallet-actions">
             <button id="sf-disconnect" class="btn btn-dark" type="button">Disconnect</button>
-            <button id="sf-switch-wallet" class="btn btn-dark" type="button">Use Another Wallet</button>
+            <button id="sf-switch-wallet" class="btn btn-dark" type="button">Disconnect & Change Wallet</button>
           </div>
         </div>
         <div id="sf-wallet" class="sf-wallet-note warn">Wallet not connected</div>

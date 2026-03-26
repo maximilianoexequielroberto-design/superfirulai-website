@@ -233,7 +233,7 @@ export function mountRoundRegister(selector) {
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
         <div id="sfRoundWalletTools" class="sf-wallet-tools">
           <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
-          <button type="button" class="btn btn-dark" id="sfRoundSwitchWallet">Use Another Wallet</button>
+          <button type="button" class="btn btn-dark" id="sfRoundSwitchWallet">Disconnect & Change Wallet</button>
         </div>
         <div class="sf-action-grid">
           <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
