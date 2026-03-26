@@ -9,20 +9,47 @@ const supabase = createClient(
 
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
-const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
+const PUBLIC_BROWSER_RPC_URL = "https://api.mainnet-beta.solana.com";
 const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
 
-async function getLivePrices() {
-  const resp = await fetch(PRICE_URL, {
-    headers: { accept: "application/json" }
-  });
-  const data = await resp.json();
-
+function getFallbackPrices() {
   return {
-    SOL: Number(data?.solana?.usd || 0),
-    USDT: Number(data?.tether?.usd || 0),
-    USDC: Number(data?.["usd-coin"]?.usd || 0)
+    SOL: Number(process.env.FALLBACK_SOL_PRICE_USD || 90.84),
+    USDT: Number(process.env.FALLBACK_USDT_PRICE_USD || 1),
+    USDC: Number(process.env.FALLBACK_USDC_PRICE_USD || 1)
   };
+}
+
+async function getLivePrices() {
+  try {
+    const resp = await fetch(PRICE_URL, {
+      headers: {
+        accept: "application/json",
+        "user-agent": "SuperFirulai/1.0"
+      }
+    });
+
+    if (!resp.ok) {
+      throw new Error(`price_http_${resp.status}`);
+    }
+
+    const data = await resp.json();
+
+    const prices = {
+      SOL: Number(data?.solana?.usd || 0),
+      USDT: Number(data?.tether?.usd || 0),
+      USDC: Number(data?.["usd-coin"]?.usd || 0)
+    };
+
+    if (!(prices.SOL > 0) || !(prices.USDT > 0) || !(prices.USDC > 0)) {
+      throw new Error("price_payload_invalid");
+    }
+
+    return prices;
+  } catch (error) {
+    console.error("live price fallback", error);
+    return getFallbackPrices();
+  }
 }
 
 function getAta(owner, mint) {
@@ -55,13 +82,7 @@ function getRoundConfig(roundKey) {
 }
 
 function getPublicRpcUrl() {
-  const publicRpcUrl = String(
-    process.env.SOLANA_RPC_URL_PUBLIC ||
-    process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
-    DEFAULT_PUBLIC_RPC_URL
-  ).trim();
-
-  return publicRpcUrl || DEFAULT_PUBLIC_RPC_URL;
+  return PUBLIC_BROWSER_RPC_URL;
 }
 
 async function getRaisedFiruByRound(round) {
@@ -80,6 +101,7 @@ export default async function handler(req, res) {
     const projectReceiveWallet = String(
       process.env.ROUND_RECEIVER_WALLET || process.env.PROJECT_RECEIVE_WALLET || ""
     ).trim();
+
     if (!projectReceiveWallet) {
       return res.status(500).json({ error: "Project receive wallet is not configured" });
     }
@@ -139,6 +161,7 @@ export default async function handler(req, res) {
       ]
     };
 
+    res.setHeader("Cache-Control", "no-store, max-age=0");
     return res.status(200).json(payload);
   } catch (error) {
     console.error("round config error", error);
