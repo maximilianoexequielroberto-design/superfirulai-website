@@ -34,36 +34,12 @@ export function getAvailableSolanaWallets() {
   return getProviderCandidates();
 }
 
-function askWalletChoice(matches) {
-  if (!matches.length) return null;
-  if (matches.length === 1) return matches[0];
-  if (isMobileDevice()) {
-    return matches.find((item) => item.name === "Phantom") || matches[0];
-  }
-
-  const text = [
-    "Choose wallet:",
-    ...matches.map((item, index) => `${index + 1}. ${item.name}`),
-    "",
-    "Write 1, 2 or 3 and press OK."
-  ].join("\n");
-
-  const raw = window.prompt(text, "1");
-  if (raw == null) return null;
-
-  const choice = Number.parseInt(String(raw).trim(), 10);
-  if (Number.isInteger(choice) && matches[choice - 1]) {
-    return matches[choice - 1];
-  }
-
-  return matches.find((item) => item.name === "Phantom") || matches[0];
-}
-
 export async function getPreferredSolanaProvider() {
   for (let i = 0; i < 25; i++) {
     const matches = getProviderCandidates();
     if (matches.length) {
-      return askWalletChoice(matches);
+      const preferred = matches.find((item) => item.name === "Phantom") || matches[0];
+      return preferred;
     }
     await new Promise((resolve) => setTimeout(resolve, 120));
   }
