@@ -729,10 +729,44 @@
 
   
     /* ── 2026 ultra-pro overrides ── */
-    .navbar-inner{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px;padding:0 18px}
-    .nav-links{position:static !important;left:auto !important;right:auto !important;justify-self:start;display:flex;justify-content:flex-start;flex-wrap:wrap;gap:6px}
-    .nav-ctas{justify-self:end}
-    .nav-btn-buy{min-width:112px;padding:0 18px}
+    @media(min-width:821px){
+      .navbar-inner{
+        display:grid;
+        grid-template-columns:minmax(0,1fr) auto;
+        align-items:center;
+        gap:16px;
+        padding:0 18px;
+        background:transparent !important;
+        border:none !important;
+        box-shadow:none !important;
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+      }
+      .nav-links{
+        position:static !important;
+        left:auto !important;
+        right:auto !important;
+        justify-self:start;
+        display:flex;
+        justify-content:flex-start;
+        flex-wrap:wrap;
+        gap:8px;
+      }
+      .nav-links a{
+        background:rgba(8,14,32,.52);
+        border:1px solid rgba(255,255,255,.08);
+        box-shadow:0 8px 22px rgba(0,0,0,.18);
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
+      }
+      .nav-ctas{justify-self:end;background:transparent !important;border:none !important;box-shadow:none !important}
+      .nav-ctas .nav-btn{
+        box-shadow:0 8px 22px rgba(0,0,0,.18);
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
+      }
+      .nav-btn-buy{min-width:112px;padding:0 18px}
+    }
     .hero-proof{max-width:1180px;margin:-8px auto 0;padding:0 18px 6px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
     .proof-card{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);box-shadow:0 18px 40px rgba(0,0,0,.18);backdrop-filter:blur(20px)}
     .proof-card strong{display:block;font-family:'Barlow Condensed',sans-serif;font-size:22px;color:#fff;margin-bottom:4px}
