@@ -134,6 +134,41 @@ function formatCompact(value, digits = 6) {
   });
 }
 
+function getEstimatedFiruForAmount(roundConfig, roundValue, tokenValue, amountValue) {
+  const token = getTokenMeta(roundConfig, tokenValue);
+  const round = getSelectedRoundMeta(roundConfig, roundValue);
+  const amount = Number(amountValue || 0);
+
+  if (!token || !round || !Number.isFinite(amount) || amount <= 0) return 0;
+
+  const usdValue = amount * Number(token.livePriceUsd || 0);
+  return round.firuPriceUsd > 0 ? usdValue / Number(round.firuPriceUsd) : 0;
+}
+
+async function simulateSolTransfer(connection, transaction) {
+  try {
+    const simulation = await connection.simulateTransaction(transaction, {
+      sigVerify: false,
+      replaceRecentBlockhash: true,
+      commitment: "confirmed"
+    });
+
+    if (simulation?.value?.err) {
+      const logs = Array.isArray(simulation?.value?.logs) ? simulation.value.logs.join(" | ") : "";
+      throw new Error(logs || JSON.stringify(simulation.value.err));
+    }
+  } catch (error) {
+    const message = String(error?.message || error || "");
+    if (/insufficient/i.test(message)) {
+      throw new Error("Insufficient SOL balance to complete this purchase and pay the network fee.");
+    }
+    if (/blockhash/i.test(message)) {
+      throw new Error("Could not prepare the Solana transaction. Please try again.");
+    }
+    throw new Error("Phantom could not safely simulate this transaction yet. Please try again in a few seconds.");
+  }
+}
+
 export function mountRoundRegister(selector) {
   const root = document.querySelector(selector);
   if (!root) return;
@@ -477,13 +512,20 @@ export function mountRoundRegister(selector) {
     const limits = getTokenLimits(selectedToken);
     pieces.push(`Min ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}`);
     pieces.push(`Max ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}`);
-    if (typeof meta.remainingSol === "number") {
+    if (typeof meta.remainingFiru === "number") {
       if (selectedToken === "SOL") {
-        pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingSol, 4)} SOL`);
-      } else {
         const solToken = getTokenMeta(roundConfig, "SOL");
         const solPrice = Number(solToken?.livePriceUsd || 0);
-        const remainingStable = Number(meta.remainingSol || 0) * solPrice;
+        const remainingSol = solPrice > 0 && Number(meta.firuPriceUsd || 0) > 0
+          ? (Number(meta.remainingFiru || 0) * Number(meta.firuPriceUsd || 0)) / solPrice
+          : null;
+        pieces.push(meta.soldOut
+          ? "Sold out"
+          : remainingSol === null
+            ? `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`
+            : `Remaining ${formatCompact(remainingSol, 4)} SOL`);
+      } else {
+        const remainingStable = Number(meta.remainingFiru || 0) * Number(meta.firuPriceUsd || 0);
         pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(remainingStable, 2)} ${selectedToken}`);
       }
     }
@@ -735,8 +777,8 @@ export function mountRoundRegister(selector) {
     if (data?.round_status) {
       const meta = roundConfig?.rounds?.[roundEl.value];
       if (meta) {
-        meta.raisedSol = data.round_status.raised_sol;
-        meta.remainingSol = data.round_status.remaining_sol;
+        meta.raisedFiru = data.round_status.raised_firu;
+        meta.remainingFiru = data.round_status.remaining_firu;
         meta.soldOut = Boolean(data.round_status.sold_out);
       }
       updateRoundMeta();
@@ -769,10 +811,19 @@ export function mountRoundRegister(selector) {
       if (amount > Number(roundConfig?.limits?.maxSol || 0)) {
         throw new Error(`Maximum purchase is ${formatCompact(roundConfig.limits.maxSol, 4)} SOL.`);
       }
-      if (typeof round?.remainingSol === "number" && amount > Number(round.remainingSol || 0)) {
+      const estimatedFiru = getEstimatedFiruForAmount(roundConfig, roundEl.value, "SOL", amount);
+      if (typeof round?.remainingFiru === "number" && estimatedFiru > Number(round.remainingFiru || 0)) {
+        const solToken = getTokenMeta(roundConfig, "SOL");
+        const solPrice = Number(solToken?.livePriceUsd || 0);
+        const remainingSol = solPrice > 0 && Number(round.firuPriceUsd || 0) > 0
+          ? (Number(round.remainingFiru || 0) * Number(round.firuPriceUsd || 0)) / solPrice
+          : null;
+
         throw new Error(round.soldOut
           ? "This round is sold out."
-          : `Only ${formatCompact(round.remainingSol, 4)} SOL remains in this round.`);
+          : remainingSol === null
+            ? `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`
+            : `Only ${formatCompact(remainingSol, 4)} SOL remains in this round.`);
       }
 
       autoBuyBtn.disabled = true;
@@ -793,8 +844,17 @@ export function mountRoundRegister(selector) {
         })
       );
 
+      autoBuyBtn.textContent = "Checking...";
+      setMsg("Checking the Solana transfer before requesting your signature...", "warn");
+      await simulateSolTransfer(connection, transaction);
+
       autoBuyBtn.textContent = "Waiting for approval...";
-      const { signature } = await provider.signAndSendTransaction(transaction);
+      const signedTransaction = await provider.signTransaction(transaction);
+      const signature = await connection.sendRawTransaction(signedTransaction.serialize(), {
+        skipPreflight: false,
+        preflightCommitment: "confirmed",
+        maxRetries: 3
+      });
 
       txEl.value = signature;
       autoBuyBtn.textContent = "Confirming...";
@@ -814,8 +874,8 @@ export function mountRoundRegister(selector) {
       if (data?.round_status) {
         const meta = roundConfig?.rounds?.[roundEl.value];
         if (meta) {
-          meta.raisedSol = data.round_status.raised_sol;
-          meta.remainingSol = data.round_status.remaining_sol;
+          meta.raisedFiru = data.round_status.raised_firu;
+          meta.remainingFiru = data.round_status.remaining_firu;
           meta.soldOut = Boolean(data.round_status.sold_out);
         }
       }
@@ -840,7 +900,8 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.disabled = false;
       autoBuyBtn.textContent = tokenEl.value === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
       setReady();
-      setMsg(err?.message || "Could not complete the automatic Phantom purchase.", "error");
+      const message = err?.message || "Could not complete the automatic Phantom purchase.";
+      setMsg(message, "error");
     }
   });
 
