@@ -9,6 +9,7 @@ const supabase = createClient(
 
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
+const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
 const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
 
 async function getLivePrices() {
@@ -53,6 +54,16 @@ function getRoundConfig(roundKey) {
   };
 }
 
+function getPublicRpcUrl() {
+  const publicRpcUrl = String(
+    process.env.SOLANA_RPC_URL_PUBLIC ||
+    process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
+    DEFAULT_PUBLIC_RPC_URL
+  ).trim();
+
+  return publicRpcUrl || DEFAULT_PUBLIC_RPC_URL;
+}
+
 async function getRaisedFiruByRound(round) {
   const { data, error } = await supabase
     .from("round_registrations")
@@ -86,7 +97,7 @@ export default async function handler(req, res) {
     const round2 = getRoundConfig("round2");
 
     const payload = {
-      rpcUrl: process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com",
+      rpcUrl: getPublicRpcUrl(),
       projectReceiveWallet,
       limits: {
         minSol: Number(process.env.ROUND_MIN || 0),
