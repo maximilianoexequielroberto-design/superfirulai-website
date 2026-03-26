@@ -39,7 +39,22 @@ const bs58 = {
 };
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
-import { disconnectSolanaWallet, getAvailableSolanaWallets, getPreferredSolanaProvider, getWalletLabel, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+
+function getWalletLabel(provider) {
+  if (provider?.isPhantom) return "Phantom";
+  if (provider?.isBackpack) return "Backpack";
+  if (provider?.isSolflare || window.solflare === provider) return "Solflare";
+  return "Wallet";
+}
+
+async function disconnectSolanaWallet(provider) {
+  try {
+    if (provider?.disconnect) {
+      await provider.disconnect();
+    }
+  } catch (_) {}
+}
 
 
 function ensureTurnstileScript() {

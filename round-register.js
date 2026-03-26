@@ -6,6 +6,8 @@ import {
   LAMPORTS_PER_SOL
 } from "https://esm.sh/@solana/web3.js@1.98.4";
 
+import { getPreferredSolanaProvider, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
 const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
 const CONFIG_ENDPOINT = "/api/round/config";
@@ -276,6 +278,23 @@ export function mountRoundRegister(selector) {
   let provider = null;
   let walletAddress = "";
   let roundConfig = null;
+
+  function showWalletTools(show) {
+    walletToolsEl?.classList.toggle("show", Boolean(show));
+  }
+
+  async function disconnectCurrentWallet() {
+    try {
+      if (provider?.disconnect) {
+        await provider.disconnect();
+      }
+    } catch (_) {}
+    provider = null;
+    walletAddress = "";
+    connectBtn.textContent = "Connect Wallet";
+    showWalletTools(false);
+    setReady();
+  }
 
   function applyContextualUi() {
     const token = tokenEl?.value || "SOL";
@@ -687,7 +706,7 @@ export function mountRoundRegister(selector) {
   switchWalletBtn.addEventListener("click", async () => {
     await disconnectCurrentWallet();
     if (isMobileDevice() && !isInPhantomBrowser()) {
-      openInPhantom();
+      openInPreferredWallet("#buy");
       setMsg("Open Phantom, switch account there, then return and tap Connect Wallet again.", "warn");
       return;
     }
