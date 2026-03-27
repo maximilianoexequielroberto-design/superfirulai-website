@@ -186,8 +186,6 @@ export function mountRoundRegister(selector) {
   injectStyles();
   root.innerHTML = `
     <form class="sf-round-form" novalidate>
-      <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
-
       <div class="sf-trust-bar" id="sfTrustBar">
         <div class="sf-trust-item"><strong id="sfTrustHeadline">Live round status</strong><span id="sfTrustCopy">Loading live pricing and round availability...</span></div>
         <div class="sf-trust-item"><strong>Official destination</strong><span>Only use the address shown in this form on Solana.</span></div>
@@ -304,6 +302,7 @@ export function mountRoundRegister(selector) {
           <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
           <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
         </div>
+        <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
       </div>
     </form>
 
