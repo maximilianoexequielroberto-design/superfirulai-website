@@ -113,8 +113,35 @@ function injectStyles() {
     .sf-receipt-btn.primary{background:linear-gradient(135deg,#ffd665,#ffb84d);color:#07111f;border-color:rgba(255,214,101,.65)}
     .sf-receipt-btn.primary:hover{background:linear-gradient(135deg,#ffe08a,#ffc566)}
     .sf-receipt-footer{margin-top:18px;color:#92abda;font-size:13px;line-height:1.6}
+    .sf-history{display:grid;gap:14px;padding:18px;border-radius:24px;background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
+    .sf-history[hidden]{display:none!important}
+    .sf-history-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+    .sf-history-head h3{margin:0;color:#fff;font-size:22px;line-height:1.1}
+    .sf-history-head p{margin:6px 0 0;color:#a9bee7;font-size:13px;line-height:1.55;max-width:56ch}
+    .sf-history-refresh{min-height:44px;padding:0 16px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;font:inherit;font-weight:800;cursor:pointer}
+    .sf-history-refresh:hover{background:rgba(255,255,255,.08)}
+    .sf-history-refresh:disabled{opacity:.6;cursor:not-allowed}
+    .sf-history-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .sf-history-empty{padding:16px;border-radius:18px;background:rgba(255,255,255,.03);border:1px dashed rgba(255,255,255,.12);color:#bfd3ff;font-size:14px;line-height:1.6}
+    .sf-history-list{display:grid;gap:12px}
+    .sf-history-item{padding:16px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
+    .sf-history-item-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+    .sf-history-item-head strong{color:#fff;font-size:15px}
+    .sf-history-chip{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#dbe7ff;font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+    .sf-history-chip.pending{color:#ffd87d;border-color:rgba(255,216,125,.28);background:rgba(255,216,125,.1)}
+    .sf-history-chip.delivered{color:#95f0be;border-color:rgba(18,227,140,.26);background:rgba(18,227,140,.11)}
+    .sf-history-chip.processing{color:#8fc8ff;border-color:rgba(81,151,255,.26);background:rgba(81,151,255,.11)}
+    .sf-history-chip.failed,.sf-history-chip.cancelled{color:#ffb7b7;border-color:rgba(255,107,107,.25);background:rgba(255,107,107,.12)}
+    .sf-history-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .sf-history-stat{padding:12px;border-radius:16px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06)}
+    .sf-history-stat strong{display:block;color:#8fb3ff;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+    .sf-history-stat span{display:block;color:#fff;font-size:15px;font-weight:800;line-height:1.35;word-break:break-word}
+    .sf-history-links{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+    .sf-history-link{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;text-decoration:none;font-size:13px;font-weight:800}
+    .sf-history-link:hover{background:rgba(255,255,255,.08)}
+    .sf-history-meta{margin-top:12px;color:#9fb5df;font-size:12px;line-height:1.55}
     body.sf-modal-open{overflow:hidden}
-    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid{grid-template-columns:1fr}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}}
   `;
   document.head.appendChild(style);
 }
@@ -166,6 +193,26 @@ export function mountRoundRegister(selector) {
         <div class="sf-trust-item"><strong>Official destination</strong><span>Only use the address shown in this form on Solana.</span></div>
         <div class="sf-trust-item"><strong>Allocation policy</strong><span>Your FIRU allocation is calculated automatically from the verified payment.</span></div>
       </div>
+
+      <section class="sf-history" id="sfPurchaseHistory" hidden>
+        <div class="sf-history-head">
+          <div>
+            <h3>My FIRU Position</h3>
+            <p>Connect your wallet to view your verified purchases, your reserved FIRU allocation and delivery status.</p>
+          </div>
+          <button type="button" class="sf-history-refresh" id="sfHistoryRefresh">Refresh</button>
+        </div>
+
+        <div class="sf-history-summary">
+          <div class="sf-metric"><strong>Total reserved FIRU</strong><span id="sfHistoryTotalFiru">-</span></div>
+          <div class="sf-metric"><strong>Total purchases</strong><span id="sfHistoryTotalPurchases">-</span></div>
+          <div class="sf-metric"><strong>Total paid</strong><span id="sfHistoryTotalPaid">-</span></div>
+          <div class="sf-metric"><strong>Delivery status</strong><span id="sfHistoryDelivery">-</span></div>
+        </div>
+
+        <div class="sf-history-empty" id="sfHistoryEmpty">Connect your wallet to load your verified FIRU purchases.</div>
+        <div class="sf-history-list" id="sfHistoryList"></div>
+      </section>
 
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
@@ -321,6 +368,14 @@ export function mountRoundRegister(selector) {
   const hashWarningEl = root.querySelector("#sfHashWarning");
   const trustHeadlineEl = root.querySelector("#sfTrustHeadline");
   const trustCopyEl = root.querySelector("#sfTrustCopy");
+  const purchaseHistoryEl = root.querySelector("#sfPurchaseHistory");
+  const historyRefreshBtn = root.querySelector("#sfHistoryRefresh");
+  const historyTotalFiruEl = root.querySelector("#sfHistoryTotalFiru");
+  const historyTotalPurchasesEl = root.querySelector("#sfHistoryTotalPurchases");
+  const historyTotalPaidEl = root.querySelector("#sfHistoryTotalPaid");
+  const historyDeliveryEl = root.querySelector("#sfHistoryDelivery");
+  const historyEmptyEl = root.querySelector("#sfHistoryEmpty");
+  const historyListEl = root.querySelector("#sfHistoryList");
   const destinationShortEl = root.querySelector("#sfDestinationShort");
   const roundMetaEl = root.querySelector("#sfRoundMeta");
   const amountHintEl = root.querySelector("#sfAmountHint");
@@ -360,10 +415,142 @@ export function mountRoundRegister(selector) {
   let provider = null;
   let walletAddress = "";
   let roundConfig = null;
+  let historyLoading = false;
+
+  function formatPurchaseDate(value) {
+    if (!value) return "-";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "-";
+    return date.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
+
+  function getDeliveryBadgeClass(status) {
+    const key = String(status || "pending").toLowerCase();
+    if (["delivered", "processing", "failed", "cancelled"].includes(key)) return key;
+    return "pending";
+  }
+
+  function getDeliveryLabelFromSummary(summary) {
+    if (!summary || !summary.total_purchases) return "No purchases yet";
+    if (summary.delivered_firu > 0 && summary.reserved_firu > 0) return "Partially delivered";
+    if (summary.delivered_firu > 0) return "Delivered";
+    return "Reserved for launch";
+  }
+
+  function setHistoryLoadingState(isLoading) {
+    historyLoading = Boolean(isLoading);
+    if (historyRefreshBtn) {
+      historyRefreshBtn.disabled = historyLoading || !walletAddress;
+      historyRefreshBtn.textContent = historyLoading ? "Refreshing..." : "Refresh";
+    }
+  }
+
+  function clearHistory(message = "Connect your wallet to load your verified FIRU purchases.") {
+    if (purchaseHistoryEl) purchaseHistoryEl.hidden = !walletAddress;
+    if (historyTotalFiruEl) historyTotalFiruEl.textContent = walletAddress ? "-" : "-";
+    if (historyTotalPurchasesEl) historyTotalPurchasesEl.textContent = walletAddress ? "-" : "-";
+    if (historyTotalPaidEl) historyTotalPaidEl.textContent = walletAddress ? "-" : "-";
+    if (historyDeliveryEl) historyDeliveryEl.textContent = walletAddress ? "-" : "-";
+    if (historyListEl) historyListEl.innerHTML = "";
+    if (historyEmptyEl) {
+      historyEmptyEl.hidden = false;
+      historyEmptyEl.textContent = message;
+    }
+    setHistoryLoadingState(false);
+  }
+
+  function renderHistory(data) {
+    if (!purchaseHistoryEl) return;
+    purchaseHistoryEl.hidden = !walletAddress;
+
+    const summary = data?.summary || {};
+    const purchases = Array.isArray(data?.purchases) ? data.purchases : [];
+
+    if (historyTotalFiruEl) historyTotalFiruEl.textContent = `${formatCompact(summary.total_firu || 0, 0)} FIRU`;
+    if (historyTotalPurchasesEl) historyTotalPurchasesEl.textContent = String(summary.total_purchases || 0);
+    if (historyTotalPaidEl) historyTotalPaidEl.textContent = `$${formatCurrency(summary.total_paid_usd || 0, 2)}`;
+    if (historyDeliveryEl) historyDeliveryEl.textContent = getDeliveryLabelFromSummary(summary);
+
+    if (historyListEl) {
+      historyListEl.innerHTML = purchases.map((purchase) => {
+        const roundLabel = purchase.round === "round2" ? "Round 2" : "Round 1";
+        const statusLabel = purchase.ownership_status || "Reserved";
+        const statusClass = getDeliveryBadgeClass(purchase.delivery_status);
+        const deliveredMeta = purchase.delivered_at ? `Delivered: ${formatPurchaseDate(purchase.delivered_at)}` : `Registered: ${formatPurchaseDate(purchase.created_at)}`;
+        return `
+          <article class="sf-history-item">
+            <div class="sf-history-item-head">
+              <strong>${roundLabel} · ${purchase.payment_token}</strong>
+              <span class="sf-history-chip ${statusClass}">${statusLabel}</span>
+            </div>
+            <div class="sf-history-grid">
+              <div class="sf-history-stat"><strong>Paid</strong><span>${formatCompact(purchase.payment_amount, purchase.payment_token === "SOL" ? 4 : 2)} ${purchase.payment_token}</span></div>
+              <div class="sf-history-stat"><strong>Market value</strong><span>$${formatCurrency(purchase.payment_amount_usd, 2)}</span></div>
+              <div class="sf-history-stat"><strong>Reserved FIRU</strong><span>${formatCompact(purchase.firu_allocation, 0)} FIRU</span></div>
+              <div class="sf-history-stat"><strong>Wallet match</strong><span>${shortAddress(purchase.sender_wallet || purchase.wallet || walletAddress)}</span></div>
+            </div>
+            <div class="sf-history-links">
+              <a class="sf-history-link" href="${getSolscanUrl(purchase.tx_hash)}" target="_blank" rel="noopener noreferrer">View payment TX</a>
+              ${purchase.delivery_tx ? `<a class="sf-history-link" href="${getSolscanUrl(purchase.delivery_tx)}" target="_blank" rel="noopener noreferrer">View delivery TX</a>` : ""}
+            </div>
+            <div class="sf-history-meta">${deliveredMeta}</div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    if (historyEmptyEl) {
+      historyEmptyEl.hidden = purchases.length > 0;
+      historyEmptyEl.textContent = purchases.length > 0
+        ? ""
+        : "No verified purchases were found for this wallet yet. Once you register a payment, it will appear here automatically.";
+    }
+
+    setHistoryLoadingState(false);
+  }
+
+  async function loadPurchaseHistory(force = false) {
+    if (!walletAddress || !purchaseHistoryEl) {
+      clearHistory("Connect your wallet to load your verified FIRU purchases.");
+      return;
+    }
+    if (historyLoading && !force) return;
+
+    try {
+      purchaseHistoryEl.hidden = false;
+      setHistoryLoadingState(true);
+      if (historyEmptyEl && (!historyListEl || !historyListEl.children.length || force)) {
+        historyEmptyEl.hidden = false;
+        historyEmptyEl.textContent = "Loading your verified FIRU purchases...";
+      }
+
+      const resp = await fetch(`/api/round/history?wallet=${encodeURIComponent(walletAddress)}`, {
+        headers: { accept: "application/json" },
+        cache: "no-store"
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        throw new Error(data.error || "Could not load purchase history.");
+      }
+      renderHistory(data);
+    } catch (error) {
+      clearHistory(error?.message || "Could not load purchase history.");
+    }
+  }
 
   function updateWalletControls() {
     const connected = Boolean(walletAddress);
     if (walletToolsEl) walletToolsEl.classList.toggle("show", connected);
+    if (purchaseHistoryEl) purchaseHistoryEl.hidden = !connected;
+    if (historyRefreshBtn) {
+      historyRefreshBtn.disabled = !connected || historyLoading;
+    }
     if (connectBtn) {
       connectBtn.textContent = connected ? "Wallet Connected" : "Connect Wallet";
       connectBtn.disabled = false;
@@ -797,11 +984,17 @@ export function mountRoundRegister(selector) {
     }
   });
 
+  historyRefreshBtn?.addEventListener("click", async () => {
+    await loadPurchaseHistory(true);
+  });
+
   openBtn.addEventListener("click", () => openInPreferredWallet("#buy"));
   openBtn.textContent = "Open in Wallet App";
   if (isMobileDevice() && !isInPhantomBrowser()) {
     openBtn.classList.add("show");
   }
+
+  clearHistory();
 
   (async () => {
     try {
@@ -853,6 +1046,7 @@ export function mountRoundRegister(selector) {
       "ok"
     );
     setReady();
+    await loadPurchaseHistory(true);
     return provider;
   }
 
@@ -867,6 +1061,7 @@ export function mountRoundRegister(selector) {
     if (txEl && tokenEl?.value === "SOL") txEl.value = "";
     setMsg("<strong>Wallet disconnected.</strong> You can connect another wallet whenever you want.", "warn");
     updateWalletControls();
+    clearHistory();
     setReady();
   }
 
@@ -1089,6 +1284,7 @@ export function mountRoundRegister(selector) {
       submitBtn.textContent = "Registered";
       lockPurchaseUi();
       openReceipt(data);
+      await loadPurchaseHistory(true);
     } catch (err) {
       autoBuyBtn.disabled = false;
       autoBuyBtn.textContent = tokenEl.value === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
@@ -1133,6 +1329,7 @@ export function mountRoundRegister(selector) {
       submitBtn.textContent = "Registered";
       lockPurchaseUi();
       openReceipt(data);
+      await loadPurchaseHistory(true);
     } catch (err) {
       submitBtn.disabled = false;
       submitBtn.textContent = "Register TX Hash";
