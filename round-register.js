@@ -74,7 +74,45 @@ function injectStyles() {
     .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-metric span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
-    .sf-progress{padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)} .sf-progress-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;margin-bottom:8px} .sf-progress-head strong{color:#fff}.sf-progress-head span{color:#9db7e8;font-weight:800}.sf-progress-bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}.sf-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#18a3ff,#ffd665);transition:width .4s ease} @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid{grid-template-columns:1fr}}
+    .sf-progress{padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)} .sf-progress-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;margin-bottom:8px} .sf-progress-head strong{color:#fff}.sf-progress-head span{color:#9db7e8;font-weight:800}.sf-progress-bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}.sf-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#18a3ff,#ffd665);transition:width .4s ease}
+    .sf-receipt-overlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,8,23,.76);backdrop-filter:blur(12px)}
+    .sf-receipt-overlay.show{display:flex}
+    .sf-receipt-card{position:relative;width:min(760px,100%);max-height:min(92vh,980px);overflow:auto;border-radius:28px;padding:28px;background:
+      radial-gradient(circle at top left,rgba(255,214,101,.18),transparent 28%),
+      radial-gradient(circle at top right,rgba(24,163,255,.18),transparent 34%),
+      linear-gradient(180deg,rgba(9,15,34,.98),rgba(6,12,26,.98));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:0 40px 120px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.08)}
+    .sf-receipt-card:before{content:"";position:absolute;inset:0;border-radius:28px;padding:1px;background:linear-gradient(135deg,rgba(255,214,101,.7),rgba(24,163,255,.55),rgba(255,255,255,.18));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .sf-receipt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;margin-bottom:20px}
+    .sf-receipt-badge{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:999px;background:rgba(18,227,140,.14);border:1px solid rgba(18,227,140,.25);color:#9ef3c4;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .sf-receipt-title{margin:14px 0 8px;color:#fff;font-size:clamp(28px,4vw,42px);line-height:1.05;font-weight:900;letter-spacing:-.03em}
+    .sf-receipt-sub{margin:0;color:#bfd3ff;font-size:15px;line-height:1.6;max-width:56ch}
+    .sf-receipt-close{flex:0 0 auto;width:44px;height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:#fff;font-size:18px;font-weight:900;cursor:pointer}
+    .sf-receipt-close:hover{background:rgba(255,255,255,.08)}
+    .sf-receipt-hero{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin:22px 0}
+    .sf-receipt-panel{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .sf-receipt-kicker{display:block;color:#ffd665;font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+    .sf-receipt-value{display:block;color:#fff;font-size:clamp(28px,4vw,38px);font-weight:900;line-height:1.05}
+    .sf-receipt-value.small{font-size:clamp(22px,3.5vw,30px)}
+    .sf-receipt-copy{display:grid;gap:10px}
+    .sf-receipt-copy p{margin:0;color:#cfe0ff;font-size:14px;line-height:1.6}
+    .sf-receipt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
+    .sf-receipt-stat{padding:16px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08)}
+    .sf-receipt-stat strong{display:block;color:#8fb3ff;font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+    .sf-receipt-stat span{display:block;color:#fff;font-size:16px;font-weight:800;line-height:1.35;word-break:break-word}
+    .sf-receipt-hash{display:grid;gap:10px;margin-top:18px;padding:18px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.08)}
+    .sf-receipt-hash-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .sf-receipt-hash-head strong{color:#fff;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+    .sf-receipt-hash code{display:block;padding:14px 16px;border-radius:16px;background:#081122;border:1px solid rgba(255,255,255,.06);color:#d7e6ff;font:600 13px/1.55 ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;word-break:break-all}
+    .sf-receipt-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
+    .sf-receipt-btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:#fff;font:inherit;font-weight:800;text-decoration:none;cursor:pointer;transition:transform .18s ease,background .18s ease,border-color .18s ease}
+    .sf-receipt-btn:hover{transform:translateY(-1px);background:rgba(255,255,255,.09)}
+    .sf-receipt-btn.primary{background:linear-gradient(135deg,#ffd665,#ffb84d);color:#07111f;border-color:rgba(255,214,101,.65)}
+    .sf-receipt-btn.primary:hover{background:linear-gradient(135deg,#ffe08a,#ffc566)}
+    .sf-receipt-footer{margin-top:18px;color:#92abda;font-size:13px;line-height:1.6}
+    body.sf-modal-open{overflow:hidden}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid{grid-template-columns:1fr}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}}
   `;
   document.head.appendChild(style);
 }
@@ -215,6 +253,55 @@ export function mountRoundRegister(selector) {
         </div>
       </div>
     </form>
+
+    <div class="sf-receipt-overlay" id="sfReceiptOverlay" aria-hidden="true">
+      <div class="sf-receipt-card" role="dialog" aria-modal="true" aria-labelledby="sfReceiptTitle">
+        <div class="sf-receipt-top">
+          <div>
+            <div class="sf-receipt-badge">✓ Purchase Confirmed</div>
+            <h3 class="sf-receipt-title" id="sfReceiptTitle">Your FIRU allocation is locked in.</h3>
+            <p class="sf-receipt-sub" id="sfReceiptSub">Your verified payment has been registered successfully. This receipt confirms your early position and reserved allocation.</p>
+          </div>
+          <button type="button" class="sf-receipt-close" id="sfReceiptClose" aria-label="Close receipt">✕</button>
+        </div>
+
+        <div class="sf-receipt-hero">
+          <div class="sf-receipt-panel">
+            <span class="sf-receipt-kicker">Reserved allocation</span>
+            <span class="sf-receipt-value" id="sfReceiptFiru">-</span>
+          </div>
+          <div class="sf-receipt-panel sf-receipt-copy">
+            <span class="sf-receipt-kicker">Receipt status</span>
+            <span class="sf-receipt-value small" id="sfReceiptRound">-</span>
+            <p id="sfReceiptMessage">Your purchase is recorded and reserved for post-launch distribution.</p>
+          </div>
+        </div>
+
+        <div class="sf-receipt-grid">
+          <div class="sf-receipt-stat"><strong>Payment</strong><span id="sfReceiptPayment">-</span></div>
+          <div class="sf-receipt-stat"><strong>Market value</strong><span id="sfReceiptUsd">-</span></div>
+          <div class="sf-receipt-stat"><strong>Wallet</strong><span id="sfReceiptWallet">-</span></div>
+          <div class="sf-receipt-stat"><strong>Token price</strong><span id="sfReceiptPrice">-</span></div>
+        </div>
+
+        <div class="sf-receipt-hash">
+          <div class="sf-receipt-hash-head">
+            <strong>Transaction hash</strong>
+            <button type="button" class="sf-receipt-btn" id="sfReceiptCopyTx">Copy TX</button>
+          </div>
+          <code id="sfReceiptTx">-</code>
+        </div>
+
+        <div class="sf-receipt-actions">
+          <a class="sf-receipt-btn primary" id="sfReceiptExplorer" href="#" target="_blank" rel="noopener noreferrer">View on Solscan</a>
+          <button type="button" class="sf-receipt-btn" id="sfReceiptCloseAction">Close receipt</button>
+        </div>
+
+        <div class="sf-receipt-footer">
+          This receipt confirms that your payment was verified on Solana and your FIRU allocation was reserved successfully. Keep this transaction hash for your records.
+        </div>
+      </div>
+    </div>
   `;
 
   const walletMsg = root.querySelector("#sfRoundWalletMsg");
@@ -240,6 +327,21 @@ export function mountRoundRegister(selector) {
   const openBtn = root.querySelector("#sfRoundOpenPhantom");
   const autoBuyBtn = root.querySelector("#sfRoundAutoBuy");
   const submitBtn = root.querySelector("#sfRoundSubmit");
+  const receiptOverlay = root.querySelector("#sfReceiptOverlay");
+  const receiptCloseBtn = root.querySelector("#sfReceiptClose");
+  const receiptCloseActionBtn = root.querySelector("#sfReceiptCloseAction");
+  const receiptCopyTxBtn = root.querySelector("#sfReceiptCopyTx");
+  const receiptExplorerLink = root.querySelector("#sfReceiptExplorer");
+  const receiptTitleEl = root.querySelector("#sfReceiptTitle");
+  const receiptSubEl = root.querySelector("#sfReceiptSub");
+  const receiptFiruEl = root.querySelector("#sfReceiptFiru");
+  const receiptRoundEl = root.querySelector("#sfReceiptRound");
+  const receiptMessageEl = root.querySelector("#sfReceiptMessage");
+  const receiptPaymentEl = root.querySelector("#sfReceiptPayment");
+  const receiptUsdEl = root.querySelector("#sfReceiptUsd");
+  const receiptWalletEl = root.querySelector("#sfReceiptWallet");
+  const receiptPriceEl = root.querySelector("#sfReceiptPrice");
+  const receiptTxEl = root.querySelector("#sfReceiptTx");
 
   const txField = txEl?.closest(".sf-field");
   const destField = destinationEl?.closest(".sf-field");
@@ -556,6 +658,55 @@ export function mountRoundRegister(selector) {
     }
   }
 
+
+  function getSolscanUrl(txHash) {
+    if (!txHash) return "#";
+    return `https://solscan.io/tx/${encodeURIComponent(txHash)}`;
+  }
+
+  function lockPurchaseUi() {
+    amountEl.disabled = true;
+    txEl.disabled = true;
+    tokenEl.disabled = true;
+    roundEl.disabled = true;
+    autoBuyBtn.disabled = true;
+    submitBtn.disabled = true;
+  }
+
+  function openReceipt(data) {
+    if (!receiptOverlay || !data) return;
+    const paymentAmount = Number(data.payment_amount || 0);
+    const paymentUsd = Number(data.payment_amount_usd || 0);
+    const firuAllocation = Number(data.firu_allocation || 0);
+    const tokenPriceUsd = Number(data.token_price_usd || data.firu_price_usd || 0);
+    const txHash = String(data.tx_hash || txEl.value || "").trim();
+    const paymentToken = String(data.payment_token || tokenEl.value || "SOL");
+    const effectiveWallet = String(data.wallet || walletAddress || "").trim();
+
+    if (receiptTitleEl) receiptTitleEl.textContent = "Your FIRU allocation is locked in.";
+    if (receiptSubEl) receiptSubEl.textContent = "Verified on Solana. Registered successfully. Reserved for post-launch distribution.";
+    if (receiptFiruEl) receiptFiruEl.textContent = `${formatCompact(firuAllocation, 0)} FIRU`;
+    if (receiptRoundEl) receiptRoundEl.textContent = `Round ${data.round === "round2" ? "2" : "1"} confirmed`;
+    if (receiptMessageEl) receiptMessageEl.textContent = "You entered early. Your verified payment is now attached to a reserved FIRU allocation.";
+    if (receiptPaymentEl) receiptPaymentEl.textContent = `${formatCompact(paymentAmount, paymentToken === "SOL" ? 4 : 2)} ${paymentToken}`;
+    if (receiptUsdEl) receiptUsdEl.textContent = `$${formatCurrency(paymentUsd, 2)}`;
+    if (receiptWalletEl) receiptWalletEl.textContent = effectiveWallet ? shortAddress(effectiveWallet) : "Wallet connected";
+    if (receiptPriceEl) receiptPriceEl.textContent = tokenPriceUsd > 0 ? `$${formatCompact(tokenPriceUsd, 6)}` : "-";
+    if (receiptTxEl) receiptTxEl.textContent = txHash || "-";
+    if (receiptExplorerLink) receiptExplorerLink.href = getSolscanUrl(txHash);
+
+    receiptOverlay.classList.add("show");
+    receiptOverlay.setAttribute("aria-hidden", "false");
+    document.body.classList.add("sf-modal-open");
+  }
+
+  function closeReceipt() {
+    if (!receiptOverlay) return;
+    receiptOverlay.classList.remove("show");
+    receiptOverlay.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("sf-modal-open");
+  }
+
   function setReady() {
     applyContextualUi();
     const token = tokenEl.value;
@@ -593,6 +744,33 @@ export function mountRoundRegister(selector) {
       }, 1600);
     } catch {
       setMsg("Could not copy the destination address. Copy it manually.", "error");
+    }
+  });
+
+  receiptCloseBtn?.addEventListener("click", closeReceipt);
+  receiptCloseActionBtn?.addEventListener("click", closeReceipt);
+  receiptOverlay?.addEventListener("click", (event) => {
+    if (event.target === receiptOverlay) closeReceipt();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && receiptOverlay?.classList.contains("show")) {
+      closeReceipt();
+    }
+  });
+  receiptCopyTxBtn?.addEventListener("click", async () => {
+    const txHash = receiptTxEl?.textContent?.trim();
+    if (!txHash || txHash === "-") return;
+    try {
+      await copyToClipboardWithFallback(txHash);
+      receiptCopyTxBtn.textContent = "Copied";
+      setTimeout(() => {
+        receiptCopyTxBtn.textContent = "Copy TX";
+      }, 1400);
+    } catch {
+      receiptCopyTxBtn.textContent = "Copy failed";
+      setTimeout(() => {
+        receiptCopyTxBtn.textContent = "Copy TX";
+      }, 1400);
     }
   });
 
@@ -852,12 +1030,8 @@ export function mountRoundRegister(selector) {
 
       autoBuyBtn.textContent = "Purchased";
       submitBtn.textContent = "Registered";
-      amountEl.disabled = true;
-      txEl.disabled = true;
-      tokenEl.disabled = true;
-      roundEl.disabled = true;
-      autoBuyBtn.disabled = true;
-      submitBtn.disabled = true;
+      lockPurchaseUi();
+      openReceipt(data);
     } catch (err) {
       autoBuyBtn.disabled = false;
       autoBuyBtn.textContent = tokenEl.value === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
@@ -900,11 +1074,8 @@ export function mountRoundRegister(selector) {
       );
 
       submitBtn.textContent = "Registered";
-      amountEl.disabled = true;
-      txEl.disabled = true;
-      tokenEl.disabled = true;
-      roundEl.disabled = true;
-      autoBuyBtn.disabled = true;
+      lockPurchaseUi();
+      openReceipt(data);
     } catch (err) {
       submitBtn.disabled = false;
       submitBtn.textContent = "Register TX Hash";
