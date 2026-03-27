@@ -295,7 +295,7 @@ export function mountRoundRegister(selector) {
         <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
         <div class="sf-wallet-tools" id="sfWalletTools">
-          <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Change Wallet</button>
+          <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
           <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
         </div>
         <div class="sf-action-grid">
@@ -1066,15 +1066,20 @@ export function mountRoundRegister(selector) {
 
   changeWalletBtn?.addEventListener("click", async () => {
     await disconnectCurrentWallet();
+
+    if (isMobileDevice() || isInPhantomBrowser()) {
+      setMsg("<strong>Switch account in Phantom.</strong> Open Phantom, choose another account, then tap <strong>Connect Wallet</strong> again to load that wallet in the app.", "warn");
+      updateWalletControls();
+      return;
+    }
+
     try {
       connectBtn.disabled = true;
-      connectBtn.textContent = isMobileDevice() && !isInPhantomBrowser() ? "Opening Phantom..." : "Connecting...";
+      connectBtn.textContent = "Connecting...";
       await ensureConnected();
     } catch (err) {
       connectBtn.textContent = "Connect Wallet";
-      if (err?.message !== "Opening Phantom...") {
-        setMsg(err?.message || "Could not change the wallet.", "error");
-      }
+      setMsg(err?.message || "Could not switch the wallet.", "error");
     } finally {
       updateWalletControls();
     }
