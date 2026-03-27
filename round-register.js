@@ -209,26 +209,26 @@ export function mountRoundRegister(selector) {
       <div class="sf-trust-bar" id="sfTrustBar">
         <div class="sf-trust-item"><strong id="sfTrustHeadline">Live round status</strong><span id="sfTrustCopy">Loading live pricing and round availability...</span></div>
         <div class="sf-trust-item"><strong>Official destination</strong><span>Only use the address shown in this form on Solana.</span></div>
-        <div class="sf-trust-item"><strong>Allocation policy</strong><span>Your FIRU allocation is calculated automatically from the verified payment.</span></div>
+        <div class="sf-trust-item"><strong>Allocation policy</strong><span>Your $FIRU allocation is calculated automatically from the verified payment.</span></div>
       </div>
 
       <section class="sf-history" id="sfPurchaseHistory" hidden>
         <div class="sf-history-head">
           <div>
-            <h3>My FIRU Position</h3>
-            <p>Connect your wallet to view your verified purchases, your reserved FIRU allocation and delivery status.</p>
+            <h3>My $FIRU Position</h3>
+            <p>Connect your wallet to view your verified purchases, your reserved $FIRU allocation and delivery status.</p>
           </div>
           <button type="button" class="sf-history-refresh" id="sfHistoryRefresh">Refresh</button>
         </div>
 
         <div class="sf-history-summary">
-          <div class="sf-metric"><strong>Total reserved FIRU</strong><span id="sfHistoryTotalFiru">-</span></div>
+          <div class="sf-metric"><strong>Total reserved $FIRU</strong><span id="sfHistoryTotalFiru">-</span></div>
           <div class="sf-metric"><strong>Total purchases</strong><span id="sfHistoryTotalPurchases">-</span></div>
           <div class="sf-metric"><strong>Total paid</strong><span id="sfHistoryTotalPaid">-</span></div>
           <div class="sf-metric"><strong>Delivery status</strong><span id="sfHistoryDelivery">-</span></div>
         </div>
 
-        <div class="sf-history-empty" id="sfHistoryEmpty">Connect your wallet to load your verified FIRU purchases.</div>
+        <div class="sf-history-empty" id="sfHistoryEmpty">Connect your wallet to load your verified $FIRU purchases.</div>
         <div class="sf-history-list" id="sfHistoryList"></div>
       </section>
 
@@ -236,16 +236,16 @@ export function mountRoundRegister(selector) {
         <div class="sf-steps-head">
           <div>
             <strong>Buy in 5 easy steps</strong>
-            <span>Simple flow for first-time buyers. Follow these steps and your FIRU allocation will be reserved automatically after verification.</span>
+            <span>Simple flow for first-time buyers. Follow these steps and your $FIRU allocation will be reserved automatically after verification.</span>
           </div>
           <div class="sf-steps-kicker">Easy mode</div>
         </div>
         <div class="sf-steps-grid">
           <div class="sf-step" data-step="1"><div class="sf-step-num">1</div><strong>Connect wallet</strong><span>Use Phantom and make sure the correct account is active before you continue.</span></div>
           <div class="sf-step" data-step="2"><div class="sf-step-num">2</div><strong>Choose token</strong><span>Select SOL, USDT or USDC on Solana and review the live round details.</span></div>
-          <div class="sf-step" data-step="3"><div class="sf-step-num">3</div><strong>Enter amount</strong><span>Type the amount you want to buy. The app shows your live market value and FIRU estimate.</span></div>
+          <div class="sf-step" data-step="3"><div class="sf-step-num">3</div><strong>Enter amount</strong><span>Type the amount you want to buy. The app shows your live market value and $FIRU estimate.</span></div>
           <div class="sf-step" data-step="4"><div class="sf-step-num">4</div><strong>Confirm payment</strong><span>Use Phantom for automatic SOL buys, or send USDT/USDC and paste the confirmed TX hash.</span></div>
-          <div class="sf-step" data-step="5"><div class="sf-step-num">5</div><strong>Receipt saved</strong><span>Your verified payment is registered and your FIRU allocation appears in your wallet position.</span></div>
+          <div class="sf-step" data-step="5"><div class="sf-step-num">5</div><strong>Receipt saved</strong><span>Your verified payment is registered and your $FIRU allocation appears in your wallet position.</span></div>
         </div>
       </section>
 
@@ -287,7 +287,7 @@ export function mountRoundRegister(selector) {
       <div class="sf-price-grid">
         <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
         <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
-        <div class="sf-metric"><strong>Estimated FIRU</strong><span id="sfEstimatedFiru">-</span></div>
+        <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">-</span></div>
         <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
       </div>
 
@@ -325,7 +325,7 @@ export function mountRoundRegister(selector) {
       <div class="sf-summary">
         <div class="sf-mini"><strong>Automatic SOL</strong><span>Connect Phantom, confirm the payment and let the app register the purchase automatically.</span></div>
         <div class="sf-mini"><strong>Stablecoin flow</strong><span>Copy the official USDT or USDC destination, send funds on Solana, then paste the confirmed transaction hash.</span></div>
-        <div class="sf-mini"><strong>Live allocation</strong><span>Your FIRU allocation is calculated automatically from the verified payment and the active round price.</span></div>
+        <div class="sf-mini"><strong>Live allocation</strong><span>Your $FIRU allocation is calculated automatically from the verified payment and the active round price.</span></div>
       </div>
 
       <div class="sf-round-actions">
@@ -348,7 +348,7 @@ export function mountRoundRegister(selector) {
         <div class="sf-receipt-top">
           <div>
             <div class="sf-receipt-badge">✓ Purchase Confirmed</div>
-            <h3 class="sf-receipt-title" id="sfReceiptTitle">Your FIRU allocation is locked in.</h3>
+            <h3 class="sf-receipt-title" id="sfReceiptTitle">Your $FIRU allocation is locked in.</h3>
             <p class="sf-receipt-sub" id="sfReceiptSub">Your verified payment has been registered successfully. This receipt confirms your early position and reserved allocation.</p>
           </div>
           <button type="button" class="sf-receipt-close" id="sfReceiptClose" aria-label="Close receipt">✕</button>
@@ -387,7 +387,7 @@ export function mountRoundRegister(selector) {
         </div>
 
         <div class="sf-receipt-footer">
-          This receipt confirms that your payment was verified on Solana and your FIRU allocation was reserved successfully. Keep this transaction hash for your records.
+          This receipt confirms that your payment was verified on Solana and your $FIRU allocation was reserved successfully. Keep this transaction hash for your records.
         </div>
       </div>
     </div>
@@ -490,7 +490,7 @@ export function mountRoundRegister(selector) {
     }
   }
 
-  function clearHistory(message = "Connect your wallet to load your verified FIRU purchases.") {
+  function clearHistory(message = "Connect your wallet to load your verified $FIRU purchases.") {
     if (purchaseHistoryEl) purchaseHistoryEl.hidden = !walletAddress;
     if (historyTotalFiruEl) historyTotalFiruEl.textContent = walletAddress ? "-" : "-";
     if (historyTotalPurchasesEl) historyTotalPurchasesEl.textContent = walletAddress ? "-" : "-";
@@ -531,7 +531,7 @@ export function mountRoundRegister(selector) {
             <div class="sf-history-grid">
               <div class="sf-history-stat"><strong>Paid</strong><span>${formatCompact(purchase.payment_amount, purchase.payment_token === "SOL" ? 4 : 2)} ${purchase.payment_token}</span></div>
               <div class="sf-history-stat"><strong>Market value</strong><span>$${formatCurrency(purchase.payment_amount_usd, 2)}</span></div>
-              <div class="sf-history-stat"><strong>Reserved FIRU</strong><span>${formatCompact(purchase.firu_allocation, 0)} FIRU</span></div>
+              <div class="sf-history-stat"><strong>Reserved $FIRU</strong><span>${formatCompact(purchase.firu_allocation, 0)} FIRU</span></div>
               <div class="sf-history-stat"><strong>Wallet match</strong><span>${shortAddress(purchase.sender_wallet || purchase.wallet || walletAddress)}</span></div>
             </div>
             <div class="sf-history-links">
@@ -556,7 +556,7 @@ export function mountRoundRegister(selector) {
 
   async function loadPurchaseHistory(force = false) {
     if (!walletAddress || !purchaseHistoryEl) {
-      clearHistory("Connect your wallet to load your verified FIRU purchases.");
+      clearHistory("Connect your wallet to load your verified $FIRU purchases.");
       return;
     }
     if (historyLoading && !force) return;
@@ -566,7 +566,7 @@ export function mountRoundRegister(selector) {
       setHistoryLoadingState(true);
       if (historyEmptyEl && (!historyListEl || !historyListEl.children.length || force)) {
         historyEmptyEl.hidden = false;
-        historyEmptyEl.textContent = "Loading your verified FIRU purchases...";
+        historyEmptyEl.textContent = "Loading your verified $FIRU purchases...";
       }
 
       const resp = await fetch(`/api/round/history?wallet=${encodeURIComponent(walletAddress)}`, {
@@ -749,7 +749,7 @@ export function mountRoundRegister(selector) {
       if (remainingPayment !== null) {
         return `Only ${formatCompact(remainingPayment, limits.decimals)} ${selectedToken} remains in this round at the current price.`;
       }
-      return `Only ${formatCompact(selectedRound.remainingFiru, 0)} FIRU remains in this round.`;
+      return `Only ${formatCompact(selectedRound.remainingFiru, 0)} $FIRU remains in this round.`;
     }
 
     return "";
@@ -806,12 +806,12 @@ export function mountRoundRegister(selector) {
     }
     const pieces = [];
     pieces.push(meta.enabled ? "Open" : "Closed");
-    pieces.push(`FIRU $${formatCompact(meta.firuPriceUsd, 6)}`);
+    pieces.push(`$FIRU $${formatCompact(meta.firuPriceUsd, 6)}`);
     const limits = getTokenLimits(selectedToken);
     pieces.push(`Min ${formatCompact(limits.min, limits.decimals)} ${limits.suffix}`);
     pieces.push(`Max ${formatCompact(limits.max, limits.decimals)} ${limits.suffix}`);
     if (typeof meta.remainingFiru === "number") {
-      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingFiru, 0)} FIRU`);
+      pieces.push(meta.soldOut ? "Sold out" : `Remaining ${formatCompact(meta.remainingFiru, 0)} $FIRU`);
     }
     roundMetaEl.textContent = pieces.join(" · ");
     if (amountRangeEl) {
@@ -835,7 +835,7 @@ export function mountRoundRegister(selector) {
     const sold = Number(meta.raisedFiru || 0);
     const cap = Number(meta.tokenCap || 0);
     const percent = cap > 0 ? Math.min((sold / cap) * 100, 100) : 0;
-    textEl.textContent = sold.toLocaleString("en-US") + " / " + cap.toLocaleString("en-US") + " FIRU sold";
+    textEl.textContent = sold.toLocaleString("en-US") + " / " + cap.toLocaleString("en-US") + " $FIRU sold";
     percentEl.textContent = percent.toFixed(1) + "%";
     fillEl.style.width = percent + "%";
   }
@@ -931,11 +931,11 @@ export function mountRoundRegister(selector) {
     const paymentToken = String(data.payment_token || tokenEl.value || "SOL");
     const effectiveWallet = String(data.wallet || walletAddress || "").trim();
 
-    if (receiptTitleEl) receiptTitleEl.textContent = "Your FIRU allocation is locked in.";
+    if (receiptTitleEl) receiptTitleEl.textContent = "Your $FIRU allocation is locked in.";
     if (receiptSubEl) receiptSubEl.textContent = "Verified on Solana. Registered successfully. Reserved for post-launch distribution.";
     if (receiptFiruEl) receiptFiruEl.textContent = `${formatCompact(firuAllocation, 0)} FIRU`;
     if (receiptRoundEl) receiptRoundEl.textContent = `Round ${data.round === "round2" ? "2" : "1"} confirmed`;
-    if (receiptMessageEl) receiptMessageEl.textContent = "You entered early. Your verified payment is now attached to a reserved FIRU allocation.";
+    if (receiptMessageEl) receiptMessageEl.textContent = "You entered early. Your verified payment is now attached to a reserved $FIRU allocation.";
     if (receiptPaymentEl) receiptPaymentEl.textContent = `${formatCompact(paymentAmount, paymentToken === "SOL" ? 4 : 2)} ${paymentToken}`;
     if (receiptUsdEl) receiptUsdEl.textContent = `$${formatCurrency(paymentUsd, 2)}`;
     if (receiptWalletEl) receiptWalletEl.textContent = effectiveWallet ? shortAddress(effectiveWallet) : "Wallet connected";
@@ -1266,7 +1266,7 @@ export function mountRoundRegister(selector) {
             ? "This round is sold out."
             : remainingSol !== null
               ? `Only ${formatCompact(remainingSol, 4)} SOL remains in this round at the current price.`
-              : `Only ${formatCompact(round.remainingFiru, 0)} FIRU remains in this round.`
+              : `Only ${formatCompact(round.remainingFiru, 0)} $FIRU remains in this round.`
         );
       }
 
@@ -1396,7 +1396,7 @@ export function mountRoundRegister(selector) {
       setReady();
 
       setMsg(
-        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated. Your allocation is now reserved for distribution after launch.`,
+        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} $FIRU allocated. Your allocation is now reserved for distribution after launch.`,
         "ok"
       );
 
@@ -1442,7 +1442,7 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(tx_hash);
 
       setMsg(
-        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} FIRU allocated. Your allocation is now reserved for distribution after launch.`,
+        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} $FIRU allocated. Your allocation is now reserved for distribution after launch.`,
         "ok"
       );
 
