@@ -173,8 +173,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       <div class="sf-steps-shell">
         <div class="sf-steps-head">
           <div>
-            <div class="sf-steps-title">Airdrop in 5 premium steps</div>
-            <div class="sf-steps-sub">Follow the flow below to secure your verified SuperFirulai access without confusion.</div>
+            <div class="sf-steps-title">Airdrop in 3 simple steps</div>
+            <div class="sf-steps-sub">Connect your wallet, add your social handles, then verify and join.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -182,39 +182,23 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
             <div class="sf-step-index">1</div>
             <div>
               <div class="sf-step-title">Connect wallet</div>
-              <div class="sf-step-desc">Use your personal wallet before anything else.</div>
+              <div class="sf-step-desc">Connect and sign once to verify your wallet.</div>
             </div>
             <div class="sf-step-state">Pending</div>
           </div>
           <div class="sf-step-card" data-step="2">
             <div class="sf-step-index">2</div>
             <div>
-              <div class="sf-step-title">Sign verification message</div>
-              <div class="sf-step-desc">Prove wallet ownership with a secure signature.</div>
+              <div class="sf-step-title">Add Telegram + X</div>
+              <div class="sf-step-desc">Enter your usernames correctly to keep your entry valid.</div>
             </div>
             <div class="sf-step-state">Pending</div>
           </div>
           <div class="sf-step-card" data-step="3">
             <div class="sf-step-index">3</div>
             <div>
-              <div class="sf-step-title">Complete social handles</div>
-              <div class="sf-step-desc">Add your Telegram and X usernames correctly.</div>
-            </div>
-            <div class="sf-step-state">Pending</div>
-          </div>
-          <div class="sf-step-card" data-step="4">
-            <div class="sf-step-index">4</div>
-            <div>
-              <div class="sf-step-title">Pass captcha</div>
-              <div class="sf-step-desc">Confirm you are human before registering.</div>
-            </div>
-            <div class="sf-step-state">Pending</div>
-          </div>
-          <div class="sf-step-card" data-step="5">
-            <div class="sf-step-index">5</div>
-            <div>
-              <div class="sf-step-title">Registration confirmed</div>
-              <div class="sf-step-desc">Finish and lock your verified airdrop access.</div>
+              <div class="sf-step-title">Verify and join</div>
+              <div class="sf-step-desc">Pass captcha and submit your verified airdrop access.</div>
             </div>
             <div class="sf-step-state">Pending</div>
           </div>
@@ -253,7 +237,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
       <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Access</button>
-      <div id="sf-msg" class="sf-wallet-note info">Use one personal wallet, sign the message, then complete Telegram, X and captcha to finish your airdrop registration.</div>
+      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, add Telegram + X, then verify to lock your airdrop access.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
         <div class="sf-confirm-copy">Your wallet and social accounts were verified successfully. Your access is now locked in.</div>
@@ -329,12 +313,11 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
   function getFlowState() {
     const fields = getFieldState();
+    const walletVerified = Boolean(walletAddress && signedMessage && signature && nonce && timestamp && challenge);
     return {
-      step1: Boolean(walletAddress),
-      step2: Boolean(walletAddress && signedMessage && signature && nonce && timestamp && challenge),
-      step3: fields.complete,
-      step4: getCaptchaComplete(),
-      step5: Boolean(registered)
+      step1: walletVerified,
+      step2: fields.complete,
+      step3: Boolean(getCaptchaComplete() && registered)
     };
   }
 
@@ -345,7 +328,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
   function applyFieldHighlights() {
     const fields = getFieldState();
-    const needsHighlight = lastMissingStep === 3 && !fields.complete;
+    const needsHighlight = lastMissingStep === 2 && !fields.complete;
     telegramShell.classList.toggle("sf-missing", needsHighlight && !fields.telegram);
     xShell.classList.toggle("sf-missing", needsHighlight && !fields.x);
   }
@@ -355,17 +338,13 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     const doneMap = {
       1: state.step1,
       2: state.step2,
-      3: state.step3,
-      4: state.step4,
-      5: state.step5
+      3: state.step3
     };
 
     let activeStep = 0;
     if (!state.step1) activeStep = 1;
     else if (!state.step2) activeStep = 2;
     else if (!state.step3) activeStep = 3;
-    else if (!state.step4) activeStep = 4;
-    else if (!state.step5) activeStep = isSubmitting ? 5 : 5;
 
     stepCards.forEach((card) => {
       const step = Number(card.dataset.step);
@@ -380,18 +359,18 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       else if (active) card.classList.add("active");
 
       if (done) {
-        stateEl.textContent = step === 5 ? "Complete" : "Done";
+        stateEl.textContent = step === 3 ? "Complete" : "Done";
       } else if (missing) {
         stateEl.textContent = "Required";
       } else if (active) {
-        stateEl.textContent = step === 5 && isSubmitting ? "Finishing" : "Now";
+        stateEl.textContent = step === 3 && isSubmitting ? "Finishing" : "Now";
       } else {
         stateEl.textContent = "Pending";
       }
     });
 
     applyFieldHighlights();
-    confirmEl.classList.toggle("show", Boolean(state.step5));
+    confirmEl.classList.toggle("show", Boolean(state.step3));
   }
 
   function setMissingStep(step, message) {
@@ -433,19 +412,19 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
   function evaluateReadyState() {
     const state = getFlowState();
-    setRegisterEnabled(Boolean(state.step1 && state.step2));
+    setRegisterEnabled(Boolean(state.step1));
     updateStepCards();
   }
 
   telegramEl.addEventListener("input", () => {
     telegramEl.value = normalizeTelegramHandle(telegramEl.value);
-    if (lastMissingStep === 3) clearMissingStep();
+    if (lastMissingStep === 2) clearMissingStep();
     evaluateReadyState();
   });
 
   xEl.addEventListener("input", () => {
     xEl.value = normalizeXHandle(xEl.value);
-    if (lastMissingStep === 3) clearMissingStep();
+    if (lastMissingStep === 2) clearMissingStep();
     evaluateReadyState();
   });
 
@@ -518,7 +497,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       showWalletActions(true);
       showOpenWalletButton(false);
       setRegisterEnabled(true);
-      setMsg("Wallet verified. Complete Telegram, X and captcha, then register your airdrop.", "ok");
+      setMsg("Wallet verified. Add Telegram + X, then verify to join the airdrop.", "ok");
       updateStepCards();
     } catch (err) {
       resetWalletState("Wallet not connected");
@@ -545,12 +524,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   registerBtn.addEventListener("click", async () => {
     try {
       clearMissingStep();
-      if (!walletAddress) {
-        setMissingStep(1, "Complete Step 1: connect your wallet first.");
-        return;
-      }
-      if (!signedMessage || !signature || !nonce || !timestamp || !challenge) {
-        setMissingStep(2, "Complete Step 2: sign the verification message.");
+      if (!walletAddress || !signedMessage || !signature || !nonce || !timestamp || !challenge) {
+        setMissingStep(1, "Complete Step 1: connect and verify your wallet first.");
         return;
       }
 
@@ -560,11 +535,11 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       const turnstileToken = getTurnstileToken(root);
 
       if (!telegram || !x) {
-        setMissingStep(3, "Complete Step 3: add both Telegram and X usernames.");
+        setMissingStep(2, "Complete Step 2: add both Telegram and X usernames.");
         return;
       }
       if (!turnstileToken) {
-        setMissingStep(4, "Complete Step 4: pass the captcha before registering.");
+        setMissingStep(3, "Complete Step 3: pass the captcha and finish your registration.");
         return;
       }
 
@@ -624,7 +599,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       window.clearInterval(turnstileWatcher);
       return;
     }
-    if (lastMissingStep === 4 && getCaptchaComplete()) {
+    if (lastMissingStep === 3 && getCaptchaComplete()) {
       clearMissingStep();
     }
     evaluateReadyState();
