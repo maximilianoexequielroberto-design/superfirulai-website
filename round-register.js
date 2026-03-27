@@ -332,7 +332,7 @@ export function mountRoundRegister(selector) {
         <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
         <div class="sf-wallet-tools" id="sfWalletTools">
-          <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Change Wallet</button>
+          <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
           <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
         </div>
         <div class="sf-action-grid">
@@ -448,6 +448,7 @@ export function mountRoundRegister(selector) {
   const stableRow = txField?.parentElement;
   const stepEls = Array.from(root.querySelectorAll(".sf-step[data-step]"));
   let receiptCompleted = false;
+  let stepAttention = 0;
   const summaryCards = Array.from(root.querySelectorAll(".sf-summary .sf-mini"));
 
   let provider = null;
@@ -957,6 +958,21 @@ export function mountRoundRegister(selector) {
     updateStepWitness();
   }
 
+  function getMissingBuyStep() {
+    if (!walletAddress) {
+      return { step: 1, message: "<strong>Complete Step 1:</strong> connect your wallet before continuing." };
+    }
+    if (!tokenEl?.value) {
+      return { step: 2, message: "<strong>Complete Step 2:</strong> choose a payment token before continuing." };
+    }
+    const rawAmount = String(amountEl?.value || "").trim();
+    const numericAmount = Number(rawAmount || 0);
+    if (!rawAmount || !Number.isFinite(numericAmount) || numericAmount <= 0 || getAmountValidation()) {
+      return { step: 3, message: "<strong>Complete Step 3:</strong> enter a valid amount before tapping buy." };
+    }
+    return null;
+  }
+
   function updateStepWitness() {
     if (!stepEls.length) return;
 
@@ -968,6 +984,7 @@ export function mountRoundRegister(selector) {
 
     let activeStep = 1;
     if (receiptCompleted) activeStep = 5;
+    else if (stepAttention && !receiptCompleted) activeStep = stepAttention;
     else if (hasValidAmount) activeStep = 4;
     else if (hasWallet) activeStep = 3;
     else activeStep = 1;
@@ -998,6 +1015,9 @@ export function mountRoundRegister(selector) {
     const amountInvalid = Boolean(getAmountValidation());
     const amountReady = walletAddress && token === "SOL" && Number.isFinite(amount) && amount > 0 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
     const manualReady = txEl.value.trim().length > 20 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
+    if (stepAttention === 1 && walletAddress) stepAttention = 0;
+    if (stepAttention === 2 && token) stepAttention = 0;
+    if (stepAttention === 3 && Number.isFinite(amount) && amount > 0 && !amountInvalid) stepAttention = 0;
     autoBuyBtn.disabled = !amountReady;
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
@@ -1120,6 +1140,7 @@ export function mountRoundRegister(selector) {
         : `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Use automatic buy for SOL, or for USDT / USDC send funds on Solana and register the confirmed transaction hash.`,
       "ok"
     );
+    stepAttention = 0;
     setReady();
     await loadPurchaseHistory(true);
     return provider;
@@ -1134,6 +1155,7 @@ export function mountRoundRegister(selector) {
     walletAddress = "";
     provider = null;
     receiptCompleted = false;
+    stepAttention = 0;
     if (txEl && tokenEl?.value === "SOL") txEl.value = "";
     setMsg("<strong>Wallet disconnected.</strong> You can connect another wallet whenever you want.", "warn");
     updateWalletControls();
@@ -1143,18 +1165,10 @@ export function mountRoundRegister(selector) {
 
   changeWalletBtn?.addEventListener("click", async () => {
     await disconnectCurrentWallet();
-    try {
-      connectBtn.disabled = true;
-      connectBtn.textContent = isMobileDevice() && !isInPhantomBrowser() ? "Opening Phantom..." : "Connecting...";
-      await ensureConnected();
-    } catch (err) {
-      connectBtn.textContent = "Connect Wallet";
-      if (err?.message !== "Opening Phantom...") {
-        setMsg(err?.message || "Could not change the wallet.", "error");
-      }
-    } finally {
-      updateWalletControls();
-    }
+    stepAttention = 1;
+    setMsg("<strong>Switch account in Phantom.</strong> Open Phantom, choose another account, then tap <strong>Connect Wallet</strong> again to load that wallet in the app.", "warn");
+    updateWalletControls();
+    setReady();
   });
 
   disconnectWalletBtn?.addEventListener("click", async () => {
@@ -1219,7 +1233,16 @@ export function mountRoundRegister(selector) {
         throw new Error("Automatic buy is only available for SOL. Use manual TX registration for USDT and USDC.");
       }
 
+      const missingStep = getMissingBuyStep();
+      if (missingStep) {
+        stepAttention = missingStep.step;
+        setMsg(missingStep.message, "warn");
+        setReady();
+        return;
+      }
+
       await ensureConnected();
+      stepAttention = 0;
 
       const round = getSelectedRoundMeta(roundConfig, roundEl.value);
       const amount = Number(amountEl.value || 0);
