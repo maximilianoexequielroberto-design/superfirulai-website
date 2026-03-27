@@ -88,6 +88,15 @@ function injectStyles() {
     .sf-step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:999px;background:linear-gradient(180deg,#ffd665,#ffb81f);color:#081224;font-size:14px;font-weight:900;box-shadow:0 10px 28px rgba(255,214,101,.18)}
     .sf-step strong{display:block;margin-top:12px;color:#fff;font-size:14px;line-height:1.2}
     .sf-step span{display:block;margin-top:8px;color:#a9bee7;font-size:12px;line-height:1.5}
+    .sf-step{transition:border-color .2s ease,background .2s ease,transform .2s ease,box-shadow .2s ease}
+    .sf-step.active{border-color:rgba(255,214,101,.5);background:linear-gradient(180deg,rgba(255,214,101,.12),rgba(24,163,255,.08));box-shadow:0 16px 36px rgba(8,17,34,.22),0 0 0 1px rgba(255,214,101,.08) inset;transform:translateY(-1px)}
+    .sf-step.active:before{width:4px;background:linear-gradient(180deg,#ffe08a,#18a3ff)}
+    .sf-step.active .sf-step-num{box-shadow:0 0 0 6px rgba(255,214,101,.12),0 10px 30px rgba(255,214,101,.28)}
+    .sf-step.completed{border-color:rgba(18,227,140,.26);background:linear-gradient(180deg,rgba(18,227,140,.10),rgba(255,255,255,.035))}
+    .sf-step.completed:before{background:linear-gradient(180deg,#12e38c,#18a3ff)}
+    .sf-step.completed .sf-step-num{background:linear-gradient(180deg,#12e38c,#10c872);color:#04131d;box-shadow:0 0 0 6px rgba(18,227,140,.10),0 10px 28px rgba(18,227,140,.22)}
+    .sf-step.done .sf-step-num{font-size:0;position:relative}
+    .sf-step.done .sf-step-num::after{content:"✓";font-size:15px;font-weight:900}
     .sf-receipt-overlay{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;background:rgba(2,8,23,.76);backdrop-filter:blur(12px)}
     .sf-receipt-overlay.show{display:flex}
     .sf-receipt-card{position:relative;width:min(760px,100%);max-height:min(92vh,980px);overflow:auto;border-radius:28px;padding:28px;background:
@@ -232,11 +241,11 @@ export function mountRoundRegister(selector) {
           <div class="sf-steps-kicker">Easy mode</div>
         </div>
         <div class="sf-steps-grid">
-          <div class="sf-step"><div class="sf-step-num">1</div><strong>Connect wallet</strong><span>Use Phantom and make sure the correct account is active before you continue.</span></div>
-          <div class="sf-step"><div class="sf-step-num">2</div><strong>Choose token</strong><span>Select SOL, USDT or USDC on Solana and review the live round details.</span></div>
-          <div class="sf-step"><div class="sf-step-num">3</div><strong>Enter amount</strong><span>Type the amount you want to buy. The app shows your live market value and FIRU estimate.</span></div>
-          <div class="sf-step"><div class="sf-step-num">4</div><strong>Confirm payment</strong><span>Use Phantom for automatic SOL buys, or send USDT/USDC and paste the confirmed TX hash.</span></div>
-          <div class="sf-step"><div class="sf-step-num">5</div><strong>Receipt saved</strong><span>Your verified payment is registered and your FIRU allocation appears in your wallet position.</span></div>
+          <div class="sf-step" data-step="1"><div class="sf-step-num">1</div><strong>Connect wallet</strong><span>Use Phantom and make sure the correct account is active before you continue.</span></div>
+          <div class="sf-step" data-step="2"><div class="sf-step-num">2</div><strong>Choose token</strong><span>Select SOL, USDT or USDC on Solana and review the live round details.</span></div>
+          <div class="sf-step" data-step="3"><div class="sf-step-num">3</div><strong>Enter amount</strong><span>Type the amount you want to buy. The app shows your live market value and FIRU estimate.</span></div>
+          <div class="sf-step" data-step="4"><div class="sf-step-num">4</div><strong>Confirm payment</strong><span>Use Phantom for automatic SOL buys, or send USDT/USDC and paste the confirmed TX hash.</span></div>
+          <div class="sf-step" data-step="5"><div class="sf-step-num">5</div><strong>Receipt saved</strong><span>Your verified payment is registered and your FIRU allocation appears in your wallet position.</span></div>
         </div>
       </section>
 
@@ -437,6 +446,8 @@ export function mountRoundRegister(selector) {
   const txField = txEl?.closest(".sf-field");
   const destField = destinationEl?.closest(".sf-field");
   const stableRow = txField?.parentElement;
+  const stepEls = Array.from(root.querySelectorAll(".sf-step[data-step]"));
+  let receiptCompleted = false;
   const summaryCards = Array.from(root.querySelectorAll(".sf-summary .sf-mini"));
 
   let provider = null;
@@ -931,9 +942,11 @@ export function mountRoundRegister(selector) {
     if (receiptTxEl) receiptTxEl.textContent = txHash || "-";
     if (receiptExplorerLink) receiptExplorerLink.href = getSolscanUrl(txHash);
 
+    receiptCompleted = true;
     receiptOverlay.classList.add("show");
     receiptOverlay.setAttribute("aria-hidden", "false");
     document.body.classList.add("sf-modal-open");
+    updateStepWitness();
   }
 
   function closeReceipt() {
@@ -941,6 +954,34 @@ export function mountRoundRegister(selector) {
     receiptOverlay.classList.remove("show");
     receiptOverlay.setAttribute("aria-hidden", "true");
     document.body.classList.remove("sf-modal-open");
+    updateStepWitness();
+  }
+
+  function updateStepWitness() {
+    if (!stepEls.length) return;
+
+    const token = tokenEl?.value || "SOL";
+    const amount = Number(amountEl?.value || 0);
+    const hasWallet = Boolean(walletAddress);
+    const hasToken = Boolean(token);
+    const hasValidAmount = Number.isFinite(amount) && amount > 0 && !getAmountValidation();
+    const hasManualHash = token !== "SOL" && txEl?.value.trim().length > 20;
+    const canConfirm = token === "SOL" ? hasWallet && hasValidAmount : hasValidAmount && hasManualHash;
+
+    let activeStep = 1;
+    if (receiptCompleted) activeStep = 5;
+    else if (canConfirm) activeStep = 4;
+    else if (hasValidAmount) activeStep = 3;
+    else if (hasToken) activeStep = 2;
+    else if (hasWallet) activeStep = 2;
+
+    stepEls.forEach((el) => {
+      const step = Number(el.getAttribute("data-step") || 0);
+      const completed = receiptCompleted ? step < 5 : step < activeStep || (step === 1 && hasWallet);
+      el.classList.toggle("active", step === activeStep);
+      el.classList.toggle("completed", completed || (receiptCompleted && step <= 5));
+      el.classList.toggle("done", completed || (receiptCompleted && step <= 5));
+    });
   }
 
   function setReady() {
@@ -956,9 +997,11 @@ export function mountRoundRegister(selector) {
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
     submitBtn.textContent = token === "SOL" ? "Register TX Hash" : `Register ${token} TX Hash`;
+    updateStepWitness();
   }
 
   [tokenEl, amountEl, txEl, roundEl].forEach((el) => el.addEventListener("input", () => {
+    if (!receiptOverlay?.classList.contains("show")) receiptCompleted = false;
     updateRoundMeta();
     updateTokenDetails();
     setReady();
@@ -1085,6 +1128,7 @@ export function mountRoundRegister(selector) {
     } catch (_) {}
     walletAddress = "";
     provider = null;
+    receiptCompleted = false;
     if (txEl && tokenEl?.value === "SOL") txEl.value = "";
     setMsg("<strong>Wallet disconnected.</strong> You can connect another wallet whenever you want.", "warn");
     updateWalletControls();
