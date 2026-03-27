@@ -960,27 +960,32 @@ export function mountRoundRegister(selector) {
   function updateStepWitness() {
     if (!stepEls.length) return;
 
-    const token = tokenEl?.value || "SOL";
+    const token = tokenEl?.value || "";
     const amount = Number(amountEl?.value || 0);
     const hasWallet = Boolean(walletAddress);
     const hasToken = Boolean(token);
     const hasValidAmount = Number.isFinite(amount) && amount > 0 && !getAmountValidation();
-    const hasManualHash = token !== "SOL" && txEl?.value.trim().length > 20;
-    const canConfirm = token === "SOL" ? hasWallet && hasValidAmount : hasValidAmount && hasManualHash;
 
     let activeStep = 1;
     if (receiptCompleted) activeStep = 5;
-    else if (canConfirm) activeStep = 4;
-    else if (hasValidAmount) activeStep = 3;
-    else if (hasToken) activeStep = 2;
-    else if (hasWallet) activeStep = 2;
+    else if (hasValidAmount) activeStep = 4;
+    else if (hasWallet) activeStep = 3;
+    else activeStep = 1;
+
+    const completedMap = {
+      1: hasWallet,
+      2: hasToken,
+      3: hasValidAmount,
+      4: receiptCompleted,
+      5: receiptCompleted,
+    };
 
     stepEls.forEach((el) => {
       const step = Number(el.getAttribute("data-step") || 0);
-      const completed = receiptCompleted ? step < 5 : step < activeStep || (step === 1 && hasWallet);
+      const completed = Boolean(completedMap[step]);
       el.classList.toggle("active", step === activeStep);
-      el.classList.toggle("completed", completed || (receiptCompleted && step <= 5));
-      el.classList.toggle("done", completed || (receiptCompleted && step <= 5));
+      el.classList.toggle("completed", completed);
+      el.classList.toggle("done", completed);
     });
   }
 
