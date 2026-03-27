@@ -57,6 +57,8 @@ function injectStyles() {
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
     .sf-round-actions{display:grid;gap:10px}
     .sf-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .sf-wallet-tools{display:none;grid-template-columns:1fr 1fr;gap:10px}
+    .sf-wallet-tools.show{display:grid}
     .sf-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
     .sf-mini{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-mini strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
@@ -247,6 +249,10 @@ export function mountRoundRegister(selector) {
       <div class="sf-round-actions">
         <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
         <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
+        <div class="sf-wallet-tools" id="sfWalletTools">
+          <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Change Wallet</button>
+          <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+        </div>
         <div class="sf-action-grid">
           <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
           <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
@@ -325,6 +331,9 @@ export function mountRoundRegister(selector) {
   const estimatedFiruEl = root.querySelector("#sfEstimatedFiru");
   const connectBtn = root.querySelector("#sfRoundConnect");
   const openBtn = root.querySelector("#sfRoundOpenPhantom");
+  const walletToolsEl = root.querySelector("#sfWalletTools");
+  const changeWalletBtn = root.querySelector("#sfRoundChangeWallet");
+  const disconnectWalletBtn = root.querySelector("#sfRoundDisconnect");
   const autoBuyBtn = root.querySelector("#sfRoundAutoBuy");
   const submitBtn = root.querySelector("#sfRoundSubmit");
   const receiptOverlay = root.querySelector("#sfReceiptOverlay");
@@ -352,10 +361,20 @@ export function mountRoundRegister(selector) {
   let walletAddress = "";
   let roundConfig = null;
 
+  function updateWalletControls() {
+    const connected = Boolean(walletAddress);
+    if (walletToolsEl) walletToolsEl.classList.toggle("show", connected);
+    if (connectBtn) {
+      connectBtn.textContent = connected ? "Wallet Connected" : "Connect Wallet";
+      connectBtn.disabled = false;
+    }
+  }
+
   function applyContextualUi() {
     const token = tokenEl?.value || "SOL";
     const phantomMobile = isMobileDevice() && isInPhantomBrowser();
     const outsidePhantomMobile = isMobileDevice() && !isInPhantomBrowser();
+    updateWalletControls();
 
     if (stableRow && destField && txField && (token === "USDT" || token === "USDC")) {
       if (stableRow.firstElementChild !== destField) {
@@ -371,6 +390,7 @@ export function mountRoundRegister(selector) {
       if (submitBtn) submitBtn.style.display = "none";
       if (destField) destField.style.display = "none";
       if (connectBtn) connectBtn.style.display = "";
+      if (walletToolsEl) walletToolsEl.style.display = walletAddress ? "grid" : "none";
       if (autoBuyBtn) autoBuyBtn.style.display = "";
       if (openBtn) openBtn.style.display = "none";
       if (summaryCards[0]) summaryCards[0].style.display = "";
@@ -386,6 +406,7 @@ export function mountRoundRegister(selector) {
       if (submitBtn) submitBtn.style.display = "none";
       if (destField) destField.style.display = "";
       if (connectBtn) connectBtn.style.display = outsidePhantomMobile ? "none" : "";
+      if (walletToolsEl) walletToolsEl.style.display = outsidePhantomMobile ? "none" : (walletAddress ? "grid" : "none");
       if (openBtn) openBtn.style.display = outsidePhantomMobile ? "" : "none";
       if (autoBuyBtn) autoBuyBtn.style.display = outsidePhantomMobile ? "none" : "";
       if (summaryCards[0]) summaryCards[0].style.display = "";
@@ -403,6 +424,7 @@ export function mountRoundRegister(selector) {
       if (submitBtn) submitBtn.style.display = "";
       if (destField) destField.style.display = "";
       if (connectBtn) connectBtn.style.display = "none";
+      if (walletToolsEl) walletToolsEl.style.display = "none";
       if (openBtn) openBtn.style.display = "none";
       if (autoBuyBtn) autoBuyBtn.style.display = "none";
       if (summaryCards[0]) summaryCards[0].style.display = "none";
@@ -708,6 +730,7 @@ export function mountRoundRegister(selector) {
   }
 
   function setReady() {
+    updateWalletControls();
     applyContextualUi();
     const token = tokenEl.value;
     const selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value);
@@ -822,7 +845,7 @@ export function mountRoundRegister(selector) {
 
     const resp = await provider.connect({ onlyIfTrusted: false });
     walletAddress = resp.publicKey.toString();
-    connectBtn.textContent = "Wallet Connected";
+    updateWalletControls();
     setMsg(
       isMobileDevice() && isInPhantomBrowser()
         ? `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Wallet mode is active. Continue with the automatic SOL purchase below.`
@@ -832,6 +855,40 @@ export function mountRoundRegister(selector) {
     setReady();
     return provider;
   }
+
+  async function disconnectCurrentWallet() {
+    try {
+      if (provider?.disconnect) {
+        await provider.disconnect();
+      }
+    } catch (_) {}
+    walletAddress = "";
+    provider = null;
+    if (txEl && tokenEl?.value === "SOL") txEl.value = "";
+    setMsg("<strong>Wallet disconnected.</strong> You can connect another wallet whenever you want.", "warn");
+    updateWalletControls();
+    setReady();
+  }
+
+  changeWalletBtn?.addEventListener("click", async () => {
+    await disconnectCurrentWallet();
+    try {
+      connectBtn.disabled = true;
+      connectBtn.textContent = isMobileDevice() && !isInPhantomBrowser() ? "Opening Phantom..." : "Connecting...";
+      await ensureConnected();
+    } catch (err) {
+      connectBtn.textContent = "Connect Wallet";
+      if (err?.message !== "Opening Phantom...") {
+        setMsg(err?.message || "Could not change the wallet.", "error");
+      }
+    } finally {
+      updateWalletControls();
+    }
+  });
+
+  disconnectWalletBtn?.addEventListener("click", async () => {
+    await disconnectCurrentWallet();
+  });
 
   connectBtn.addEventListener("click", async () => {
     try {
@@ -847,7 +904,7 @@ export function mountRoundRegister(selector) {
       }
     } finally {
       connectBtn.disabled = false;
-      if (walletAddress) connectBtn.textContent = "Wallet Connected";
+      updateWalletControls();
     }
   });
 
