@@ -11,21 +11,40 @@ create table if not exists public.airdrop_registrations (
   turnstile_ok boolean not null default false,
   status text not null default 'pending',
   reason text,
+  approved_at timestamptz,
+  claim_requested_at timestamptz,
+  claimed_at timestamptz,
+  claim_tx text,
+  airdrop_amount numeric(30,0),
   created_at timestamptz not null default now(),
 
   constraint airdrop_wallet_unique unique (wallet),
   constraint airdrop_telegram_unique unique (telegram_username),
   constraint airdrop_x_unique unique (x_username),
   constraint airdrop_nonce_unique unique (nonce),
-  constraint airdrop_status_check check (status in ('pending', 'approved', 'rejected', 'airdrop_sent')),
+  constraint airdrop_status_check check (status in ('pending', 'approved', 'rejected', 'claimed', 'airdrop_sent')),
   constraint airdrop_wallet_length_check check (char_length(wallet) between 32 and 64),
   constraint airdrop_telegram_format_check check (telegram_username ~ '^[A-Za-z0-9_]{3,32}$'),
   constraint airdrop_x_format_check check (x_username ~ '^[A-Za-z0-9_]{1,15}$'),
   constraint airdrop_nonce_length_check check (char_length(nonce) >= 8)
 );
 
+alter table public.airdrop_registrations
+  add column if not exists approved_at timestamptz,
+  add column if not exists claim_requested_at timestamptz,
+  add column if not exists claimed_at timestamptz,
+  add column if not exists claim_tx text,
+  add column if not exists airdrop_amount numeric(30,0);
+
+update public.airdrop_registrations
+set status = 'claimed'
+where status = 'airdrop_sent'
+  and (claimed_at is not null or claim_tx is not null);
+
 create index if not exists idx_airdrop_created_at on public.airdrop_registrations (created_at desc);
 create index if not exists idx_airdrop_status on public.airdrop_registrations (status);
+create index if not exists idx_airdrop_approved_at on public.airdrop_registrations (approved_at desc);
+create index if not exists idx_airdrop_claimed_at on public.airdrop_registrations (claimed_at desc);
 
 alter table public.airdrop_registrations enable row level security;
 
@@ -96,8 +115,6 @@ set delivery_status = case
 end
 where delivery_status is null
    or delivery_status not in ('pending', 'processing', 'delivered', 'failed', 'cancelled');
-
-
 
 do $$
 begin
