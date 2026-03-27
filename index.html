@@ -8,15 +8,17 @@
   <meta property="og:title" content="SuperFirulai $FIRU — Register, Buy, Claim" />
   <meta property="og:description" content="Register first, buy when live, claim after launch." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="/superfirulai-social.webp" />
+  <meta property="og:image" content="/superfirulai-social.webp.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="SuperFirulai $FIRU — Register, Buy, Claim" />
   <meta name="twitter:description" content="Register first, buy when live, claim after launch." />
-  <meta name="twitter:image" content="/superfirulai-social.webp" />
+  <meta name="twitter:image" content="/superfirulai-social.webp.png" />
   <meta name="theme-color" content="#050d1f" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="/superfirulai-mobile-640x960.webp" />
+  <link rel="preload" as="image" href="/superfirulai-hero-final.webp" media="(min-width: 860px)" />
   <style>
     :root{
       --bg:#050d1f; --panel:rgba(8,16,38,.90); --panel2:rgba(10,20,48,.90); --line:rgba(255,255,255,.08);
@@ -117,7 +119,7 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      body::before{background-image:url("superfirulai-desktop.png")}
+      body::before{background-image:url("superfirulai-hero-final.webp")}
       .topbar{padding:0 22px}.app{padding-top:124px;--app-top-space:124px}
       .hero-media{aspect-ratio:2048/1365}
       .home-hero .hero-media{min-height:100svh;min-height:100dvh}
@@ -157,7 +159,7 @@
           <div class="card hero-card home-hero">
             <div class="hero-media">
               <div class="hero-img hero-img-mobile"><img src="superfirulai-mobile-640x960.webp" alt="SuperFirulai $FIRU hero mobile" /></div>
-              <div class="hero-img hero-img-desktop"><img src="superfirulai-desktop.png" alt="SuperFirulai $FIRU hero desktop" /></div>
+              <div class="hero-img hero-img-desktop"><img src="superfirulai-hero-final.webp" alt="SuperFirulai $FIRU hero desktop" /></div>
             </div>
             <div class="hero-copy">
               <div class="eyebrow"><span></span> Clean launch flow</div>
@@ -181,14 +183,14 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Essential numbers</div>
                 <h3>Tokenomics at a glance</h3>
-                <p>Only the core numbers stay visible on the main path.</p>
+                <p>Only the core numbers stay visible on the main path, aligned with the current allocation.</p>
               </div>
             </div>
             <div class="grid-stats">
               <div class="stat-card"><strong>1B</strong><span>Total supply</span></div>
               <div class="stat-card"><strong>0%</strong><span>Tax</span></div>
               <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
-              <div class="stat-card"><strong>20%</strong><span>Community</span></div>
+              <div class="stat-card"><strong>13%</strong><span>Community</span></div>
             </div>
             <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Tokenomics info</button></div>
           </div>
@@ -270,14 +272,14 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Open the full tokenomics artwork and details only when you need them.</p>
+                <p>Open the full tokenomics artwork and details only when you need them. The visible numbers below follow the current allocation.</p>
               </div>
             </div>
             <div class="grid-stats">
               <div class="stat-card"><strong>1B</strong><span>Total supply</span></div>
               <div class="stat-card"><strong>0%</strong><span>Tax</span></div>
               <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
-              <div class="stat-card"><strong>20%</strong><span>Community</span></div>
+              <div class="stat-card"><strong>13%</strong><span>Community</span></div>
             </div>
             <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics</button></div>
           </div>
@@ -337,7 +339,7 @@
 
   <dialog id="claimDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Claim</div><div class="dialog-head"><div><h3>Claim info</h3><p>Claim opens after launch and only for approved wallets.</p></div><button class="dialog-close" data-close="claimDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div><div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div><div class="dialog-item"><strong>After launch only</strong><span>Wait for the official X and Telegram announcement.</span></div></div></div></dialog>
 
-  <dialog id="tokenomicsDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Tokenomics</div><div class="dialog-head"><div><h3>Official allocation</h3><p>Clean distribution with a fixed 1,000,000,000 $FIRU supply.</p></div><button class="dialog-close" data-close="tokenomicsDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>55% Liquidity</strong><span>Strong market base.</span></div><div class="dialog-item"><strong>20% Community</strong><span>Community growth and rewards room.</span></div><div class="dialog-item"><strong>10% Marketing · 10% Team · 5% Burn/Reserve</strong><span>Simple fixed structure built for launch.</span></div></div><div style="margin-top:18px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08)"><img src="tokenomics.jpg" alt="SuperFirulai Tokenomics Chart"></div></div></dialog>
+  <dialog id="tokenomicsDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Tokenomics</div><div class="dialog-head"><div><h3>Official allocation</h3><p>Clean distribution with a fixed 1,000,000,000 $FIRU supply.</p></div><button class="dialog-close" data-close="tokenomicsDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>55% Liquidity</strong><span>Strong market base.</span></div><div class="dialog-item"><strong>13% Community</strong><span>Community allocation after carving out both launch rounds.</span></div><div class="dialog-item"><strong>5% Round 1 · 2% Round 2</strong><span>Both rounds come out of the community allocation.</span></div><div class="dialog-item"><strong>10% Marketing · 10% Team · 5% Burn</strong><span>Fixed support structure around liquidity and launch growth.</span></div></div><div style="margin-top:18px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08)"><img src="tokenomics.jpg" alt="SuperFirulai Tokenomics Chart"></div></div></dialog>
 
   <dialog id="socialDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Official channels</div><div class="dialog-head"><div><h3>Stay on official links only</h3><p>Everything important happens first on X and Telegram.</p></div><button class="dialog-close" data-close="socialDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>X / Twitter</strong><span>Launch reminders, BUY updates and claim announcement.</span></div><div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div></div><div class="dialog-actions"><a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a><a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a></div></div></dialog>
 
@@ -375,14 +377,57 @@
 
     const views=[...document.querySelectorAll('.view')];
     const navBtns=[...document.querySelectorAll('[data-view-btn]')];
-    function showView(name){
+    const hashToView = {
+      '#home':'home',
+      '#register':'register',
+      '#airdrop':'register',
+      '#buy':'buy',
+      '#claim':'claim',
+      '#info':'info',
+      '#tokenomics':'info'
+    };
+    const viewToHash = {
+      home:'#home',
+      register:'#register',
+      buy:'#buy',
+      claim:'#claim',
+      info:'#info'
+    };
+    function showView(name, options={}){
+      const { scroll=true, updateHash=true } = options;
+      if(!views.some(v=>v.dataset.view===name)) return;
       views.forEach(v=>v.classList.toggle('active', v.dataset.view===name));
       navBtns.forEach(btn=>btn.classList.toggle('active', btn.dataset.viewBtn===name));
       drawer.classList.remove('open');
-      window.scrollTo({top:0, behavior:'smooth'});
+      if(updateHash){
+        const nextHash = viewToHash[name] || '#home';
+        if(window.location.hash !== nextHash){
+          history.replaceState(null, '', nextHash);
+        }
+      }
+      if(scroll){
+        window.scrollTo({top:0, behavior:'smooth'});
+      }
+    }
+    function syncViewFromHash(){
+      const target = hashToView[window.location.hash];
+      if(target){
+        showView(target, { scroll:false, updateHash:false });
+      }
     }
     navBtns.forEach(btn=>btn.addEventListener('click', ()=>showView(btn.dataset.viewBtn)));
     document.getElementById('buyFloat')?.addEventListener('click', ()=>showView('buy'));
+    window.addEventListener('hashchange', syncViewFromHash);
+    document.addEventListener('click', (event)=>{
+      const anchor = event.target.closest('a[href^="#"]');
+      if(!anchor) return;
+      const href = anchor.getAttribute('href');
+      const target = hashToView[href];
+      if(!target) return;
+      event.preventDefault();
+      showView(target);
+    });
+    syncViewFromHash();
 
     const openDialog = (id)=> document.getElementById(id)?.showModal?.();
     const closeDialog = (id)=> document.getElementById(id)?.close?.();
