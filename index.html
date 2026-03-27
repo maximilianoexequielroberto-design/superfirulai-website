@@ -54,8 +54,9 @@
     .card{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.90));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
     .hero-card{overflow:hidden}
     .hero-media{aspect-ratio:2/3;background:#07132b;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
-    .hero-media picture,.hero-media img{width:100%;height:100%;display:block}
-    .hero-media img{object-fit:cover;object-position:center top}
+    .hero-mobile,.hero-desktop{width:100%;height:100%;display:block}
+    .hero-mobile img,.hero-desktop img{width:100%;height:100%;display:block;object-fit:cover;object-position:center top}
+    .hero-desktop{display:none}
     .hero-copy{padding-top:18px}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff}
     .eyebrow span{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(255,208,96,.14)}
@@ -113,6 +114,8 @@
       body::before{background-image:url("superfirulai-desktop.png")}
       .topbar{padding:0 22px}.app{padding-top:124px}
       .hero-media{aspect-ratio:2048/1365}
+      .hero-mobile{display:none}
+      .hero-desktop{display:block}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
       .grid-3,.roadmap-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .grid-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -145,7 +148,10 @@
       <section class="view active" data-view="home">
         <div class="stack">
           <div class="card hero-card">
-            <div class="hero-media"><picture><source media="(min-width:860px)" srcset="superfirulai-desktop.png" /><source media="(max-width:859px)" srcset="superfirulai-mobile-640x960.webp" /><img src="superfirulai-desktop.png" alt="SuperFirulai $FIRU hero" /></picture></div>
+            <div class="hero-media">
+              <div class="hero-mobile"><img src="superfirulai-mobile-640x960.webp" alt="SuperFirulai $FIRU hero mobile" /></div>
+              <div class="hero-desktop"><img src="superfirulai-desktop.png" alt="SuperFirulai $FIRU hero desktop" /></div>
+            </div>
             <div class="hero-copy">
               <div class="eyebrow"><span></span> Clean launch flow</div>
               <h1>Register. Buy. Claim.</h1>
