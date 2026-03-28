@@ -3,166 +3,464 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SuperFirulai $FIRU — Register, Buy, Claim</title>
-  <meta name="description" content="Register first, buy when live, claim after launch. Clean mobile-first flow for SuperFirulai on Solana." />
-  <meta property="og:title" content="SuperFirulai $FIRU — Register, Buy, Claim" />
-  <meta property="og:description" content="Register first, buy when live, claim after launch." />
+  <title>SuperFirulai $FIRU — Official Register, Buy & Claim Path</title>
+  <meta name="description" content="Official SuperFirulai path: register first, buy when live, claim after launch. Clean + epic layout with premium CTA panels and community metrics." />
+  <meta property="og:title" content="SuperFirulai $FIRU — Official Register, Buy & Claim Path" />
+  <meta property="og:description" content="Register first. Buy when live. Claim after launch. Official channels only." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="/superfirulai-social.webp" />
+  <meta property="og:image" content="/superfirulai-social.webp.png" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="SuperFirulai $FIRU — Register, Buy, Claim" />
-  <meta name="twitter:description" content="Register first, buy when live, claim after launch." />
-  <meta name="twitter:image" content="/superfirulai-social.webp" />
+  <meta name="twitter:title" content="SuperFirulai $FIRU — Official Register, Buy & Claim Path" />
+  <meta name="twitter:description" content="Register first. Buy when live. Claim after launch. Official channels only." />
+  <meta name="twitter:image" content="/superfirulai-social.webp.png" />
   <meta name="theme-color" content="#050d1f" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     :root{
-      --bg:#050d1f; --panel:rgba(8,16,38,.90); --panel2:rgba(10,20,48,.90); --line:rgba(255,255,255,.08);
-      --text:#eef5ff; --muted:#9bb2d7; --blue:#2991ff; --blue2:#0a59da; --gold:#ffd060; --gold2:#ffaf12; --green:#1ae28a;
-      --shadow:0 24px 60px rgba(0,0,0,.42); --max:1180px;
+      --bg:#050d1f;
+      --panel:rgba(9,17,40,.88);
+      --panel-strong:rgba(7,14,34,.95);
+      --glass:rgba(255,255,255,.045);
+      --line:rgba(255,255,255,.08);
+      --text:#eef5ff;
+      --muted:#9bb2d7;
+      --muted-2:#7f99c5;
+      --blue:#2991ff;
+      --blue2:#0a59da;
+      --gold:#ffd060;
+      --gold2:#ffaf12;
+      --green:#1ae28a;
+      --shadow:0 24px 60px rgba(0,0,0,.42);
+      --max:1180px;
     }
+
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
-    body{font-family:"Inter",system-ui,sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-    body::before{content:"";position:fixed;inset:0;z-index:-2;background:url("superfirulai-mobile-640x960.webp?v=mobileclean3") center top/cover no-repeat;filter:blur(38px) brightness(.13) saturate(1.05);transform:scale(1.08)}
-    body::after{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 15% 0%,rgba(41,145,255,.10),transparent 28%),linear-gradient(180deg,rgba(4,9,24,.12),rgba(4,9,24,.94) 48%)}
-    a{text-decoration:none;color:inherit} button{font:inherit;cursor:pointer;border:none;background:none;color:inherit} img{display:block;max-width:100%}
+    body{
+      font-family:"Inter",system-ui,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:url("Hero%20mobile%20oficial.png?v=hero-mobile-official-20260328") center top/cover no-repeat;
+      filter:blur(40px) brightness(.13) saturate(1.03);
+      transform:scale(1.08);
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      background:
+        radial-gradient(circle at 14% 0%,rgba(41,145,255,.10),transparent 28%),
+        linear-gradient(180deg,rgba(4,9,24,.12),rgba(4,9,24,.94) 48%);
+    }
+
+    a{text-decoration:none;color:inherit}
+    button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+    img{display:block;max-width:100%}
     .container{width:min(calc(100% - 28px),var(--max));margin:0 auto}
 
     .topbar{position:fixed;top:12px;left:0;right:0;z-index:1000;padding:0 12px;pointer-events:none}
     .topbar-inner{width:min(calc(100% - 0px),var(--max));margin:0 auto;display:flex;align-items:center;justify-content:space-between}
     .float-btn,.buy-float{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center}
-    .float-btn{width:46px;height:46px;border-radius:16px;background:rgba(8,14,32,.62);border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px)}
+    .float-btn{
+      width:46px;height:46px;border-radius:16px;background:rgba(8,14,32,.62);
+      border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px)
+    }
     .float-btn span{display:block;width:18px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
-    .float-btn span::before,.float-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:#c9ddff;border-radius:99px}
-    .float-btn span::before{top:-6px}.float-btn span::after{top:6px}
-    .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)}
+    .float-btn span::before,.float-btn span::after{
+      content:"";position:absolute;left:0;width:18px;height:2px;background:#c9ddff;border-radius:99px
+    }
+    .float-btn span::before{top:-6px}
+    .float-btn span::after{top:6px}
+    .buy-float{
+      min-width:92px;height:66px;padding:0 22px;border-radius:22px;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;
+      font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)
+    }
 
     .drawer{position:fixed;inset:0;z-index:999;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
-    .drawer-panel{position:absolute;top:0;left:0;bottom:0;width:min(82vw,330px);background:rgba(4,10,26,.96);border-right:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);padding:86px 16px 26px;transform:translateX(-100%);transition:transform .24s ease}
+    .drawer-panel{
+      position:absolute;top:0;left:0;bottom:0;width:min(82vw,330px);
+      background:rgba(4,10,26,.96);border-right:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);
+      padding:86px 16px 26px;transform:translateX(-100%);transition:transform .24s ease
+    }
     .drawer.open .drawer-panel{transform:translateX(0)}
     .drawer-links{display:grid;gap:10px}
-    .drawer-links button{display:flex;align-items:center;justify-content:flex-start;width:100%;padding:15px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf5ff;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+    .drawer-links button{
+      display:flex;align-items:center;justify-content:flex-start;width:100%;padding:15px 16px;border-radius:16px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf5ff;font-weight:800;
+      letter-spacing:.05em;text-transform:uppercase
+    }
 
-    .app{padding:112px 0 188px}
+    .app{padding:98px 0 188px}
     .view{display:none}
     .view.active{display:block}
     .stack{display:grid;gap:18px}
-    .view[data-view="home"] .stack{gap:28px}
-    .card{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.90));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
-    .hero-card{padding:0;background:transparent;border:none;box-shadow:none;overflow:visible}
-    .hero-media{aspect-ratio:auto;background:transparent;border-radius:0;overflow:visible;border:none}
-    .hero-media picture,.hero-media img{width:100%;height:100%;display:block}
-    .hero-media img{object-fit:contain;object-position:center top}
-    .hero-copy{padding:118px 6px 42px}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff}
-    .eyebrow span{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(255,208,96,.14)}
+    .view[data-view="home"] .stack{gap:18px}
+
+    .hero-card{background:transparent;border:none;box-shadow:none;padding:0}
+    .hero-media{
+      width:100%;
+      background:transparent;
+      border:none;
+      border-radius:0;
+      overflow:visible;
+      box-shadow:none;
+    }
+    .hero-media picture,.hero-media img{width:100%;display:block}
+    .hero-media img{height:auto;object-fit:contain;object-position:center top}
+    .hero-caption{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 2px;
+    }
+
     h1,h2,h3{font-family:"Barlow Condensed",sans-serif;letter-spacing:-.02em;line-height:1}
-    h1{margin-top:16px;font-size:clamp(48px,12vw,92px)}
+    h1{font-size:clamp(48px,12vw,92px)}
     h2{font-size:clamp(40px,10vw,66px)}
     h3{font-size:clamp(34px,8vw,50px)}
-    .lead{margin-top:14px;color:var(--muted);font-size:18px;line-height:1.65}
-    .sub{margin-top:10px;color:var(--muted);font-size:17px;line-height:1.65}
-    .actions,.chip-actions,.section-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
-    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 22px;border-radius:18px;font-weight:900;font-size:16px;letter-spacing:.03em;transition:transform .15s ease,filter .15s ease,background .15s ease,border-color .15s ease}
+
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;
+      font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff
+    }
+    .eyebrow span{
+      width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 0 0 4px rgba(255,208,96,.14)
+    }
+
+    .home-band,
+    .card,
+    .metrics-shell,
+    .asset-cta,
+    .token-chip,
+    .phase-card,
+    .mini-card,
+    .fact-card{
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+    }
+
+    .card,
+    .home-band,
+    .metrics-shell,
+    .hybrid-panel{
+      padding:22px;
+      border-radius:28px;
+      background:linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.94));
+    }
+
+    .home-band{
+      padding:22px 22px 20px;
+      overflow:hidden;
+      position:relative;
+    }
+    .home-band::after{
+      content:"";
+      position:absolute;
+      inset:auto -70px -70px auto;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(255,208,96,.18),transparent 70%);
+      pointer-events:none;
+    }
+    .home-band-inner{display:grid;gap:14px;position:relative;z-index:1}
+    .home-band h3{font-size:40px}
+    .home-band p{color:var(--muted);line-height:1.65}
+
+    .actions,.section-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 22px;border-radius:18px;
+      font-weight:900;font-size:16px;letter-spacing:.03em;
+      transition:transform .15s ease,filter .15s ease,background .15s ease,border-color .15s ease
+    }
     .btn:hover{transform:translateY(-1px)}
     .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#141006;box-shadow:0 18px 34px rgba(255,160,0,.26)}
     .btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 18px 34px rgba(30,144,255,.24)}
     .btn-dark{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf5ff}
-    .grid-2,.grid-3,.grid-stats{display:grid;gap:12px}
-    .mini-card,.stat-card,.step-card{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .mini-card strong,.step-card strong{display:block;font-size:22px;font-weight:900;color:#fff}
-    .mini-card span,.step-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
-    .step-card{position:relative;overflow:hidden}
-    .step-no{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),#fff0b0);color:#0c1220;font-family:"Barlow Condensed",sans-serif;font-size:30px;font-weight:900;margin-bottom:14px}
-    .stat-card strong{display:block;font-size:42px;font-family:"Barlow Condensed",sans-serif}
-    .stat-card span{display:block;margin-top:4px;color:#95afd9;font-size:13px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
-    .module-shell{padding-top:4px}
-    .summary-note{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--muted);line-height:1.65}
-    .module-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-    .module-title .left{display:grid;gap:10px}
-    .module-title .left p{color:var(--muted);line-height:1.6}
-    .pill-nav{display:flex;gap:10px;flex-wrap:wrap}
-    .pill-nav button{padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-weight:800}
-    .roadmap-grid{display:grid;gap:12px}
 
-    .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:850;padding:0 10px 12px}
-    .bottom-shell{width:min(calc(100% - 0px),760px);margin:0 auto;padding:10px;border-radius:26px;background:rgba(5,11,28,.88);border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;box-shadow:0 24px 42px rgba(0,0,0,.35)}
-    .mnav{display:grid;place-items:center;gap:8px;min-height:72px;border-radius:18px;color:#a9c0e8;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,.04)}
-    .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-    .mnav.active{background:rgba(255,255,255,.08);color:#fff}
+    .asset-grid{display:grid;gap:14px}
+    .asset-cta{
+      width:100%;
+      text-align:left;
+      padding:22px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right,rgba(255,208,96,.12),transparent 28%),
+        linear-gradient(180deg,rgba(12,22,52,.94),rgba(7,14,34,.96));
+      position:relative;
+      overflow:hidden;
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+    }
+    .asset-cta:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,.16);
+      box-shadow:0 28px 60px rgba(0,0,0,.44);
+    }
+    .asset-cta::before{
+      content:"";
+      position:absolute;
+      inset:auto -36px -36px auto;
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(41,145,255,.22),transparent 70%);
+      opacity:.88;
+      pointer-events:none;
+    }
+    .asset-kicker{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;letter-spacing:.12em;
+      text-transform:uppercase;color:#dbe9ff
+    }
+    .asset-kicker::before{
+      content:"";
+      width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+    }
+    .asset-cta strong{
+      display:block;
+      margin-top:16px;
+      font-size:32px;
+      font-family:"Barlow Condensed",sans-serif;
+      letter-spacing:-.01em;
+      line-height:.96;
+    }
+    .asset-cta p{
+      margin-top:10px;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:15px;
+      max-width:32ch;
+    }
+    .asset-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:18px;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#fff2c8;
+      font-size:13px;
+    }
+    .asset-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
 
-    footer{padding:12px 0 0;color:#88a4d0;text-align:center;font-size:14px}
+    .metrics-shell{
+      position:relative;
+      overflow:hidden;
+    }
+    .metrics-shell::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 8% 0%,rgba(41,145,255,.10),transparent 20%),
+        radial-gradient(circle at 100% 100%,rgba(255,208,96,.10),transparent 24%);
+      pointer-events:none;
+    }
+    .metrics-inner{position:relative;z-index:1;display:grid;gap:16px}
+    .metrics-top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
+    .metrics-top p{color:var(--muted);line-height:1.65;max-width:68ch}
+    .metrics-grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .metric-card{
+      padding:18px;
+      border-radius:22px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .metric-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:42px;
+      line-height:.95;
+    }
+    .metric-card span{
+      display:block;
+      margin-top:6px;
+      color:#95afd9;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+    }
+    .metric-note{
+      margin-top:2px;
+      color:var(--muted-2);
+      font-size:13px;
+      line-height:1.55;
+    }
 
-    dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
-    dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
-    .dialog-shell{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(8,15,37,.98),rgba(5,12,29,.98));border:1px solid rgba(255,255,255,.08);box-shadow:0 26px 60px rgba(0,0,0,.42)}
-    .dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-top:16px}
-    .dialog-head h3{font-size:42px}
-    .dialog-head p{margin-top:8px;color:var(--muted);line-height:1.6}
-    .dialog-close{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);color:#fff;flex:0 0 44px}
-    .dialog-grid{display:grid;gap:12px;margin-top:18px}
-    .dialog-item{padding:16px 17px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .dialog-item strong{display:block;font-size:16px}
-    .dialog-item span{display:block;margin-top:6px;color:var(--muted);line-height:1.55}
-    .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
-
-
-    .home-band{padding:18px 18px 20px;border-radius:24px;background:
-      linear-gradient(180deg,rgba(10,20,48,.92),rgba(7,14,34,.94));
-      border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
-    .home-band-inner{display:grid;gap:14px}
-    .home-band h3{font-size:40px}
-    .home-band p{color:var(--muted);line-height:1.65}
-    .flow-grid{display:grid;gap:12px}
-    .flow-card{position:relative;padding:18px 18px 18px 68px;border-radius:24px;
-      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.03));
-      border:1px solid rgba(255,255,255,.08);overflow:hidden}
-    .flow-card::after{content:"";position:absolute;inset:auto -30px -30px auto;width:90px;height:90px;border-radius:50%;
-      background:radial-gradient(circle,rgba(255,208,96,.18),transparent 70%)}
-    .flow-no{position:absolute;left:18px;top:18px;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
-      background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0c1220;font-family:"Barlow Condensed",sans-serif;
-      font-size:28px;font-weight:900}
-    .flow-card strong{display:block;font-size:22px;font-weight:900}
-    .flow-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
     .hybrid-grid{display:grid;gap:14px}
-    .hybrid-panel{padding:20px;border-radius:26px;background:
-      linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.92));
-      border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+    .hybrid-panel{
+      padding:22px;border-radius:28px;
+      background:linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.94));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
     .hybrid-panel h3{font-size:42px}
     .hybrid-panel p{margin-top:10px;color:var(--muted);line-height:1.65}
     .bullet-list{display:grid;gap:10px;margin-top:16px}
-    .bullet-item{display:flex;gap:12px;align-items:flex-start;padding:14px 14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .bullet-dot{margin-top:3px;width:11px;height:11px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 5px rgba(255,208,96,.10);flex:0 0 11px}
+    .bullet-item{
+      display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:18px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08)
+    }
+    .bullet-dot{
+      margin-top:3px;width:11px;height:11px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 0 0 5px rgba(255,208,96,.10);flex:0 0 11px
+    }
     .bullet-copy strong{display:block;font-size:16px}
     .bullet-copy span{display:block;margin-top:4px;color:var(--muted);line-height:1.55}
-    .fact-grid{display:grid;gap:12px;margin-top:18px}
-    .fact-card{padding:18px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .fact-card strong{display:block;font-family:"Barlow Condensed",sans-serif;font-size:38px}
-    .fact-card span{display:block;margin-top:4px;color:#95afd9;font-size:13px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
-    .phase-grid{display:grid;gap:12px}
-    .phase-card{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
-    .phase-kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#d6e6ff}
-    .phase-kicker::before{content:"";width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2))}
-    .phase-card strong{display:block;margin-top:12px;font-size:24px}
-    .phase-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+
+    .token-chip-grid{
+      display:grid;
+      gap:10px;
+      margin-top:16px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .token-chip{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.045);
+    }
+    .token-chip strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:34px;
+      line-height:.95;
+    }
+    .token-chip span{
+      display:block;
+      margin-top:6px;
+      color:var(--muted);
+      line-height:1.45;
+      font-size:13px;
+    }
+    .token-footnote{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+
+    .module-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+    .module-title .left{display:grid;gap:10px}
+    .module-title .left p{color:var(--muted);line-height:1.6}
+    .pill-nav{display:flex;gap:10px;flex-wrap:wrap}
+    .pill-nav button{
+      padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);font-weight:800
+    }
+
+    .grid-2,.grid-3,.grid-stats,.roadmap-grid,.phase-grid{display:grid;gap:12px}
+    .mini-card,.step-card,.fact-card,.phase-card,.stat-card{
+      padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)
+    }
+    .mini-card strong,.step-card strong,.phase-card strong{display:block;font-size:22px;font-weight:900;color:#fff}
+    .mini-card span,.step-card span,.phase-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+    .phase-kicker{
+      display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#d6e6ff
+    }
+    .phase-kicker::before{
+      content:"";width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2))
+    }
+    .summary-note{
+      padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);color:var(--muted);line-height:1.65
+    }
+    .stat-card strong{
+      display:block;
+      font-size:38px;
+      font-family:"Barlow Condensed",sans-serif;
+      line-height:.96;
+    }
+    .stat-card span{
+      display:block;
+      margin-top:4px;
+      color:#95afd9;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+    }
+
+    footer{padding:12px 0 0;color:#88a4d0;text-align:center;font-size:14px}
+
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:850;padding:0 10px 12px}
+    .bottom-shell{
+      width:min(calc(100% - 0px),760px);margin:0 auto;padding:10px;border-radius:26px;background:rgba(5,11,28,.88);
+      border:1px solid rgba(255,255,255,.08);backdrop-filter:blur(16px);display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;box-shadow:0 24px 42px rgba(0,0,0,.35)
+    }
+    .mnav{
+      display:grid;place-items:center;gap:8px;min-height:72px;border-radius:18px;color:#a9c0e8;font-size:11px;
+      font-weight:800;letter-spacing:.08em;text-transform:uppercase;border:1px solid rgba(255,255,255,.04)
+    }
+    .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .mnav.active{background:rgba(255,255,255,.08);color:#fff}
+
+    dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
+    dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
+    .dialog-shell{
+      padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(8,15,37,.98),rgba(5,12,29,.98));
+      border:1px solid rgba(255,255,255,.08);box-shadow:0 26px 60px rgba(0,0,0,.42)
+    }
+    .dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-top:16px}
+    .dialog-head h3{font-size:42px}
+    .dialog-head p{margin-top:8px;color:var(--muted);line-height:1.6}
+    .dialog-close{
+      width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);
+      color:#fff;flex:0 0 44px
+    }
+    .dialog-grid{
+      display:grid;gap:12px;margin-top:18px;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr))
+    }
+    .dialog-item{
+      padding:16px;border-radius:20px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08)
+    }
+    .dialog-item strong{display:block;font-size:18px}
+    .dialog-item span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+    .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      .hero-card{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.90));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);overflow:hidden}
-      .hero-media{aspect-ratio:2048/1365;background:#07132b;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
-      .hero-media img{object-fit:cover}
-      .hero-copy{padding:18px 0 0}
-      body::before{background-image:url("superfirulai-desktop.png?v=desktopbase1")}
-      .topbar{padding:0 22px}.app{padding:124px 0 116px}
-      .hero-media{aspect-ratio:2048/1365}
+      body::before{background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-official-20260328")}
+      .topbar{padding:0 22px}
+      .app{padding:112px 0 120px}
+      .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+      .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-      .view[data-view="home"] .stack{gap:18px}
-      .grid-3,.roadmap-grid,.flow-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .grid-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
-      .hybrid-grid{grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr)}
+      .token-chip-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
   </style>
 </head>
@@ -191,14 +489,18 @@
     <div class="container">
       <section class="view active" data-view="home">
         <div class="stack">
-          <div class="card hero-card">
-            <div class="hero-media"><picture><source media="(min-width:860px)" srcset="superfirulai-desktop.png?v=desktopbase1" /><source media="(max-width:859px)" srcset="superfirulai-mobile-640x960.webp?v=mobileclean3" /><img src="superfirulai-desktop.png?v=desktopbase1" alt="SuperFirulai $FIRU hero" /></picture></div>
-            <div class="hero-copy">
-              <div class="eyebrow"><span></span> Clean launch flow</div>
-              <h1>Register. Buy. Claim.</h1>
-              <p class="lead">Follow one clear order from the first click to the final claim. Extra explanations open only when you ask for them.</p>
+          <div class="hero-card">
+            <div class="hero-media">
+              <picture>
+                <source media="(min-width:860px)" srcset="Hero%20PC%20oficial.png?v=hero-desktop-official-20260328" />
+                <source media="(max-width:859px)" srcset="Hero%20mobile%20oficial.png?v=hero-mobile-official-20260328" />
+                <img src="Hero%20PC%20oficial.png?v=hero-desktop-official-20260328" alt="SuperFirulai $FIRU official hero" />
+              </picture>
+            </div>
+            <div class="hero-caption">
+              <div class="eyebrow"><span></span> Official hero locked</div>
               <div class="actions">
-                <button class="btn btn-gold" type="button" data-view-btn="register">Start with Register</button>
+                <button class="btn btn-gold" type="button" data-view-btn="register">Register Airdrop</button>
                 <button class="btn btn-dark" type="button" data-open="pathDialog">See full path</button>
               </div>
             </div>
@@ -207,47 +509,125 @@
           <div class="home-band">
             <div class="home-band-inner">
               <div class="eyebrow"><span></span> Hybrid Clean + Epic</div>
-              <h3>Big hero on top. Cleaner path underneath.</h3>
-              <p>The image stays powerful, but the next blocks become easier to read, lighter to scan, and faster to understand on mobile.</p>
+              <h3>Big hero stays on top. Premium assets start below.</h3>
+              <p>The first screen remains focused on the official hero. Under it, the home now organizes the main actions as clean premium panels, a live community band, and lighter info blocks.</p>
               <div class="actions">
-                <button class="btn btn-gold" type="button" data-view-btn="register">Register first</button>
-                <button class="btn btn-blue" type="button" data-view-btn="buy">Open BUY</button>
-                <button class="btn btn-dark" type="button" data-view-btn="info">View info</button>
+                <button class="btn btn-gold" type="button" data-view-btn="register">Start Register</button>
+                <button class="btn btn-blue" type="button" data-view-btn="buy">Open Buy $FIRU</button>
+                <button class="btn btn-dark" type="button" data-view-btn="info">Tokenomics & Roadmap</button>
               </div>
             </div>
           </div>
 
-          <div class="flow-grid">
-            <div class="flow-card"><div class="flow-no">1</div><strong>Register</strong><span>Use one personal Solana wallet, complete the short form, and enter review.</span></div>
-            <div class="flow-card"><div class="flow-no">2</div><strong>Buy</strong><span>When the round opens, use the official BUY flow and keep your reserved allocation tied to that wallet.</span></div>
-            <div class="flow-card"><div class="flow-no">3</div><strong>Claim</strong><span>After launch, return with the same approved wallet and claim from the official page.</span></div>
+          <div class="asset-grid" aria-label="Main premium actions">
+            <button class="asset-cta" type="button" data-view-btn="register">
+              <span class="asset-kicker">Asset 03 · CTA</span>
+              <strong>Register Airdrop</strong>
+              <p>Connect one personal Solana wallet, submit your X and Telegram usernames, and enter the approval review path.</p>
+              <span class="asset-link">Open register
+                <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>
+              </span>
+            </button>
+
+            <button class="asset-cta" type="button" data-view-btn="buy">
+              <span class="asset-kicker">Asset 04 · CTA</span>
+              <strong>Buy $FIRU</strong>
+              <p>When the round goes live, use the official buy flow and save your reserved allocation with the same wallet.</p>
+              <span class="asset-link">Open buy
+                <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>
+              </span>
+            </button>
+
+            <a class="asset-cta" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+              <span class="asset-kicker">Asset 05 · CTA</span>
+              <strong>Join Telegram</strong>
+              <p>Stay inside the official community chat for pinned instructions, launch reminders, and claim updates only from trusted links.</p>
+              <span class="asset-link">Open telegram
+                <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>
+              </span>
+            </a>
+          </div>
+
+          <div class="metrics-shell">
+            <div class="metrics-inner">
+              <div class="metrics-top">
+                <div class="left">
+                  <div class="eyebrow"><span></span> Community pulse</div>
+                  <h3>Live metrics band</h3>
+                </div>
+                <p>Fast visibility for holders, Telegram, X and total supply. Values load from the site API and fall back automatically if a live source is unavailable.</p>
+              </div>
+
+              <div class="metrics-grid" id="metricsGrid">
+                <div class="metric-card">
+                  <strong id="metricHolders">2,418</strong>
+                  <span>Holders</span>
+                  <div class="metric-note">Asset 06 ready for live counter styling.</div>
+                </div>
+                <div class="metric-card">
+                  <strong id="metricTelegram">24</strong>
+                  <span>Telegram members</span>
+                  <div class="metric-note">Official community chat growth.</div>
+                </div>
+                <div class="metric-card">
+                  <strong id="metricX">61</strong>
+                  <span>X followers</span>
+                  <div class="metric-note">Official account momentum.</div>
+                </div>
+                <div class="metric-card">
+                  <strong id="metricSupply">1B</strong>
+                  <span>Total supply</span>
+                  <div class="metric-note">Fixed supply target for $FIRU.</div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div class="hybrid-grid">
             <div class="hybrid-panel">
-              <div class="eyebrow"><span></span> Why this path works</div>
-              <h3>Everything stays in one clean order.</h3>
-              <p>No scattered steps, no overloaded first screen, and no confusion between registration, purchase, and final claim.</p>
+              <div class="eyebrow"><span></span> Clean launch logic</div>
+              <h3>One wallet. One path. No scattered steps.</h3>
+              <p>Register, buy and claim are separated clearly so the home feels lighter, while each step still stays close to the others and easy to understand on mobile.</p>
               <div class="bullet-list">
-                <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-copy"><strong>One wallet across the full path</strong><span>Register, buy, and claim with the same wallet to keep the process safe and simple.</span></div></div>
-                <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-copy"><strong>Official channels only</strong><span>X and Telegram stay as the official places for launch reminders, BUY updates, and claim announcements.</span></div></div>
-                <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-copy"><strong>Extra details stay behind dialogs</strong><span>The home remains easier to scan because secondary explanations only open when needed.</span></div></div>
+                <div class="bullet-item">
+                  <div class="bullet-dot"></div>
+                  <div class="bullet-copy">
+                    <strong>Register first</strong>
+                    <span>The airdrop review comes before everything else and keeps the first user action simple.</span>
+                  </div>
+                </div>
+                <div class="bullet-item">
+                  <div class="bullet-dot"></div>
+                  <div class="bullet-copy">
+                    <strong>Buy with the same wallet</strong>
+                    <span>The buy step remains tied to the same wallet for a cleaner delivery path and fewer mistakes.</span>
+                  </div>
+                </div>
+                <div class="bullet-item">
+                  <div class="bullet-dot"></div>
+                  <div class="bullet-copy">
+                    <strong>Claim only after launch</strong>
+                    <span>The claim state stays protected behind wallet check and official launch confirmation on X and Telegram.</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div class="hybrid-panel">
-              <div class="eyebrow"><span></span> Essential numbers</div>
-              <h3>Quick view</h3>
-              <p>Only the numbers that matter most stay visible on the home path.</p>
-              <div class="fact-grid">
-                <div class="fact-card"><strong>1B</strong><span>Total supply</span></div>
-                <div class="fact-card"><strong>0%</strong><span>Tax</span></div>
-                <div class="fact-card"><strong>55%</strong><span>Liquidity</span></div>
-                <div class="fact-card"><strong>20%</strong><span>Community</span></div>
+              <div class="eyebrow"><span></span> Asset 07 · Tokenomics</div>
+              <h3>Official allocation</h3>
+              <p>Quick view kept text-first for clarity while the final tokenomics asset is refined separately.</p>
+              <div class="token-chip-grid">
+                <div class="token-chip"><strong>55%</strong><span>Liquidity</span></div>
+                <div class="token-chip"><strong>13%</strong><span>Community core</span></div>
+                <div class="token-chip"><strong>10%</strong><span>Marketing</span></div>
+                <div class="token-chip"><strong>10%</strong><span>Team</span></div>
+                <div class="token-chip"><strong>5%</strong><span>Burn</span></div>
+                <div class="token-chip"><strong>5% / 2%</strong><span>Round 1 / Round 2</span></div>
               </div>
-              <div class="actions">
-                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Tokenomics info</button>
-                <button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button>
+              <div class="token-footnote">Round 1 and Round 2 are deducted from the community allocation path. Clean headline numbers stay visible here while the full visual asset is completed later.</div>
+              <div class="actions" style="margin-top:16px">
+                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open full allocation</button>
               </div>
             </div>
           </div>
@@ -255,15 +635,27 @@
           <div class="card">
             <div class="module-title">
               <div class="left">
-                <div class="eyebrow"><span></span> Roadmap</div>
+                <div class="eyebrow"><span></span> Asset 08 · Roadmap</div>
                 <h3>Three clear phases</h3>
-                <p>The project still moves in the same order, but the section now reads faster and cleaner.</p>
+                <p>The roadmap closes the lower home with a fast read: register first, buy when live, claim after launch.</p>
               </div>
             </div>
             <div class="phase-grid">
-              <div class="phase-card"><div class="phase-kicker">Phase 1</div><strong>Register</strong><span>Community growth, wallet submissions, and approval review.</span></div>
-              <div class="phase-card"><div class="phase-kicker">Phase 2</div><strong>Buy</strong><span>Official launch on Solana and round access through the BUY flow.</span></div>
-              <div class="phase-card"><div class="phase-kicker">Phase 3</div><strong>Claim</strong><span>Approved wallets return after launch and claim with the same wallet.</span></div>
+              <div class="phase-card">
+                <div class="phase-kicker">Phase 1</div>
+                <strong>Register</strong>
+                <span>Community growth, wallet submissions, approval review and early access filtering.</span>
+              </div>
+              <div class="phase-card">
+                <div class="phase-kicker">Phase 2</div>
+                <strong>Buy</strong>
+                <span>Official Solana round access, wallet funding, purchase confirmation and allocation tracking.</span>
+              </div>
+              <div class="phase-card">
+                <div class="phase-kicker">Phase 3</div>
+                <strong>Claim</strong>
+                <span>Approved wallets return after launch, verify their status and claim from the official page.</span>
+              </div>
             </div>
           </div>
         </div>
@@ -275,7 +667,7 @@
             <div class="module-title">
               <div class="left">
                 <div class="eyebrow"><span></span> Step 1</div>
-                <h2>Register your wallet</h2>
+                <h2>Register Airdrop</h2>
                 <p>Submit one personal Solana wallet, verify your social handles, and enter the approval queue.</p>
               </div>
               <div class="pill-nav">
@@ -283,7 +675,7 @@
                 <button type="button" data-open="airdropDialog">Airdrop details</button>
               </div>
             </div>
-            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · use the same wallet later for claim.</div>
+            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · use the same wallet later for buy and claim.</div>
           </div>
           <div class="card"><div id="airdrop-register"></div></div>
         </div>
@@ -295,7 +687,7 @@
             <div class="module-title">
               <div class="left">
                 <div class="eyebrow"><span></span> Step 2</div>
-                <h2>Buy when live</h2>
+                <h2>Buy $FIRU when live</h2>
                 <p>Fund your wallet, use the official destination shown by the app, and let the purchase save your reserved $FIRU allocation automatically.</p>
               </div>
               <div class="pill-nav">
@@ -305,7 +697,7 @@
             </div>
             <div class="grid-3">
               <div class="mini-card"><strong>Fund wallet</strong><span>Keep SOL, USDT or USDC ready on Solana before opening BUY.</span></div>
-              <div class="mini-card"><strong>Open BUY</strong><span>Use only the official destination shown by the app and confirm with your wallet.</span></div>
+              <div class="mini-card"><strong>Open official flow</strong><span>Use only the destination shown by the app and confirm with your wallet.</span></div>
               <div class="mini-card"><strong>Save allocation</strong><span>The app verifies the payment and stores your reserved $FIRU allocation automatically.</span></div>
             </div>
           </div>
@@ -320,7 +712,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 3</div>
                 <h2>Claim after launch</h2>
-                <p>Come back with the same wallet after the official launch announcement. The page will tell you if that wallet is pending, approved, rejected or claimed.</p>
+                <p>Come back with the same wallet after the official launch announcement. The page will tell you if that wallet is pending, approved, rejected or already claimed.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="claimDialog">Claim info</button>
@@ -328,8 +720,8 @@
               </div>
             </div>
             <div class="grid-3">
-              <div class="mini-card"><strong>Approved only</strong><span>Only approved wallets can claim.</span></div>
-              <div class="mini-card"><strong>After launch</strong><span>Claim starts only after the official launch announcement.</span></div>
+              <div class="mini-card"><strong>Approved only</strong><span>Only approved wallets can claim from the official page.</span></div>
+              <div class="mini-card"><strong>After launch</strong><span>Claim starts only after the official launch announcement on X and Telegram.</span></div>
               <div class="mini-card"><strong>Status first</strong><span>Connect wallet and the page will show pending, approved, rejected or claimed.</span></div>
             </div>
           </div>
@@ -344,16 +736,21 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Open the full tokenomics artwork and details only when you need them.</p>
+                <p>Clean text-first distribution while the final tokenomics art is refined separately.</p>
               </div>
             </div>
             <div class="grid-stats">
               <div class="stat-card"><strong>1B</strong><span>Total supply</span></div>
-              <div class="stat-card"><strong>0%</strong><span>Tax</span></div>
               <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
-              <div class="stat-card"><strong>20%</strong><span>Community</span></div>
+              <div class="stat-card"><strong>13%</strong><span>Community core</span></div>
+              <div class="stat-card"><strong>10%</strong><span>Marketing</span></div>
+              <div class="stat-card"><strong>10%</strong><span>Team</span></div>
+              <div class="stat-card"><strong>5%</strong><span>Burn</span></div>
+              <div class="stat-card"><strong>5% / 2%</strong><span>Round 1 / Round 2</span></div>
             </div>
-            <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics</button></div>
+            <div class="actions" style="margin-top:18px">
+              <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics details</button>
+            </div>
           </div>
 
           <div class="card">
@@ -380,11 +777,11 @@
               </div>
             </div>
             <div class="roadmap-grid">
-              <div class="mini-card"><strong>Phase 1 · Register</strong><span>Community growth, wallet registrations and review.</span></div>
+              <div class="mini-card"><strong>Phase 1 · Register</strong><span>Community growth, wallet registrations and approval review.</span></div>
               <div class="mini-card"><strong>Phase 2 · Buy</strong><span>Official launch on Solana and round opening access.</span></div>
               <div class="mini-card"><strong>Phase 3 · Claim</strong><span>Approved wallets return with the same wallet and claim.</span></div>
             </div>
-            <div class="actions"><button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button></div>
+            <div class="actions" style="margin-top:18px"><button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button></div>
           </div>
         </div>
       </section>
@@ -403,19 +800,137 @@
     </div>
   </nav>
 
-  <dialog id="registerDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Register</div><div class="dialog-head"><div><h3>Registration info</h3><p>Use one personal wallet, add your X and Telegram usernames, complete captcha and submit once.</p></div><button class="dialog-close" data-close="registerDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>One wallet only</strong><span>Avoid exchange deposit addresses.</span></div><div class="dialog-item"><strong>Same wallet later</strong><span>Use the exact same wallet for claim after launch.</span></div><div class="dialog-item"><strong>Fast review queue</strong><span>Once submitted, the wallet enters review.</span></div></div></div></dialog>
+  <dialog id="registerDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Register</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Registration info</h3>
+          <p>Use one personal wallet, add your X and Telegram usernames, complete captcha and submit once.</p>
+        </div>
+        <button class="dialog-close" data-close="registerDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>One wallet only</strong><span>Avoid exchange deposit addresses and use one personal Solana wallet.</span></div>
+        <div class="dialog-item"><strong>Same wallet later</strong><span>Use the exact same wallet later for buy and claim after launch.</span></div>
+        <div class="dialog-item"><strong>Fast review queue</strong><span>Once submitted, the wallet enters review and status can be checked later.</span></div>
+      </div>
+    </div>
+  </dialog>
 
-  <dialog id="airdropDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Founding access</div><div class="dialog-head"><div><h3>Airdrop details</h3><p>Only the earliest approved wallets qualify for the founding access round.</p></div><button class="dialog-close" data-close="airdropDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>20,000 $FIRU</strong><span>Reserved per approved wallet.</span></div><div class="dialog-item"><strong>100 wallets only</strong><span>Once the cap is reached, this round closes.</span></div><div class="dialog-item"><strong>Same wallet required</strong><span>Register and claim later with the same wallet.</span></div></div></div></dialog>
+  <dialog id="airdropDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Founding access</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Airdrop details</h3>
+          <p>Only the earliest approved wallets qualify for the founding access round.</p>
+        </div>
+        <button class="dialog-close" data-close="airdropDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>20,000 $FIRU</strong><span>Reserved per approved wallet.</span></div>
+        <div class="dialog-item"><strong>100 wallets only</strong><span>Once the cap is reached, this round closes.</span></div>
+        <div class="dialog-item"><strong>Same wallet required</strong><span>Register, buy and claim later with the same wallet.</span></div>
+      </div>
+    </div>
+  </dialog>
 
-  <dialog id="buyInfoDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> BUY</div><div class="dialog-head"><div><h3>BUY details</h3><p>When the round opens, fund your wallet, confirm the payment, and let the app save the reserved $FIRU allocation automatically.</p></div><button class="dialog-close" data-close="buyInfoDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Fund wallet first</strong><span>Keep SOL, USDT or USDC ready on Solana.</span></div><div class="dialog-item"><strong>Use official destination only</strong><span>Always use the address shown by the app.</span></div><div class="dialog-item"><strong>Receipt and history</strong><span>Your purchase history and receipt stay inside the BUY view.</span></div></div></div></dialog>
+  <dialog id="buyInfoDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> BUY</div>
+      <div class="dialog-head">
+        <div>
+          <h3>BUY details</h3>
+          <p>When the round opens, fund your wallet, confirm the payment, and let the app save the reserved $FIRU allocation automatically.</p>
+        </div>
+        <button class="dialog-close" data-close="buyInfoDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>Fund wallet first</strong><span>Keep SOL, USDT or USDC ready on Solana before opening buy.</span></div>
+        <div class="dialog-item"><strong>Use official destination only</strong><span>Always use the address shown by the app and never third-party screenshots.</span></div>
+        <div class="dialog-item"><strong>Receipt and history</strong><span>Your purchase history and receipt stay inside the BUY view.</span></div>
+      </div>
+    </div>
+  </dialog>
 
-  <dialog id="claimDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Claim</div><div class="dialog-head"><div><h3>Claim info</h3><p>Claim opens after launch and only for approved wallets.</p></div><button class="dialog-close" data-close="claimDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div><div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div><div class="dialog-item"><strong>After launch only</strong><span>Wait for the official X and Telegram announcement.</span></div></div></div></dialog>
+  <dialog id="claimDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Claim</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Claim info</h3>
+          <p>Claim opens after launch and only for approved wallets.</p>
+        </div>
+        <button class="dialog-close" data-close="claimDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div>
+        <div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div>
+        <div class="dialog-item"><strong>After launch only</strong><span>Wait for the official X and Telegram announcement.</span></div>
+      </div>
+    </div>
+  </dialog>
 
-  <dialog id="tokenomicsDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Tokenomics</div><div class="dialog-head"><div><h3>Official allocation</h3><p>Clean distribution with a fixed 1,000,000,000 $FIRU supply.</p></div><button class="dialog-close" data-close="tokenomicsDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>55% Liquidity</strong><span>Strong market base.</span></div><div class="dialog-item"><strong>20% Community</strong><span>Community growth and rewards room.</span></div><div class="dialog-item"><strong>10% Marketing · 10% Team · 5% Burn/Reserve</strong><span>Simple fixed structure built for launch.</span></div></div><div style="margin-top:18px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08)"><img src="tokenomics.jpg" alt="SuperFirulai Tokenomics Chart"></div></div></dialog>
+  <dialog id="tokenomicsDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Tokenomics</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Official allocation</h3>
+          <p>Clean distribution with a fixed 1,000,000,000 $FIRU supply.</p>
+        </div>
+        <button class="dialog-close" data-close="tokenomicsDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>55% Liquidity</strong><span>Core market base.</span></div>
+        <div class="dialog-item"><strong>13% Community core</strong><span>Community allocation after separating dedicated round slices.</span></div>
+        <div class="dialog-item"><strong>5% Round 1 · 2% Round 2</strong><span>Both rounds are deducted from the community path.</span></div>
+        <div class="dialog-item"><strong>10% Marketing</strong><span>Project growth and promotion.</span></div>
+        <div class="dialog-item"><strong>10% Team</strong><span>Core execution allocation.</span></div>
+        <div class="dialog-item"><strong>5% Burn</strong><span>Fixed burn reserve.</span></div>
+      </div>
+    </div>
+  </dialog>
 
-  <dialog id="socialDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Official channels</div><div class="dialog-head"><div><h3>Stay on official links only</h3><p>Everything important happens first on X and Telegram.</p></div><button class="dialog-close" data-close="socialDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>X / Twitter</strong><span>Launch reminders, BUY updates and claim announcement.</span></div><div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div></div><div class="dialog-actions"><a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a><a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a></div></div></dialog>
+  <dialog id="socialDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Official channels</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Stay on official links only</h3>
+          <p>Everything important happens first on X and Telegram.</p>
+        </div>
+        <button class="dialog-close" data-close="socialDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>X / Twitter</strong><span>Launch reminders, buy updates and claim announcement.</span></div>
+        <div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div>
+      </div>
+      <div class="dialog-actions">
+        <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a>
+        <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a>
+      </div>
+    </div>
+  </dialog>
 
-  <dialog id="pathDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Full path</div><div class="dialog-head"><div><h3>One clean order</h3><p>The site is organized in the same sequence users should follow from the first click to the last step.</p></div><button class="dialog-close" data-close="pathDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>1 · Register</strong><span>Connect one wallet and enter review.</span></div><div class="dialog-item"><strong>2 · Buy</strong><span>When the round opens, fund wallet and save your reserved allocation.</span></div><div class="dialog-item"><strong>3 · Claim</strong><span>After launch, return with the same approved wallet.</span></div></div></div></dialog>
+  <dialog id="pathDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Full path</div>
+      <div class="dialog-head">
+        <div>
+          <h3>One clean order</h3>
+          <p>The site is organized in the same sequence users should follow from the first click to the last step.</p>
+        </div>
+        <button class="dialog-close" data-close="pathDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>1 · Register</strong><span>Connect one wallet and enter review.</span></div>
+        <div class="dialog-item"><strong>2 · Buy</strong><span>When the round opens, fund wallet and save your reserved allocation.</span></div>
+        <div class="dialog-item"><strong>3 · Claim</strong><span>After launch, return with the same approved wallet.</span></div>
+      </div>
+    </div>
+  </dialog>
 
   <noscript><div class="container" style="padding:20px 0 110px;color:#fff">Enable JavaScript to use wallet registration and claim status.</div></noscript>
 
@@ -433,39 +948,125 @@
     }
 
     function enforceXBeforeTelegram(){
-      const root=document.querySelector("#airdrop-register");
-      if(!root) return;
-      const form=root.querySelector(".sf-airdrop-form");
-      const xField=root.querySelector("#sf-x")?.closest(".sf-field");
-      const tgField=root.querySelector("#sf-telegram")?.closest(".sf-field");
-      if(form&&xField&&tgField){ form.insertBefore(xField,tgField); }
+      const root = document.querySelector("#airdrop-register");
+      if (!root) return;
+      const form = root.querySelector(".sf-airdrop-form");
+      const xField = root.querySelector("#sf-x")?.closest(".sf-field");
+      const tgField = root.querySelector("#sf-telegram")?.closest(".sf-field");
+      if (form && xField && tgField) form.insertBefore(xField, tgField);
     }
     enforceXBeforeTelegram();
-    setTimeout(enforceXBeforeTelegram,0);
+    setTimeout(enforceXBeforeTelegram, 0);
 
-    const drawer=document.getElementById('drawer');
-    document.getElementById('menuBtn')?.addEventListener('click', ()=> drawer.classList.toggle('open'));
-    drawer.addEventListener('click', (e)=> { if(e.target===drawer) drawer.classList.remove('open'); });
+    const drawer = document.getElementById("drawer");
+    document.getElementById("menuBtn")?.addEventListener("click", () => drawer.classList.toggle("open"));
+    drawer.addEventListener("click", (e) => { if (e.target === drawer) drawer.classList.remove("open"); });
 
-    const views=[...document.querySelectorAll('.view')];
-    const navBtns=[...document.querySelectorAll('[data-view-btn]')];
-    function showView(name){
-      views.forEach(v=>v.classList.toggle('active', v.dataset.view===name));
-      navBtns.forEach(btn=>btn.classList.toggle('active', btn.dataset.viewBtn===name));
-      drawer.classList.remove('open');
-      window.scrollTo({top:0, behavior:'smooth'});
+    const views = [...document.querySelectorAll(".view")];
+    const navBtns = [...document.querySelectorAll("[data-view-btn]")];
+    const validViews = new Set(views.map((v) => v.dataset.view));
+
+    function normalizeViewName(value) {
+      const clean = String(value || "").replace(/^#/, "").trim().toLowerCase();
+      return validViews.has(clean) ? clean : "home";
     }
-    navBtns.forEach(btn=>btn.addEventListener('click', ()=>showView(btn.dataset.viewBtn)));
-    document.getElementById('buyFloat')?.addEventListener('click', ()=>showView('buy'));
 
-    const openDialog = (id)=> document.getElementById(id)?.showModal?.();
-    const closeDialog = (id)=> document.getElementById(id)?.close?.();
-    document.querySelectorAll('[data-open]').forEach(el=>el.addEventListener('click', ()=>openDialog(el.dataset.open)));
-    document.querySelectorAll('[data-close]').forEach(el=>el.addEventListener('click', ()=>closeDialog(el.dataset.close)));
-    document.querySelectorAll('dialog').forEach(dlg=>dlg.addEventListener('click', (e)=> {
-      const r=dlg.getBoundingClientRect();
-      if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) dlg.close();
-    }));
+    function setHashForView(name) {
+      const nextHash = name === "home" ? "" : `#${name}`;
+      const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+      window.history.replaceState(null, "", nextUrl);
+    }
+
+    function showView(name, options = {}) {
+      const finalName = normalizeViewName(name);
+      const shouldScroll = options.scroll !== false;
+      const shouldUpdateHash = options.updateHash !== false;
+
+      views.forEach((v) => v.classList.toggle("active", v.dataset.view === finalName));
+      navBtns.forEach((btn) => btn.classList.toggle("active", btn.dataset.viewBtn === finalName));
+      drawer.classList.remove("open");
+      if (shouldUpdateHash) setHashForView(finalName);
+      if (shouldScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navBtns.forEach((btn) => {
+      btn.addEventListener("click", () => showView(btn.dataset.viewBtn));
+    });
+
+    document.getElementById("buyFloat")?.addEventListener("click", () => showView("buy"));
+
+    document.addEventListener("click", (event) => {
+      const anchor = event.target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const rawTarget = String(anchor.getAttribute("href") || "");
+      const targetView = normalizeViewName(rawTarget);
+      const requested = rawTarget.replace(/^#/, "").trim().toLowerCase();
+      if (!validViews.has(requested)) return;
+      event.preventDefault();
+      showView(targetView);
+    });
+
+    window.addEventListener("hashchange", () => {
+      showView(window.location.hash, { updateHash: false, scroll: false });
+    });
+
+    showView(window.location.hash || "home", { updateHash: false, scroll: false });
+
+    const openDialog = (id) => document.getElementById(id)?.showModal?.();
+    const closeDialog = (id) => document.getElementById(id)?.close?.();
+
+    document.querySelectorAll("[data-open]").forEach((el) => {
+      el.addEventListener("click", () => openDialog(el.dataset.open));
+    });
+
+    document.querySelectorAll("[data-close]").forEach((el) => {
+      el.addEventListener("click", () => closeDialog(el.dataset.close));
+    });
+
+    document.querySelectorAll("dialog").forEach((dlg) => {
+      dlg.addEventListener("click", (e) => {
+        const r = dlg.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlg.close();
+      });
+    });
+
+    function formatCompactNumber(value) {
+      const n = Number(value || 0);
+      if (n >= 1000000000) return `${(n / 1000000000).toFixed(n % 1000000000 === 0 ? 0 : 1)}B`;
+      if (n >= 1000000) return `${(n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1)}M`;
+      if (n >= 1000) return n.toLocaleString("en-US");
+      return String(n);
+    }
+
+    async function loadCommunityStats() {
+      const holdersEl = document.getElementById("metricHolders");
+      const telegramEl = document.getElementById("metricTelegram");
+      const xEl = document.getElementById("metricX");
+      const supplyEl = document.getElementById("metricSupply");
+
+      try {
+        const response = await fetch("/api/community-stats", { cache: "no-store" });
+        if (!response.ok) throw new Error("community stats request failed");
+        const data = await response.json();
+
+        if (holdersEl && Number.isFinite(Number(data.holders))) {
+          holdersEl.textContent = Number(data.holders).toLocaleString("en-US");
+        }
+        if (telegramEl && Number.isFinite(Number(data.telegramMembers))) {
+          telegramEl.textContent = Number(data.telegramMembers).toLocaleString("en-US");
+        }
+        if (xEl && Number.isFinite(Number(data.xFollowers))) {
+          xEl.textContent = Number(data.xFollowers).toLocaleString("en-US");
+        }
+        if (supplyEl && Number.isFinite(Number(data.totalSupply))) {
+          supplyEl.textContent = formatCompactNumber(Number(data.totalSupply));
+        }
+      } catch (error) {
+        console.warn("community stats", error);
+      }
+    }
+
+    loadCommunityStats();
   </script>
 </body>
 </html>
