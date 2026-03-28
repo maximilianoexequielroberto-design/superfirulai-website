@@ -60,11 +60,12 @@
     .hero-media img{object-fit:cover;object-position:center top}
     .hero-copy{padding-top:18px}
     .home-hero{position:relative;margin-top:calc(-1 * var(--app-top-space));margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding:0;border:none;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
-    .home-hero .hero-media{position:relative;min-height:100svh;min-height:100dvh;aspect-ratio:auto;border:none;border-radius:0;overflow:hidden;background:#07132b}
+    .home-hero .hero-media{position:relative;min-height:0;aspect-ratio:640/960;border:none;border-radius:0;overflow:hidden;background:#07132b}
     .home-hero .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,8,18,.04),rgba(4,8,18,0) 48%,rgba(4,8,18,.28) 100%);pointer-events:none}
     .home-hero .hero-copy{width:min(calc(100% - 28px),var(--max));margin:0 auto;padding:20px 0 0}
     .hero-img{position:absolute;inset:0}
-    .hero-img-mobile{display:block}
+    .hero-img-mobile{display:block;position:relative;inset:auto;height:auto}
+    .hero-img-mobile img{height:auto;object-fit:contain;object-position:center top}
     .hero-img-desktop{display:none}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff}
     .eyebrow span{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(255,208,96,.14)}
@@ -123,7 +124,9 @@
       .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;font-size:18px;box-shadow:0 18px 40px rgba(255,160,0,.34)}
       .topbar{padding:0 22px}.app{padding-top:124px;--app-top-space:124px}
       .hero-media{aspect-ratio:2048/1365}
-      .home-hero .hero-media{min-height:100svh;min-height:100dvh}
+      .home-hero .hero-media{min-height:100svh;min-height:100dvh;aspect-ratio:auto}
+      .hero-img-mobile{position:absolute;inset:0;height:100%}
+      .hero-img-mobile img{height:100%;object-fit:cover}
       .hero-img-mobile{display:none}
       .hero-img-desktop{display:block}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
