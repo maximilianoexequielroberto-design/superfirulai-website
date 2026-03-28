@@ -26,7 +26,7 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
     body{font-family:"Inter",system-ui,sans-serif;color:var(--text);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-    body::before{content:"";position:fixed;inset:0;z-index:-2;background:url("superfirulai-mobile-640x960.webp") center top/cover no-repeat;filter:blur(38px) brightness(.13) saturate(1.05);transform:scale(1.08)}
+    body::before{content:"";position:fixed;inset:0;z-index:-2;background:url("superfirulai-mobile-640x960.webp?v=mobileclean3") center top/cover no-repeat;filter:blur(38px) brightness(.13) saturate(1.05);transform:scale(1.08)}
     body::after{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(circle at 15% 0%,rgba(41,145,255,.10),transparent 28%),linear-gradient(180deg,rgba(4,9,24,.12),rgba(4,9,24,.94) 48%)}
     a{text-decoration:none;color:inherit} button{font:inherit;cursor:pointer;border:none;background:none;color:inherit} img{display:block;max-width:100%}
     .container{width:min(calc(100% - 28px),var(--max));margin:0 auto}
@@ -52,11 +52,11 @@
     .view.active{display:block}
     .stack{display:grid;gap:18px}
     .card{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.90));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
-    .hero-card{overflow:hidden}
-    .hero-media{aspect-ratio:2/3;background:#07132b;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+    .hero-card{padding:0;background:transparent;border:none;box-shadow:none;overflow:visible}
+    .hero-media{aspect-ratio:auto;background:transparent;border-radius:0;overflow:visible;border:none}
     .hero-media picture,.hero-media img{width:100%;height:100%;display:block}
-    .hero-media img{object-fit:cover;object-position:center top}
-    .hero-copy{padding-top:18px}
+    .hero-media img{object-fit:contain;object-position:center top}
+    .hero-copy{padding:18px 6px 0}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff}
     .eyebrow span{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(255,208,96,.14)}
     h1,h2,h3{font-family:"Barlow Condensed",sans-serif;letter-spacing:-.02em;line-height:1}
@@ -110,7 +110,11 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      body::before{background-image:url("superfirulai-desktop.png")}
+      .hero-card{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.90));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);overflow:hidden}
+      .hero-media{aspect-ratio:2048/1365;background:#07132b;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+      .hero-media img{object-fit:cover}
+      .hero-copy{padding:18px 0 0}
+      body::before{background-image:url("superfirulai-desktop.png?v=desktopbase1")}
       .topbar{padding:0 22px}.app{padding-top:124px}
       .hero-media{aspect-ratio:2048/1365}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -145,7 +149,7 @@
       <section class="view active" data-view="home">
         <div class="stack">
           <div class="card hero-card">
-            <div class="hero-media"><picture><source media="(min-width:860px)" srcset="superfirulai-desktop.png" /><source media="(max-width:859px)" srcset="superfirulai-mobile-640x960.webp" /><img src="superfirulai-desktop.png" alt="SuperFirulai $FIRU hero" /></picture></div>
+            <div class="hero-media"><picture><source media="(min-width:860px)" srcset="superfirulai-desktop.png?v=desktopbase1" /><source media="(max-width:859px)" srcset="superfirulai-mobile-640x960.webp?v=mobileclean3" /><img src="superfirulai-desktop.png?v=desktopbase1" alt="SuperFirulai $FIRU hero" /></picture></div>
             <div class="hero-copy">
               <div class="eyebrow"><span></span> Clean launch flow</div>
               <h1>Register. Buy. Claim.</h1>
