@@ -40,7 +40,7 @@
     .float-btn span{display:block;width:18px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
     .float-btn span::before,.float-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:#c9ddff;border-radius:99px}
     .float-btn span::before{top:-6px}.float-btn span::after{top:6px}
-    .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)}
+    .buy-float{min-width:74px;height:54px;padding:0 16px;border-radius:18px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:15px;letter-spacing:.04em;box-shadow:0 12px 28px rgba(255,160,0,.28)}
 
     .drawer{position:fixed;inset:0;z-index:999;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
@@ -120,6 +120,7 @@
 
     @media(min-width:860px){
       body::before{background-image:url("superfirulai-hero-final.webp")}
+      .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;font-size:18px;box-shadow:0 18px 40px rgba(255,160,0,.34)}
       .topbar{padding:0 22px}.app{padding-top:124px;--app-top-space:124px}
       .hero-media{aspect-ratio:2048/1365}
       .home-hero .hero-media{min-height:100svh;min-height:100dvh}
