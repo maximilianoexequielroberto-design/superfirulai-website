@@ -110,6 +110,46 @@
     .dialog-item span{display:block;margin-top:6px;color:var(--muted);line-height:1.55}
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
+
+    .home-band{padding:18px 18px 20px;border-radius:24px;background:
+      linear-gradient(180deg,rgba(10,20,48,.92),rgba(7,14,34,.94));
+      border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+    .home-band-inner{display:grid;gap:14px}
+    .home-band h3{font-size:40px}
+    .home-band p{color:var(--muted);line-height:1.65}
+    .flow-grid{display:grid;gap:12px}
+    .flow-card{position:relative;padding:18px 18px 18px 68px;border-radius:24px;
+      background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08);overflow:hidden}
+    .flow-card::after{content:"";position:absolute;inset:auto -30px -30px auto;width:90px;height:90px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,208,96,.18),transparent 70%)}
+    .flow-no{position:absolute;left:18px;top:18px;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));color:#0c1220;font-family:"Barlow Condensed",sans-serif;
+      font-size:28px;font-weight:900}
+    .flow-card strong{display:block;font-size:22px;font-weight:900}
+    .flow-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+    .hybrid-grid{display:grid;gap:14px}
+    .hybrid-panel{padding:20px;border-radius:26px;background:
+      linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.92));
+      border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+    .hybrid-panel h3{font-size:42px}
+    .hybrid-panel p{margin-top:10px;color:var(--muted);line-height:1.65}
+    .bullet-list{display:grid;gap:10px;margin-top:16px}
+    .bullet-item{display:flex;gap:12px;align-items:flex-start;padding:14px 14px;border-radius:18px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .bullet-dot{margin-top:3px;width:11px;height:11px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 5px rgba(255,208,96,.10);flex:0 0 11px}
+    .bullet-copy strong{display:block;font-size:16px}
+    .bullet-copy span{display:block;margin-top:4px;color:var(--muted);line-height:1.55}
+    .fact-grid{display:grid;gap:12px;margin-top:18px}
+    .fact-card{padding:18px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .fact-card strong{display:block;font-family:"Barlow Condensed",sans-serif;font-size:38px}
+    .fact-card span{display:block;margin-top:4px;color:#95afd9;font-size:13px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}
+    .phase-grid{display:grid;gap:12px}
+    .phase-card{padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .phase-kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#d6e6ff}
+    .phase-kicker::before{content:"";width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2))}
+    .phase-card strong{display:block;margin-top:12px;font-size:24px}
+    .phase-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+
     @media(min-width:860px){
       .hero-card{padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.90));border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow);overflow:hidden}
       .hero-media{aspect-ratio:2048/1365;background:#07132b;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.06)}
@@ -120,8 +160,9 @@
       .hero-media{aspect-ratio:2048/1365}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
       .view[data-view="home"] .stack{gap:18px}
-      .grid-3,.roadmap-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .grid-3,.roadmap-grid,.flow-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .grid-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .hybrid-grid{grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr)}
     }
   </style>
 </head>
@@ -163,27 +204,67 @@
             </div>
           </div>
 
-          <div class="grid-3">
-            <div class="step-card"><div class="step-no">1</div><strong>Register</strong><span>Connect one wallet, add Telegram + X, complete captcha, and enter review.</span></div>
-            <div class="step-card"><div class="step-no">2</div><strong>Buy</strong><span>When live, use the official BUY flow and save your reserved $FIRU allocation.</span></div>
-            <div class="step-card"><div class="step-no">3</div><strong>Claim</strong><span>After launch, return with the same approved wallet to check status and claim.</span></div>
+          <div class="home-band">
+            <div class="home-band-inner">
+              <div class="eyebrow"><span></span> Hybrid Clean + Epic</div>
+              <h3>Big hero on top. Cleaner path underneath.</h3>
+              <p>The image stays powerful, but the next blocks become easier to read, lighter to scan, and faster to understand on mobile.</p>
+              <div class="actions">
+                <button class="btn btn-gold" type="button" data-view-btn="register">Register first</button>
+                <button class="btn btn-blue" type="button" data-view-btn="buy">Open BUY</button>
+                <button class="btn btn-dark" type="button" data-view-btn="info">View info</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="flow-grid">
+            <div class="flow-card"><div class="flow-no">1</div><strong>Register</strong><span>Use one personal Solana wallet, complete the short form, and enter review.</span></div>
+            <div class="flow-card"><div class="flow-no">2</div><strong>Buy</strong><span>When the round opens, use the official BUY flow and keep your reserved allocation tied to that wallet.</span></div>
+            <div class="flow-card"><div class="flow-no">3</div><strong>Claim</strong><span>After launch, return with the same approved wallet and claim from the official page.</span></div>
+          </div>
+
+          <div class="hybrid-grid">
+            <div class="hybrid-panel">
+              <div class="eyebrow"><span></span> Why this path works</div>
+              <h3>Everything stays in one clean order.</h3>
+              <p>No scattered steps, no overloaded first screen, and no confusion between registration, purchase, and final claim.</p>
+              <div class="bullet-list">
+                <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-copy"><strong>One wallet across the full path</strong><span>Register, buy, and claim with the same wallet to keep the process safe and simple.</span></div></div>
+                <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-copy"><strong>Official channels only</strong><span>X and Telegram stay as the official places for launch reminders, BUY updates, and claim announcements.</span></div></div>
+                <div class="bullet-item"><div class="bullet-dot"></div><div class="bullet-copy"><strong>Extra details stay behind dialogs</strong><span>The home remains easier to scan because secondary explanations only open when needed.</span></div></div>
+              </div>
+            </div>
+
+            <div class="hybrid-panel">
+              <div class="eyebrow"><span></span> Essential numbers</div>
+              <h3>Quick view</h3>
+              <p>Only the numbers that matter most stay visible on the home path.</p>
+              <div class="fact-grid">
+                <div class="fact-card"><strong>1B</strong><span>Total supply</span></div>
+                <div class="fact-card"><strong>0%</strong><span>Tax</span></div>
+                <div class="fact-card"><strong>55%</strong><span>Liquidity</span></div>
+                <div class="fact-card"><strong>20%</strong><span>Community</span></div>
+              </div>
+              <div class="actions">
+                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Tokenomics info</button>
+                <button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button>
+              </div>
+            </div>
           </div>
 
           <div class="card">
             <div class="module-title">
               <div class="left">
-                <div class="eyebrow"><span></span> Essential numbers</div>
-                <h3>Tokenomics at a glance</h3>
-                <p>Only the core numbers stay visible on the main path.</p>
+                <div class="eyebrow"><span></span> Roadmap</div>
+                <h3>Three clear phases</h3>
+                <p>The project still moves in the same order, but the section now reads faster and cleaner.</p>
               </div>
             </div>
-            <div class="grid-stats">
-              <div class="stat-card"><strong>1B</strong><span>Total supply</span></div>
-              <div class="stat-card"><strong>0%</strong><span>Tax</span></div>
-              <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
-              <div class="stat-card"><strong>20%</strong><span>Community</span></div>
+            <div class="phase-grid">
+              <div class="phase-card"><div class="phase-kicker">Phase 1</div><strong>Register</strong><span>Community growth, wallet submissions, and approval review.</span></div>
+              <div class="phase-card"><div class="phase-kicker">Phase 2</div><strong>Buy</strong><span>Official launch on Solana and round access through the BUY flow.</span></div>
+              <div class="phase-card"><div class="phase-kicker">Phase 3</div><strong>Claim</strong><span>Approved wallets return after launch and claim with the same wallet.</span></div>
             </div>
-            <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Tokenomics info</button></div>
           </div>
         </div>
       </section>
