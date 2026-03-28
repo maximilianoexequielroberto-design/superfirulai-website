@@ -4,21 +4,21 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SuperFirulai $FIRU — Register, Buy, Claim</title>
-  <meta name="description" content="Register first, buy when live, claim after launch. Clean mobile-first flow for SuperFirulai on Solana." />
+  <meta name="description" content="Register now for founding access, buy at launch, and claim after launch with the same wallet." />
   <meta property="og:title" content="SuperFirulai $FIRU — Register, Buy, Claim" />
-  <meta property="og:description" content="Register first, buy when live, claim after launch." />
+  <meta property="og:description" content="Register now for founding access, buy at launch, and claim after launch." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="/superfirulai-social.webp.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="SuperFirulai $FIRU — Register, Buy, Claim" />
-  <meta name="twitter:description" content="Register first, buy when live, claim after launch." />
+  <meta name="twitter:description" content="Register now for founding access, buy at launch, and claim after launch." />
   <meta name="twitter:image" content="/superfirulai-social.webp.png" />
   <meta name="theme-color" content="#050d1f" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="preload" as="image" href="/superfirulai-mobile-640x960.webp" />
-  <link rel="preload" as="image" href="/superfirulai-hero-final.webp" media="(min-width: 860px)" />
+  <link rel="preload" as="image" href="/superfirulai-desktop.png" media="(min-width: 860px)" />
   <style>
     :root{
       --bg:#050d1f; --panel:rgba(8,16,38,.90); --panel2:rgba(10,20,48,.90); --line:rgba(255,255,255,.08);
@@ -40,7 +40,7 @@
     .float-btn span{display:block;width:18px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
     .float-btn span::before,.float-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:#c9ddff;border-radius:99px}
     .float-btn span::before{top:-6px}.float-btn span::after{top:6px}
-    .buy-float{min-width:74px;height:54px;padding:0 16px;border-radius:18px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:15px;letter-spacing:.04em;box-shadow:0 12px 28px rgba(255,160,0,.28)}
+    .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)}
 
     .drawer{position:fixed;inset:0;z-index:999;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
@@ -60,12 +60,11 @@
     .hero-media img{object-fit:cover;object-position:center top}
     .hero-copy{padding-top:18px}
     .home-hero{position:relative;margin-top:calc(-1 * var(--app-top-space));margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding:0;border:none;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
-    .home-hero .hero-media{position:relative;min-height:0;aspect-ratio:640/960;border:none;border-radius:0;overflow:hidden;background:#07132b}
+    .home-hero .hero-media{position:relative;min-height:100svh;min-height:100dvh;aspect-ratio:auto;border:none;border-radius:0;overflow:hidden;background:#07132b}
     .home-hero .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,8,18,.04),rgba(4,8,18,0) 48%,rgba(4,8,18,.28) 100%);pointer-events:none}
     .home-hero .hero-copy{width:min(calc(100% - 28px),var(--max));margin:0 auto;padding:20px 0 0}
     .hero-img{position:absolute;inset:0}
-    .hero-img-mobile{display:block;position:relative;inset:auto;height:auto}
-    .hero-img-mobile img{height:auto;object-fit:contain;object-position:center top}
+    .hero-img-mobile{display:block}
     .hero-img-desktop{display:none}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff}
     .eyebrow span{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(255,208,96,.14)}
@@ -120,13 +119,10 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      body::before{background-image:url("superfirulai-hero-final.webp")}
-      .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;font-size:18px;box-shadow:0 18px 40px rgba(255,160,0,.34)}
+      body::before{background-image:url("superfirulai-desktop.png")}
       .topbar{padding:0 22px}.app{padding-top:124px;--app-top-space:124px}
       .hero-media{aspect-ratio:2048/1365}
-      .home-hero .hero-media{min-height:100svh;min-height:100dvh;aspect-ratio:auto}
-      .hero-img-mobile{position:absolute;inset:0;height:100%}
-      .hero-img-mobile img{height:100%;object-fit:cover}
+      .home-hero .hero-media{min-height:100svh;min-height:100dvh}
       .hero-img-mobile{display:none}
       .hero-img-desktop{display:block}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -163,22 +159,22 @@
           <div class="card hero-card home-hero">
             <div class="hero-media">
               <div class="hero-img hero-img-mobile"><img src="superfirulai-mobile-640x960.webp" alt="SuperFirulai $FIRU hero mobile" /></div>
-              <div class="hero-img hero-img-desktop"><img src="superfirulai-hero-final.webp" alt="SuperFirulai $FIRU hero desktop" /></div>
+              <div class="hero-img hero-img-desktop"><img src="superfirulai-desktop.png" alt="SuperFirulai $FIRU hero desktop" /></div>
             </div>
             <div class="hero-copy">
-              <div class="eyebrow"><span></span> Clean launch flow</div>
-              <h1>Register. Buy. Claim.</h1>
-              <p class="lead">Follow one clear order from the first click to the final claim. Extra explanations open only when you ask for them.</p>
+              <div class="eyebrow"><span></span> Founding access path</div>
+              <h1>Register now. Buy at launch. Claim after launch.</h1>
+              <p class="lead">Registration is for access and review. Buying opens later. Claim starts only after launch, using the same approved wallet.</p>
               <div class="actions">
-                <button class="btn btn-gold" type="button" data-view-btn="register">Start with Register</button>
-                <button class="btn btn-dark" type="button" data-open="pathDialog">See full path</button>
+                <button class="btn btn-gold" type="button" data-view-btn="register">Register now</button>
+                <button class="btn btn-dark" type="button" data-open="pathDialog">How it works</button>
               </div>
             </div>
           </div>
 
           <div class="grid-3">
-            <div class="step-card"><div class="step-no">1</div><strong>Register</strong><span>Connect one wallet, add Telegram + X, complete captcha, and enter review.</span></div>
-            <div class="step-card"><div class="step-no">2</div><strong>Buy</strong><span>When live, use the official BUY flow and save your reserved $FIRU allocation.</span></div>
+            <div class="step-card"><div class="step-no">1</div><strong>Register</strong><span>Connect one wallet, add X + Telegram, complete captcha, and enter review. Registration does not buy tokens.</span></div>
+            <div class="step-card"><div class="step-no">2</div><strong>Buy</strong><span>When the round opens, use the same wallet in the official BUY flow. Your $FIRU allocation is saved automatically.</span></div>
             <div class="step-card"><div class="step-no">3</div><strong>Claim</strong><span>After launch, return with the same approved wallet to check status and claim.</span></div>
           </div>
 
@@ -187,7 +183,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Essential numbers</div>
                 <h3>Tokenomics at a glance</h3>
-                <p>Only the core numbers stay visible on the main path, aligned with the current allocation.</p>
+                <p>Only the core numbers stay visible on the main path. Full details stay inside the info panel.</p>
               </div>
             </div>
             <div class="grid-stats">
@@ -197,6 +193,7 @@
               <div class="stat-card"><strong>13%</strong><span>Community</span></div>
             </div>
             <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Tokenomics info</button></div>
+            <div class="summary-note" style="margin-top:14px">Round 1 and Round 2 come out of the community allocation. Register is free. BUY opens later.</div>
           </div>
         </div>
       </section>
@@ -208,14 +205,14 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 1</div>
                 <h2>Register your wallet</h2>
-                <p>Submit one personal Solana wallet, verify your social handles, and enter the approval queue.</p>
+                <p>Register now to enter review for founding access. Registration is free and it is not a token purchase.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="registerDialog">Registration info</button>
                 <button type="button" data-open="airdropDialog">Airdrop details</button>
               </div>
             </div>
-            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · use the same wallet later for claim.</div>
+            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · register and claim later with the same wallet.</div>
           </div>
           <div class="card"><div id="airdrop-register"></div></div>
         </div>
@@ -228,7 +225,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 2</div>
                 <h2>Buy when live</h2>
-                <p>Fund your wallet, use the official destination shown by the app, and let the purchase save your reserved $FIRU allocation automatically.</p>
+                <p>BUY opens when the round goes live. Use the official destination shown by the app and keep the same wallet connected for your saved allocation.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="buyInfoDialog">BUY details</button>
@@ -237,7 +234,7 @@
             </div>
             <div class="grid-3">
               <div class="mini-card"><strong>Fund wallet</strong><span>Keep SOL, USDT or USDC ready on Solana before opening BUY.</span></div>
-              <div class="mini-card"><strong>Open BUY</strong><span>Use only the official destination shown by the app and confirm with your wallet.</span></div>
+              <div class="mini-card"><strong>Open BUY</strong><span>Use only the official destination shown by the app and confirm with the same wallet you plan to use later.</span></div>
               <div class="mini-card"><strong>Save allocation</strong><span>The app verifies the payment and stores your reserved $FIRU allocation automatically.</span></div>
             </div>
           </div>
@@ -252,7 +249,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 3</div>
                 <h2>Claim after launch</h2>
-                <p>Come back with the same wallet after the official launch announcement. The page will tell you if that wallet is pending, approved, rejected or claimed.</p>
+                <p>Come back with the same wallet after the official launch announcement. The page will tell you whether that wallet is pending, approved, rejected or already claimed.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="claimDialog">Claim info</button>
@@ -276,7 +273,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Open the full tokenomics artwork and details only when you need them. The visible numbers below follow the current allocation.</p>
+                <p>Open the full tokenomics artwork only when you need it. The summary below follows the current allocation.</p>
               </div>
             </div>
             <div class="grid-stats">
@@ -293,7 +290,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Official only</div>
                 <h3>Official channels</h3>
-                <p>Keep launch reminders, BUY announcements and claim updates in one place.</p>
+                <p>Keep launch reminders, BUY updates and claim notices in one place.</p>
               </div>
             </div>
             <div class="actions">
@@ -308,13 +305,13 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Roadmap</div>
                 <h3>One clean order</h3>
-                <p>The project moves in three simple phases from register to final claim.</p>
+                <p>The project follows three simple phases: register now, buy at launch, claim after launch.</p>
               </div>
             </div>
             <div class="roadmap-grid">
-              <div class="mini-card"><strong>Phase 1 · Register</strong><span>Community growth, wallet registrations and review.</span></div>
-              <div class="mini-card"><strong>Phase 2 · Buy</strong><span>Official launch on Solana and round opening access.</span></div>
-              <div class="mini-card"><strong>Phase 3 · Claim</strong><span>Approved wallets return with the same wallet and claim.</span></div>
+              <div class="mini-card"><strong>Phase 1 · Register · Live now</strong><span>Community growth, wallet registrations and review.</span></div>
+              <div class="mini-card"><strong>Phase 2 · Buy · At launch</strong><span>Official launch on Solana and round opening access.</span></div>
+              <div class="mini-card"><strong>Phase 3 · Claim · After launch</strong><span>Approved wallets return with the same wallet and claim.</span></div>
             </div>
             <div class="actions"><button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button></div>
           </div>
@@ -335,19 +332,19 @@
     </div>
   </nav>
 
-  <dialog id="registerDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Register</div><div class="dialog-head"><div><h3>Registration info</h3><p>Use one personal wallet, add your X and Telegram usernames, complete captcha and submit once.</p></div><button class="dialog-close" data-close="registerDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>One wallet only</strong><span>Avoid exchange deposit addresses.</span></div><div class="dialog-item"><strong>Same wallet later</strong><span>Use the exact same wallet for claim after launch.</span></div><div class="dialog-item"><strong>Fast review queue</strong><span>Once submitted, the wallet enters review.</span></div></div></div></dialog>
+  <dialog id="registerDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Register</div><div class="dialog-head"><div><h3>Registration info</h3><p>Use one personal wallet, add your X and Telegram usernames, complete captcha and submit once. Registration is free and does not purchase tokens.</p></div><button class="dialog-close" data-close="registerDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>One wallet only</strong><span>Avoid exchange deposit addresses.</span></div><div class="dialog-item"><strong>Same wallet later</strong><span>Use the exact same wallet for BUY and claim after launch.</span></div><div class="dialog-item"><strong>Fast review queue</strong><span>Once submitted, the wallet enters review.</span></div></div></div></dialog>
 
-  <dialog id="airdropDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Founding access</div><div class="dialog-head"><div><h3>Airdrop details</h3><p>Only the earliest approved wallets qualify for the founding access round.</p></div><button class="dialog-close" data-close="airdropDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>20,000 $FIRU</strong><span>Reserved per approved wallet.</span></div><div class="dialog-item"><strong>100 wallets only</strong><span>Once the cap is reached, this round closes.</span></div><div class="dialog-item"><strong>Same wallet required</strong><span>Register and claim later with the same wallet.</span></div></div></div></dialog>
+  <dialog id="airdropDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Founding access</div><div class="dialog-head"><div><h3>Airdrop details</h3><p>Only the earliest approved wallets qualify for the founding access round. Registration gives access to review first; BUY is a separate later step.</p></div><button class="dialog-close" data-close="airdropDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>20,000 $FIRU</strong><span>Reserved per approved wallet.</span></div><div class="dialog-item"><strong>100 wallets only</strong><span>Once the cap is reached, this round closes.</span></div><div class="dialog-item"><strong>Same wallet required</strong><span>Register, BUY and claim later with the same wallet.</span></div></div></div></dialog>
 
-  <dialog id="buyInfoDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> BUY</div><div class="dialog-head"><div><h3>BUY details</h3><p>When the round opens, fund your wallet, confirm the payment, and let the app save the reserved $FIRU allocation automatically.</p></div><button class="dialog-close" data-close="buyInfoDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Fund wallet first</strong><span>Keep SOL, USDT or USDC ready on Solana.</span></div><div class="dialog-item"><strong>Use official destination only</strong><span>Always use the address shown by the app.</span></div><div class="dialog-item"><strong>Receipt and history</strong><span>Your purchase history and receipt stay inside the BUY view.</span></div></div></div></dialog>
+  <dialog id="buyInfoDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> BUY</div><div class="dialog-head"><div><h3>BUY details</h3><p>When the round opens, fund your wallet, confirm the payment, and let the app save your reserved $FIRU allocation automatically. BUY is the purchase step.</p></div><button class="dialog-close" data-close="buyInfoDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Fund wallet first</strong><span>Keep SOL, USDT or USDC ready on Solana.</span></div><div class="dialog-item"><strong>Use official destination only</strong><span>Always use the address shown by the app.</span></div><div class="dialog-item"><strong>Receipt and history</strong><span>Your purchase history and receipt stay inside the BUY view.</span></div></div></div></dialog>
 
-  <dialog id="claimDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Claim</div><div class="dialog-head"><div><h3>Claim info</h3><p>Claim opens after launch and only for approved wallets.</p></div><button class="dialog-close" data-close="claimDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div><div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div><div class="dialog-item"><strong>After launch only</strong><span>Wait for the official X and Telegram announcement.</span></div></div></div></dialog>
+  <dialog id="claimDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Claim</div><div class="dialog-head"><div><h3>Claim info</h3><p>Claim opens after launch and only for approved wallets. Check status first, then claim from the same wallet.</p></div><button class="dialog-close" data-close="claimDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div><div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div><div class="dialog-item"><strong>After launch only</strong><span>Wait for the official X and Telegram announcement.</span></div></div></div></dialog>
 
   <dialog id="tokenomicsDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Tokenomics</div><div class="dialog-head"><div><h3>Official allocation</h3><p>Clean distribution with a fixed 1,000,000,000 $FIRU supply.</p></div><button class="dialog-close" data-close="tokenomicsDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>55% Liquidity</strong><span>Strong market base.</span></div><div class="dialog-item"><strong>13% Community</strong><span>Community allocation after carving out both launch rounds.</span></div><div class="dialog-item"><strong>5% Round 1 · 2% Round 2</strong><span>Both rounds come out of the community allocation.</span></div><div class="dialog-item"><strong>10% Marketing · 10% Team · 5% Burn</strong><span>Fixed support structure around liquidity and launch growth.</span></div></div><div style="margin-top:18px;border-radius:22px;overflow:hidden;border:1px solid rgba(255,255,255,.08)"><img src="tokenomics.jpg" alt="SuperFirulai Tokenomics Chart"></div></div></dialog>
 
-  <dialog id="socialDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Official channels</div><div class="dialog-head"><div><h3>Stay on official links only</h3><p>Everything important happens first on X and Telegram.</p></div><button class="dialog-close" data-close="socialDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>X / Twitter</strong><span>Launch reminders, BUY updates and claim announcement.</span></div><div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div></div><div class="dialog-actions"><a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a><a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a></div></div></dialog>
+  <dialog id="socialDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Official channels</div><div class="dialog-head"><div><h3>Stay on official links only</h3><p>X and Telegram are the first places for launch, BUY and claim announcements.</p></div><button class="dialog-close" data-close="socialDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>X / Twitter</strong><span>Launch reminders, BUY updates and claim announcement.</span></div><div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div></div><div class="dialog-actions"><a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a><a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a></div></div></dialog>
 
-  <dialog id="pathDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Full path</div><div class="dialog-head"><div><h3>One clean order</h3><p>The site is organized in the same sequence users should follow from the first click to the last step.</p></div><button class="dialog-close" data-close="pathDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>1 · Register</strong><span>Connect one wallet and enter review.</span></div><div class="dialog-item"><strong>2 · Buy</strong><span>When the round opens, fund wallet and save your reserved allocation.</span></div><div class="dialog-item"><strong>3 · Claim</strong><span>After launch, return with the same approved wallet.</span></div></div></div></dialog>
+  <dialog id="pathDialog"><div class="dialog-shell"><div class="eyebrow"><span></span> Full path</div><div class="dialog-head"><div><h3>One clean order</h3><p>The site follows the same sequence every user should follow from first click to final claim.</p></div><button class="dialog-close" data-close="pathDialog">✕</button></div><div class="dialog-grid"><div class="dialog-item"><strong>1 · Register</strong><span>Connect one wallet, submit details and enter review.</span></div><div class="dialog-item"><strong>2 · Buy</strong><span>When the round opens, fund the same wallet and save your reserved allocation.</span></div><div class="dialog-item"><strong>3 · Claim</strong><span>After launch, return with the same approved wallet.</span></div></div></div></dialog>
 
   <noscript><div class="container" style="padding:20px 0 110px;color:#fff">Enable JavaScript to use wallet registration and claim status.</div></noscript>
 
