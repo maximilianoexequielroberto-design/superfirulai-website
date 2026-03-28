@@ -18,7 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="preload" as="image" href="/superfirulai-mobile-640x960.webp" />
-  <link rel="preload" as="image" href="/superfirulai-desktop.png" media="(min-width: 860px)" />
+  <link rel="preload" as="image" href="/superfirulai-hero-final.webp" media="(min-width: 860px)" />
   <style>
     :root{
       --bg:#050d1f; --panel:rgba(8,16,38,.90); --panel2:rgba(10,20,48,.90); --line:rgba(255,255,255,.08);
@@ -40,7 +40,7 @@
     .float-btn span{display:block;width:18px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
     .float-btn span::before,.float-btn span::after{content:"";position:absolute;left:0;width:18px;height:2px;background:#c9ddff;border-radius:99px}
     .float-btn span::before{top:-6px}.float-btn span::after{top:6px}
-    .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)}
+    .buy-float{min-width:74px;height:54px;padding:0 16px;border-radius:18px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;font-weight:900;font-size:15px;letter-spacing:.04em;box-shadow:0 12px 28px rgba(255,160,0,.28)}
 
     .drawer{position:fixed;inset:0;z-index:999;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
@@ -60,11 +60,12 @@
     .hero-media img{object-fit:cover;object-position:center top}
     .hero-copy{padding-top:18px}
     .home-hero{position:relative;margin-top:calc(-1 * var(--app-top-space));margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding:0;border:none;border-radius:0;background:transparent;box-shadow:none;overflow:visible}
-    .home-hero .hero-media{position:relative;min-height:100svh;min-height:100dvh;aspect-ratio:auto;border:none;border-radius:0;overflow:hidden;background:#07132b}
+    .home-hero .hero-media{position:relative;min-height:0;aspect-ratio:640/960;border:none;border-radius:0;overflow:hidden;background:#07132b}
     .home-hero .hero-media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,8,18,.04),rgba(4,8,18,0) 48%,rgba(4,8,18,.28) 100%);pointer-events:none}
     .home-hero .hero-copy{width:min(calc(100% - 28px),var(--max));margin:0 auto;padding:20px 0 0}
     .hero-img{position:absolute;inset:0}
-    .hero-img-mobile{display:block}
+    .hero-img-mobile{display:block;position:relative;inset:auto;height:auto}
+    .hero-img-mobile img{height:auto;object-fit:contain;object-position:center top}
     .hero-img-desktop{display:none}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff}
     .eyebrow span{width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 4px rgba(255,208,96,.14)}
@@ -119,10 +120,13 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      body::before{background-image:url("superfirulai-desktop.png")}
+      body::before{background-image:url("superfirulai-hero-final.webp")}
+      .buy-float{min-width:92px;height:66px;padding:0 22px;border-radius:22px;font-size:18px;box-shadow:0 18px 40px rgba(255,160,0,.34)}
       .topbar{padding:0 22px}.app{padding-top:124px;--app-top-space:124px}
       .hero-media{aspect-ratio:2048/1365}
-      .home-hero .hero-media{min-height:100svh;min-height:100dvh}
+      .home-hero .hero-media{min-height:100svh;min-height:100dvh;aspect-ratio:auto}
+      .hero-img-mobile{position:absolute;inset:0;height:100%}
+      .hero-img-mobile img{height:100%;object-fit:cover}
       .hero-img-mobile{display:none}
       .hero-img-desktop{display:block}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -159,7 +163,7 @@
           <div class="card hero-card home-hero">
             <div class="hero-media">
               <div class="hero-img hero-img-mobile"><img src="superfirulai-mobile-640x960.webp" alt="SuperFirulai $FIRU hero mobile" /></div>
-              <div class="hero-img hero-img-desktop"><img src="superfirulai-desktop.png" alt="SuperFirulai $FIRU hero desktop" /></div>
+              <div class="hero-img hero-img-desktop"><img src="superfirulai-hero-final.webp" alt="SuperFirulai $FIRU hero desktop" /></div>
             </div>
             <div class="hero-copy">
               <div class="eyebrow"><span></span> Founding access path</div>
@@ -205,14 +209,14 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 1</div>
                 <h2>Register your wallet</h2>
-                <p>Register now to enter review for founding access. Registration is free and it is not a token purchase.</p>
+                <p>Submit one personal Solana wallet, verify your social handles, and enter the approval queue. Registration is for access and review, not for buying.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="registerDialog">Registration info</button>
                 <button type="button" data-open="airdropDialog">Airdrop details</button>
               </div>
             </div>
-            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · register and claim later with the same wallet.</div>
+            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · registration is free · use the same wallet later for BUY and claim.</div>
           </div>
           <div class="card"><div id="airdrop-register"></div></div>
         </div>
@@ -225,7 +229,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 2</div>
                 <h2>Buy when live</h2>
-                <p>BUY opens when the round goes live. Use the official destination shown by the app and keep the same wallet connected for your saved allocation.</p>
+                <p>Fund your wallet, use the official destination shown by the app, and let the purchase save your reserved $FIRU allocation automatically. BUY is the purchase step.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="buyInfoDialog">BUY details</button>
@@ -234,7 +238,7 @@
             </div>
             <div class="grid-3">
               <div class="mini-card"><strong>Fund wallet</strong><span>Keep SOL, USDT or USDC ready on Solana before opening BUY.</span></div>
-              <div class="mini-card"><strong>Open BUY</strong><span>Use only the official destination shown by the app and confirm with the same wallet you plan to use later.</span></div>
+              <div class="mini-card"><strong>Open BUY</strong><span>Use only the official destination shown by the app and confirm with your wallet.</span></div>
               <div class="mini-card"><strong>Save allocation</strong><span>The app verifies the payment and stores your reserved $FIRU allocation automatically.</span></div>
             </div>
           </div>
@@ -249,7 +253,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 3</div>
                 <h2>Claim after launch</h2>
-                <p>Come back with the same wallet after the official launch announcement. The page will tell you whether that wallet is pending, approved, rejected or already claimed.</p>
+                <p>Come back with the same wallet after the official launch announcement. The page will tell you if that wallet is pending, approved, rejected or claimed.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="claimDialog">Claim info</button>
@@ -273,7 +277,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Open the full tokenomics artwork only when you need it. The summary below follows the current allocation.</p>
+                <p>Open the full tokenomics artwork and details only when you need them. The visible numbers below follow the current allocation.</p>
               </div>
             </div>
             <div class="grid-stats">
@@ -290,7 +294,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Official only</div>
                 <h3>Official channels</h3>
-                <p>Keep launch reminders, BUY updates and claim notices in one place.</p>
+                <p>Keep launch reminders, BUY announcements and claim updates in one place.</p>
               </div>
             </div>
             <div class="actions">
@@ -305,13 +309,13 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Roadmap</div>
                 <h3>One clean order</h3>
-                <p>The project follows three simple phases: register now, buy at launch, claim after launch.</p>
+                <p>The project moves in three simple phases from register to final claim.</p>
               </div>
             </div>
             <div class="roadmap-grid">
-              <div class="mini-card"><strong>Phase 1 · Register · Live now</strong><span>Community growth, wallet registrations and review.</span></div>
-              <div class="mini-card"><strong>Phase 2 · Buy · At launch</strong><span>Official launch on Solana and round opening access.</span></div>
-              <div class="mini-card"><strong>Phase 3 · Claim · After launch</strong><span>Approved wallets return with the same wallet and claim.</span></div>
+              <div class="mini-card"><strong>Phase 1 · Register</strong><span>Live now: community growth, wallet registrations and review.</span></div>
+              <div class="mini-card"><strong>Phase 2 · Buy</strong><span>Opens at launch: official Solana launch and round access.</span></div>
+              <div class="mini-card"><strong>Phase 3 · Claim</strong><span>After announcement: approved wallets return with the same wallet and claim.</span></div>
             </div>
             <div class="actions"><button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button></div>
           </div>
