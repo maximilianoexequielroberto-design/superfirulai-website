@@ -207,10 +207,13 @@
     .hero-desktop-image{
       display:none;
       background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328");
+      background-size:contain;
+      background-position:center calc(50% + 34px);
     }
     .hero-mobile-image{
       display:block;
       background-image:url("hero-mobile-image.png?v=hero-mobile-image-v4-20260328");
+      background-position:center top;
     }
     .hero-stage::before{
       content:"";
@@ -230,6 +233,9 @@
       background:linear-gradient(180deg,rgba(5,13,31,0),rgba(5,13,31,.30) 48%,rgba(5,13,31,.86) 100%);
       pointer-events:none;
       z-index:1;
+    }
+    @media(min-width:860px){
+      .hero-stage::before{background:radial-gradient(circle at 50% 70%,rgba(255,184,43,.16),transparent 24%)}
     }
 
     .home-quick-shell{
@@ -524,7 +530,7 @@
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
       .hero-stage{height:100vh;min-height:720px}
-      .hero-desktop-image{display:block;background-position:center center}
+      .hero-desktop-image{display:block;background-size:contain;background-position:center calc(50% + 42px)}
       .hero-mobile-image{display:none}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
@@ -560,7 +566,7 @@
     <div class="container">
       <section class="view active" data-view="home">
         <div class="stack">
-          <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero">
+          <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero" data-hero-lock="desktop-lowered-v5-20260328">
             <div class="hero-desktop-image" aria-hidden="true"></div>
             <div class="hero-mobile-image" aria-hidden="true"></div>
           </div>
