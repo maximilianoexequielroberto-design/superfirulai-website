@@ -50,7 +50,7 @@
       position:fixed;
       inset:0;
       z-index:-2;
-      background:url("Hero%20mobile%20oficial.png?v=hero-mobile-official-20260328") center top/cover no-repeat;
+      background:url("Hero%20mobile%20oficial.png?v=hero-mobile-locked-v2-20260328") center top/cover no-repeat;
       filter:blur(40px) brightness(.13) saturate(1.03);
       transform:scale(1.08);
     }
@@ -184,6 +184,55 @@
     .home-band-inner{display:grid;gap:14px;position:relative;z-index:1}
     .home-band h3{font-size:40px}
     .home-band p{color:var(--muted);line-height:1.65}
+
+    .hero-stage{
+      position:relative;
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      height:calc(100svh - 176px);
+      min-height:520px;
+      background:#040b19 url("Hero%20mobile%20oficial.png?v=hero-mobile-locked-v2-20260328") center top/cover no-repeat;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .hero-stage::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at 50% 78%,rgba(255,184,43,.16),transparent 24%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .hero-stage::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:140px;
+      background:linear-gradient(180deg,rgba(5,13,31,0),rgba(5,13,31,.30) 48%,rgba(5,13,31,.86) 100%);
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .home-quick-shell{
+      margin-top:2px;
+      padding:18px;
+      border-radius:26px;
+      background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.94));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+    .home-quick-head{display:grid;gap:10px}
+    .home-quick-head strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(28px,6vw,44px);
+      line-height:.95;
+      letter-spacing:-.01em;
+    }
+    .home-quick-head p{color:var(--muted);line-height:1.6;max-width:54ch}
+    .quick-action-row{display:grid;gap:12px;margin-top:16px}
 
     .actions,.section-actions{display:flex;gap:12px;flex-wrap:wrap}
     .btn{
@@ -451,10 +500,12 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      body::before{background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-official-20260328")}
+      body::before{background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-locked-v2-20260328")}
       .topbar{padding:0 22px}
       .app{padding:112px 0 120px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .hero-stage{height:calc(100vh - 148px);min-height:620px;background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-locked-v2-20260328");background-position:center center}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -489,33 +540,18 @@
     <div class="container">
       <section class="view active" data-view="home">
         <div class="stack">
-          <div class="hero-card">
-            <div class="hero-media">
-              <picture>
-                <source media="(min-width:860px)" srcset="Hero%20PC%20oficial.png?v=hero-desktop-official-20260328" />
-                <source media="(max-width:859px)" srcset="Hero%20mobile%20oficial.png?v=hero-mobile-official-20260328" />
-                <img src="Hero%20PC%20oficial.png?v=hero-desktop-official-20260328" alt="SuperFirulai $FIRU official hero" />
-              </picture>
-            </div>
-            <div class="hero-caption">
-              <div class="eyebrow"><span></span> Official hero locked</div>
-              <div class="actions">
-                <button class="btn btn-gold" type="button" data-view-btn="register">Register Airdrop</button>
-                <button class="btn btn-dark" type="button" data-open="pathDialog">See full path</button>
-              </div>
-            </div>
-          </div>
+          <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero"></div>
 
-          <div class="home-band">
-            <div class="home-band-inner">
-              <div class="eyebrow"><span></span> Hybrid Clean + Epic</div>
-              <h3>Big hero stays on top. Premium assets start below.</h3>
-              <p>The first screen remains focused on the official hero. Under it, the home now organizes the main actions as clean premium panels, a live community band, and lighter info blocks.</p>
-              <div class="actions">
-                <button class="btn btn-gold" type="button" data-view-btn="register">Start Register</button>
-                <button class="btn btn-blue" type="button" data-view-btn="buy">Open Buy $FIRU</button>
-                <button class="btn btn-dark" type="button" data-view-btn="info">Tokenomics & Roadmap</button>
-              </div>
+          <div class="home-quick-shell">
+            <div class="home-quick-head">
+              <div class="eyebrow"><span></span> Official launch path</div>
+              <strong>Hero first. Actions and info start below.</strong>
+              <p>The first screen stays dominated by the official hero on both mobile and desktop. Scroll a little to open the premium action blocks, live metrics, tokenomics and roadmap.</p>
+            </div>
+            <div class="quick-action-row">
+              <button class="btn btn-gold" type="button" data-view-btn="register">Register Airdrop</button>
+              <button class="btn btn-blue" type="button" data-view-btn="buy">Open Buy $FIRU</button>
+              <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
             </div>
           </div>
 
