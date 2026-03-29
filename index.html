@@ -232,6 +232,102 @@
       z-index:1;
     }
 
+    .hero-assets{
+      position:absolute;
+      left:50%;
+      bottom:118px;
+      transform:translateX(-50%);
+      width:min(calc(100% - 28px),760px);
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      z-index:2;
+    }
+    .hero-asset{
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:42px minmax(0,1fr) 16px;
+      align-items:center;
+      gap:10px;
+      min-height:74px;
+      padding:12px 14px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg,rgba(8,17,38,.78),rgba(5,12,28,.88));
+      box-shadow:0 20px 40px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.03);
+      backdrop-filter:blur(14px);
+      color:#f5f8ff;
+      text-align:left;
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
+    }
+    .hero-asset::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg,rgba(255,208,96,.12),transparent 46%);
+      pointer-events:none;
+    }
+    .hero-asset:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 26px 54px rgba(0,0,0,.40);
+    }
+    .hero-asset-icon{
+      position:relative;
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,rgba(255,208,96,.22),rgba(255,157,39,.10));
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .hero-asset-icon svg{
+      width:20px;
+      height:20px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      color:#ffe9ae;
+    }
+    .hero-asset-copy{position:relative; min-width:0;}
+    .hero-asset-copy strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:24px;
+      line-height:.92;
+      letter-spacing:-.01em;
+      color:#fff;
+    }
+    .hero-asset-copy span{
+      display:block;
+      margin-top:4px;
+      font-size:11px;
+      line-height:1.25;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#b8c9e7;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .hero-asset-arrow{
+      position:relative;
+      font-size:16px;
+      color:#ffe9ae;
+      opacity:.9;
+      text-align:right;
+    }
+    .hero-asset.is-x .hero-asset-icon,
+    .hero-asset.is-buy .hero-asset-icon{
+      background:linear-gradient(135deg,rgba(42,146,255,.16),rgba(255,208,96,.10));
+    }
+
     .home-quick-shell{
       margin-top:2px;
       padding:18px;
@@ -526,6 +622,11 @@
       .hero-stage{height:100vh;min-height:720px}
       .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
+      .hero-assets{width:min(calc(100% - 180px),1040px);grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;bottom:110px}
+      .hero-asset{min-height:92px;padding:16px 18px;grid-template-columns:50px minmax(0,1fr) 18px}
+      .hero-asset-icon{width:50px;height:50px;border-radius:16px}
+      .hero-asset-copy strong{font-size:28px}
+      .hero-asset-copy span{font-size:11px}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -567,48 +668,40 @@
           <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero">
             <div class="hero-desktop-image" aria-hidden="true"></div>
             <div class="hero-mobile-image" aria-hidden="true"></div>
-          </div>
 
-          <div class="home-quick-shell">
-            <div class="home-quick-head">
-              <div class="eyebrow"><span></span> Official launch path</div>
-              <strong>Hero first. Actions and info start below.</strong>
-              <p>The first screen stays dominated by the official hero on both mobile and desktop. Scroll a little to open the premium action blocks, live metrics, tokenomics and roadmap.</p>
+            <div class="hero-assets" aria-label="Main hero assets">
+              <button class="hero-asset is-register" type="button" data-view-btn="register">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M7 7h10v10H7z" opacity=".28"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Register</strong><span>Airdrop access</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <button class="hero-asset is-buy" type="button" data-view-btn="buy">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M7 16V9"></path><path d="M12 16V5"></path><path d="M17 16v-7"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Buy $FIRU</strong><span>Official round</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M21 5L3 11l7 2 2 6 9-14z"></path><path d="M10 13l11-8"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Telegram</strong><span>Official community</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </a>
+
+              <a class="hero-asset is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 4l16 16"></path><path d="M20 4L4 20"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>X</strong><span>Launch alerts</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </a>
             </div>
-            <div class="quick-action-row">
-              <button class="btn btn-gold" type="button" data-view-btn="register">Register Airdrop</button>
-              <button class="btn btn-blue" type="button" data-view-btn="buy">Open Buy $FIRU</button>
-              <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
-            </div>
-          </div>
-
-          <div class="asset-grid" aria-label="Main premium actions">
-            <button class="asset-cta" type="button" data-view-btn="register">
-              <span class="asset-kicker">Asset 03 · CTA</span>
-              <strong>Register Airdrop</strong>
-              <p>Connect one personal Solana wallet, submit your X and Telegram usernames, and enter the approval review path.</p>
-              <span class="asset-link">Open register
-                <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>
-              </span>
-            </button>
-
-            <button class="asset-cta" type="button" data-view-btn="buy">
-              <span class="asset-kicker">Asset 04 · CTA</span>
-              <strong>Buy $FIRU</strong>
-              <p>When the round goes live, use the official buy flow and save your reserved allocation with the same wallet.</p>
-              <span class="asset-link">Open buy
-                <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>
-              </span>
-            </button>
-
-            <a class="asset-cta" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-              <span class="asset-kicker">Asset 05 · CTA</span>
-              <strong>Join Telegram</strong>
-              <p>Stay inside the official community chat for pinned instructions, launch reminders, and claim updates only from trusted links.</p>
-              <span class="asset-link">Open telegram
-                <svg viewBox="0 0 24 24"><path d="M5 12h14"></path><path d="M13 5l7 7-7 7"></path></svg>
-              </span>
-            </a>
           </div>
 
           <div class="metrics-shell">
