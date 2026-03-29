@@ -50,7 +50,7 @@
       position:fixed;
       inset:0;
       z-index:-2;
-      background:url("Hero%20mobile%20oficial.png?v=hero-mobile-locked-v2-20260328") center top/cover no-repeat;
+      background:url("Hero%20mobile%20oficial.png?v=hero-mobile-split-v3-20260328") center top/cover no-repeat;
       filter:blur(40px) brightness(.13) saturate(1.03);
       transform:scale(1.08);
     }
@@ -103,9 +103,10 @@
       letter-spacing:.05em;text-transform:uppercase
     }
 
-    .app{padding:98px 0 188px}
+    .app{padding:0 0 188px}
     .view{display:none}
     .view.active{display:block}
+    .view:not([data-view="home"]){padding-top:98px}
     .stack{display:grid;gap:18px}
     .view[data-view="home"] .stack{gap:18px}
 
@@ -189,11 +190,27 @@
       position:relative;
       width:100vw;
       margin-left:calc(50% - 50vw);
-      height:calc(100svh - 176px);
-      min-height:520px;
-      background:#040b19 url("Hero%20mobile%20oficial.png?v=hero-mobile-locked-v2-20260328") center top/cover no-repeat;
+      height:100svh;
+      min-height:640px;
+      background:#040b19;
       overflow:hidden;
       isolation:isolate;
+    }
+    .hero-desktop-image,.hero-mobile-image{
+      position:absolute;
+      inset:0;
+      background-repeat:no-repeat;
+      background-size:cover;
+      background-position:center top;
+      z-index:0;
+    }
+    .hero-desktop-image{
+      display:none;
+      background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-split-v3-20260328");
+    }
+    .hero-mobile-image{
+      display:block;
+      background-image:url("Hero%20mobile%20oficial.png?v=hero-mobile-split-v3-20260328");
     }
     .hero-stage::before{
       content:"";
@@ -500,12 +517,15 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
-      body::before{background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-locked-v2-20260328")}
+      body::before{background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-split-v3-20260328")}
       .topbar{padding:0 22px}
-      .app{padding:112px 0 120px}
+      .app{padding:0 0 120px}
+      .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .hero-stage{height:calc(100vh - 148px);min-height:620px;background-image:url("Hero%20PC%20oficial.png?v=hero-desktop-locked-v2-20260328");background-position:center center}
+      .hero-stage{height:100vh;min-height:720px}
+      .hero-desktop-image{display:block;background-position:center center}
+      .hero-mobile-image{display:none}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -540,7 +560,10 @@
     <div class="container">
       <section class="view active" data-view="home">
         <div class="stack">
-          <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero"></div>
+          <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero">
+            <div class="hero-desktop-image" aria-hidden="true"></div>
+            <div class="hero-mobile-image" aria-hidden="true"></div>
+          </div>
 
           <div class="home-quick-shell">
             <div class="home-quick-head">
@@ -1047,6 +1070,24 @@
     });
 
     showView(window.location.hash || "home", { updateHash: false, scroll: false });
+
+    const heroDesktop = document.querySelector(".hero-desktop-image");
+    const heroMobile = document.querySelector(".hero-mobile-image");
+
+    function syncHeroVariant() {
+      const isDesktop = window.matchMedia("(min-width: 860px)").matches;
+      if (heroDesktop) {
+        heroDesktop.hidden = !isDesktop;
+        heroDesktop.style.display = isDesktop ? "block" : "none";
+      }
+      if (heroMobile) {
+        heroMobile.hidden = isDesktop;
+        heroMobile.style.display = isDesktop ? "none" : "block";
+      }
+    }
+
+    syncHeroVariant();
+    window.addEventListener("resize", syncHeroVariant, { passive: true });
 
     const openDialog = (id) => document.getElementById(id)?.showModal?.();
     const closeDialog = (id) => document.getElementById(id)?.close?.();
