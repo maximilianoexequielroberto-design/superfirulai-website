@@ -69,12 +69,13 @@
     img{display:block;max-width:100%}
     .container{width:min(calc(100% - 28px),var(--max));margin:0 auto}
 
-    .topbar{position:fixed;top:12px;left:0;right:0;z-index:1000;padding:0 12px;pointer-events:none}
-    .topbar-inner{width:min(calc(100% - 0px),var(--max));margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+    .topbar{position:fixed;top:12px;left:0;right:0;z-index:1300;padding:0 12px;pointer-events:none}
+    .topbar-inner{width:min(calc(100% - 0px),var(--max));margin:0 auto;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1301}
     .float-btn,.buy-float{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center}
     .float-btn{
-      width:46px;height:46px;border-radius:16px;background:rgba(8,14,32,.62);
-      border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px)
+      width:52px;height:52px;border-radius:16px;background:rgba(8,14,32,.72);
+      border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px);
+      position:relative;z-index:1302; margin-left:-6px;
     }
     .float-btn span{display:block;width:18px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
     .float-btn span::before,.float-btn span::after{
@@ -88,7 +89,7 @@
       font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)
     }
 
-    .drawer{position:fixed;inset:0;z-index:999;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
+    .drawer{position:fixed;inset:0;z-index:1290;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
     .drawer-panel{
       position:absolute;top:0;left:0;bottom:0;width:min(82vw,330px);
@@ -587,6 +588,12 @@
     .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .mnav.active{background:rgba(255,255,255,.08);color:#fff}
 
+
+    .desktop-top-nav{display:none}
+    .hero-assets-desktop{display:none}
+    .asset-img-btn{display:block; background:transparent; border:0; padding:0; line-height:0; cursor:pointer}
+    .asset-img-btn img{display:block; width:100%; height:auto; filter:drop-shadow(0 10px 18px rgba(0,0,0,.30));}
+
     dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
     dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
     .dialog-shell{
@@ -612,77 +619,31 @@
     .dialog-item span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
-
-    .desktop-top-nav{display:none}
-    .hero-assets-desktop{display:none}
-    .desktop-top-nav{
-      position:fixed;
-      top:12px;
-      left:92px;
-      right:720px;
-      z-index:1002;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      pointer-events:auto;
-      flex-wrap:nowrap;
-    }
-    .desktop-top-nav button{
-      pointer-events:auto;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      height:42px;
-      padding:0 16px;
-      border-radius:14px;
-      background:rgba(8,14,32,.52);
-      border:1px solid rgba(255,255,255,.10);
-      box-shadow:0 10px 24px rgba(0,0,0,.24);
-      backdrop-filter:blur(10px);
-      color:#eef5ff;
-      font-weight:800;
-      font-size:14px;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      white-space:nowrap;
-    }
-    .desktop-top-nav button:hover{background:rgba(12,22,46,.72)}
-    .hero-assets-desktop{
-      position:fixed;
-      top:2px;
-      right:20px;
-      z-index:1003;
-      align-items:flex-start;
-      justify-content:flex-end;
-      gap:16px;
-      pointer-events:auto;
-    }
-    .asset-img-btn{display:inline-flex;align-items:center;justify-content:center;pointer-events:auto}
-    .asset-img-btn img{height:165px;width:auto}
     @media(min-width:860px){
       body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
-      .topbar{padding:0 22px}
-      .bottom-nav{display:none}
-      .buy-float{display:none}
-      .float-btn{width:46px;height:46px;margin-left:-8px}
-      .float-btn span{width:19px}
-      .desktop-top-nav,.hero-assets-desktop{display:flex}
-      .desktop-top-nav{left:92px;right:720px;top:12px;gap:10px}
-      .hero-assets-desktop{right:20px;top:2px;gap:16px}
-      .asset-img-btn img{height:165px}
-      .hero-assets{display:none}
+      .topbar{padding:0 18px}
+      .topbar-inner{position:relative;justify-content:flex-start}
+      .float-btn{margin-left:-4px}
+      .buy-float{display:none !important}
+      .desktop-top-nav{
+        display:flex;align-items:center;gap:22px;position:absolute;left:50%;top:18px;transform:translateX(-50%);z-index:1301
+      }
+      .desktop-top-nav button,.desktop-top-nav a{
+        color:#eef5ff;font-size:14px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;opacity:.95
+      }
+      .desktop-top-nav button:hover,.desktop-top-nav a:hover{color:#fff;text-shadow:0 0 16px rgba(255,208,96,.45)}
       .app{padding:0 0 120px}
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
       .hero-stage{height:100vh;min-height:720px}
-      .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
+      .hero-desktop-image{display:block;background-size:auto 100%;background-position:center top}
       .hero-mobile-image{display:none}
-      .hero-assets{width:min(calc(100% - 180px),1040px);grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;bottom:110px}
-      .hero-asset{min-height:92px;padding:16px 18px;grid-template-columns:50px minmax(0,1fr) 18px}
-      .hero-asset-icon{width:50px;height:50px;border-radius:16px}
-      .hero-asset-copy strong{font-size:28px}
-      .hero-asset-copy span{font-size:11px}
+      .hero-assets{display:none}
+      .hero-assets-desktop{
+        display:flex;position:absolute;right:20px;top:2px;z-index:1301;gap:16px;align-items:flex-start
+      }
+      .bottom-nav{display:none}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -691,8 +652,13 @@
       .token-chip-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
     }
 
+    @media (min-width: 1360px){
+      .hero-assets-desktop{right:20px;top:2px;gap:16px}
+      .asset-img-btn img{height:140px}
+    }
+
     @media(min-width:860px) and (max-aspect-ratio:3/2){
-      .hero-desktop-image{background-size:cover;}
+      .hero-desktop-image{background-size:auto 100%;background-position:center top;}
     }
   </style>
 </head>
@@ -701,26 +667,12 @@
     <div class="topbar-inner">
       <button class="float-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
       <nav class="desktop-top-nav" aria-label="Desktop navigation">
-        <button type="button" data-view-btn="home">HOME</button>
-        <button type="button" data-view-btn="register">REGISTER</button>
-        <button type="button" data-view-btn="buy">BUY</button>
-        <button type="button" data-view-btn="claim">CLAIM</button>
-        <button type="button" data-view-btn="info">INFO</button>
+        <button type="button" data-view-btn="home">Home</button>
+        <button type="button" data-view-btn="register">Register</button>
+        <button type="button" data-view-btn="buy">Buy</button>
+        <button type="button" data-view-btn="claim">Claim</button>
+        <button type="button" data-view-btn="info">Info</button>
       </nav>
-      <div class="hero-assets-desktop" aria-label="Desktop hero assets">
-        <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="X">
-          <img src="./x-button.png" alt="X" />
-        </a>
-        <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Telegram">
-          <img src="./join-telegram.png" alt="Join Telegram" />
-        </a>
-        <button class="asset-img-btn" type="button" data-view-btn="register" aria-label="Register Airdrop">
-          <img src="./register-airdrop.png" alt="Register Airdrop" />
-        </button>
-        <button class="asset-img-btn" type="button" data-view-btn="buy" aria-label="Buy FIRU">
-          <img src="./buy-firu.png" alt="Buy FIRU" />
-        </button>
-      </div>
       <button class="buy-float" id="buyFloat" type="button">BUY</button>
     </div>
   </header>
@@ -778,6 +730,13 @@
                 <span class="hero-asset-copy"><strong>X</strong><span>Launch alerts</span></span>
                 <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </a>
+            </div>
+
+            <div class="hero-assets-desktop" aria-label="Main hero assets desktop">
+              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
+              <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join Telegram"></a>
+              <button class="asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
+              <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
             </div>
           </div>
 
