@@ -79,7 +79,7 @@ function injectStyles() {
     .sf-steps-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
     .sf-steps-title{font-size:15px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8fb3ff}
     .sf-steps-sub{font-size:13px;color:#b8c8ea;line-height:1.5;max-width:520px}
-    .sf-steps-grid{display:grid;gap:10px}
+    .sf-steps-grid{display:grid;gap:10px;grid-template-columns:1fr !important}
     .sf-step-card{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease}
     .sf-step-card.active{border-color:rgba(89,161,255,.7);background:linear-gradient(180deg,rgba(20,38,76,.92),rgba(12,23,47,.9));box-shadow:0 10px 28px rgba(28,85,188,.22)}
     .sf-step-card.done{border-color:rgba(90,202,137,.55);background:linear-gradient(180deg,rgba(17,46,32,.92),rgba(11,26,19,.88));box-shadow:0 10px 24px rgba(17,68,38,.2)}
@@ -105,7 +105,7 @@ function injectStyles() {
     .sf-modal-point{font-size:13px;color:#dfe9ff;line-height:1.55}.sf-modal-point strong{color:#fff}
     .sf-modal-close{appearance:none;border:none;background:rgba(255,255,255,.06);color:#fff;border-radius:12px;width:42px;height:42px;font-size:24px;line-height:1;cursor:pointer}
     .sf-hidden{display:none!important}
-    @media (max-width:640px){.sf-wallet-actions{grid-template-columns:1fr}.sf-step-card{grid-template-columns:52px 1fr;align-items:start}.sf-step-trigger{grid-column:2;justify-self:start}.sf-modal-backdrop{padding:14px}.sf-modal-title{font-size:22px}}
+    @media (max-width:640px){.sf-wallet-actions{grid-template-columns:1fr}.sf-steps-grid{grid-template-columns:1fr !important}.sf-step-card{grid-template-columns:52px 1fr;align-items:start}.sf-step-trigger{grid-column:2;justify-self:start}.sf-modal-backdrop{padding:14px}.sf-modal-title{font-size:22px}}
   `;
   document.head.appendChild(style);
 }

@@ -810,7 +810,7 @@
       box-shadow:inset 0 1px 0 rgba(255,255,255,.04), inset 0 -1px 0 rgba(255,255,255,.02)
     }
     .mnav{
-      display:grid;place-items:center;gap:7px;min-height:74px;border-radius:20px;color:#c5d6f4;font-size:10px;
+      display:grid;place-items:center;gap:10px;min-height:78px;border-radius:20px;color:#c5d6f4;font-size:10px;
       font-weight:900;letter-spacing:.065em;text-transform:uppercase;border:1px solid rgba(255,255,255,.06);line-height:1.02;text-align:center;padding:8px 2px 6px;
       position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.015));
       box-shadow:inset 0 1px 0 rgba(255,255,255,.03)
@@ -821,8 +821,8 @@
       background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.025));
       border:1px solid rgba(255,255,255,.07);box-shadow:0 12px 22px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.08)
     }
-    .mnav span{display:block;position:relative;z-index:1;text-shadow:0 1px 0 rgba(0,0,0,.22)}
-    .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.18))}
+    .mnav span{display:block;position:relative;z-index:1;text-shadow:0 1px 0 rgba(0,0,0,.22);margin-top:2px;line-height:1.14}
+    .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.18));margin-top:2px}
     .mnav.active{
       background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.045));color:#fff;
       border-color:rgba(255,228,150,.18);box-shadow:0 14px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,248,214,.08)
@@ -1375,11 +1375,11 @@
 
   <nav class="bottom-nav" aria-label="Bottom navigation">
     <div class="bottom-shell">
-      <button class="mnav active" type="button" data-view-btn="home"><svg viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5"></path><path d="M5 10.5V20h14v-9.5"></path></svg>Home</button>
+      <button class="mnav active" type="button" data-view-btn="home"><svg viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5"></path><path d="M5 10.5V20h14v-9.5"></path></svg><span>Home</span></button>
       <button class="mnav" type="button" data-view-btn="register"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M7 7h10v10H7z" opacity=".2"></path></svg><span>Register<br>Airdrop</span></button>
       <button class="mnav" type="button" data-view-btn="buy"><svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M7 16V9"></path><path d="M12 16V5"></path><path d="M17 16v-7"></path></svg><span>Buy<br>$FIRU</span></button>
-      <button class="mnav" type="button" data-view-btn="claim"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg>Claim</button>
-      <button class="mnav" type="button" data-view-btn="info"><svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg>Info</button>
+      <button class="mnav" type="button" data-view-btn="claim"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg><span>Claim</span></button>
+      <button class="mnav" type="button" data-view-btn="info"><svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg><span>Info</span></button>
     </div>
   </nav>
 
