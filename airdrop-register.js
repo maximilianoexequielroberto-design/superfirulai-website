@@ -63,18 +63,18 @@ function injectStyles() {
   const style = document.createElement("style");
   style.id = "sf-airdrop-styles";
   style.textContent = `
-    .sf-airdrop-form{display:grid;gap:16px;position:relative;z-index:1}
+    .sf-airdrop-form{display:grid;gap:16px}
     .sf-wallet-shell{display:grid;gap:12px;padding:16px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(12,20,42,.94),rgba(7,12,24,.92));box-shadow:0 18px 46px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04)}
-    .sf-wallet-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:15px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+    .sf-wallet-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px}
     .sf-wallet-note strong{color:#fff}.sf-wallet-note.ok{color:#8bf0b2}.sf-wallet-note.warn{color:#ffd87d}.sf-wallet-note.error{color:#ffb2b2}.sf-wallet-note.info{color:#9ec4ff}
-    .sf-social-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sf-field{display:grid;gap:8px;padding:14px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08)}.sf-label{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff}.sf-field-kicker{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#ffd665}
+    .sf-social-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.sf-field{display:grid;gap:8px;padding:14px;border-radius:18px;background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08)}.sf-label{font-size:13px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff}
     .sf-handle-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden;transition:border-color .18s ease, box-shadow .18s ease}
     .sf-prefix{flex:0 0 auto;padding:0 14px;height:52px;display:inline-flex;align-items:center;justify-content:center;color:#8fb3ff;font-weight:800;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
     .sf-input{width:100%;padding:14px;border:none;background:transparent;color:#fff;outline:none;font:inherit}
     .sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-handle-shell.sf-missing{border-color:rgba(255,115,115,.75);box-shadow:0 0 0 3px rgba(255,115,115,.12)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
-    .sf-btn-stack{display:grid;gap:10px}.sf-wallet-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.sf-wallet-title{font-size:15px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#ffd665}.sf-wallet-sub{font-size:13px;color:#b8c8ea;line-height:1.5;max-width:520px}.sf-wallet-actions{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sf-wallet-actions.show{display:grid}
+    .sf-btn-stack{display:grid;gap:10px}.sf-wallet-actions{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.sf-wallet-actions.show{display:grid}.sf-register-cta{min-height:58px;font-size:18px;font-weight:900;letter-spacing:.03em;box-shadow:0 18px 40px rgba(255,214,101,.14)}
     .sf-steps-shell{display:grid;gap:12px;padding:16px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(12,20,42,.94),rgba(7,12,24,.92));box-shadow:0 18px 46px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04)}
     .sf-steps-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
     .sf-steps-title{font-size:15px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8fb3ff}
@@ -100,12 +100,12 @@ function injectStyles() {
     .sf-modal-backdrop.show{display:flex}
     .sf-modal{width:min(100%,560px);border-radius:24px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(13,21,44,.98),rgba(8,12,24,.98));box-shadow:0 26px 70px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.05);padding:18px;display:grid;gap:12px}
     .sf-modal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.sf-modal-step{font-size:12px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8fb3ff}
-    .sf-modal-title{font-size:24px;font-weight:900;color:#fff;line-height:1.1;margin-top:6px}.sf-modal-copy{font-size:14px;color:#c7d6f5;line-height:1.7}.sf-register-cta{min-height:58px;font-size:18px;font-weight:900;letter-spacing:.03em;box-shadow:0 18px 40px rgba(255,214,101,.14)}
+    .sf-modal-title{font-size:24px;font-weight:900;color:#fff;line-height:1.1;margin-top:6px}.sf-modal-copy{font-size:14px;color:#c7d6f5;line-height:1.7}
     .sf-modal-points{display:grid;gap:8px;padding:14px;border-radius:18px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-modal-point{font-size:13px;color:#dfe9ff;line-height:1.55}.sf-modal-point strong{color:#fff}
     .sf-modal-close{appearance:none;border:none;background:rgba(255,255,255,.06);color:#fff;border-radius:12px;width:42px;height:42px;font-size:24px;line-height:1;cursor:pointer}
     .sf-hidden{display:none!important}
-    @media (max-width:640px){.sf-social-grid{grid-template-columns:1fr}.sf-wallet-head{flex-direction:column}.sf-wallet-actions{grid-template-columns:1fr}.sf-step-card{grid-template-columns:52px 1fr;align-items:start}.sf-step-trigger{grid-column:2;justify-self:start}.sf-modal-backdrop{padding:14px}.sf-modal-title{font-size:22px}}
+    @media (max-width:640px){.sf-social-grid{grid-template-columns:1fr}.sf-wallet-actions{grid-template-columns:1fr}.sf-step-card{grid-template-columns:52px 1fr;align-items:start}.sf-step-trigger{grid-column:2;justify-self:start}.sf-modal-backdrop{padding:14px}.sf-modal-title{font-size:22px}}
   `;
   document.head.appendChild(style);
 }
@@ -137,8 +137,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       <div class="sf-steps-shell">
         <div class="sf-steps-head">
           <div>
-            <div class="sf-steps-title">Airdrop access · premium flow</div>
-            <div class="sf-steps-sub">Mobile-first registration. Keep the flow clean: connect wallet, add <strong>X first</strong> and Telegram second, then verify and lock your access.</div>
+            <div class="sf-steps-title">Airdrop access in 3 steps</div>
+            <div class="sf-steps-sub">Cleaner premium flow. Tap <strong>Info</strong> on any step to see the explanation without filling the screen with extra text.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -176,12 +176,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       </div>
 
       <div class="sf-wallet-shell">
-        <div class="sf-wallet-head">
-          <div>
-            <div class="sf-wallet-title">Wallet access</div>
-            <div class="sf-wallet-sub">Connect once, approve the signature and keep the correct wallet active for your airdrop entry.</div>
-          </div>
-        </div>
         <div class="sf-btn-stack">
           <button id="sf-connect" class="btn btn-blue" type="button">Connect Wallet</button>
           <button id="sf-open-phantom" class="btn btn-dark" type="button" style="display:none">Open in Phantom</button>
@@ -285,7 +279,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     2: {
       step: "Step 2",
       title: "Add X + Telegram",
-      copy: "Keep it simple: one X username first, one Telegram username second. No links, no extra text.",
+      copy: "Keep it simple: one X username first and one Telegram username second. No links, no extra text.",
       points: [
         "Enter your <strong>X</strong> username only.",
         "Enter your <strong>Telegram</strong> username only.",
@@ -487,7 +481,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       showWalletActions(true);
       showOpenWalletButton(false);
       setRegisterEnabled(true);
-      setMsg("Wallet verified. Add X first, Telegram second, then pass captcha and join the airdrop.", "ok");
+      setMsg("Wallet verified. Add X + Telegram, then pass captcha and join the airdrop.", "ok");
       updateStepCards();
     } catch (err) {
       resetWalletState("Wallet not connected");
