@@ -640,9 +640,18 @@
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
       .hero-assets-desktop{
-        display:grid;position:absolute;right:28px;top:86px;z-index:3;gap:18px;width:min(240px,18vw)
+        display:flex;
+        position:absolute;
+        right:18px;
+        top:18px;
+        z-index:4;
+        gap:10px;
+        width:auto;
+        align-items:flex-start;
+        justify-content:flex-end;
       }
-      .bottom-nav{display:none}
+      .asset-img-btn img{width:auto; height:46px; max-width:none;}
+      .bottom-nav{display:none !important}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -729,10 +738,10 @@
             </div>
 
             <div class="hero-assets-desktop" aria-label="Main hero assets desktop">
+              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
+              <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join Telegram"></a>
               <button class="asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
               <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
-              <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join Telegram"></a>
-              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
             </div>
           </div>
 
