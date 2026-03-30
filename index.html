@@ -531,6 +531,136 @@
       font-size:14px;
     }
 
+    .tokenomics-premium{
+      position:relative;
+      overflow:hidden;
+      padding:24px;
+      border-radius:32px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 0% 0%,rgba(41,145,255,.16),transparent 26%),
+        radial-gradient(circle at 100% 0%,rgba(255,208,96,.18),transparent 30%),
+        linear-gradient(180deg,rgba(10,19,45,.94),rgba(6,13,31,.98));
+      box-shadow:0 28px 64px rgba(0,0,0,.42);
+      isolation:isolate;
+    }
+    .tokenomics-premium::before{
+      content:"";
+      position:absolute;
+      inset:auto -100px -100px auto;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(41,145,255,.16),transparent 70%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .tokenomics-premium::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,rgba(255,255,255,.03),transparent 40%,rgba(255,208,96,.04));
+      pointer-events:none;
+      z-index:0;
+    }
+    .tokenomics-premium-inner{position:relative;z-index:1;display:grid;gap:18px}
+    .tokenomics-premium-top{display:grid;gap:12px}
+    .tokenomics-premium-top p{color:var(--muted);line-height:1.68;max-width:68ch}
+    .tokenomics-premium-grid{display:grid;gap:12px}
+    .tokenomics-main-card,
+    .tokenomics-side-card,
+    .allocation-card,
+    .round-card,
+    .tokenomics-bar,
+    .tokenomics-note{
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+    .tokenomics-main-card,
+    .tokenomics-side-card,
+    .round-card,
+    .tokenomics-note{
+      border-radius:24px;
+      background:rgba(255,255,255,.04);
+      backdrop-filter:blur(14px);
+    }
+    .tokenomics-main-card{padding:22px}
+    .tokenomics-main-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(46px,10vw,84px);
+      line-height:.9;
+      color:#fff;
+    }
+    .tokenomics-main-card span{
+      display:block;
+      margin-top:8px;
+      color:#c1d2ed;
+      font-weight:800;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+    .tokenomics-main-card p{margin-top:14px;color:var(--muted);line-height:1.65;max-width:42ch}
+    .tokenomics-side-card{padding:20px;display:grid;gap:14px}
+    .tokenomics-side-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:32px;
+      line-height:.94;
+      color:#fff;
+    }
+    .tokenomics-side-card p{color:var(--muted);line-height:1.62}
+    .tokenomics-distribution{display:grid;gap:12px}
+    .allocation-card{
+      position:relative;
+      overflow:hidden;
+      padding:18px;
+      border-radius:22px;
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.035));
+    }
+    .allocation-card::before{
+      content:"";
+      position:absolute;
+      left:0;top:0;bottom:0;
+      width:4px;
+      background:var(--accent,linear-gradient(180deg,var(--blue),var(--gold)));
+      opacity:.95;
+    }
+    .allocation-card-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .allocation-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:34px;
+      line-height:.92;
+    }
+    .allocation-card span{
+      display:block;
+      margin-top:4px;
+      color:#9eb6dc;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .allocation-card p{margin-top:10px;color:var(--muted);line-height:1.6;font-size:14px}
+    .allocation-card.is-liquidity{--accent:linear-gradient(180deg,#2991ff,#68bcff)}
+    .allocation-card.is-community{--accent:linear-gradient(180deg,#ffd060,#ff9d27)}
+    .allocation-card.is-marketing{--accent:linear-gradient(180deg,#7c7cff,#b49cff)}
+    .allocation-card.is-team{--accent:linear-gradient(180deg,#36d6c9,#1fb8ff)}
+    .allocation-card.is-burn{--accent:linear-gradient(180deg,#ff7f6e,#ffb366)}
+    .tokenomics-bar{overflow:hidden;border-radius:999px;height:18px;background:rgba(255,255,255,.04)}
+    .tokenomics-bar-fill{
+      width:100%;height:100%;
+      background:linear-gradient(90deg,#2991ff 0 55%,#ffd060 55% 75%,#7c7cff 75% 85%,#36d6c9 85% 95%,#ff8a6a 95% 100%);
+    }
+    .tokenomics-rounds{display:grid;gap:12px}
+    .round-card{padding:18px}
+    .round-card strong{display:block;font-size:24px;color:#fff}
+    .round-card span{display:block;margin-top:6px;color:#9eb6dc;font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .round-card p{margin-top:8px;color:var(--muted);line-height:1.6;font-size:14px}
+    .tokenomics-note{padding:16px 18px;color:var(--muted);line-height:1.68;font-size:14px}
+
     .module-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
     .module-title .left{display:grid;gap:10px}
     .module-title .left p{color:var(--muted);line-height:1.6}
@@ -620,6 +750,9 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(min-width:860px){
+      .tokenomics-premium-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+      .tokenomics-distribution{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .tokenomics-rounds{grid-template-columns:repeat(2,minmax(0,1fr))}
       body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
       .topbar{padding:0 18px}
       .topbar-inner{position:relative;justify-content:flex-start}
@@ -740,6 +873,72 @@
             </div>
           </div>
 
+          <section class="tokenomics-premium" aria-labelledby="tokenomics-premium-title">
+            <div class="tokenomics-premium-inner">
+              <div class="tokenomics-premium-top">
+                <div class="eyebrow"><span></span> Tokenomics · Premium allocation</div>
+                <h2 id="tokenomics-premium-title">Elegant tokenomics, clear at first glance.</h2>
+                <p>The allocation now lives as a premium web section below the hero, with stronger color hierarchy and cleaner reading. Community stays at 20% total, while Round 1 and Round 2 live inside that community allocation.</p>
+              </div>
+
+              <div class="tokenomics-premium-grid">
+                <div class="tokenomics-main-card">
+                  <strong>1,000,000,000 $FIRU</strong>
+                  <span>Total supply fixed</span>
+                  <p>The foundation stays simple: deep liquidity first, a strong community reserve, clean team and marketing allocations, and a defined burn reserve to keep the structure credible.</p>
+                </div>
+
+                <div class="tokenomics-side-card">
+                  <strong>55% liquidity leads the structure</strong>
+                  <p>The largest share goes to liquidity so the project launches with the strongest visual and market base.</p>
+                  <div class="tokenomics-bar" aria-hidden="true"><div class="tokenomics-bar-fill"></div></div>
+                </div>
+              </div>
+
+              <div class="tokenomics-distribution">
+                <div class="allocation-card is-liquidity">
+                  <div class="allocation-card-head"><strong>55%</strong><span>Liquidity</span></div>
+                  <p>Main market base and launch depth.</p>
+                </div>
+                <div class="allocation-card is-community">
+                  <div class="allocation-card-head"><strong>20%</strong><span>Community</span></div>
+                  <p>Includes both official rounds plus the remaining long-term community reserve.</p>
+                </div>
+                <div class="allocation-card is-marketing">
+                  <div class="allocation-card-head"><strong>10%</strong><span>Marketing</span></div>
+                  <p>Growth campaigns, exposure and strategic promotion.</p>
+                </div>
+                <div class="allocation-card is-team">
+                  <div class="allocation-card-head"><strong>10%</strong><span>Team</span></div>
+                  <p>Core execution, delivery and project continuity.</p>
+                </div>
+                <div class="allocation-card is-burn">
+                  <div class="allocation-card-head"><strong>5%</strong><span>Burn</span></div>
+                  <p>Dedicated burn reserve inside the official allocation model.</p>
+                </div>
+              </div>
+
+              <div class="tokenomics-rounds">
+                <div class="round-card">
+                  <strong>Round 1 · 25,000,000 $FIRU</strong>
+                  <span>2.5% inside community</span>
+                  <p>First dedicated community round inside the 20% allocation.</p>
+                </div>
+                <div class="round-card">
+                  <strong>Round 2 · 25,000,000 $FIRU</strong>
+                  <span>2.5% inside community</span>
+                  <p>Second dedicated community round, also included inside community.</p>
+                </div>
+              </div>
+
+              <div class="tokenomics-note">Community remains <strong>20%</strong> in total: <strong>2.5%</strong> for Round 1, <strong>2.5%</strong> for Round 2, and the remaining <strong>15%</strong> stays outside the rounds for the broader community path.</div>
+
+              <div class="actions">
+                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open full allocation</button>
+              </div>
+            </div>
+          </section>
+
           <div class="metrics-shell">
             <div class="metrics-inner">
               <div class="metrics-top">
@@ -806,20 +1005,18 @@
             </div>
 
             <div class="hybrid-panel">
-              <div class="eyebrow"><span></span> Asset 07 · Tokenomics</div>
-              <h3>Official allocation</h3>
-              <p>Quick view kept text-first for clarity while the final tokenomics asset is refined separately.</p>
+              <div class="eyebrow"><span></span> Allocation logic</div>
+              <h3>Community stays whole.</h3>
+              <p>The premium tokenomics section above now carries the full visual weight, so this panel stays focused on the one thing that matters most: the rounds do not sit outside community.</p>
               <div class="token-chip-grid">
-                <div class="token-chip"><strong>55%</strong><span>Liquidity</span></div>
-                <div class="token-chip"><strong>13%</strong><span>Community core</span></div>
-                <div class="token-chip"><strong>10%</strong><span>Marketing</span></div>
-                <div class="token-chip"><strong>10%</strong><span>Team</span></div>
-                <div class="token-chip"><strong>5%</strong><span>Burn</span></div>
-                <div class="token-chip"><strong>5% / 2%</strong><span>Round 1 / Round 2</span></div>
+                <div class="token-chip"><strong>20%</strong><span>Total community</span></div>
+                <div class="token-chip"><strong>2.5%</strong><span>Round 1</span></div>
+                <div class="token-chip"><strong>2.5%</strong><span>Round 2</span></div>
+                <div class="token-chip"><strong>15%</strong><span>Community outside rounds</span></div>
               </div>
-              <div class="token-footnote">Round 1 and Round 2 are deducted from the community allocation path. Clean headline numbers stay visible here while the full visual asset is completed later.</div>
+              <div class="token-footnote">This keeps the structure cleaner and more credible: 55% Liquidity, 20% Community, 10% Marketing, 10% Team and 5% Burn.</div>
               <div class="actions" style="margin-top:16px">
-                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open full allocation</button>
+                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open allocation details</button>
               </div>
             </div>
           </div>
@@ -928,17 +1125,18 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Clean text-first distribution while the final tokenomics art is refined separately.</p>
+                <p>Premium allocation structure with the official community breakdown already included.</p>
               </div>
             </div>
             <div class="grid-stats">
               <div class="stat-card"><strong>1B</strong><span>Total supply</span></div>
               <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
-              <div class="stat-card"><strong>13%</strong><span>Community core</span></div>
+              <div class="stat-card"><strong>20%</strong><span>Community</span></div>
               <div class="stat-card"><strong>10%</strong><span>Marketing</span></div>
               <div class="stat-card"><strong>10%</strong><span>Team</span></div>
               <div class="stat-card"><strong>5%</strong><span>Burn</span></div>
-              <div class="stat-card"><strong>5% / 2%</strong><span>Round 1 / Round 2</span></div>
+              <div class="stat-card"><strong>2.5% / 2.5%</strong><span>Round 1 / Round 2</span></div>
+              <div class="stat-card"><strong>15%</strong><span>Community outside rounds</span></div>
             </div>
             <div class="actions" style="margin-top:18px">
               <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics details</button>
@@ -1075,9 +1273,11 @@
         <button class="dialog-close" data-close="tokenomicsDialog">✕</button>
       </div>
       <div class="dialog-grid">
-        <div class="dialog-item"><strong>55% Liquidity</strong><span>Core market base.</span></div>
-        <div class="dialog-item"><strong>13% Community core</strong><span>Community allocation after separating dedicated round slices.</span></div>
-        <div class="dialog-item"><strong>5% Round 1 · 2% Round 2</strong><span>Both rounds are deducted from the community path.</span></div>
+        <div class="dialog-item"><strong>55% Liquidity</strong><span>Core launch base and market depth.</span></div>
+        <div class="dialog-item"><strong>20% Community</strong><span>Total community allocation before the internal split.</span></div>
+        <div class="dialog-item"><strong>Round 1 · 25,000,000 $FIRU</strong><span>2.5% inside Community.</span></div>
+        <div class="dialog-item"><strong>Round 2 · 25,000,000 $FIRU</strong><span>2.5% inside Community.</span></div>
+        <div class="dialog-item"><strong>15% Community reserve</strong><span>Remaining community allocation outside the two rounds.</span></div>
         <div class="dialog-item"><strong>10% Marketing</strong><span>Project growth and promotion.</span></div>
         <div class="dialog-item"><strong>10% Team</strong><span>Core execution allocation.</span></div>
         <div class="dialog-item"><strong>5% Burn</strong><span>Fixed burn reserve.</span></div>
