@@ -25,6 +25,10 @@ function injectStyles() {
   style.id = "sf-claim-status-styles";
   style.textContent = `
     .sf-claim-stack{display:grid;gap:14px}
+    .sf-claim-switcher{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .sf-claim-switch{display:inline-flex;align-items:center;justify-content:center;padding:13px 14px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);color:#dce8ff;font-size:13px;font-weight:900;letter-spacing:.02em;cursor:pointer;transition:.18s ease}
+    .sf-claim-switch.active{border-color:rgba(255,216,77,.34);background:linear-gradient(180deg, rgba(255,216,77,.18), rgba(255,216,77,.1));color:#fff;box-shadow:0 0 0 1px rgba(255,216,77,.06) inset}
+    .sf-claim-panel[hidden]{display:none !important}
     .sf-claim-card{
       position:relative;
       overflow:hidden;
@@ -115,7 +119,12 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
   root.innerHTML = `
     <div class="sf-claim-stack">
-      <div class="sf-claim-card" id="sf-airdrop-claim-card">
+      <div class="sf-claim-switcher" aria-label="Claim flows">
+        <button id="sf-claim-tab-airdrop" class="sf-claim-switch active" type="button" aria-pressed="true">Claim Airdrop</button>
+        <button id="sf-claim-tab-round" class="sf-claim-switch" type="button" aria-pressed="false">Claim Round $FIRU</button>
+      </div>
+
+      <div class="sf-claim-card sf-claim-panel" id="sf-airdrop-claim-card" data-claim-panel="airdrop">
         <div class="sf-claim-eyebrow">Claim Airdrop · Premium</div>
         <h3 class="sf-claim-title">Claim Airdrop with the same wallet</h3>
         <p class="sf-claim-subtitle">Connect the same wallet from registration. The page checks status first and unlocks claim only for approved wallets.</p>
@@ -142,7 +151,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
         </div>
       </div>
 
-      <div class="sf-claim-card round-claim" id="sf-round-claim-card">
+      <div class="sf-claim-card round-claim sf-claim-panel" id="sf-round-claim-card" data-claim-panel="round" hidden>
         <div class="sf-claim-eyebrow">Claim Round $FIRU · Testing</div>
         <h3 class="sf-claim-title">Claim Round $FIRU with your buyer wallet</h3>
         <p class="sf-claim-subtitle">Use the same wallet from your round purchase. The page loads your reserved $FIRU position first, then keeps the claim action enabled for testing.</p>
@@ -178,6 +187,25 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
   mountAirdropClaim(root);
   mountRoundClaim(root);
+
+  const airdropTab = root.querySelector("#sf-claim-tab-airdrop");
+  const roundTab = root.querySelector("#sf-claim-tab-round");
+  const airdropPanel = root.querySelector('[data-claim-panel="airdrop"]');
+  const roundPanel = root.querySelector('[data-claim-panel="round"]');
+
+  function setActiveClaimTab(mode = "airdrop") {
+    const isAirdrop = mode === "airdrop";
+    airdropTab.classList.toggle("active", isAirdrop);
+    roundTab.classList.toggle("active", !isAirdrop);
+    airdropTab.setAttribute("aria-pressed", String(isAirdrop));
+    roundTab.setAttribute("aria-pressed", String(!isAirdrop));
+    airdropPanel.hidden = !isAirdrop;
+    roundPanel.hidden = isAirdrop;
+  }
+
+  airdropTab?.addEventListener("click", () => setActiveClaimTab("airdrop"));
+  roundTab?.addEventListener("click", () => setActiveClaimTab("round"));
+  setActiveClaimTab("airdrop");
 }
 
 function mountAirdropClaim(root) {
