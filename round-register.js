@@ -35,7 +35,7 @@ function injectStyles() {
   style.textContent = `
     .sf-round-form{display:grid;gap:12px;position:relative;z-index:1}
     .sf-checkout-cluster{display:grid;gap:10px;padding:14px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.07)}
-    .sf-checkout-cluster .sf-row,.sf-checkout-cluster .sf-row-tight,.sf-checkout-cluster .sf-price-grid,.sf-checkout-cluster .sf-summary{margin:0}
+    .sf-checkout-cluster .sf-row,.sf-checkout-cluster .sf-row-tight,.sf-checkout-cluster .sf-price-grid,.sf-checkout-cluster .sf-summary,.sf-checkout-cluster .sf-round-actions{margin:0}
     .sf-round-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px}
     .sf-round-note strong{color:#fff}
     .sf-round-note.ok{color:#8bf0b2}
@@ -57,7 +57,7 @@ function injectStyles() {
     .sf-input,.sf-select{width:100%;padding:14px;border:none;background:transparent;color:#fff;outline:none;font:inherit}
     .sf-input-shell:focus-within,.sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
-    .sf-round-actions{display:grid;gap:10px}
+    .sf-round-actions{display:grid;gap:10px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
     .sf-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .sf-wallet-tools{display:none;grid-template-columns:1fr 1fr;gap:10px}
     .sf-wallet-tools.show{display:grid}
@@ -271,20 +271,7 @@ export function mountRoundRegister(selector) {
           </div>
         </section>
 
-        <div class="sf-round-actions">
-          <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
-          <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
-          <div class="sf-wallet-tools" id="sfWalletTools">
-            <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
-            <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
-          </div>
-          <div class="sf-action-grid">
-            <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
-            <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
-          </div>
-          <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
-        </div>
-
+'
         <div class="sf-row-tight">
           <label class="sf-field">
             <span class="sf-label">Payment token</span>
@@ -341,6 +328,20 @@ export function mountRoundRegister(selector) {
             </div>
             <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
           </label>
+        </div>
+
+        <div class="sf-round-actions">
+          <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
+          <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
+          <div class="sf-wallet-tools" id="sfWalletTools">
+            <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
+            <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+          </div>
+          <div class="sf-action-grid">
+            <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
+            <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+          </div>
+          <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
         </div>
 
         <div class="sf-summary">
