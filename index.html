@@ -73,13 +73,13 @@
     .topbar-inner{width:100%;max-width:none;margin:0 auto;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1301}
     .float-btn,.buy-float{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center}
     .float-btn{
-      width:56px;height:56px;border-radius:16px;background:rgba(8,14,32,.72);
+      width:52px;height:52px;border-radius:16px;background:rgba(8,14,32,.76);
       border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 26px rgba(0,0,0,.28);backdrop-filter:blur(10px);
       position:relative;z-index:1410; margin-left:2px;
     }
-    .float-btn span{display:block;width:18px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
+    .float-btn span{display:block;width:17px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
     .float-btn span::before,.float-btn span::after{
-      content:"";position:absolute;left:0;width:18px;height:2px;background:#c9ddff;border-radius:99px
+      content:"";position:absolute;left:0;width:17px;height:2px;background:#c9ddff;border-radius:99px
     }
     .float-btn span::before{top:-6px}
     .float-btn span::after{top:6px}
@@ -97,12 +97,19 @@
       padding:86px 16px 26px;transform:translateX(-100%);transition:transform .24s ease
     }
     .drawer.open .drawer-panel{transform:translateX(0)}
+    .drawer-section-title{
+      display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:0 4px;color:#eef5ff;font-size:12px;font-weight:900;
+      letter-spacing:.16em;text-transform:uppercase;opacity:.88
+    }
+    .drawer-section-title span{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--gold),#ff9f43);box-shadow:0 0 0 4px rgba(255,202,72,.10)}
     .drawer-links{display:grid;gap:10px}
     .drawer-links button{
-      display:flex;align-items:center;justify-content:flex-start;width:100%;padding:15px 16px;border-radius:16px;
-      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf5ff;font-weight:800;
-      letter-spacing:.05em;text-transform:uppercase
+      display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:100%;padding:14px 16px 13px;border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);color:#edf5ff;
+      letter-spacing:.05em;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,.18)
     }
+    .drawer-links button strong{font-size:15px;font-weight:900;line-height:1.05}
+    .drawer-links button span{margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:none;color:#9fb2d1}
 
     .app{padding:0 0 188px}
     .view{display:none}
@@ -839,13 +846,14 @@
 
   <aside class="drawer" id="drawer">
     <div class="drawer-panel">
+      <div class="drawer-section-title"><span></span> Mobile menu</div>
       <nav class="drawer-links">
-        <button type="button" data-view-btn="home">Home</button>
-        <button type="button" data-view-btn="register">Register</button>
-        <button type="button" data-view-btn="buy">Buy</button>
-        <button type="button" data-view-btn="claim">Claim</button>
-        <button type="button" data-view-btn="info">Info</button>
-        <button type="button" data-open="pathDialog">Full Path</button>
+        <button type="button" data-view-btn="home"><strong>Home</strong><span>Hero and main overview</span></button>
+        <button type="button" data-view-btn="register"><strong>Register Airdrop</strong><span>Official wallet registration</span></button>
+        <button type="button" data-view-btn="buy"><strong>Buy $FIRU</strong><span>Official round access</span></button>
+        <button type="button" data-view-btn="claim"><strong>Claim</strong><span>Approved wallets after launch</span></button>
+        <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
+        <button type="button" data-open="pathDialog"><strong>Full Path</strong><span>Register, buy and claim flow</span></button>
       </nav>
     </div>
   </aside>
