@@ -34,6 +34,8 @@ function injectStyles() {
   style.id = "sf-round-styles";
   style.textContent = `
     .sf-round-form{display:grid;gap:12px;position:relative;z-index:1}
+    .sf-checkout-cluster{display:grid;gap:10px;padding:14px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.07)}
+    .sf-checkout-cluster .sf-row,.sf-checkout-cluster .sf-row-tight,.sf-checkout-cluster .sf-price-grid,.sf-checkout-cluster .sf-summary{margin:0}
     .sf-round-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px}
     .sf-round-note strong{color:#fff}
     .sf-round-note.ok{color:#8bf0b2}
@@ -164,7 +166,7 @@ function injectStyles() {
     .sf-history-link:hover{background:rgba(255,255,255,.08)}
     .sf-history-meta{margin-top:12px;color:#9fb5df;font-size:12px;line-height:1.55}
     body.sf-modal-open{overflow:hidden}
-    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary{padding:12px;border-radius:18px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary,.sf-checkout-cluster{padding:12px;border-radius:18px}.sf-checkout-cluster{gap:8px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -231,99 +233,107 @@ export function mountRoundRegister(selector) {
 
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
-      <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
-        <div class="sf-steps-head">
-          <div>
-            <strong>Buy in 5 guided steps</strong>
-            <span>The buy form stays first. These cards keep showing what is done, what is active, and what still needs attention.</span>
-          </div>
-          <div class="sf-steps-kicker">Live progress</div>
+      <div class="sf-checkout-cluster">
+        <div class="sf-row-tight">
+          <label class="sf-field">
+            <span class="sf-label">Payment token</span>
+            <div class="sf-input-shell">
+              <select class="sf-select" id="sfTokenSelect">
+                <option value="SOL">SOL</option>
+                <option value="USDT">USDT</option>
+                <option value="USDC">USDC</option>
+              </select>
+            </div>
+            <span class="sf-help">Accepted on Solana only. Order: SOL, USDT, USDC.</span>
+          </label>
+
+          <label class="sf-field">
+            <span class="sf-label">Amount</span>
+            <div class="sf-input-shell">
+              <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
+            </div>
+            <span class="sf-help" id="sfAmountHint">Use this for live estimate. Automatic buy is only available for SOL right now.</span><span class="sf-help" id="sfAmountRange">Loading limits...</span><span class="sf-help" id="sfAmountValidation"></span>
+          </label>
+
+          <label class="sf-field">
+            <span class="sf-label">Round</span>
+            <div class="sf-input-shell">
+              <select class="sf-select" id="sfRoundSelect">
+                <option value="round1">Round 1</option>
+                <option value="round2">Round 2</option>
+              </select>
+            </div>
+            <span class="sf-help" id="sfRoundMeta">Loading round configuration...</span>
+          </label>
         </div>
-        <div class="sf-steps-grid">
-          <article class="sf-step" data-step="1">
-            <div class="sf-step-num">1</div>
-            <strong>Connect wallet</strong>
-            <span>Use Phantom and keep the correct Solana wallet active.</span>
-          </article>
-          <article class="sf-step" data-step="2">
-            <div class="sf-step-num">2</div>
-            <strong>Choose token</strong>
-            <span>Select SOL, USDT or USDC on Solana before continuing.</span>
-          </article>
-          <article class="sf-step" data-step="3">
-            <div class="sf-step-num">3</div>
-            <strong>Enter amount</strong>
-            <span>Type a valid amount inside the active round limits.</span>
-          </article>
-          <article class="sf-step" data-step="4">
-            <div class="sf-step-num">4</div>
-            <strong>Confirm payment</strong>
-            <span>Approve Phantom for SOL, or submit the confirmed TX hash.</span>
-          </article>
-          <article class="sf-step" data-step="5">
-            <div class="sf-step-num">5</div>
-            <strong>Receipt saved</strong>
-            <span>Your verified payment locks the reserved $FIRU allocation.</span>
-          </article>
+
+        <div class="sf-price-grid">
+          <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
+          <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
+          <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">-</span></div>
+          <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
         </div>
-      </section>
 
-      <div class="sf-row-tight">
-        <label class="sf-field">
-          <span class="sf-label">Payment token</span>
-          <div class="sf-input-shell">
-            <select class="sf-select" id="sfTokenSelect">
-              <option value="SOL">SOL</option>
-              <option value="USDT">USDT</option>
-              <option value="USDC">USDC</option>
-            </select>
+        <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
+          <div class="sf-steps-head">
+            <div>
+              <strong>Buy in 5 guided steps</strong>
+              <span>The buy form stays first. These cards keep showing what is done, what is active, and what still needs attention.</span>
+            </div>
+            <div class="sf-steps-kicker">Live progress</div>
           </div>
-          <span class="sf-help">Accepted on Solana only. Order: SOL, USDT, USDC.</span>
-        </label>
+          <div class="sf-steps-grid">
+            <article class="sf-step" data-step="1">
+              <div class="sf-step-num">1</div>
+              <strong>Connect wallet</strong>
+              <span>Use Phantom and keep the correct Solana wallet active.</span>
+            </article>
+            <article class="sf-step" data-step="2">
+              <div class="sf-step-num">2</div>
+              <strong>Choose token</strong>
+              <span>Select SOL, USDT or USDC on Solana before continuing.</span>
+            </article>
+            <article class="sf-step" data-step="3">
+              <div class="sf-step-num">3</div>
+              <strong>Enter amount</strong>
+              <span>Type a valid amount inside the active round limits.</span>
+            </article>
+            <article class="sf-step" data-step="4">
+              <div class="sf-step-num">4</div>
+              <strong>Confirm payment</strong>
+              <span>Approve Phantom for SOL, or submit the confirmed TX hash.</span>
+            </article>
+            <article class="sf-step" data-step="5">
+              <div class="sf-step-num">5</div>
+              <strong>Receipt saved</strong>
+              <span>Your verified payment locks the reserved $FIRU allocation.</span>
+            </article>
+          </div>
+        </section>
 
-        <label class="sf-field">
-          <span class="sf-label">Amount</span>
-          <div class="sf-input-shell">
-            <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
-          </div>
-          <span class="sf-help" id="sfAmountHint">Use this for live estimate. Automatic buy is only available for SOL right now.</span><span class="sf-help" id="sfAmountRange">Loading limits...</span><span class="sf-help" id="sfAmountValidation"></span>
-        </label>
+        <div class="sf-row">
+          <label class="sf-field">
+            <span class="sf-label">Transaction hash</span>
+            <div class="sf-input-shell">
+              <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the confirmed Solana transaction hash" />
+            </div>
+            <span class="sf-help">For USDT and USDC this step is required. Without submitting the hash, the payment is not automatically registered.</span>
+          </label>
+          <label class="sf-field">
+            <span class="sf-label">Destination wallet / token account</span>
+            <div class="sf-copy-shell">
+              <input class="sf-input" id="sfDestinationAddress" readonly />
+              <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY ADDRESS</button>
+            </div>
+            <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
+          </label>
+        </div>
 
-        <label class="sf-field">
-          <span class="sf-label">Round</span>
-          <div class="sf-input-shell">
-            <select class="sf-select" id="sfRoundSelect">
-              <option value="round1">Round 1</option>
-              <option value="round2">Round 2</option>
-            </select>
-          </div>
-          <span class="sf-help" id="sfRoundMeta">Loading round configuration...</span>
-        </label>
-      </div>
-
-      <div class="sf-price-grid">
-        <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
-        <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
-        <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">-</span></div>
-        <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
-      </div>
-
-      <div class="sf-row">
-        <label class="sf-field">
-          <span class="sf-label">Transaction hash</span>
-          <div class="sf-input-shell">
-            <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the confirmed Solana transaction hash" />
-          </div>
-          <span class="sf-help">For USDT and USDC this step is required. Without submitting the hash, the payment is not automatically registered.</span>
-        </label>
-        <label class="sf-field">
-          <span class="sf-label">Destination wallet / token account</span>
-          <div class="sf-copy-shell">
-            <input class="sf-input" id="sfDestinationAddress" readonly />
-            <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY ADDRESS</button>
-          </div>
-          <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
-        </label>
+        <div class="sf-summary">
+          <div class="sf-mini"><strong>Automatic SOL</strong><span>Connect Phantom and confirm the payment for the fastest buy path.</span></div>
+          <div class="sf-mini"><strong>Stablecoin flow</strong><span>For USDT or USDC, send on Solana and paste the confirmed TX hash.</span></div>
+          <div class="sf-mini"><strong>Live allocation</strong><span>Your $FIRU estimate updates from the active round and verified payment.</span></div>
+        </div>
       </div>
 
       <div class="sf-stable-guide" id="sfStableGuide">
@@ -337,12 +347,6 @@ export function mountRoundRegister(selector) {
       <div class="sf-hash-warning" id="sfHashWarning">
         <div><strong>USDT / USDC important:</strong> after sending funds, paste the confirmed transaction hash to complete and register the payment.</div>
         <div>Payments sent without submitting the transaction hash will not be automatically processed.</div>
-      </div>
-
-      <div class="sf-summary">
-        <div class="sf-mini"><strong>Automatic SOL</strong><span>Connect Phantom and confirm the payment for the fastest buy path.</span></div>
-        <div class="sf-mini"><strong>Stablecoin flow</strong><span>For USDT or USDC, send on Solana and paste the confirmed TX hash.</span></div>
-        <div class="sf-mini"><strong>Live allocation</strong><span>Your $FIRU estimate updates from the active round and verified payment.</span></div>
       </div>
 
       <div class="sf-round-actions">
