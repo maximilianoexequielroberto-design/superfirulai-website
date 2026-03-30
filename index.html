@@ -1276,6 +1276,24 @@
 
       <section class="view" data-view="claim">
         <div class="stack">
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Step 3</div>
+                <h2>Claim after launch</h2>
+                <p>Come back with the same wallet after the official launch announcement. The page will tell you if that wallet is pending, approved, rejected or already claimed.</p>
+              </div>
+              <div class="pill-nav">
+                <button type="button" data-open="claimDialog">Claim info</button>
+                <button type="button" data-open="socialDialog">Official channels</button>
+              </div>
+            </div>
+            <div class="grid-3">
+              <div class="mini-card"><strong>Approved only</strong><span>Only approved wallets can claim from the official page.</span></div>
+              <div class="mini-card"><strong>After launch</strong><span>Claim starts only after the official launch announcement on X and Telegram.</span></div>
+              <div class="mini-card"><strong>Status first</strong><span>Connect wallet and the page will show pending, approved, rejected or claimed.</span></div>
+            </div>
+          </div>
           <div class="card"><div id="airdrop-claim-status"></div></div>
         </div>
       </section>
@@ -1285,8 +1303,26 @@
           <div class="card">
             <div class="module-title">
               <div class="left">
+                <div class="eyebrow"><span></span> Info · Premium map</div>
+                <h2>Official SuperFirulai paths</h2>
+                <p>One clean mobile map for airdrop access, round access, and both claim flows.</p>
+              </div>
+            </div>
+            <div class="roadmap-grid">
+              <div class="mini-card"><strong>Airdrop Path</strong><span>Register Airdrop first, then return later for Claim Airdrop with the same approved wallet.</span></div>
+              <div class="mini-card"><strong>Round Path</strong><span>Buy $FIRU when live, then use Claim Round $FIRU later if round delivery is enabled.</span></div>
+              <div class="mini-card"><strong>Same wallet rule</strong><span>Use one personal Solana wallet across register, buy and both claim flows.</span></div>
+            </div>
+            <div class="actions" style="margin-top:18px">
+              <button class="btn btn-dark" type="button" data-open="pathDialog">Open full path</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
-                <h2>Official allocation</h2>
+                <h3>Official allocation</h3>
                 <p>Premium allocation structure with the official community breakdown already included.</p>
               </div>
             </div>
@@ -1308,9 +1344,9 @@
           <div class="card">
             <div class="module-title">
               <div class="left">
-                <div class="eyebrow"><span></span> Official only</div>
-                <h3>Official channels</h3>
-                <p>Keep launch reminders, BUY announcements and claim updates in one place.</p>
+                <div class="eyebrow"><span></span> Official channels</div>
+                <h3>X first, Telegram second</h3>
+                <p>Keep launch reminders, buy updates, Claim Airdrop and Claim Round $FIRU announcements in one place.</p>
               </div>
             </div>
             <div class="actions">
@@ -1323,17 +1359,16 @@
           <div class="card">
             <div class="module-title">
               <div class="left">
-                <div class="eyebrow"><span></span> Roadmap</div>
-                <h3>One clean order</h3>
-                <p>The project moves in three simple phases from register to final claim.</p>
+                <div class="eyebrow"><span></span> Live views</div>
+                <h3>What each screen is for</h3>
+                <p>Each view stays focused on one action so the user always knows what comes next.</p>
               </div>
             </div>
             <div class="roadmap-grid">
-              <div class="mini-card"><strong>Phase 1 · Register</strong><span>Community growth, wallet registrations and approval review.</span></div>
-              <div class="mini-card"><strong>Phase 2 · Buy</strong><span>Official launch on Solana and round opening access.</span></div>
-              <div class="mini-card"><strong>Phase 3 · Claim</strong><span>Approved wallets return with the same wallet and claim.</span></div>
+              <div class="mini-card"><strong>Register Airdrop</strong><span>Submit wallet, X and Telegram, pass review, keep the same wallet.</span></div>
+              <div class="mini-card"><strong>Claim Airdrop</strong><span>Approved wallets only, with testing enabled now and official claim later.</span></div>
+              <div class="mini-card"><strong>Claim Round $FIRU</strong><span>Reserved for later use if round delivery is enabled after the buy flow.</span></div>
             </div>
-            <div class="actions" style="margin-top:18px"><button class="btn btn-dark" type="button" data-open="pathDialog">Full path</button></div>
           </div>
         </div>
       </section>
@@ -1485,15 +1520,16 @@
       <div class="eyebrow"><span></span> Full path</div>
       <div class="dialog-head">
         <div>
-          <h3>One clean order</h3>
-          <p>The site is organized in the same sequence users should follow from the first click to the last step.</p>
+          <h3>Airdrop path + round path</h3>
+          <p>The project now shows both official flows clearly: the airdrop claim path and the round claim path.</p>
         </div>
         <button class="dialog-close" data-close="pathDialog">✕</button>
       </div>
       <div class="dialog-grid">
-        <div class="dialog-item"><strong>1 · Register</strong><span>Connect one wallet and enter review.</span></div>
-        <div class="dialog-item"><strong>2 · Buy</strong><span>When the round opens, fund wallet and save your reserved allocation.</span></div>
-        <div class="dialog-item"><strong>3 · Claim</strong><span>After launch, return with the same approved wallet.</span></div>
+        <div class="dialog-item"><strong>1 · Register Airdrop</strong><span>Connect one wallet, submit X first, then Telegram, and enter review.</span></div>
+        <div class="dialog-item"><strong>2 · Claim Airdrop</strong><span>Approved wallets return with the same wallet once claim testing or launch claim is active.</span></div>
+        <div class="dialog-item"><strong>3 · Buy $FIRU</strong><span>When the round opens, fund the wallet and save the reserved allocation inside BUY.</span></div>
+        <div class="dialog-item"><strong>4 · Claim Round $FIRU</strong><span>Use later only if the project enables round delivery through a separate claim flow.</span></div>
       </div>
     </div>
   </dialog>
