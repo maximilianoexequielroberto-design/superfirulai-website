@@ -591,7 +591,7 @@
     .desktop-top-nav{display:none}
     .hero-assets-desktop{display:none}
     .asset-img-btn{display:block; background:transparent; border:0; padding:0; line-height:0; cursor:pointer}
-    .asset-img-btn img{display:block; width:100%; height:auto; filter:drop-shadow(0 10px 18px rgba(0,0,0,.30));}
+    .asset-img-btn img{display:block; width:auto; height:54px; max-width:none; filter:drop-shadow(0 10px 18px rgba(0,0,0,.30));}
 
     dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
     dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
@@ -640,18 +640,9 @@
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
       .hero-assets-desktop{
-        display:flex;
-        position:absolute;
-        right:18px;
-        top:18px;
-        z-index:4;
-        gap:10px;
-        width:auto;
-        align-items:flex-start;
-        justify-content:flex-end;
+        display:flex;position:absolute;right:20px;top:18px;z-index:3;gap:14px;align-items:center;justify-content:flex-end;
       }
-      .asset-img-btn img{width:auto; height:46px; max-width:none;}
-      .bottom-nav{display:none !important}
+      .bottom-nav{display:none}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -662,6 +653,11 @@
 
     @media(min-width:860px) and (max-aspect-ratio:3/2){
       .hero-desktop-image{background-size:cover;}
+    }
+
+    @media (min-width: 1360px){
+      .hero-assets-desktop{right:26px;top:16px;gap:16px}
+      .asset-img-btn img{height:62px}
     }
   </style>
 </head>
