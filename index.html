@@ -521,8 +521,24 @@
       line-height:.92;
     }
     .metric-card .metric-supply-value{font-size:24px;line-height:1.02;letter-spacing:-.03em;word-break:normal;overflow-wrap:normal;white-space:normal}
-    .metrics-grid--compact .metric-card--wide{grid-column:1 / -1;min-height:118px}
-    .metrics-grid--compact .metric-card--wide .metric-supply-value{font-size:22px;line-height:1.02;letter-spacing:-.03em}
+    .metrics-grid--compact .metric-card--wide{grid-column:1 / -1;min-height:132px}
+    .metrics-grid--compact .metric-card--wide .metric-supply-value{font-size:21px;line-height:1.02;letter-spacing:-.03em}
+    .metric-card.is-supply{
+      background:
+        radial-gradient(circle at 100% 0%,rgba(74,247,255,.18),transparent 34%),
+        radial-gradient(circle at 0% 100%,rgba(41,145,255,.16),transparent 30%),
+        linear-gradient(135deg,rgba(10,22,58,.97),rgba(7,15,38,.98));
+      border-color:rgba(124,240,255,.16);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 18px 40px rgba(3,10,26,.32);
+    }
+    .metric-card.is-supply::before{
+      background:
+        radial-gradient(circle at 100% 0%,rgba(74,247,255,.13),transparent 34%),
+        radial-gradient(circle at 0% 100%,rgba(41,145,255,.13),transparent 30%);
+    }
+    .metric-card.is-supply::after{width:5px;top:16px;bottom:16px;background:linear-gradient(180deg,#55e8ff,#38cfff)}
+    .metric-card.is-supply .metric-supply-value{text-shadow:0 6px 20px rgba(76,230,255,.10)}
+    .metric-card.is-supply .metric-note{max-width:24ch}
     .metric-card span{
       display:block;
       position:relative;
@@ -887,7 +903,7 @@
       .metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
       .metric-card{min-height:124px;padding:18px 16px 18px 18px}
       .metric-card strong{font-size:40px}
-      .metric-card .metric-supply-value{font-size:24px;line-height:1.02}
+      .metric-card .metric-supply-value{font-size:23px;line-height:1.02}
       .metric-card span{font-size:12px;letter-spacing:.1em}
       .metric-note{font-size:12px;max-width:16ch}
     }
