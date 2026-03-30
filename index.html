@@ -587,12 +587,6 @@
     .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .mnav.active{background:rgba(255,255,255,.08);color:#fff}
 
-
-    .desktop-top-nav{display:none}
-    .hero-assets-desktop{display:none}
-    .asset-img-btn{display:block; background:transparent; border:0; padding:0; line-height:0; cursor:pointer}
-    .asset-img-btn img{display:block; width:auto; height:54px; max-width:none; filter:drop-shadow(0 10px 18px rgba(0,0,0,.30));}
-
     dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
     dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
     .dialog-shell{
@@ -621,16 +615,12 @@
     @media(min-width:860px){
       body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
       .topbar{padding:0 22px}
-      .topbar-inner{position:relative;justify-content:flex-start}
-      .float-btn{margin-left:0}
-      .buy-float{display:none !important}
-      .desktop-top-nav{
-        display:flex;align-items:center;gap:28px;position:absolute;left:50%;top:22px;transform:translateX(-50%);z-index:5
-      }
-      .desktop-top-nav button,.desktop-top-nav a{
-        color:#eef5ff;font-size:15px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;opacity:.95
-      }
-      .desktop-top-nav button:hover,.desktop-top-nav a:hover{color:#fff;text-shadow:0 0 16px rgba(255,208,96,.45)}
+      .bottom-nav{display:none}
+      .buy-float{display:none}
+      .float-btn{width:46px;height:46px;margin-left:-8px}
+      .float-btn span{width:19px}
+      .desktop-top-nav,.hero-assets-desktop{display:flex}
+      .hero-assets{display:none}
       .app{padding:0 0 120px}
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -638,11 +628,11 @@
       .hero-stage{height:100vh;min-height:720px}
       .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
-      .hero-assets{display:none}
-      .hero-assets-desktop{
-        display:flex;position:absolute;right:20px;top:2px;z-index:3;gap:16px;align-items:center;justify-content:flex-end;
-      }
-      .bottom-nav{display:none}
+      .hero-assets{width:min(calc(100% - 180px),1040px);grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;bottom:110px}
+      .hero-asset{min-height:92px;padding:16px 18px;grid-template-columns:50px minmax(0,1fr) 18px}
+      .hero-asset-icon{width:50px;height:50px;border-radius:16px}
+      .hero-asset-copy strong{font-size:28px}
+      .hero-asset-copy span{font-size:11px}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -654,17 +644,6 @@
     @media(min-width:860px) and (max-aspect-ratio:3/2){
       .hero-desktop-image{background-size:cover;}
     }
-
-    @media (min-width: 1360px){
-      .topbar{top:8px;padding:0 8px}
-      .topbar-inner{width:min(calc(100% - 0px),var(--max));padding-left:0}
-      .float-btn{width:52px;height:52px;border-radius:17px;margin-left:-6px}
-      .float-btn span,.float-btn span::before,.float-btn span::after{width:20px;height:2.5px}
-      .float-btn span::before{top:-7px}
-      .float-btn span::after{top:7px}
-      .hero-assets-desktop{right:20px;top:2px;gap:16px}
-      .asset-img-btn img{height:74px}
-    }
   </style>
 </head>
 <body>
@@ -672,12 +651,26 @@
     <div class="topbar-inner">
       <button class="float-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
       <nav class="desktop-top-nav" aria-label="Desktop navigation">
-        <button type="button" data-view-btn="home">Home</button>
-        <button type="button" data-view-btn="register">Register</button>
-        <button type="button" data-view-btn="buy">Buy</button>
-        <button type="button" data-view-btn="claim">Claim</button>
-        <button type="button" data-view-btn="info">Info</button>
+        <button type="button" data-view-btn="home">HOME</button>
+        <button type="button" data-view-btn="register">REGISTER</button>
+        <button type="button" data-view-btn="buy">BUY</button>
+        <button type="button" data-view-btn="claim">CLAIM</button>
+        <button type="button" data-view-btn="info">INFO</button>
       </nav>
+      <div class="hero-assets-desktop" aria-label="Desktop hero assets">
+        <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="X">
+          <img src="./x-button.png" alt="X" />
+        </a>
+        <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Telegram">
+          <img src="./join-telegram.png" alt="Join Telegram" />
+        </a>
+        <button class="asset-img-btn" type="button" data-view-btn="register" aria-label="Register Airdrop">
+          <img src="./register-airdrop.png" alt="Register Airdrop" />
+        </button>
+        <button class="asset-img-btn" type="button" data-view-btn="buy" aria-label="Buy FIRU">
+          <img src="./buy-firu.png" alt="Buy FIRU" />
+        </button>
+      </div>
       <button class="buy-float" id="buyFloat" type="button">BUY</button>
     </div>
   </header>
@@ -735,13 +728,6 @@
                 <span class="hero-asset-copy"><strong>X</strong><span>Launch alerts</span></span>
                 <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </a>
-            </div>
-
-            <div class="hero-assets-desktop" aria-label="Main hero assets desktop">
-              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
-              <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join Telegram"></a>
-              <button class="asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
-              <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
             </div>
           </div>
 
