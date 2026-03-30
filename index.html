@@ -640,7 +640,7 @@
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
       .hero-assets-desktop{
-        display:flex;position:absolute;right:20px;top:18px;z-index:3;gap:14px;align-items:center;justify-content:flex-end;
+        display:flex;position:absolute;right:20px;top:2px;z-index:3;gap:16px;align-items:center;justify-content:flex-end;
       }
       .bottom-nav{display:none}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -656,8 +656,14 @@
     }
 
     @media (min-width: 1360px){
+      .topbar{top:8px;padding:0 8px}
+      .topbar-inner{width:min(calc(100% - 0px),var(--max));padding-left:0}
+      .float-btn{width:52px;height:52px;border-radius:17px;margin-left:-6px}
+      .float-btn span,.float-btn span::before,.float-btn span::after{width:20px;height:2.5px}
+      .float-btn span::before{top:-7px}
+      .float-btn span::after{top:7px}
       .hero-assets-desktop{right:20px;top:2px;gap:16px}
-      .asset-img-btn img{height:165px}
+      .asset-img-btn img{height:74px}
     }
   </style>
 </head>
@@ -671,8 +677,6 @@
         <button type="button" data-view-btn="buy">Buy</button>
         <button type="button" data-view-btn="claim">Claim</button>
         <button type="button" data-view-btn="info">Info</button>
-        <a href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
-        <a href="https://x.com/superfirulai" target="_blank" rel="noopener">X</a>
       </nav>
       <button class="buy-float" id="buyFloat" type="button">BUY</button>
     </div>
