@@ -862,6 +862,20 @@
     .dialog-item strong{display:block;font-size:18px}
     .dialog-item span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .buy-premium-shell{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(10,18,44,.99),rgba(4,10,25,.99));border-color:rgba(255,215,110,.14);box-shadow:0 30px 70px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,249,220,.06)}
+    .buy-premium-shell::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 14%,rgba(255,190,66,.18),transparent 28%),radial-gradient(circle at 14% 100%,rgba(64,165,255,.12),transparent 28%);pointer-events:none}
+    .buy-premium-shell>*{position:relative;z-index:1}
+    .buy-premium-hero{display:grid;gap:14px;margin-top:18px;padding:18px;border-radius:24px;background:linear-gradient(135deg,rgba(255,196,78,.12),rgba(255,255,255,.03) 38%,rgba(49,110,255,.08));border:1px solid rgba(255,255,255,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+    .buy-premium-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .buy-kpi{padding:14px;border-radius:18px;background:rgba(4,11,28,.52);border:1px solid rgba(255,255,255,.08)}
+    .buy-kpi strong{display:block;font-family:"Barlow Condensed",sans-serif;font-size:28px;line-height:.95;color:#fff}
+    .buy-kpi span{display:block;margin-top:6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#c9d4f3}
+    .buy-premium-grid{display:grid;gap:12px;margin-top:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .buy-premium-item{padding:16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .buy-premium-item strong{display:block;font-size:18px}
+    .buy-premium-item span{display:block;margin-top:8px;color:var(--muted);line-height:1.55}
+    .buy-premium-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .buy-premium-actions button{min-width:160px}
 
     @media(max-width:640px){
       .tokenomics-premium{padding:18px 16px 52px;border-radius:28px;margin-bottom:34px}
@@ -873,6 +887,12 @@
       .tokenomics-main-card strong{font-size:clamp(36px,10vw,48px)}
       .tokenomics-main-card p{font-size:13.5px;max-width:24ch}
       .tokenomics-side-card{padding:16px;gap:10px}
+      .dialog-head h3{font-size:34px}
+      .buy-premium-hero{padding:16px}
+      .buy-premium-kpis{grid-template-columns:1fr}
+      .buy-kpi strong{font-size:24px}
+      .buy-premium-grid{grid-template-columns:1fr}
+      .buy-premium-item{padding:14px}
       .tokenomics-side-card strong{font-size:20px;max-width:9ch}
       .tokenomics-side-card p{font-size:13.5px;line-height:1.42;max-width:21ch}
       .tokenomics-bar{height:15px}
@@ -1395,19 +1415,31 @@
   </dialog>
 
   <dialog id="buyInfoDialog">
-    <div class="dialog-shell">
-      <div class="eyebrow"><span></span> BUY</div>
+    <div class="dialog-shell buy-premium-shell">
+      <div class="eyebrow"><span></span> BUY $FIRU</div>
       <div class="dialog-head">
         <div>
-          <h3>BUY details</h3>
-          <p>When the round opens, fund your wallet, confirm the payment, and let the app save the reserved $FIRU allocation automatically.</p>
+          <h3>Premium buy flow</h3>
+          <p>Open the official round flow, fund with supported Solana assets, and keep the whole purchase path clean, visible and saved inside the app.</p>
         </div>
         <button class="dialog-close" data-close="buyInfoDialog">✕</button>
       </div>
-      <div class="dialog-grid">
-        <div class="dialog-item"><strong>Fund wallet first</strong><span>Keep SOL, USDT or USDC ready on Solana before opening buy.</span></div>
-        <div class="dialog-item"><strong>Use official destination only</strong><span>Always use the address shown by the app and never third-party screenshots.</span></div>
-        <div class="dialog-item"><strong>Receipt and history</strong><span>Your purchase history and receipt stay inside the BUY view.</span></div>
+      <div class="buy-premium-hero">
+        <div class="buy-premium-kpis">
+          <div class="buy-kpi"><strong>SOL · USDT · USDC</strong><span>Supported payment assets</span></div>
+          <div class="buy-kpi"><strong>Official flow only</strong><span>No third-party screenshots</span></div>
+          <div class="buy-kpi"><strong>Receipt saved</strong><span>History stays in BUY</span></div>
+        </div>
+      </div>
+      <div class="buy-premium-grid">
+        <div class="buy-premium-item"><strong>1 · Fund wallet first</strong><span>Keep enough SOL, USDT or USDC on Solana before you open the round flow.</span></div>
+        <div class="buy-premium-item"><strong>2 · Use the app destination</strong><span>Send only to the official destination shown by the app inside the BUY view.</span></div>
+        <div class="buy-premium-item"><strong>3 · Keep the same wallet</strong><span>Use the same wallet later for register, buy history and claim after launch.</span></div>
+        <div class="buy-premium-item"><strong>4 · Save your reserved allocation</strong><span>After confirmation, the app stores the purchase and keeps the receipt visible in your BUY history.</span></div>
+      </div>
+      <div class="buy-premium-actions">
+        <button class="btn btn-blue" type="button" data-view-btn="buy">Open BUY view</button>
+        <button class="btn btn-dark" type="button" data-open="pathDialog">See full path</button>
       </div>
     </div>
   </dialog>
