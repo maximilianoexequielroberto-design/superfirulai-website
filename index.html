@@ -436,19 +436,71 @@
     .metrics-shell{
       position:relative;
       overflow:hidden;
+      padding:22px;
+      border-radius:34px;
+      background:
+        linear-gradient(180deg,rgba(12,19,43,.90),rgba(7,14,33,.95)),
+        radial-gradient(circle at 0% 0%,rgba(68,161,255,.16),transparent 28%),
+        radial-gradient(circle at 100% 100%,rgba(255,200,74,.12),transparent 34%);
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:0 26px 80px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05);
+      isolation:isolate;
     }
     .metrics-shell::before{
       content:"";
       position:absolute;
       inset:0;
       background:
-        radial-gradient(circle at 8% 0%,rgba(41,145,255,.10),transparent 20%),
-        radial-gradient(circle at 100% 100%,rgba(255,208,96,.10),transparent 24%);
+        radial-gradient(circle at 10% 0%,rgba(41,145,255,.13),transparent 24%),
+        radial-gradient(circle at 100% 100%,rgba(255,208,96,.12),transparent 26%),
+        linear-gradient(90deg,rgba(38,122,255,.11),transparent 26%,transparent 74%,rgba(38,122,255,.09));
       pointer-events:none;
+      z-index:0;
     }
-    .metrics-inner{position:relative;z-index:1;display:grid;gap:16px}
-    .metrics-top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap}
-    .metrics-top p{color:var(--muted);line-height:1.65;max-width:68ch}
+    .metrics-shell::after{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.05);
+      pointer-events:none;
+      z-index:0;
+    }
+    .metrics-inner{position:relative;z-index:1;display:grid;gap:18px}
+    .metrics-top{display:grid;gap:12px}
+    .metrics-top .left{display:grid;gap:10px}
+    .metrics-top h3{font-size:44px;line-height:.94;max-width:9ch}
+    .metrics-top p{color:var(--muted);line-height:1.65;max-width:34ch;font-size:15px}
+    .metrics-highlight{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:12px;
+    }
+    .metrics-feature,.metrics-mini-stack{display:grid;gap:12px}
+    .metric-hero-card,.metric-mini-card,.metric-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:24px;
+      background:linear-gradient(180deg,rgba(16,24,52,.90),rgba(10,17,40,.94));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .metric-hero-card{padding:20px;min-height:154px}
+    .metric-hero-card::before,.metric-mini-card::before,.metric-card::before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(circle at 100% 0%,rgba(255,196,58,.10),transparent 30%), radial-gradient(circle at 0% 100%,rgba(51,144,255,.10),transparent 28%);
+    }
+    .metric-kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#eaf1ff}
+    .metric-kicker::before{content:"";width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 5px rgba(255,208,96,.10)}
+    .metric-hero-main{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:14px}
+    .metric-hero-value{font-family:"Barlow Condensed",sans-serif;font-size:64px;line-height:.88;letter-spacing:-.03em}
+    .metric-hero-main strong:last-child{font-size:14px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d7e6ff;text-align:right;max-width:10ch}
+    .metric-hero-card p{margin-top:10px;color:var(--muted);line-height:1.55;max-width:30ch;font-size:14px}
+    .metrics-mini-stack{grid-template-rows:repeat(2,minmax(0,1fr))}
+    .metric-mini-card{padding:18px;display:grid;align-content:space-between;min-height:71px}
+    .metric-mini-value{font-family:"Barlow Condensed",sans-serif;font-size:42px;line-height:.9}
+    .metric-mini-label{margin-top:4px;color:#d7e6ff;font-size:13px;font-weight:900;letter-spacing:.10em;text-transform:uppercase}
+    .metric-mini-note{margin-top:6px;color:var(--muted-2);font-size:12px;line-height:1.45}
     .metrics-grid{
       display:grid;
       gap:12px;
@@ -456,31 +508,41 @@
     }
     .metric-card{
       padding:18px;
-      border-radius:22px;
-      background:rgba(255,255,255,.045);
-      border:1px solid rgba(255,255,255,.08);
+      min-height:132px;
     }
+    .metric-card::after{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:999px;background:var(--metric-accent,linear-gradient(180deg,var(--gold),var(--gold2)))}
     .metric-card strong{
       display:block;
+      position:relative;
+      z-index:1;
       font-family:"Barlow Condensed",sans-serif;
-      font-size:42px;
-      line-height:.95;
+      font-size:44px;
+      line-height:.92;
     }
     .metric-card span{
       display:block;
-      margin-top:6px;
-      color:#95afd9;
+      position:relative;
+      z-index:1;
+      margin-top:8px;
+      color:#d7e6ff;
       font-size:13px;
-      font-weight:800;
-      letter-spacing:.09em;
+      font-weight:900;
+      letter-spacing:.11em;
       text-transform:uppercase;
     }
     .metric-note{
-      margin-top:2px;
+      position:relative;
+      z-index:1;
+      margin-top:8px;
       color:var(--muted-2);
       font-size:13px;
-      line-height:1.55;
+      line-height:1.5;
+      max-width:20ch;
     }
+    .metric-card.is-holders{--metric-accent:linear-gradient(180deg,#3da1ff,#6fc5ff)}
+    .metric-card.is-telegram{--metric-accent:linear-gradient(180deg,#f0c85d,#ffd56a)}
+    .metric-card.is-x{--metric-accent:linear-gradient(180deg,#8a7dff,#b29aff)}
+    .metric-card.is-supply{--metric-accent:linear-gradient(180deg,#3fd9da,#82f0ea)}
 
     .hybrid-grid{display:grid;gap:14px}
     .hybrid-panel{
@@ -806,6 +868,24 @@
       .actions .btn{width:min(100%,250px);justify-content:center;min-height:52px;border-radius:18px;font-size:16px;padding-inline:20px}
     }
 
+    @media(max-width:859px){
+      .metrics-shell{padding:20px 18px;border-radius:30px}
+      .metrics-top h3{font-size:34px;max-width:8ch}
+      .metrics-top p{font-size:14px;max-width:32ch}
+      .metrics-highlight{grid-template-columns:1fr;gap:12px}
+      .metric-hero-card{min-height:auto;padding:18px}
+      .metric-hero-value{font-size:58px}
+      .metric-hero-main strong:last-child{font-size:12px;max-width:9ch}
+      .metrics-mini-stack{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
+      .metric-mini-card{min-height:116px}
+      .metric-mini-value{font-size:36px}
+      .metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+      .metric-card{min-height:124px;padding:18px 16px 18px 18px}
+      .metric-card strong{font-size:40px}
+      .metric-card span{font-size:12px;letter-spacing:.1em}
+      .metric-note{font-size:12px;max-width:16ch}
+    }
+
     @media(min-width:860px){
       .tokenomics-premium-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .tokenomics-distribution{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -834,6 +914,7 @@
         display:flex;position:absolute;right:20px;top:2px;z-index:1400;gap:16px;align-items:flex-start;pointer-events:none
       }
       .bottom-nav{display:none}
+      .metrics-highlight{grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr)}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -1001,28 +1082,57 @@
               <div class="metrics-top">
                 <div class="left">
                   <div class="eyebrow"><span></span> Community pulse</div>
-                  <h3>Live metrics band</h3>
+                  <h3>Premium live momentum.</h3>
                 </div>
-                <p>Fast visibility for holders, Telegram, X and total supply. Values load from the site API and fall back automatically if a live source is unavailable.</p>
+                <p>Fast visibility for holders, Telegram, X and total supply, now presented as a stronger premium section with cleaner hierarchy for mobile.</p>
+              </div>
+
+              <div class="metrics-highlight">
+                <div class="metrics-feature">
+                  <div class="metric-hero-card">
+                    <div class="metric-kicker">Live holders signal</div>
+                    <div class="metric-hero-main">
+                      <strong class="metric-hero-value" id="metricHolders">2,418</strong>
+                      <strong>Official holders</strong>
+                    </div>
+                    <p>The strongest community indicator sits first, with a more premium live-counter presentation.</p>
+                  </div>
+                </div>
+                <div class="metrics-mini-stack">
+                  <div class="metric-mini-card">
+                    <div>
+                      <strong class="metric-mini-value" id="metricTelegram">24</strong>
+                      <div class="metric-mini-label">Telegram</div>
+                    </div>
+                    <div class="metric-mini-note">Official community chat.</div>
+                  </div>
+                  <div class="metric-mini-card">
+                    <div>
+                      <strong class="metric-mini-value" id="metricX">61</strong>
+                      <div class="metric-mini-label">X reach</div>
+                    </div>
+                    <div class="metric-mini-note">Launch visibility signal.</div>
+                  </div>
+                </div>
               </div>
 
               <div class="metrics-grid" id="metricsGrid">
-                <div class="metric-card">
-                  <strong id="metricHolders">2,418</strong>
+                <div class="metric-card is-holders">
+                  <strong id="metricHoldersSecondary">2,418</strong>
                   <span>Holders</span>
-                  <div class="metric-note">Asset 06 ready for live counter styling.</div>
+                  <div class="metric-note">Primary community count ready for live styling.</div>
                 </div>
-                <div class="metric-card">
-                  <strong id="metricTelegram">24</strong>
+                <div class="metric-card is-telegram">
+                  <strong id="metricTelegramSecondary">24</strong>
                   <span>Telegram members</span>
-                  <div class="metric-note">Official community chat growth.</div>
+                  <div class="metric-note">Official group growth and retention.</div>
                 </div>
-                <div class="metric-card">
-                  <strong id="metricX">61</strong>
+                <div class="metric-card is-x">
+                  <strong id="metricXSecondary">61</strong>
                   <span>X followers</span>
-                  <div class="metric-note">Official account momentum.</div>
+                  <div class="metric-note">Official launch reach and momentum.</div>
                 </div>
-                <div class="metric-card">
+                <div class="metric-card is-supply">
                   <strong id="metricSupply">1B</strong>
                   <span>Total supply</span>
                   <div class="metric-note">Fixed supply target for $FIRU.</div>
@@ -1507,8 +1617,11 @@
 
     async function loadCommunityStats() {
       const holdersEl = document.getElementById("metricHolders");
+      const holdersElSecondary = document.getElementById("metricHoldersSecondary");
       const telegramEl = document.getElementById("metricTelegram");
+      const telegramElSecondary = document.getElementById("metricTelegramSecondary");
       const xEl = document.getElementById("metricX");
+      const xElSecondary = document.getElementById("metricXSecondary");
       const supplyEl = document.getElementById("metricSupply");
 
       try {
@@ -1516,14 +1629,20 @@
         if (!response.ok) throw new Error("community stats request failed");
         const data = await response.json();
 
-        if (holdersEl && Number.isFinite(Number(data.holders))) {
-          holdersEl.textContent = Number(data.holders).toLocaleString("en-US");
+        if (Number.isFinite(Number(data.holders))) {
+          const holdersValue = Number(data.holders).toLocaleString("en-US");
+          if (holdersEl) holdersEl.textContent = holdersValue;
+          if (holdersElSecondary) holdersElSecondary.textContent = holdersValue;
         }
-        if (telegramEl && Number.isFinite(Number(data.telegramMembers))) {
-          telegramEl.textContent = Number(data.telegramMembers).toLocaleString("en-US");
+        if (Number.isFinite(Number(data.telegramMembers))) {
+          const telegramValue = Number(data.telegramMembers).toLocaleString("en-US");
+          if (telegramEl) telegramEl.textContent = telegramValue;
+          if (telegramElSecondary) telegramElSecondary.textContent = telegramValue;
         }
-        if (xEl && Number.isFinite(Number(data.xFollowers))) {
-          xEl.textContent = Number(data.xFollowers).toLocaleString("en-US");
+        if (Number.isFinite(Number(data.xFollowers))) {
+          const xValue = Number(data.xFollowers).toLocaleString("en-US");
+          if (xEl) xEl.textContent = xValue;
+          if (xElSecondary) xElSecondary.textContent = xValue;
         }
         if (supplyEl && Number.isFinite(Number(data.totalSupply))) {
           supplyEl.textContent = formatCompactNumber(Number(data.totalSupply));
