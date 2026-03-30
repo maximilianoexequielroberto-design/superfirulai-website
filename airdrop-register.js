@@ -207,7 +207,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
       <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Access</button>
-      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, add Telegram + X, then verify and join.</div>
+      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, add X + Telegram, then verify and join.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
         <div class="sf-confirm-copy">Your wallet and social handles were verified successfully. Your airdrop access is now locked in.</div>
