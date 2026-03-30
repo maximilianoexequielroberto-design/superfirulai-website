@@ -234,6 +234,57 @@ export function mountRoundRegister(selector) {
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
       <div class="sf-checkout-cluster">
+        <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
+          <div class="sf-steps-head">
+            <div>
+              <strong>Buy in 5 guided steps</strong>
+              <span>Connect wallet first, then choose token, amount and confirm the official Solana buy flow.</span>
+            </div>
+            <div class="sf-steps-kicker">Live progress</div>
+          </div>
+          <div class="sf-steps-grid">
+            <article class="sf-step" data-step="1">
+              <div class="sf-step-num">1</div>
+              <strong>Connect wallet</strong>
+              <span>Use Phantom and keep the correct Solana wallet active.</span>
+            </article>
+            <article class="sf-step" data-step="2">
+              <div class="sf-step-num">2</div>
+              <strong>Choose token</strong>
+              <span>Select SOL, USDT or USDC on Solana before continuing.</span>
+            </article>
+            <article class="sf-step" data-step="3">
+              <div class="sf-step-num">3</div>
+              <strong>Enter amount</strong>
+              <span>Type a valid amount inside the active round limits.</span>
+            </article>
+            <article class="sf-step" data-step="4">
+              <div class="sf-step-num">4</div>
+              <strong>Confirm payment</strong>
+              <span>Approve Phantom for SOL, or submit the confirmed TX hash.</span>
+            </article>
+            <article class="sf-step" data-step="5">
+              <div class="sf-step-num">5</div>
+              <strong>Receipt saved</strong>
+              <span>Your verified payment locks the reserved $FIRU allocation.</span>
+            </article>
+          </div>
+        </section>
+
+        <div class="sf-round-actions">
+          <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
+          <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
+          <div class="sf-wallet-tools" id="sfWalletTools">
+            <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
+            <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+          </div>
+          <div class="sf-action-grid">
+            <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
+            <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+          </div>
+          <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
+        </div>
+
         <div class="sf-row-tight">
           <label class="sf-field">
             <span class="sf-label">Payment token</span>
@@ -274,43 +325,6 @@ export function mountRoundRegister(selector) {
           <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
         </div>
 
-        <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
-          <div class="sf-steps-head">
-            <div>
-              <strong>Buy in 5 guided steps</strong>
-              <span>The buy form stays first. These cards keep showing what is done, what is active, and what still needs attention.</span>
-            </div>
-            <div class="sf-steps-kicker">Live progress</div>
-          </div>
-          <div class="sf-steps-grid">
-            <article class="sf-step" data-step="1">
-              <div class="sf-step-num">1</div>
-              <strong>Connect wallet</strong>
-              <span>Use Phantom and keep the correct Solana wallet active.</span>
-            </article>
-            <article class="sf-step" data-step="2">
-              <div class="sf-step-num">2</div>
-              <strong>Choose token</strong>
-              <span>Select SOL, USDT or USDC on Solana before continuing.</span>
-            </article>
-            <article class="sf-step" data-step="3">
-              <div class="sf-step-num">3</div>
-              <strong>Enter amount</strong>
-              <span>Type a valid amount inside the active round limits.</span>
-            </article>
-            <article class="sf-step" data-step="4">
-              <div class="sf-step-num">4</div>
-              <strong>Confirm payment</strong>
-              <span>Approve Phantom for SOL, or submit the confirmed TX hash.</span>
-            </article>
-            <article class="sf-step" data-step="5">
-              <div class="sf-step-num">5</div>
-              <strong>Receipt saved</strong>
-              <span>Your verified payment locks the reserved $FIRU allocation.</span>
-            </article>
-          </div>
-        </section>
-
         <div class="sf-row">
           <label class="sf-field">
             <span class="sf-label">Transaction hash</span>
@@ -334,33 +348,19 @@ export function mountRoundRegister(selector) {
           <div class="sf-mini"><strong>Stablecoin flow</strong><span>For USDT or USDC, send on Solana and paste the confirmed TX hash.</span></div>
           <div class="sf-mini"><strong>Live allocation</strong><span>Your $FIRU estimate updates from the active round and verified payment.</span></div>
         </div>
-      </div>
 
-      <div class="sf-stable-guide" id="sfStableGuide">
-        <div><strong>How it works:</strong></div>
-        <div>1. Copy the official destination address.</div>
-        <div>2. Send funds on Solana.</div>
-        <div>3. Paste the confirmed transaction hash.</div>
-        <div>4. Register the payment to lock your allocation.</div>
-      </div>
-
-      <div class="sf-hash-warning" id="sfHashWarning">
-        <div><strong>USDT / USDC important:</strong> after sending funds, paste the confirmed transaction hash to complete and register the payment.</div>
-        <div>Payments sent without submitting the transaction hash will not be automatically processed.</div>
-      </div>
-
-      <div class="sf-round-actions">
-        <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
-        <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
-        <div class="sf-wallet-tools" id="sfWalletTools">
-          <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
-          <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+        <div class="sf-stable-guide" id="sfStableGuide">
+          <div><strong>How it works:</strong></div>
+          <div>1. Copy the official destination address.</div>
+          <div>2. Send funds on Solana.</div>
+          <div>3. Paste the confirmed transaction hash.</div>
+          <div>4. Register the payment to lock your allocation.</div>
         </div>
-        <div class="sf-action-grid">
-          <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
-          <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+
+        <div class="sf-hash-warning" id="sfHashWarning">
+          <div><strong>USDT / USDC important:</strong> after sending funds, paste the confirmed transaction hash to complete and register the payment.</div>
+          <div>Payments sent without submitting the transaction hash will not be automatically processed.</div>
         </div>
-        <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
       </div>
     </form>
 
