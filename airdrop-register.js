@@ -63,11 +63,11 @@ function injectStyles() {
   const style = document.createElement("style");
   style.id = "sf-airdrop-styles";
   style.textContent = `
-    .sf-airdrop-form{display:grid;gap:14px}
-    .sf-wallet-shell{display:grid;gap:12px}
-    .sf-wallet-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px}
+    .sf-airdrop-form{display:grid;gap:14px;padding:2px 0}
+    .sf-wallet-shell{display:grid;gap:12px;padding:16px;border-radius:22px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(12,20,42,.94),rgba(7,12,24,.92));box-shadow:0 18px 46px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.04)}
+    .sf-wallet-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
     .sf-wallet-note strong{color:#fff}.sf-wallet-note.ok{color:#8bf0b2}.sf-wallet-note.warn{color:#ffd87d}.sf-wallet-note.error{color:#ffb2b2}.sf-wallet-note.info{color:#9ec4ff}
-    .sf-field{display:grid;gap:8px}.sf-label{font-size:13px;font-weight:800;letter-spacing:.02em;color:#fff}
+    .sf-field{display:grid;gap:8px;padding:14px 14px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.02))}.sf-label{font-size:13px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#dfe9ff}
     .sf-handle-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden;transition:border-color .18s ease, box-shadow .18s ease}
     .sf-prefix{flex:0 0 auto;padding:0 14px;height:52px;display:inline-flex;align-items:center;justify-content:center;color:#8fb3ff;font-weight:800;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
     .sf-input{width:100%;padding:14px;border:none;background:transparent;color:#fff;outline:none;font:inherit}
@@ -137,8 +137,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       <div class="sf-steps-shell">
         <div class="sf-steps-head">
           <div>
-            <div class="sf-steps-title">Airdrop in 3 simple steps</div>
-            <div class="sf-steps-sub">Cleaner flow. Tap <strong>Info</strong> on any step to see the explanation in a small window instead of loading the whole page with text.</div>
+            <div class="sf-steps-title">Airdrop access in 3 steps</div>
+            <div class="sf-steps-sub">Cleaner premium flow. Tap <strong>Info</strong> on any step for a quick explanation without overloading the screen.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -156,7 +156,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
             <div class="sf-step-index">2</div>
             <div>
               <div class="sf-step-title-row">
-                <div class="sf-step-title">Add Telegram + X</div>
+                <div class="sf-step-title">Add X + Telegram</div>
                 <div class="sf-step-state">Pending</div>
               </div>
             </div>
@@ -188,26 +188,26 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       </div>
 
       <div class="sf-field">
-        <label class="sf-label" for="sf-telegram">Telegram</label>
-        <div id="sf-telegram-shell" class="sf-handle-shell">
-          <span class="sf-prefix">t.me/</span>
-          <input id="sf-telegram" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
-        </div>
-        <div class="sf-help">Only the username, without @ or t.me/</div>
-      </div>
-
-      <div class="sf-field">
         <label class="sf-label" for="sf-x">X</label>
         <div id="sf-x-shell" class="sf-handle-shell">
           <span class="sf-prefix">@</span>
-          <input id="sf-x" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
+          <input id="sf-x" class="sf-input" placeholder="username" autocomplete="off" autocapitalize="off" spellcheck="false" />
         </div>
         <div class="sf-help">Only the username, without @ or x.com/</div>
       </div>
 
+      <div class="sf-field">
+        <label class="sf-label" for="sf-telegram">Telegram</label>
+        <div id="sf-telegram-shell" class="sf-handle-shell">
+          <span class="sf-prefix">t.me/</span>
+          <input id="sf-telegram" class="sf-input" placeholder="username" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        </div>
+        <div class="sf-help">Only the username, without @ or t.me/</div>
+      </div>
+
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
-      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Access</button>
-      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, add Telegram + X, then verify and join.</div>
+      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Airdrop Access</button>
+      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, add X + Telegram, then verify and join.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
         <div class="sf-confirm-copy">Your wallet and social handles were verified successfully. Your airdrop access is now locked in.</div>
@@ -276,8 +276,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     },
     2: {
       step: "Step 2",
-      title: "Add Telegram + X",
-      copy: "Keep it simple: one Telegram username and one X username. No links, no extra text.",
+      title: "Add X + Telegram",
+      copy: "Keep it simple: one X username and one Telegram username. No links, no extra text.",
       points: [
         "Enter your <strong>Telegram</strong> username only.",
         "Enter your <strong>X</strong> username only.",
@@ -290,7 +290,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       copy: "The final step is quick: pass the captcha and submit your verified entry.",
       points: [
         "Complete the <strong>captcha</strong>.",
-        "Tap <strong>Register Access</strong>.",
+        "Tap <strong>Register Airdrop Access</strong>.",
         "Wait for the confirmation card that says your access is locked in."
       ]
     }
@@ -479,7 +479,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       showWalletActions(true);
       showOpenWalletButton(false);
       setRegisterEnabled(true);
-      setMsg("Wallet verified. Add Telegram + X, then pass captcha and join the airdrop.", "ok");
+      setMsg("Wallet verified. Add X + Telegram, then pass captcha and join the airdrop.", "ok");
       updateStepCards();
     } catch (err) {
       resetWalletState("Wallet not connected");
@@ -515,7 +515,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       const x = xEl.value;
       const turnstileToken = getTurnstileToken(root);
       if (!telegram || !x) {
-        setMissingStep(2, "Complete Step 2: add both Telegram and X usernames.");
+        setMissingStep(2, "Complete Step 2: add both X and Telegram usernames.");
         return;
       }
       if (!turnstileToken) {
@@ -561,7 +561,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       isSubmitting = false;
       registered = false;
       registerBtn.disabled = false;
-      registerBtn.textContent = "Register Access";
+      registerBtn.textContent = "Register Airdrop Access";
       updateStepCards();
       setMsg(err?.message || "Error registering the airdrop.", "error");
     }
