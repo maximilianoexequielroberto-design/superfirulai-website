@@ -751,16 +751,29 @@
     .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
 
     @media(max-width:640px){
-      .tokenomics-premium{padding:20px 18px 28px;border-radius:28px;margin-bottom:20px}
+      .tokenomics-premium{padding:18px 16px 52px;border-radius:28px;margin-bottom:34px}
       .tokenomics-premium-inner{gap:14px}
-      .tokenomics-premium-top h2{font-size:clamp(42px,10.5vw,56px);line-height:.92;max-width:9ch}
-      .tokenomics-premium-top p{max-width:30ch}
-      .tokenomics-main-card strong{font-size:clamp(40px,11vw,56px)}
-      .tokenomics-side-card strong{font-size:26px;max-width:9ch}
-      .allocation-card-head{align-items:flex-start}
-      .allocation-card span{padding-top:8px;text-align:right;max-width:8ch}
-      .tokenomics-note{margin-top:2px}
-      .tokenomics-actions .btn{width:100%;justify-content:center;min-height:56px;border-radius:18px}
+      .tokenomics-premium-top{gap:8px}
+      .tokenomics-premium-top h2{font-size:clamp(31px,8.2vw,40px);line-height:.96;max-width:7.2ch}
+      .tokenomics-premium-top p{max-width:29ch;font-size:13.5px;line-height:1.5}
+      .tokenomics-main-card{padding:18px}
+      .tokenomics-main-card strong{font-size:clamp(36px,10vw,48px)}
+      .tokenomics-main-card p{font-size:13.5px;max-width:24ch}
+      .tokenomics-side-card{padding:16px;gap:10px}
+      .tokenomics-side-card strong{font-size:20px;max-width:9ch}
+      .tokenomics-side-card p{font-size:13.5px;line-height:1.42;max-width:21ch}
+      .tokenomics-bar{height:15px}
+      .allocation-card{padding:15px 16px 16px}
+      .allocation-card-head{align-items:flex-start;gap:12px}
+      .allocation-card strong{font-size:30px}
+      .allocation-card span{padding-top:7px;text-align:right;max-width:8.8ch;white-space:normal;font-size:10.5px;letter-spacing:.07em;line-height:1.08;flex:0 0 auto}
+      .allocation-card p{font-size:13.5px;max-width:16ch}
+      .round-card{padding:17px}
+      .round-card strong{font-size:19px;line-height:1.12}
+      .round-card span{font-size:10.5px}
+      .round-card p{font-size:13.5px;max-width:18ch}
+      .tokenomics-note{margin-top:2px;font-size:13.5px;line-height:1.5;padding:15px 15px 16px}
+      .actions .btn{width:min(100%,250px);justify-content:center;min-height:52px;border-radius:18px;font-size:16px;padding-inline:20px}
     }
 
     @media(min-width:860px){
@@ -892,19 +905,19 @@
               <div class="tokenomics-premium-top">
                 <div class="eyebrow"><span></span> Tokenomics · Premium allocation</div>
                 <h2 id="tokenomics-premium-title">Premium tokenomics, clear at a glance.</h2>
-                <p>A cleaner premium section, built for mobile first. Community stays at 20% total, with Round 1 and Round 2 living inside that allocation.</p>
+                <p>A cleaner premium section for mobile first reading. Community stays at 20% total, with Round 1 and Round 2 inside that allocation.</p>
               </div>
 
               <div class="tokenomics-premium-grid">
                 <div class="tokenomics-main-card">
                   <strong>1,000,000,000 $FIRU</strong>
                   <span>Total supply fixed</span>
-                  <p>Deep liquidity first, then community, team, marketing and a defined burn reserve.</p>
+                  <p>Deep liquidity first, then community, team, marketing and burn.</p>
                 </div>
 
                 <div class="tokenomics-side-card">
                   <strong>55% liquidity leads the structure</strong>
-                  <p>Liquidity leads the structure from day one.</p>
+                  <p>Liquidity leads from day one.</p>
                   <div class="tokenomics-bar" aria-hidden="true"><div class="tokenomics-bar-fill"></div></div>
                 </div>
               </div>
