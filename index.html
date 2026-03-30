@@ -70,7 +70,7 @@
     .container{width:min(calc(100% - 28px),var(--max));margin:0 auto}
 
     .topbar{position:fixed;top:12px;left:0;right:0;z-index:1000;padding:0 12px;pointer-events:none}
-    .topbar-inner{width:min(calc(100% - 0px),var(--max));margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+    .topbar-inner{width:min(calc(100% - 0px),var(--max));margin:0 auto;display:flex;align-items:center;justify-content:flex-start;gap:14px}
     .float-btn,.buy-float{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center}
     .float-btn{
       width:46px;height:46px;border-radius:16px;background:rgba(8,14,32,.62);
@@ -87,6 +87,13 @@
       background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;
       font-weight:900;font-size:18px;letter-spacing:.04em;box-shadow:0 18px 40px rgba(255,160,0,.34)
     }
+    .desktop-top-nav{display:none;pointer-events:auto;align-items:center;gap:10px;margin-left:auto}
+    .desktop-top-nav button,.desktop-top-nav a{
+      display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 16px;border-radius:16px;
+      background:rgba(8,14,32,.68);border:1px solid rgba(255,255,255,.10);box-shadow:0 10px 26px rgba(0,0,0,.28);
+      backdrop-filter:blur(10px);color:#edf5ff;font-weight:900;font-size:13px;letter-spacing:.08em;text-transform:uppercase
+    }
+    .desktop-top-nav button:hover,.desktop-top-nav a:hover{border-color:rgba(255,208,96,.42);color:#fff}
 
     .drawer{position:fixed;inset:0;z-index:999;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
@@ -245,28 +252,87 @@
     }
     .hero-asset{
       position:relative;
-      display:block;
-      padding:0;
-      border:none;
-      background:transparent;
-      box-shadow:none;
-      border-radius:24px;
-      overflow:visible;
-      cursor:pointer;
-      transition:transform .18s ease, filter .18s ease;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:42px minmax(0,1fr) 16px;
+      align-items:center;
+      gap:10px;
+      min-height:74px;
+      padding:12px 14px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg,rgba(8,17,38,.78),rgba(5,12,28,.88));
+      box-shadow:0 20px 40px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.03);
+      backdrop-filter:blur(14px);
+      color:#f5f8ff;
+      text-align:left;
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
+    }
+    .hero-asset::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg,rgba(255,208,96,.12),transparent 46%);
+      pointer-events:none;
     }
     .hero-asset:hover{
       transform:translateY(-2px);
-      filter:drop-shadow(0 14px 28px rgba(0,0,0,.34));
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 26px 54px rgba(0,0,0,.40);
     }
-    .hero-asset img{
+    .hero-asset-icon{
+      position:relative;
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,rgba(255,208,96,.22),rgba(255,157,39,.10));
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .hero-asset-icon svg{
+      width:20px;
+      height:20px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      color:#ffe9ae;
+    }
+    .hero-asset-copy{position:relative; min-width:0;}
+    .hero-asset-copy strong{
       display:block;
-      width:100%;
-      height:auto;
-      object-fit:contain;
-      pointer-events:none;
-      user-select:none;
-      filter:drop-shadow(0 12px 26px rgba(0,0,0,.28));
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:24px;
+      line-height:.92;
+      letter-spacing:-.01em;
+      color:#fff;
+    }
+    .hero-asset-copy span{
+      display:block;
+      margin-top:4px;
+      font-size:11px;
+      line-height:1.25;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#b8c9e7;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .hero-asset-arrow{
+      position:relative;
+      font-size:16px;
+      color:#ffe9ae;
+      opacity:.9;
+      text-align:right;
+    }
+    .hero-asset.is-x .hero-asset-icon,
+    .hero-asset.is-buy .hero-asset-icon{
+      background:linear-gradient(135deg,rgba(42,146,255,.16),rgba(255,208,96,.10));
     }
 
     .home-quick-shell{
@@ -556,16 +622,23 @@
     @media(min-width:860px){
       body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
       .topbar{padding:0 22px}
-      .app{padding:0 0 120px}
+      .topbar-inner{justify-content:flex-start}
+      .desktop-top-nav{display:flex}
+      .buy-float{display:none}
+      .app{padding:0 0 40px}
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
       .hero-stage{height:100vh;min-height:720px}
       .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
-      .hero-assets{width:min(calc(100% - 180px),1040px);grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;bottom:110px}
-      .hero-asset{min-height:auto}
+      .hero-assets{left:auto;right:28px;top:90px;bottom:auto;transform:none;width:min(420px,30vw);grid-template-columns:1fr;gap:12px}
+      .hero-asset{min-height:82px;padding:14px 16px;grid-template-columns:50px minmax(0,1fr) 18px;background:linear-gradient(180deg,rgba(8,17,38,.52),rgba(5,12,28,.72))}
+      .hero-asset-icon{width:50px;height:50px;border-radius:16px}
+      .hero-asset-copy strong{font-size:22px}
+      .hero-asset-copy span{font-size:11px}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .bottom-nav{display:none}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -582,6 +655,15 @@
   <header class="topbar">
     <div class="topbar-inner">
       <button class="float-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
+      <nav class="desktop-top-nav" aria-label="Desktop navigation">
+        <button type="button" data-view-btn="home">Home</button>
+        <button type="button" data-view-btn="register">Register</button>
+        <button type="button" data-view-btn="buy">Buy</button>
+        <button type="button" data-view-btn="claim">Claim</button>
+        <button type="button" data-view-btn="info">Info</button>
+        <a href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram</a>
+        <a href="https://x.com/superfirulai" target="_blank" rel="noopener">X</a>
+      </nav>
       <button class="buy-float" id="buyFloat" type="button">BUY</button>
     </div>
   </header>
@@ -608,20 +690,36 @@
             <div class="hero-mobile-image" aria-hidden="true"></div>
 
             <div class="hero-assets" aria-label="Main hero assets">
-              <button class="hero-asset is-register" type="button" data-view-btn="register" aria-label="Register Airdrop">
-                <img src="./register-airdrop.png" alt="Register Airdrop" loading="eager" decoding="async" />
+              <button class="hero-asset is-register" type="button" data-view-btn="register">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M7 7h10v10H7z" opacity=".28"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Register</strong><span>Airdrop access</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </button>
 
-              <button class="hero-asset is-buy" type="button" data-view-btn="buy" aria-label="Buy $FIRU">
-                <img src="./buy-firu.png" alt="Buy $FIRU" loading="eager" decoding="async" />
+              <button class="hero-asset is-buy" type="button" data-view-btn="buy">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M7 16V9"></path><path d="M12 16V5"></path><path d="M17 16v-7"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Buy $FIRU</strong><span>Official round</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </button>
 
-              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram">
-                <img src="./join-telegram.png" alt="Join Telegram" loading="eager" decoding="async" />
+              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M21 5L3 11l7 2 2 6 9-14z"></path><path d="M10 13l11-8"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Telegram</strong><span>Official community</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </a>
 
-              <a class="hero-asset is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="X">
-                <img src="./x-button.png" alt="X" loading="eager" decoding="async" />
+              <a class="hero-asset is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 4l16 16"></path><path d="M20 4L4 20"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>X</strong><span>Launch alerts</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </a>
             </div>
           </div>
@@ -633,7 +731,7 @@
                   <div class="eyebrow"><span></span> Community pulse</div>
                   <h3>Live metrics band</h3>
                 </div>
-                <img src="./holders-counter.png" alt="Holders Counter" style="display:block;width:min(100%,320px);height:auto;margin-left:auto;filter:drop-shadow(0 14px 28px rgba(0,0,0,.28));" loading="lazy" decoding="async" />
+                <p>Fast visibility for holders, Telegram, X and total supply. Values load from the site API and fall back automatically if a live source is unavailable.</p>
               </div>
 
               <div class="metrics-grid" id="metricsGrid">
@@ -692,17 +790,18 @@
             </div>
 
             <div class="hybrid-panel">
-              <div class="eyebrow"><span></span> Tokenomics</div>
+              <div class="eyebrow"><span></span> Asset 07 · Tokenomics</div>
               <h3>Official allocation</h3>
-              <p>Clean text-first distribution aligned with the live web version.</p>
+              <p>Quick view kept text-first for clarity while the final tokenomics asset is refined separately.</p>
               <div class="token-chip-grid">
                 <div class="token-chip"><strong>55%</strong><span>Liquidity</span></div>
-                <div class="token-chip"><strong>20%</strong><span>Community</span></div>
+                <div class="token-chip"><strong>13%</strong><span>Community core</span></div>
                 <div class="token-chip"><strong>10%</strong><span>Marketing</span></div>
                 <div class="token-chip"><strong>10%</strong><span>Team</span></div>
                 <div class="token-chip"><strong>5%</strong><span>Burn</span></div>
+                <div class="token-chip"><strong>5% / 2%</strong><span>Round 1 / Round 2</span></div>
               </div>
-              <div class="token-footnote">Within Community: Round 1 = 25,000,000 $FIRU (2.5%), Round 2 = 25,000,000 $FIRU (2.5%), Community Reserve = 150,000,000 $FIRU (15%).</div>
+              <div class="token-footnote">Round 1 and Round 2 are deducted from the community allocation path. Clean headline numbers stay visible here while the full visual asset is completed later.</div>
               <div class="actions" style="margin-top:16px">
                 <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open full allocation</button>
               </div>
@@ -813,7 +912,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Clean text-first distribution for the live website version.</p>
+                <p>Clean text-first distribution while the final tokenomics art is refined separately.</p>
               </div>
             </div>
             <div class="grid-stats">
@@ -961,8 +1060,8 @@
       </div>
       <div class="dialog-grid">
         <div class="dialog-item"><strong>55% Liquidity</strong><span>Core market base.</span></div>
-        <div class="dialog-item"><strong>20% Community</strong><span>Main community allocation bucket.</span></div>
-        <div class="dialog-item"><strong>Round 1 2.5% · Round 2 2.5% · Reserve 15%</strong><span>All three are included inside the 20% community allocation.</span></div>
+        <div class="dialog-item"><strong>13% Community core</strong><span>Community allocation after separating dedicated round slices.</span></div>
+        <div class="dialog-item"><strong>5% Round 1 · 2% Round 2</strong><span>Both rounds are deducted from the community path.</span></div>
         <div class="dialog-item"><strong>10% Marketing</strong><span>Project growth and promotion.</span></div>
         <div class="dialog-item"><strong>10% Team</strong><span>Core execution allocation.</span></div>
         <div class="dialog-item"><strong>5% Burn</strong><span>Fixed burn reserve.</span></div>
