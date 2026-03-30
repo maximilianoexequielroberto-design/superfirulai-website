@@ -284,10 +284,6 @@ export function mountRoundRegister(selector) {
               <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
               <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
             </div>
-            <div class="sf-action-grid">
-              <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
-              <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
-            </div>
             <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for SOL, or paste the confirmed TX hash for USDT/USDC.</div>
           </div>
 
@@ -361,6 +357,11 @@ export function mountRoundRegister(selector) {
         <div class="sf-hash-warning" id="sfHashWarning">
           <div><strong>USDT / USDC important:</strong> after sending funds, paste the confirmed transaction hash to complete and register the payment.</div>
           <div>Payments sent without submitting the transaction hash will not be automatically processed.</div>
+        </div>
+
+        <div class="sf-action-grid sf-action-grid-bottom">
+          <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
+          <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
         </div>
       </div>
     </form>
