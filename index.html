@@ -245,87 +245,28 @@
     }
     .hero-asset{
       position:relative;
-      overflow:hidden;
-      display:grid;
-      grid-template-columns:42px minmax(0,1fr) 16px;
-      align-items:center;
-      gap:10px;
-      min-height:74px;
-      padding:12px 14px;
-      border-radius:22px;
-      border:1px solid rgba(255,255,255,.10);
-      background:
-        linear-gradient(180deg,rgba(8,17,38,.78),rgba(5,12,28,.88));
-      box-shadow:0 20px 40px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.03);
-      backdrop-filter:blur(14px);
-      color:#f5f8ff;
-      text-align:left;
-      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
-    }
-    .hero-asset::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(135deg,rgba(255,208,96,.12),transparent 46%);
-      pointer-events:none;
+      display:block;
+      padding:0;
+      border:none;
+      background:transparent;
+      box-shadow:none;
+      border-radius:24px;
+      overflow:visible;
+      cursor:pointer;
+      transition:transform .18s ease, filter .18s ease;
     }
     .hero-asset:hover{
       transform:translateY(-2px);
-      border-color:rgba(255,255,255,.18);
-      box-shadow:0 26px 54px rgba(0,0,0,.40);
+      filter:drop-shadow(0 14px 28px rgba(0,0,0,.34));
     }
-    .hero-asset-icon{
-      position:relative;
-      width:42px;
-      height:42px;
-      border-radius:14px;
-      display:grid;
-      place-items:center;
-      background:linear-gradient(135deg,rgba(255,208,96,.22),rgba(255,157,39,.10));
-      border:1px solid rgba(255,255,255,.09);
-      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
-    }
-    .hero-asset-icon svg{
-      width:20px;
-      height:20px;
-      stroke:currentColor;
-      fill:none;
-      stroke-width:2;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-      color:#ffe9ae;
-    }
-    .hero-asset-copy{position:relative; min-width:0;}
-    .hero-asset-copy strong{
+    .hero-asset img{
       display:block;
-      font-family:"Barlow Condensed",sans-serif;
-      font-size:24px;
-      line-height:.92;
-      letter-spacing:-.01em;
-      color:#fff;
-    }
-    .hero-asset-copy span{
-      display:block;
-      margin-top:4px;
-      font-size:11px;
-      line-height:1.25;
-      letter-spacing:.12em;
-      text-transform:uppercase;
-      color:#b8c9e7;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-    .hero-asset-arrow{
-      position:relative;
-      font-size:16px;
-      color:#ffe9ae;
-      opacity:.9;
-      text-align:right;
-    }
-    .hero-asset.is-x .hero-asset-icon,
-    .hero-asset.is-buy .hero-asset-icon{
-      background:linear-gradient(135deg,rgba(42,146,255,.16),rgba(255,208,96,.10));
+      width:100%;
+      height:auto;
+      object-fit:contain;
+      pointer-events:none;
+      user-select:none;
+      filter:drop-shadow(0 12px 26px rgba(0,0,0,.28));
     }
 
     .home-quick-shell{
@@ -623,10 +564,7 @@
       .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
       .hero-assets{width:min(calc(100% - 180px),1040px);grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;bottom:110px}
-      .hero-asset{min-height:92px;padding:16px 18px;grid-template-columns:50px minmax(0,1fr) 18px}
-      .hero-asset-icon{width:50px;height:50px;border-radius:16px}
-      .hero-asset-copy strong{font-size:28px}
-      .hero-asset-copy span{font-size:11px}
+      .hero-asset{min-height:auto}
       .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
       .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
       .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -670,36 +608,20 @@
             <div class="hero-mobile-image" aria-hidden="true"></div>
 
             <div class="hero-assets" aria-label="Main hero assets">
-              <button class="hero-asset is-register" type="button" data-view-btn="register">
-                <span class="hero-asset-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M7 7h10v10H7z" opacity=".28"></path></svg>
-                </span>
-                <span class="hero-asset-copy"><strong>Register</strong><span>Airdrop access</span></span>
-                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              <button class="hero-asset is-register" type="button" data-view-btn="register" aria-label="Register Airdrop">
+                <img src="./register-airdrop.png" alt="Register Airdrop" loading="eager" decoding="async" />
               </button>
 
-              <button class="hero-asset is-buy" type="button" data-view-btn="buy">
-                <span class="hero-asset-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M7 16V9"></path><path d="M12 16V5"></path><path d="M17 16v-7"></path></svg>
-                </span>
-                <span class="hero-asset-copy"><strong>Buy $FIRU</strong><span>Official round</span></span>
-                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              <button class="hero-asset is-buy" type="button" data-view-btn="buy" aria-label="Buy $FIRU">
+                <img src="./buy-firu.png" alt="Buy $FIRU" loading="eager" decoding="async" />
               </button>
 
-              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
-                <span class="hero-asset-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M21 5L3 11l7 2 2 6 9-14z"></path><path d="M10 13l11-8"></path></svg>
-                </span>
-                <span class="hero-asset-copy"><strong>Telegram</strong><span>Official community</span></span>
-                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Join Telegram">
+                <img src="./join-telegram.png" alt="Join Telegram" loading="eager" decoding="async" />
               </a>
 
-              <a class="hero-asset is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
-                <span class="hero-asset-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24"><path d="M4 4l16 16"></path><path d="M20 4L4 20"></path></svg>
-                </span>
-                <span class="hero-asset-copy"><strong>X</strong><span>Launch alerts</span></span>
-                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              <a class="hero-asset is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="X">
+                <img src="./x-button.png" alt="X" loading="eager" decoding="async" />
               </a>
             </div>
           </div>
@@ -711,7 +633,7 @@
                   <div class="eyebrow"><span></span> Community pulse</div>
                   <h3>Live metrics band</h3>
                 </div>
-                <p>Fast visibility for holders, Telegram, X and total supply. Values load from the site API and fall back automatically if a live source is unavailable.</p>
+                <img src="./holders-counter.png" alt="Holders Counter" style="display:block;width:min(100%,320px);height:auto;margin-left:auto;filter:drop-shadow(0 14px 28px rgba(0,0,0,.28));" loading="lazy" decoding="async" />
               </div>
 
               <div class="metrics-grid" id="metricsGrid">
@@ -770,18 +692,17 @@
             </div>
 
             <div class="hybrid-panel">
-              <div class="eyebrow"><span></span> Asset 07 · Tokenomics</div>
+              <div class="eyebrow"><span></span> Tokenomics</div>
               <h3>Official allocation</h3>
-              <p>Quick view kept text-first for clarity while the final tokenomics asset is refined separately.</p>
+              <p>Clean text-first distribution aligned with the live web version.</p>
               <div class="token-chip-grid">
                 <div class="token-chip"><strong>55%</strong><span>Liquidity</span></div>
-                <div class="token-chip"><strong>13%</strong><span>Community core</span></div>
+                <div class="token-chip"><strong>20%</strong><span>Community</span></div>
                 <div class="token-chip"><strong>10%</strong><span>Marketing</span></div>
                 <div class="token-chip"><strong>10%</strong><span>Team</span></div>
                 <div class="token-chip"><strong>5%</strong><span>Burn</span></div>
-                <div class="token-chip"><strong>5% / 2%</strong><span>Round 1 / Round 2</span></div>
               </div>
-              <div class="token-footnote">Round 1 and Round 2 are deducted from the community allocation path. Clean headline numbers stay visible here while the full visual asset is completed later.</div>
+              <div class="token-footnote">Within Community: Round 1 = 25,000,000 $FIRU (2.5%), Round 2 = 25,000,000 $FIRU (2.5%), Community Reserve = 150,000,000 $FIRU (15%).</div>
               <div class="actions" style="margin-top:16px">
                 <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open full allocation</button>
               </div>
@@ -892,7 +813,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Tokenomics</div>
                 <h2>Official allocation</h2>
-                <p>Clean text-first distribution while the final tokenomics art is refined separately.</p>
+                <p>Clean text-first distribution for the live website version.</p>
               </div>
             </div>
             <div class="grid-stats">
@@ -1040,8 +961,8 @@
       </div>
       <div class="dialog-grid">
         <div class="dialog-item"><strong>55% Liquidity</strong><span>Core market base.</span></div>
-        <div class="dialog-item"><strong>13% Community core</strong><span>Community allocation after separating dedicated round slices.</span></div>
-        <div class="dialog-item"><strong>5% Round 1 · 2% Round 2</strong><span>Both rounds are deducted from the community path.</span></div>
+        <div class="dialog-item"><strong>20% Community</strong><span>Main community allocation bucket.</span></div>
+        <div class="dialog-item"><strong>Round 1 2.5% · Round 2 2.5% · Reserve 15%</strong><span>All three are included inside the 20% community allocation.</span></div>
         <div class="dialog-item"><strong>10% Marketing</strong><span>Project growth and promotion.</span></div>
         <div class="dialog-item"><strong>10% Team</strong><span>Core execution allocation.</span></div>
         <div class="dialog-item"><strong>5% Burn</strong><span>Fixed burn reserve.</span></div>
