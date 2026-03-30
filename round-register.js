@@ -57,7 +57,12 @@ function injectStyles() {
     .sf-input,.sf-select{width:100%;padding:14px;border:none;background:transparent;color:#fff;outline:none;font:inherit}
     .sf-input-shell:focus-within,.sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
-    .sf-round-actions{display:grid;gap:10px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
+    .sf-round-actions{display:grid;gap:10px;padding:0;border-radius:0;background:transparent;border:none}
+    .sf-wallet-flow{display:grid;gap:10px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
+    .sf-wallet-flow .sf-row{padding:0;border:none;background:transparent}
+    .sf-wallet-flow .sf-round-actions{margin:0}
+    .sf-wallet-flow .sf-stable-guide{margin-top:0}
+    .sf-wallet-flow .sf-summary{display:none}
     .sf-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .sf-wallet-tools{display:none;grid-template-columns:1fr 1fr;gap:10px}
     .sf-wallet-tools.show{display:grid}
@@ -166,7 +171,7 @@ function injectStyles() {
     .sf-history-link:hover{background:rgba(255,255,255,.08)}
     .sf-history-meta{margin-top:12px;color:#9fb5df;font-size:12px;line-height:1.55}
     body.sf-modal-open{overflow:hidden}
-    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary,.sf-checkout-cluster{padding:12px;border-radius:18px}.sf-checkout-cluster{gap:8px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary,.sf-checkout-cluster,.sf-wallet-flow{padding:12px;border-radius:18px}.sf-checkout-cluster{gap:8px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -271,7 +276,6 @@ export function mountRoundRegister(selector) {
           </div>
         </section>
 
-'
         <div class="sf-row-tight">
           <label class="sf-field">
             <span class="sf-label">Payment token</span>
@@ -312,50 +316,46 @@ export function mountRoundRegister(selector) {
           <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
         </div>
 
-        <div class="sf-row">
-          <label class="sf-field">
-            <span class="sf-label">Transaction hash</span>
-            <div class="sf-input-shell">
-              <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the confirmed Solana transaction hash" />
-            </div>
-            <span class="sf-help">For USDT and USDC this step is required. Without submitting the hash, the payment is not automatically registered.</span>
-          </label>
-          <label class="sf-field">
-            <span class="sf-label">Destination wallet / token account</span>
-            <div class="sf-copy-shell">
-              <input class="sf-input" id="sfDestinationAddress" readonly />
-              <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY ADDRESS</button>
-            </div>
-            <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
-          </label>
-        </div>
-
-        <div class="sf-round-actions">
-          <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
-          <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
-          <div class="sf-wallet-tools" id="sfWalletTools">
-            <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
-            <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+        <div class="sf-wallet-flow">
+          <div class="sf-row">
+            <label class="sf-field">
+              <span class="sf-label">Transaction hash</span>
+              <div class="sf-input-shell">
+                <input class="sf-input" id="sfTxHash" inputmode="text" autocomplete="off" placeholder="Paste the confirmed Solana transaction hash" />
+              </div>
+              <span class="sf-help">For USDT and USDC this step is required. Without submitting the hash, the payment is not automatically registered.</span>
+            </label>
+            <label class="sf-field">
+              <span class="sf-label">Destination wallet / token account</span>
+              <div class="sf-copy-shell">
+                <input class="sf-input" id="sfDestinationAddress" readonly />
+                <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY ADDRESS</button>
+              </div>
+              <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
+            </label>
           </div>
-          <div class="sf-action-grid">
-            <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
-            <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+
+          <div class="sf-round-actions">
+            <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
+            <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
+            <div class="sf-wallet-tools" id="sfWalletTools">
+              <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
+              <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+            </div>
+            <div class="sf-action-grid">
+              <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
+              <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+            </div>
+            <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
           </div>
-          <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
-        </div>
 
-        <div class="sf-summary">
-          <div class="sf-mini"><strong>Automatic SOL</strong><span>Connect Phantom and confirm the payment for the fastest buy path.</span></div>
-          <div class="sf-mini"><strong>Stablecoin flow</strong><span>For USDT or USDC, send on Solana and paste the confirmed TX hash.</span></div>
-          <div class="sf-mini"><strong>Live allocation</strong><span>Your $FIRU estimate updates from the active round and verified payment.</span></div>
-        </div>
-
-        <div class="sf-stable-guide" id="sfStableGuide">
+          <div class="sf-stable-guide" id="sfStableGuide">
           <div><strong>How it works:</strong></div>
           <div>1. Copy the official destination address.</div>
           <div>2. Send funds on Solana.</div>
           <div>3. Paste the confirmed transaction hash.</div>
           <div>4. Register the payment to lock your allocation.</div>
+        </div>
         </div>
 
         <div class="sf-hash-warning" id="sfHashWarning">
@@ -471,7 +471,7 @@ export function mountRoundRegister(selector) {
   const stepEls = Array.from(root.querySelectorAll(".sf-step[data-step]"));
   let receiptCompleted = false;
   let stepAttention = 0;
-  const summaryCards = Array.from(root.querySelectorAll(".sf-summary .sf-mini"));
+  const summaryCards = [];
 
   let provider = null;
   let walletAddress = "";
