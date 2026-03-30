@@ -39,12 +39,12 @@ function injectStyles() {
     .sf-round-note.ok{color:#8bf0b2}
     .sf-round-note.warn{color:#ffd87d}
     .sf-round-note.error{color:#ffb2b2}
-    .sf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .sf-row-tight{display:grid;grid-template-columns:1fr 180px 180px;gap:12px}
+    .sf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
+    .sf-row-tight{display:grid;grid-template-columns:1fr 180px 180px;gap:12px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
     .sf-field{display:grid;gap:8px}
     .sf-copy-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden}
     .sf-copy-shell .sf-input{flex:1;min-width:0}
-    .sf-copy-btn{flex:0 0 auto;min-width:110px;height:52px;border:none;border-left:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#fff;font:inherit;font-weight:800;cursor:pointer;transition:background .18s ease,color .18s ease}
+    .sf-copy-btn{flex:0 0 auto;min-width:84px;height:52px;padding:0 14px;border:none;border-left:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#fff;font:inherit;font-weight:800;cursor:pointer;transition:background .18s ease,color .18s ease;white-space:nowrap}
     .sf-copy-btn:hover{background:rgba(255,255,255,.1)}
     .sf-copy-btn.copied{background:rgba(33,203,126,.18);color:#8bf0b2}
     .sf-hash-warning{display:grid;gap:8px;padding:14px 16px;border-radius:16px;background:rgba(255,216,125,.08);border:1px solid rgba(255,216,125,.22);color:#ffe39d;font-size:13px;line-height:1.55}
@@ -59,7 +59,7 @@ function injectStyles() {
     .sf-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .sf-wallet-tools{display:none;grid-template-columns:1fr 1fr;gap:10px}
     .sf-wallet-tools.show{display:grid}
-    .sf-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+    .sf-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
     .sf-mini{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-mini strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-mini span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
@@ -73,7 +73,7 @@ function injectStyles() {
     .sf-stable-guide{display:none;gap:8px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:#dce7ff;font-size:13px;line-height:1.55}
     .sf-stable-guide.show{display:grid}
     .sf-open-phantom.show{display:inline-flex}
-    .sf-price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+    .sf-price-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
     .sf-metric{padding:12px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)}
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-metric span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
@@ -164,7 +164,7 @@ function injectStyles() {
     .sf-history-link:hover{background:rgba(255,255,255,.08)}
     .sf-history-meta{margin-top:12px;color:#9fb5df;font-size:12px;line-height:1.55}
     body.sf-modal-open{overflow:hidden}
-    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary{padding:12px;border-radius:18px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -320,7 +320,7 @@ export function mountRoundRegister(selector) {
           <span class="sf-label">Destination wallet / token account</span>
           <div class="sf-copy-shell">
             <input class="sf-input" id="sfDestinationAddress" readonly />
-            <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY WALLET ADDRESS</button>
+            <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY ADDRESS</button>
           </div>
           <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
         </label>
@@ -1061,7 +1061,7 @@ export function mountRoundRegister(selector) {
       copyDestinationBtn.textContent = "✔ COPIED";
       copyDestinationBtn.classList.add("copied");
       setTimeout(() => {
-        copyDestinationBtn.textContent = "COPY WALLET ADDRESS";
+        copyDestinationBtn.textContent = "COPY ADDRESS";
         copyDestinationBtn.classList.remove("copied");
       }, 1600);
     } catch {
