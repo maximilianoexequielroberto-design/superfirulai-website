@@ -276,47 +276,61 @@ export function mountRoundRegister(selector) {
           </div>
         </section>
 
-        <div class="sf-row-tight">
-          <label class="sf-field">
-            <span class="sf-label">Payment token</span>
-            <div class="sf-input-shell">
-              <select class="sf-select" id="sfTokenSelect">
-                <option value="SOL">SOL</option>
-                <option value="USDT">USDT</option>
-                <option value="USDC">USDC</option>
-              </select>
-            </div>
-            <span class="sf-help">Accepted on Solana only. Order: SOL, USDT, USDC.</span>
-          </label>
-
-          <label class="sf-field">
-            <span class="sf-label">Amount</span>
-            <div class="sf-input-shell">
-              <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
-            </div>
-            <span class="sf-help" id="sfAmountHint">Use this for live estimate. Automatic buy is only available for SOL right now.</span><span class="sf-help" id="sfAmountRange">Loading limits...</span><span class="sf-help" id="sfAmountValidation"></span>
-          </label>
-
-          <label class="sf-field">
-            <span class="sf-label">Round</span>
-            <div class="sf-input-shell">
-              <select class="sf-select" id="sfRoundSelect">
-                <option value="round1">Round 1</option>
-                <option value="round2">Round 2</option>
-              </select>
-            </div>
-            <span class="sf-help" id="sfRoundMeta">Loading round configuration...</span>
-          </label>
-        </div>
-
-        <div class="sf-price-grid">
-          <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
-          <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
-          <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">-</span></div>
-          <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
-        </div>
-
         <div class="sf-wallet-flow">
+          <div class="sf-round-actions">
+            <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
+            <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open Wallet</button>
+            <div class="sf-wallet-tools" id="sfWalletTools">
+              <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
+              <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
+            </div>
+            <div class="sf-action-grid">
+              <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
+              <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+            </div>
+            <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for SOL, or paste the confirmed TX hash for USDT/USDC.</div>
+          </div>
+
+          <div class="sf-row-tight">
+            <label class="sf-field">
+              <span class="sf-label">Payment token</span>
+              <div class="sf-input-shell">
+                <select class="sf-select" id="sfTokenSelect">
+                  <option value="SOL">SOL</option>
+                  <option value="USDT">USDT</option>
+                  <option value="USDC">USDC</option>
+                </select>
+              </div>
+              <span class="sf-help">Accepted on Solana only. Order: SOL, USDT, USDC.</span>
+            </label>
+
+            <label class="sf-field">
+              <span class="sf-label">Amount</span>
+              <div class="sf-input-shell">
+                <input class="sf-input" id="sfBuyAmount" inputmode="decimal" autocomplete="off" placeholder="0.10" />
+              </div>
+              <span class="sf-help" id="sfAmountHint">Use this for live estimate. Automatic buy is only available for SOL right now.</span><span class="sf-help" id="sfAmountRange">Loading limits...</span><span class="sf-help" id="sfAmountValidation"></span>
+            </label>
+
+            <label class="sf-field">
+              <span class="sf-label">Round</span>
+              <div class="sf-input-shell">
+                <select class="sf-select" id="sfRoundSelect">
+                  <option value="round1">Round 1</option>
+                  <option value="round2">Round 2</option>
+                </select>
+              </div>
+              <span class="sf-help" id="sfRoundMeta">Loading round configuration...</span>
+            </label>
+          </div>
+
+          <div class="sf-price-grid">
+            <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
+            <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
+            <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">-</span></div>
+            <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
+          </div>
+
           <div class="sf-row">
             <label class="sf-field">
               <span class="sf-label">Transaction hash</span>
@@ -333,20 +347,6 @@ export function mountRoundRegister(selector) {
               </div>
               <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
             </label>
-          </div>
-
-          <div class="sf-round-actions">
-            <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
-            <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open Wallet</button>
-            <div class="sf-wallet-tools" id="sfWalletTools">
-              <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
-              <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
-            </div>
-            <div class="sf-action-grid">
-              <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
-              <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
-            </div>
-            <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for SOL, or paste the confirmed TX hash for USDT/USDC.</div>
           </div>
 
           <div class="sf-stable-guide" id="sfStableGuide">
