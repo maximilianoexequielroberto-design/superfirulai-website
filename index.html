@@ -477,6 +477,7 @@
       gap:12px;
     }
     .metrics-feature,.metrics-mini-stack{display:grid;gap:12px}
+    .metrics-highlight--single{grid-template-columns:minmax(0,1fr)}
     .metric-hero-card,.metric-mini-card,.metric-card{
       position:relative;
       overflow:hidden;
@@ -519,7 +520,9 @@
       font-size:44px;
       line-height:.92;
     }
-    .metric-card .metric-supply-value{font-size:27px;line-height:.98;letter-spacing:-.02em;word-break:break-word;overflow-wrap:anywhere}
+    .metric-card .metric-supply-value{font-size:24px;line-height:1.02;letter-spacing:-.03em;word-break:normal;overflow-wrap:normal;white-space:normal}
+    .metrics-grid--compact .metric-card--wide{grid-column:1 / -1;min-height:118px}
+    .metrics-grid--compact .metric-card--wide .metric-supply-value{font-size:22px;line-height:1.02;letter-spacing:-.03em}
     .metric-card span{
       display:block;
       position:relative;
@@ -1090,7 +1093,7 @@
                 <p>Fast visibility for holders, X, Telegram and total supply, now presented as a stronger premium section with cleaner hierarchy for mobile.</p>
               </div>
 
-              <div class="metrics-highlight">
+              <div class="metrics-highlight metrics-highlight--single">
                 <div class="metrics-feature">
                   <div class="metric-hero-card">
                     <div class="metric-kicker">Live holders signal</div>
@@ -1101,30 +1104,9 @@
                     <p>The strongest community indicator sits first, with a more premium live-counter presentation.</p>
                   </div>
                 </div>
-                <div class="metrics-mini-stack">
-                  <div class="metric-mini-card">
-                    <div>
-                      <strong class="metric-mini-value" id="metricX">61</strong>
-                      <div class="metric-mini-label">X reach</div>
-                    </div>
-                    <div class="metric-mini-note">Launch visibility signal.</div>
-                  </div>
-                  <div class="metric-mini-card">
-                    <div>
-                      <strong class="metric-mini-value" id="metricTelegram">24</strong>
-                      <div class="metric-mini-label">Telegram</div>
-                    </div>
-                    <div class="metric-mini-note">Official community chat.</div>
-                  </div>
-                </div>
               </div>
 
-              <div class="metrics-grid" id="metricsGrid">
-                <div class="metric-card is-holders">
-                  <strong id="metricHoldersSecondary">2,418</strong>
-                  <span>Holders</span>
-                  <div class="metric-note">Primary community count ready for live styling.</div>
-                </div>
+              <div class="metrics-grid metrics-grid--compact" id="metricsGrid">
                 <div class="metric-card is-x">
                   <strong id="metricXSecondary">61</strong>
                   <span>X followers</span>
@@ -1135,7 +1117,7 @@
                   <span>Telegram members</span>
                   <div class="metric-note">Official group growth and retention.</div>
                 </div>
-                <div class="metric-card is-supply">
+                <div class="metric-card is-supply metric-card--wide">
                   <strong id="metricSupply" class="metric-supply-value">1,000,000,000</strong>
                   <span>Total supply</span>
                   <div class="metric-note">Fixed supply target for $FIRU.</div>
@@ -1612,10 +1594,8 @@
 
     function formatCompactNumber(value) {
       const n = Number(value || 0);
-      if (n >= 1000000000) return `${(n / 1000000000).toFixed(n % 1000000000 === 0 ? 0 : 1)}B`;
-      if (n >= 1000000) return `${(n / 1000000).toFixed(n % 1000000 === 0 ? 0 : 1)}M`;
-      if (n >= 1000) return n.toLocaleString("en-US");
-      return String(n);
+      if (!Number.isFinite(n)) return "0";
+      return n.toLocaleString("en-US");
     }
 
     async function loadCommunityStats() {
