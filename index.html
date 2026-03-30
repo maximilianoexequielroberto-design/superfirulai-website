@@ -519,6 +519,7 @@
       font-size:44px;
       line-height:.92;
     }
+    .metric-card .metric-supply-value{font-size:27px;line-height:.98;letter-spacing:-.02em;word-break:break-word;overflow-wrap:anywhere}
     .metric-card span{
       display:block;
       position:relative;
@@ -763,6 +764,7 @@
       font-family:"Barlow Condensed",sans-serif;
       line-height:.96;
     }
+    .stat-card-supply strong{font-size:24px;line-height:1.02;word-break:break-word;overflow-wrap:anywhere}
     .stat-card span{
       display:block;
       margin-top:4px;
@@ -882,6 +884,7 @@
       .metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
       .metric-card{min-height:124px;padding:18px 16px 18px 18px}
       .metric-card strong{font-size:40px}
+      .metric-card .metric-supply-value{font-size:24px;line-height:1.02}
       .metric-card span{font-size:12px;letter-spacing:.1em}
       .metric-note{font-size:12px;max-width:16ch}
     }
@@ -1084,7 +1087,7 @@
                   <div class="eyebrow"><span></span> Community pulse</div>
                   <h3>Premium live momentum.</h3>
                 </div>
-                <p>Fast visibility for holders, Telegram, X and total supply, now presented as a stronger premium section with cleaner hierarchy for mobile.</p>
+                <p>Fast visibility for holders, X, Telegram and total supply, now presented as a stronger premium section with cleaner hierarchy for mobile.</p>
               </div>
 
               <div class="metrics-highlight">
@@ -1101,17 +1104,17 @@
                 <div class="metrics-mini-stack">
                   <div class="metric-mini-card">
                     <div>
-                      <strong class="metric-mini-value" id="metricTelegram">24</strong>
-                      <div class="metric-mini-label">Telegram</div>
-                    </div>
-                    <div class="metric-mini-note">Official community chat.</div>
-                  </div>
-                  <div class="metric-mini-card">
-                    <div>
                       <strong class="metric-mini-value" id="metricX">61</strong>
                       <div class="metric-mini-label">X reach</div>
                     </div>
                     <div class="metric-mini-note">Launch visibility signal.</div>
+                  </div>
+                  <div class="metric-mini-card">
+                    <div>
+                      <strong class="metric-mini-value" id="metricTelegram">24</strong>
+                      <div class="metric-mini-label">Telegram</div>
+                    </div>
+                    <div class="metric-mini-note">Official community chat.</div>
                   </div>
                 </div>
               </div>
@@ -1122,18 +1125,18 @@
                   <span>Holders</span>
                   <div class="metric-note">Primary community count ready for live styling.</div>
                 </div>
-                <div class="metric-card is-telegram">
-                  <strong id="metricTelegramSecondary">24</strong>
-                  <span>Telegram members</span>
-                  <div class="metric-note">Official group growth and retention.</div>
-                </div>
                 <div class="metric-card is-x">
                   <strong id="metricXSecondary">61</strong>
                   <span>X followers</span>
                   <div class="metric-note">Official launch reach and momentum.</div>
                 </div>
+                <div class="metric-card is-telegram">
+                  <strong id="metricTelegramSecondary">24</strong>
+                  <span>Telegram members</span>
+                  <div class="metric-note">Official group growth and retention.</div>
+                </div>
                 <div class="metric-card is-supply">
-                  <strong id="metricSupply">1B</strong>
+                  <strong id="metricSupply" class="metric-supply-value">1,000,000,000</strong>
                   <span>Total supply</span>
                   <div class="metric-note">Fixed supply target for $FIRU.</div>
                 </div>
@@ -1296,7 +1299,7 @@
               </div>
             </div>
             <div class="grid-stats">
-              <div class="stat-card"><strong>1B</strong><span>Total supply</span></div>
+              <div class="stat-card stat-card-supply"><strong>1,000,000,000</strong><span>Total supply</span></div>
               <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
               <div class="stat-card"><strong>20%</strong><span>Community</span></div>
               <div class="stat-card"><strong>10%</strong><span>Marketing</span></div>
