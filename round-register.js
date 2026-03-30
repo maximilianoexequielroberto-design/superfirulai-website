@@ -231,6 +231,43 @@ export function mountRoundRegister(selector) {
 
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
+      <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
+        <div class="sf-steps-head">
+          <div>
+            <strong>Buy in 5 guided steps</strong>
+            <span>The buy form stays first. These cards keep showing what is done, what is active, and what still needs attention.</span>
+          </div>
+          <div class="sf-steps-kicker">Live progress</div>
+        </div>
+        <div class="sf-steps-grid">
+          <article class="sf-step" data-step="1">
+            <div class="sf-step-num">1</div>
+            <strong>Connect wallet</strong>
+            <span>Use Phantom and keep the correct Solana wallet active.</span>
+          </article>
+          <article class="sf-step" data-step="2">
+            <div class="sf-step-num">2</div>
+            <strong>Choose token</strong>
+            <span>Select SOL, USDT or USDC on Solana before continuing.</span>
+          </article>
+          <article class="sf-step" data-step="3">
+            <div class="sf-step-num">3</div>
+            <strong>Enter amount</strong>
+            <span>Type a valid amount inside the active round limits.</span>
+          </article>
+          <article class="sf-step" data-step="4">
+            <div class="sf-step-num">4</div>
+            <strong>Confirm payment</strong>
+            <span>Approve Phantom for SOL, or submit the confirmed TX hash.</span>
+          </article>
+          <article class="sf-step" data-step="5">
+            <div class="sf-step-num">5</div>
+            <strong>Receipt saved</strong>
+            <span>Your verified payment locks the reserved $FIRU allocation.</span>
+          </article>
+        </div>
+      </section>
+
       <div class="sf-row-tight">
         <label class="sf-field">
           <span class="sf-label">Payment token</span>
