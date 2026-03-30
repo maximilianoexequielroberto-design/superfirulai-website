@@ -337,7 +337,7 @@ export function mountRoundRegister(selector) {
 
           <div class="sf-round-actions">
             <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
-            <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open in Phantom</button>
+            <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open Wallet</button>
             <div class="sf-wallet-tools" id="sfWalletTools">
               <button type="button" class="btn btn-dark" id="sfRoundChangeWallet">Switch Account</button>
               <button type="button" class="btn btn-dark" id="sfRoundDisconnect">Disconnect</button>
@@ -346,7 +346,7 @@ export function mountRoundRegister(selector) {
               <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
               <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
             </div>
-            <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for automatic SOL purchase. For USDT and USDC, you must submit the confirmed transaction hash to register the payment.</div>
+            <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for SOL, or paste the confirmed TX hash for USDT/USDC.</div>
           </div>
 
           <div class="sf-stable-guide" id="sfStableGuide">
@@ -1106,7 +1106,7 @@ export function mountRoundRegister(selector) {
   });
 
   openBtn.addEventListener("click", () => openInPreferredWallet("#buy"));
-  openBtn.textContent = "Open in Wallet App";
+  openBtn.textContent = "Open Wallet";
   if (isMobileDevice() && !isInPhantomBrowser()) {
     openBtn.classList.add("show");
   }
