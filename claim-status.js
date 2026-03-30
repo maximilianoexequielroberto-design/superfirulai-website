@@ -28,8 +28,8 @@ function injectStyles() {
       overflow:hidden;
       margin-top:0;
       display:grid;
-      gap:12px;
-      padding:18px;
+      gap:10px;
+      padding:16px;
       border-radius:24px;
       border:1px solid rgba(255,255,255,.08);
       background:
@@ -56,29 +56,29 @@ function injectStyles() {
     .sf-claim-title{
       margin:0;
       color:#fff;
-      font-size:24px;
+      font-size:22px;
       line-height:1.08;
       letter-spacing:-.02em;
     }
     .sf-claim-subtitle{
       margin:0;
       color:#c8d6f2;
-      font-size:14px;
-      line-height:1.55;
+      font-size:13px;
+      line-height:1.48;
     }
     .sf-claim-steps{
       display:grid;
       grid-template-columns:repeat(2, minmax(0,1fr));
-      gap:10px;
+      gap:8px;
     }
     .sf-claim-step{
       display:grid;
       gap:5px;
-      padding:12px;
+      padding:10px;
       border-radius:18px;
       border:1px solid rgba(255,255,255,.08);
       background:rgba(255,255,255,.035);
-      min-height:86px;
+      min-height:78px;
     }
     .sf-claim-step-id{
       display:inline-flex;
@@ -119,20 +119,20 @@ function injectStyles() {
     .sf-claim-wallet-tools.show{display:flex}
     .sf-claim-module{
       display:grid;
-      gap:10px;
-      padding:14px;
+      gap:8px;
+      padding:12px;
       border-radius:20px;
       border:1px solid rgba(255,255,255,.08);
       background:rgba(255,255,255,.03);
     }
     .sf-claim-note{
       color:#c9d5f3;
-      font-size:14px;
-      line-height:1.6;
+      font-size:13px;
+      line-height:1.5;
       background:rgba(255,255,255,.03);
       border:1px solid rgba(255,255,255,.08);
       border-radius:16px;
-      padding:14px 16px;
+      padding:12px 14px;
     }
     .sf-claim-note strong{color:#fff}
     .sf-claim-note.ok{color:#8bf0b2;border-color:rgba(111,236,170,.22);background:rgba(111,236,170,.08)}
@@ -150,10 +150,10 @@ function injectStyles() {
     .sf-btn-disabled{display:inline-flex;align-items:center;justify-content:center;padding:13px 18px;border-radius:14px;border:1px solid rgba(255,216,77,.28);background:rgba(255,216,77,.18);color:rgba(255,255,255,.72);font-weight:800;letter-spacing:.04em;cursor:not-allowed}
     .sf-claim-code{word-break:break-all}
     @media (max-width:640px){
-      .sf-claim-card{padding:16px;border-radius:22px}
-      .sf-claim-title{font-size:21px}
+      .sf-claim-card{padding:15px;border-radius:22px}
+      .sf-claim-title{font-size:20px}
       .sf-claim-steps{grid-template-columns:1fr}
-      .sf-claim-step{min-height:auto;padding:11px}
+      .sf-claim-step{min-height:auto;padding:10px}
       .sf-claim-actions .btn,.sf-claim-wallet-tools .btn,.sf-claim-inline .btn,.sf-btn-disabled{width:100%;justify-content:center}
     }
   `;
@@ -170,13 +170,13 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     <div class="sf-claim-card">
       <div class="sf-claim-eyebrow">Claim Airdrop · Premium</div>
       <h3 class="sf-claim-title">Claim Airdrop with the same wallet</h3>
-      <p class="sf-claim-subtitle">Connect the wallet used during registration. The page will check status first, then unlock the final step only for approved wallets.</p>
+      <p class="sf-claim-subtitle">Connect the same wallet from registration. The page checks status first and unlocks claim only for approved wallets.</p>
 
       <div id="sf-claim-steps" class="sf-claim-steps">
-        <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the exact wallet from registration.</span></div>
-        <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Check Status</strong><span>Pending, approved, rejected or already claimed.</span></div>
-        <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Approved Only</strong><span>Only approved wallets can continue.</span></div>
-        <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Airdrop</strong><span>Testing stays enabled until you disable it.</span></div>
+        <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from registration.</span></div>
+        <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Check Status</strong><span>Pending, approved, rejected or claimed.</span></div>
+        <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Approved Only</strong><span>Only approved wallets continue.</span></div>
+        <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Airdrop</strong><span>Testing stays on for UI checks.</span></div>
       </div>
 
       <div class="sf-claim-module">
@@ -188,8 +188,8 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
             <button id="sf-claim-switch" class="btn btn-dark" type="button">Change Wallet</button>
           </div>
         </div>
-        <div id="sf-claim-wallet" class="sf-claim-note warn">Connect the same wallet used during registration.</div>
-        <div id="sf-claim-status" class="sf-claim-note">After connecting, the page will verify if that wallet is pending, approved, rejected or already claimed.</div>
+        <div id="sf-claim-wallet" class="sf-claim-note warn">Connect the same wallet from registration.</div>
+        <div id="sf-claim-status" class="sf-claim-note">After connecting, the page checks if that wallet is pending, approved, rejected or already claimed.</div>
         <div id="sf-claim-cta" class="sf-claim-row"></div>
       </div>
     </div>
@@ -246,7 +246,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     walletToolsEl.classList.toggle("show", Boolean(show));
   }
 
-  function resetWalletUi(message = "Connect the same wallet used during registration.") {
+  function resetWalletUi(message = "Connect the same wallet from registration.") {
     connectedProvider = null;
     connectedWallet = "";
     connectBtn.disabled = false;
@@ -254,14 +254,14 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
     connectBtn.onclick = null;
     showWalletTools(false);
     setWalletMessage(message, "warn");
-    setStatusMessage("After connecting, the page will verify if that wallet is pending, approved, rejected or already claimed.");
+    setStatusMessage("After connecting, the page checks if that wallet is pending, approved, rejected or already claimed.");
     ctaEl.innerHTML = "";
     setStepState(1, false, false);
   }
 
   function renderTestingNotice() {
     return CLAIM_TESTING_MODE
-      ? `<div class="sf-claim-testing"><strong>Testing enabled.</strong> The claim button stays active for UI testing. No live token delivery is executed until you disable testing and mount the final claim endpoint.</div>`
+      ? `<div class="sf-claim-testing"><strong>Testing enabled.</strong> The claim button stays active for UI testing. No live token delivery happens until you disable testing and connect the final claim endpoint.</div>`
       : "";
   }
 
@@ -280,10 +280,10 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
       submitBtn?.addEventListener("click", () => {
         setStepState(4, true, false);
         if (CLAIM_TESTING_MODE && !data.claimLive) {
-          setStatusMessage(`<strong>Testing mode active.</strong><br>This click confirms the Claim Airdrop UI flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the final execution endpoint is still disabled.`, "ok");
+          setStatusMessage(`<strong>Testing mode active.</strong><br>This confirms the Claim Airdrop UI flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the final endpoint is still disabled.`, "ok");
           return;
         }
-        setStatusMessage(`<strong>Claim Airdrop ready.</strong><br>The wallet is approved and the live claim flow can continue from here.`, "ok");
+        setStatusMessage(`<strong>Claim Airdrop ready.</strong><br>The wallet is approved and the live claim flow can continue here.`, "ok");
       });
       return;
     }
@@ -379,7 +379,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
         setStatusMessage(`<strong>${data.message}</strong>${amountLine}`, (data.claimLive || CLAIM_TESTING_MODE) ? "ok" : "warn");
         setStepState(4, true, false);
       } else if (data.state === "pending") {
-        setStatusMessage(`<strong>${data.message}</strong><br>Your wallet is already registered and still waiting for review.`, "warn");
+        setStatusMessage(`<strong>${data.message}</strong><br>This wallet is registered and still waiting for review.`, "warn");
         setStepState(3, false, false);
       } else if (data.state === "rejected") {
         setStatusMessage(`<strong>${data.message}</strong>`, "error");
@@ -406,7 +406,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
   disconnectBtn.addEventListener("click", async () => {
     await disconnectSolanaWallet(connectedProvider);
     resetWalletUi("Wallet disconnected");
-    setStatusMessage("Wallet disconnected. Connect again with the same or another account to check claim status.", "warn");
+    setStatusMessage("Wallet disconnected. Connect again to check claim status.", "warn");
   });
 
   switchBtn.addEventListener("click", async () => {
