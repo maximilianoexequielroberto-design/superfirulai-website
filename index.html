@@ -111,6 +111,7 @@
     }
     .drawer-links button strong{font-size:14px;font-weight:900;line-height:1.05}
     .drawer-links button span{margin-top:5px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:none;color:#9fb2d1}
+    .section-shortcut-target{scroll-margin-top:96px}
 
     .app{padding:0 0 188px}
     .view{display:none}
@@ -1012,7 +1013,10 @@
         <button type="button" data-view-btn="buy"><strong>Buy $FIRU</strong><span>Official round access</span></button>
         <button type="button" data-view-btn="claim"><strong>Claim</strong><span>Claim Airdrop + Claim Round $FIRU</span></button>
         <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
-              </nav>
+        <button type="button" data-shortcut-action="airdrop"><strong>Airdrop</strong><span>Eligibility, details and claim path</span></button>
+        <button type="button" data-home-section="tokenomics-section"><strong>Tokenomics</strong><span>Premium allocation section</span></button>
+        <button type="button" data-home-section="community-section"><strong>Community</strong><span>X, Telegram and holder pulse</span></button>
+      </nav>
     </div>
   </aside>
 
@@ -1066,7 +1070,7 @@
             </div>
           </div>
 
-          <section class="tokenomics-premium" aria-labelledby="tokenomics-premium-title">
+          <section class="tokenomics-premium section-shortcut-target" id="tokenomics-section" aria-labelledby="tokenomics-premium-title">
             <div class="tokenomics-premium-inner">
               <div class="tokenomics-premium-top">
                 <div class="eyebrow"><span></span> Tokenomics · Premium allocation</div>
@@ -1132,7 +1136,7 @@
             </div>
           </section>
 
-          <div class="metrics-shell">
+          <div class="metrics-shell section-shortcut-target" id="community-section">
             <div class="metrics-inner">
               <div class="metrics-top">
                 <div class="left">
@@ -1605,6 +1609,27 @@
     });
 
     document.getElementById("buyFloat")?.addEventListener("click", () => showView("buy"));
+
+    document.querySelectorAll("[data-home-section]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.homeSection;
+        showView("home", { scroll: false });
+        requestAnimationFrame(() => {
+          const target = document.getElementById(targetId);
+          target?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    });
+
+    document.querySelectorAll("[data-shortcut-action]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.shortcutAction;
+        if (action === "airdrop") {
+          showView("register", { scroll: false });
+          setTimeout(() => openDialog("airdropDialog"), 120);
+        }
+      });
+    });
 
     document.addEventListener("click", (event) => {
       const anchor = event.target.closest('a[href^="#"]');
