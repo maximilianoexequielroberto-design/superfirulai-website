@@ -1086,11 +1086,13 @@
     }
 
 
-      .hero-live-dock{bottom:112px;padding:12px;gap:9px;width:min(calc(100% - 24px),760px)}
-      .hero-live-kicker{font-size:11px;padding:7px 12px}
-      .hero-live-status{font-size:10px}
-      .hero-live-actions .btn{min-height:48px;font-size:13px;padding:0 8px}
-      .hero-live-actions .btn span{font-size:9px;margin-top:3px}
+      .hero-launch-strip{position:absolute;left:14px;right:14px;bottom:122px;z-index:1403;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;pointer-events:auto}
+      .hero-launch-chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:58px;padding:10px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(8,14,38,.94),rgba(8,14,38,.88));box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.03);color:#eef5ff;text-decoration:none;text-align:left}
+      .hero-launch-chip strong{font-size:12px;line-height:1.05;letter-spacing:.02em;font-weight:900}
+      .hero-launch-chip span{font-size:9px;line-height:1.1;color:rgba(225,235,255,.7);text-transform:uppercase;letter-spacing:.08em}
+      .hero-launch-chip.is-live{background:linear-gradient(180deg,#2f95ff,#1d6dff);border-color:rgba(115,185,255,.4);color:#fff}
+      .hero-launch-chip.is-live span{color:rgba(255,255,255,.82)}
+      .hero-launch-chip[disabled], .hero-launch-chip.is-locked[aria-disabled="true"]{opacity:.95}
 
     @media(min-width:860px){
       .drawer-panel{
@@ -1131,11 +1133,10 @@
       .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
-      .hero-live-dock{left:40px;right:auto;bottom:36px;transform:none;width:min(620px,calc(100% - 80px));padding:16px 18px;gap:12px}
-      .hero-live-dock-head{align-items:center}
-      .hero-live-status{text-align:left}
-      .hero-live-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .hero-live-actions .btn{min-height:56px;font-size:15px}
+      .hero-launch-strip{left:40px;right:auto;bottom:36px;width:min(620px,calc(100% - 80px));grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+      .hero-launch-chip{min-height:64px;padding:14px 16px;border-radius:22px}
+      .hero-launch-chip strong{font-size:15px}
+      .hero-launch-chip span{font-size:10px}
       .hero-assets-desktop{
         display:flex;position:absolute;right:20px;top:0px;z-index:1406;gap:16px;align-items:flex-start;pointer-events:none
       }
@@ -1246,16 +1247,19 @@
               <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
             </div>
 
-            <div class="hero-live-dock" aria-label="Official $FIRU live access">
-              <div class="hero-live-dock-head">
-                <div class="hero-live-kicker">Official $FIRU live access</div>
-                <div class="hero-live-status">Copy · buy · chart</div>
-              </div>
-              <div class="hero-live-actions">
-                <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract<span>Mint at launch</span></button>
-                <a class="btn is-live-primary is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy Live<span>Jupiter</span></a>
-                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart<span>Live tracker</span></a>
-              </div>
+            <div class="hero-launch-strip" aria-label="Official $FIRU live launch shortcuts">
+              <button class="hero-launch-chip" type="button" data-copy-firu-contract disabled>
+                <strong>Copy Contract</strong>
+                <span>Mint at launch</span>
+              </button>
+              <a class="hero-launch-chip is-live is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">
+                <strong>Buy Live</strong>
+                <span>Jupiter</span>
+              </a>
+              <a class="hero-launch-chip is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">
+                <strong>View Chart</strong>
+                <span>Live tracker</span>
+              </a>
             </div>
           </div>
 
