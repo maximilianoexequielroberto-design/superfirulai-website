@@ -1085,6 +1085,13 @@
       .metric-note{font-size:12px;max-width:16ch}
     }
 
+
+      .hero-live-dock{bottom:112px;padding:12px;gap:9px;width:min(calc(100% - 24px),760px)}
+      .hero-live-kicker{font-size:11px;padding:7px 12px}
+      .hero-live-status{font-size:10px}
+      .hero-live-actions .btn{min-height:48px;font-size:13px;padding:0 8px}
+      .hero-live-actions .btn span{font-size:9px;margin-top:3px}
+
     @media(min-width:860px){
       .drawer-panel{
         top:74px;
@@ -1124,6 +1131,11 @@
       .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
+      .hero-live-dock{left:40px;right:auto;bottom:36px;transform:none;width:min(620px,calc(100% - 80px));padding:16px 18px;gap:12px}
+      .hero-live-dock-head{align-items:center}
+      .hero-live-status{text-align:left}
+      .hero-live-actions{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .hero-live-actions .btn{min-height:56px;font-size:15px}
       .hero-assets-desktop{
         display:flex;position:absolute;right:20px;top:0px;z-index:1406;gap:16px;align-items:flex-start;pointer-events:none
       }
@@ -1233,46 +1245,19 @@
               <button class="asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
               <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
             </div>
-          </div>
 
-          <section class="launch-desk section-shortcut-target" id="launch-access-section" aria-labelledby="launchDeskTitle">
-            <div class="launch-desk-inner">
-              <div class="launch-desk-top">
-                <div class="eyebrow"><span></span> Live $FIRU access</div>
-                <h3 id="launchDeskTitle">Official contract and live trading, right at the top.</h3>
-                <p>This block stays near the hero so users do not need to search the website when $FIRU launches. Keep rounds inside <strong>Buy $FIRU</strong>, and keep the real market contract, copy action, chart and trading buttons here.</p>
+            <div class="hero-live-dock" aria-label="Official $FIRU live access">
+              <div class="hero-live-dock-head">
+                <div class="hero-live-kicker">Official $FIRU live access</div>
+                <div class="hero-live-status">Copy · buy · chart</div>
               </div>
-
-              <div class="launch-grid">
-                <div class="launch-card">
-                  <div class="launch-kicker">Official $FIRU contract</div>
-                  <strong data-firu-mint-display>Coming at launch</strong>
-                  <span class="launch-subline">Solana mint address · copy directly from the website</span>
-                  <p data-firu-mint-help>Before launch, this block stays visible and locked. At launch, paste the real mint address in the page config and the copy button will go live automatically.</p>
-                  <div class="launch-inline">
-                    <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
-                    <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="mint" aria-disabled="true" tabindex="-1">View Mint</a>
-                  </div>
-                </div>
-
-                <div class="launch-card">
-                  <div class="launch-kicker">Live trading</div>
-                  <strong class="launch-card-status" data-firu-trading-status>Trading unlocks at launch</strong>
-                  <span class="launch-subline">Jupiter · Raydium · Chart · Tracker</span>
-                  <p data-firu-trading-help>When the market goes live, this top block unlocks the official buy, chart and tracker routes without redesigning the page.</p>
-                </div>
+              <div class="hero-live-actions">
+                <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract<span>Mint at launch</span></button>
+                <a class="btn is-live-primary is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy Live<span>Jupiter</span></a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart<span>Live tracker</span></a>
               </div>
-
-              <div class="launch-actions">
-                <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
-                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="raydium" aria-disabled="true" tabindex="-1">Buy on Raydium</a>
-                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
-                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="birdeye" aria-disabled="true" tabindex="-1">Track Price</a>
-              </div>
-
-              <div class="launch-footnote" data-firu-launch-note>Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.</div>
             </div>
-          </section>
+          </div>
 
           <section class="tokenomics-premium section-shortcut-target" id="tokenomics-section" aria-labelledby="tokenomics-premium-title">
             <div class="tokenomics-premium-inner">
@@ -1384,7 +1369,50 @@
           </div>
 
 
-          
+          <section class="launch-desk" aria-labelledby="launchDeskTitle">
+            <div class="launch-desk-inner">
+              <div class="launch-desk-top">
+                <div class="eyebrow"><span></span> Live trading desk</div>
+                <h3 id="launchDeskTitle">Official contract and live trading, ready for launch.</h3>
+                <p>Keep rounds inside <strong>Buy $FIRU</strong>, and keep real market trading separate here. When $FIRU goes live, paste the official Solana mint address and the live market links once, then the website unlocks copy, chart and trading actions without redesigning the page.</p>
+              </div>
+
+              <div class="launch-grid">
+                <div class="launch-card">
+                  <div class="launch-kicker">Official $FIRU contract</div>
+                  <strong data-firu-mint-display>Coming at launch</strong>
+                  <span class="launch-subline">Solana mint address · copy directly from the website</span>
+                  <p data-firu-mint-help>Before launch, this block stays visible and locked. At launch, paste the real mint address in the page config and the copy button will go live automatically.</p>
+                  <div class="launch-inline">
+                    <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
+                    <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="mint" aria-disabled="true" tabindex="-1">View Mint</a>
+                  </div>
+                </div>
+
+                <div class="launch-card">
+                  <div class="launch-kicker">Live trading</div>
+                  <strong class="launch-card-status" data-firu-trading-status>Trading unlocks at launch</strong>
+                  <span class="launch-subline">Jupiter · Raydium · Chart · Tracker</span>
+                  <p data-firu-trading-help>Users will be able to buy the live token from the web through your official market links, while the round flow stays separate above.</p>
+                  <div class="launch-chip-row" aria-hidden="true">
+                    <div class="launch-chip">Buy on Jupiter</div>
+                    <div class="launch-chip">Buy on Raydium</div>
+                    <div class="launch-chip">View Chart</div>
+                    <div class="launch-chip">Track Price</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="launch-actions">
+                <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="raydium" aria-disabled="true" tabindex="-1">Buy on Raydium</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="birdeye" aria-disabled="true" tabindex="-1">Track Price</a>
+              </div>
+
+              <div class="launch-footnote" data-firu-launch-note>Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.</div>
+            </div>
+          </section>
 
           <div class="hybrid-grid">
             <div class="hybrid-panel">
