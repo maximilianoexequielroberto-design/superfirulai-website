@@ -89,6 +89,15 @@
       font-weight:900;font-size:12.4px;letter-spacing:.03em;box-shadow:0 14px 28px rgba(255,160,0,.24)
     }
 
+    .mobile-top-links{display:flex;align-items:center;gap:8px;pointer-events:auto;margin-left:auto;margin-right:10px}
+    .quick-social-btn{
+      width:38px;height:38px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;
+      background:rgba(8,14,32,.76);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 24px rgba(0,0,0,.22);
+      color:#eef5ff;font-weight:900;font-size:15px;line-height:1;backdrop-filter:blur(10px)
+    }
+    .quick-social-btn svg{width:16px;height:16px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .quick-social-btn:hover{color:#fff;border-color:rgba(255,220,126,.34)}
+
     .drawer{position:fixed;inset:0;z-index:1290;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
     .drawer.open{opacity:1;pointer-events:auto}
     .drawer-panel{
@@ -909,6 +918,8 @@
       .round-card p{font-size:13.5px;max-width:18ch}
       .tokenomics-note{margin-top:2px;font-size:13.5px;line-height:1.5;padding:15px 15px 16px}
       .actions .btn{width:min(100%,250px);justify-content:center;min-height:52px;border-radius:18px;font-size:16px;padding-inline:20px}
+      .mobile-top-links{gap:6px;margin-right:8px}
+      .quick-social-btn{width:36px;height:36px;border-radius:13px;font-size:14px}
     }
 
     @media(max-width:859px){
@@ -950,6 +961,7 @@
       .topbar{padding:0 18px}
       .topbar-inner{position:relative;justify-content:flex-start}
       .float-btn{margin-left:-4px}
+      .mobile-top-links{display:none !important}
       .buy-float{display:none !important}
       .desktop-top-nav{
         display:flex;align-items:center;gap:18px;position:absolute;left:34%;top:30px;transform:translateX(-50%);z-index:1405;pointer-events:auto
@@ -993,6 +1005,12 @@
   <header class="topbar">
     <div class="topbar-inner">
       <button class="float-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
+      <div class="mobile-top-links" aria-label="Quick social links">
+        <a class="quick-social-btn quick-social-x" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="Open X">X</a>
+        <a class="quick-social-btn quick-social-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Open Telegram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 3.8 10.2c-.8.3-.8 1.4.1 1.7l4.4 1.5 1.6 4.9c.3.9 1.5 1 1.9.1L21 3Z"></path><path d="m8.3 13.4 8-7.2"></path></svg>
+        </a>
+      </div>
       <nav class="desktop-top-nav" aria-label="Desktop navigation">
         <button type="button" data-view-btn="home">Home</button>
         <button type="button" data-view-btn="register">Register Airdrop</button>
@@ -1012,10 +1030,10 @@
         <button type="button" data-view-btn="register"><strong>Register Airdrop</strong><span>Official wallet registration</span></button>
         <button type="button" data-view-btn="buy"><strong>Buy $FIRU</strong><span>Official round access</span></button>
         <button type="button" data-view-btn="claim"><strong>Claim</strong><span>Claim Airdrop + Claim Round $FIRU</span></button>
-        <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
         <button type="button" data-shortcut-action="airdrop"><strong>Airdrop</strong><span>Eligibility, details and claim path</span></button>
         <button type="button" data-home-section="tokenomics-section"><strong>Tokenomics</strong><span>Premium allocation section</span></button>
         <button type="button" data-home-section="community-section"><strong>Community</strong><span>X, Telegram and holder pulse</span></button>
+        <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
       </nav>
     </div>
   </aside>
