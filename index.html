@@ -116,13 +116,14 @@
     .drawer-title-mobile{display:inline-block}
     .drawer-title-desktop{display:none}
     .drawer-links{display:grid;gap:9px}
-    .drawer-links button{
+    .drawer-links button,.drawer-links a{
       display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:100%;padding:12px 14px 11px;border-radius:18px;
       background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);color:#edf5ff;
-      letter-spacing:.05em;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,.18)
+      letter-spacing:.05em;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,.18);text-decoration:none
     }
-    .drawer-links button strong{font-size:14px;font-weight:900;line-height:1.05}
-    .drawer-links button span{margin-top:5px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:none;color:#9fb2d1}
+    .drawer-links button strong,.drawer-links a strong{font-size:14px;font-weight:900;line-height:1.05}
+    .drawer-links button span,.drawer-links a span{margin-top:5px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:none;color:#9fb2d1}
+    .drawer-links button:disabled,.drawer-links a.is-locked{opacity:.62;cursor:not-allowed}
     .section-shortcut-target{scroll-margin-top:96px}
 
     .app{padding:0 0 188px}
@@ -1086,10 +1087,10 @@
     }
 
 
-      .hero-launch-strip{position:absolute;left:14px;right:14px;bottom:142px;z-index:1403;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;pointer-events:auto}
-      .hero-launch-chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:62px;padding:10px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(8,14,38,.96),rgba(8,14,38,.9));box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.03);color:#eef5ff;text-decoration:none;text-align:left;backdrop-filter:blur(8px)}
-      .hero-launch-chip strong{font-size:12px;line-height:1.02;letter-spacing:.01em;font-weight:900}
-      .hero-launch-chip span{font-size:9px;line-height:1.05;color:rgba(225,235,255,.72);text-transform:uppercase;letter-spacing:.08em}
+      .hero-launch-strip{position:absolute;left:14px;right:14px;bottom:126px;z-index:1403;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;pointer-events:auto}
+      .hero-launch-chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;min-height:74px;padding:12px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(8,14,38,.96),rgba(8,14,38,.9));box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.03);color:#eef5ff;text-decoration:none;text-align:left;backdrop-filter:blur(8px)}
+      .hero-launch-chip strong{font-size:14px;line-height:1.02;letter-spacing:.01em;font-weight:900}
+      .hero-launch-chip span{font-size:10px;line-height:1.1;color:rgba(225,235,255,.72);text-transform:uppercase;letter-spacing:.08em}
       .hero-launch-chip.is-live{background:linear-gradient(180deg,#2f95ff,#1d6dff);border-color:rgba(115,185,255,.4);color:#fff}
       .hero-launch-chip.is-live span{color:rgba(255,255,255,.84)}
       .hero-launch-chip[disabled], .hero-launch-chip.is-locked[aria-disabled="true"]{opacity:.96}
@@ -1194,6 +1195,10 @@
         <button type="button" data-home-section="tokenomics-section"><strong>Tokenomics</strong><span>Premium allocation section</span></button>
         <button type="button" data-home-section="community-section"><strong>Community</strong><span>X, Telegram and holder pulse</span></button>
         <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
+        <button type="button" data-launch-shortcut="copy"><strong>Copy Contract</strong><span>Mint at launch</span></button>
+        <button type="button" data-launch-shortcut="jupiter"><strong>Buy $FIRU on Jupiter</strong><span>Official buy access</span></button>
+        <button type="button" data-launch-shortcut="raydium"><strong>Live Trading</strong><span>Market access</span></button>
+        <button type="button" data-launch-shortcut="dexscreener"><strong>View Chart</strong><span>Price and tracker</span></button>
       </nav>
     </div>
   </aside>
@@ -1960,6 +1965,15 @@
       birdeyeUrl: ""
     };
 
+    let CURRENT_FIRU_LAUNCH_STATE = {
+      hasMint: false,
+      liveTrading: false,
+      mintUrl: "",
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: ""
+    };
+
     function setLaunchLinkState(elements, url, enabled) {
       elements.forEach((el) => {
         if (!el) return;
@@ -1974,6 +1988,19 @@
           el.setAttribute("aria-disabled", "true");
           el.setAttribute("tabindex", "-1");
         }
+      });
+    }
+
+    function syncLaunchShortcutRows(state) {
+      document.querySelectorAll('[data-launch-shortcut="copy"]').forEach((btn) => {
+        btn.disabled = !state.hasMint;
+        btn.classList.toggle("is-locked", !state.hasMint);
+        btn.setAttribute("aria-disabled", state.hasMint ? "false" : "true");
+      });
+      document.querySelectorAll('[data-launch-shortcut="jupiter"], [data-launch-shortcut="raydium"], [data-launch-shortcut="dexscreener"]').forEach((btn) => {
+        btn.disabled = !state.liveTrading;
+        btn.classList.toggle("is-locked", !state.liveTrading);
+        btn.setAttribute("aria-disabled", state.liveTrading ? "false" : "true");
       });
     }
 
@@ -2011,6 +2038,15 @@
       const hasMint = Boolean(config.mintAddress);
       const mintUrl = config.mintExplorerUrl || (hasMint ? `https://solscan.io/token/${encodeURIComponent(config.mintAddress)}` : "");
       const liveTrading = hasMint && config.tradingEnabled;
+
+      CURRENT_FIRU_LAUNCH_STATE = {
+        hasMint,
+        liveTrading,
+        mintUrl,
+        jupiterUrl: config.jupiterUrl,
+        raydiumUrl: config.raydiumUrl,
+        dexscreenerUrl: config.dexscreenerUrl
+      };
 
       document.querySelectorAll("[data-firu-mint-display]").forEach((el) => {
         el.textContent = hasMint ? config.mintAddress : "Coming at launch";
@@ -2053,6 +2089,7 @@
       setLaunchLinkState([...document.querySelectorAll('[data-firu-link="raydium"]')], config.raydiumUrl, liveTrading);
       setLaunchLinkState([...document.querySelectorAll('[data-firu-link="dexscreener"]')], config.dexscreenerUrl, liveTrading);
       setLaunchLinkState([...document.querySelectorAll('[data-firu-link="birdeye"]')], config.birdeyeUrl, liveTrading);
+      syncLaunchShortcutRows(CURRENT_FIRU_LAUNCH_STATE);
     }
 
 
@@ -2065,6 +2102,34 @@
         window.setTimeout(() => {
           btn.textContent = defaultLabel;
         }, 1400);
+      });
+    });
+
+    document.querySelectorAll("[data-launch-shortcut]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const action = String(btn.dataset.launchShortcut || "").trim();
+        if (!action) return;
+        if (action === "copy") {
+          if (!CURRENT_FIRU_LAUNCH_STATE.hasMint) return;
+          const success = await copyTextValue(FIRU_LAUNCH_CONFIG.mintAddress);
+          const strong = btn.querySelector("strong");
+          const original = strong?.textContent || "Copy Contract";
+          if (strong) strong.textContent = success ? "Copied" : "Copy Contract";
+          window.setTimeout(() => {
+            if (strong) strong.textContent = original;
+          }, 1400);
+          drawer.classList.remove("open");
+          return;
+        }
+        const urlMap = {
+          jupiter: CURRENT_FIRU_LAUNCH_STATE.jupiterUrl,
+          raydium: CURRENT_FIRU_LAUNCH_STATE.raydiumUrl,
+          dexscreener: CURRENT_FIRU_LAUNCH_STATE.dexscreenerUrl
+        };
+        const finalUrl = String(urlMap[action] || "").trim();
+        if (!CURRENT_FIRU_LAUNCH_STATE.liveTrading || !finalUrl) return;
+        drawer.classList.remove("open");
+        window.open(finalUrl, "_blank", "noopener");
       });
     });
 
