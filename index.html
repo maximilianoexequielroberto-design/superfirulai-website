@@ -634,6 +634,147 @@
       font-size:14px;
     }
 
+
+    .launch-desk{
+      position:relative;
+      overflow:hidden;
+      padding:24px;
+      border-radius:32px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 0% 0%,rgba(104,188,255,.16),transparent 28%),
+        radial-gradient(circle at 100% 0%,rgba(255,208,96,.14),transparent 30%),
+        linear-gradient(180deg,rgba(10,19,45,.94),rgba(6,13,31,.98));
+      box-shadow:0 28px 64px rgba(0,0,0,.42);
+      isolation:isolate;
+    }
+    .launch-desk::before{
+      content:"";
+      position:absolute;
+      inset:auto auto -100px -100px;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(255,208,96,.10),transparent 70%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .launch-desk::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,rgba(255,255,255,.03),transparent 40%,rgba(61,161,255,.06));
+      pointer-events:none;
+      z-index:0;
+    }
+    .launch-desk-inner{position:relative;z-index:1;display:grid;gap:16px}
+    .launch-desk-top{display:grid;gap:10px}
+    .launch-desk-top p{color:var(--muted);line-height:1.58;max-width:58ch;font-size:15px}
+    .launch-grid{display:grid;gap:12px}
+    .launch-card{
+      position:relative;
+      overflow:hidden;
+      padding:20px;
+      border-radius:24px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(14px);
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:12px;
+    }
+    .launch-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      width:max-content;
+      max-width:100%;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      color:#dfeaff;
+    }
+    .launch-kicker::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 0 0 5px rgba(255,208,96,.12);
+    }
+    .launch-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(34px,7vw,56px);
+      line-height:.92;
+      color:#fff;
+      letter-spacing:-.01em;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+    .launch-card strong.launch-card-status{font-size:clamp(30px,6vw,46px)}
+    .launch-subline{
+      display:block;
+      color:#bdd0ee;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .launch-card p{color:var(--muted);line-height:1.58;font-size:14px;max-width:46ch}
+    .launch-inline,.launch-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+    }
+    .launch-actions .btn,.launch-inline .btn{min-height:52px}
+    .launch-chip-row{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .launch-chip{
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:#d9e8ff;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+      text-align:center;
+    }
+    .launch-footnote{
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      line-height:1.58;
+      font-size:14px;
+    }
+    .launch-lock-note{
+      color:#97afd6;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .btn.is-locked,
+    .btn[aria-disabled="true"]{
+      opacity:.58;
+      pointer-events:none;
+      filter:saturate(.74);
+      box-shadow:none;
+    }
+
     .tokenomics-premium{
       position:relative;
       overflow:hidden;
@@ -958,6 +1099,8 @@
       .drawer-title-mobile{display:none !important}
       .drawer-title-desktop{display:inline-block !important}
       .tokenomics-premium-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+      .launch-desk{padding:20px 18px 22px;border-radius:30px}
+      .launch-card{padding:18px}
       .tokenomics-distribution{grid-template-columns:repeat(2,minmax(0,1fr))}
       .tokenomics-rounds{grid-template-columns:repeat(2,minmax(0,1fr))}
       body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
@@ -992,6 +1135,7 @@
       .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
       .grid-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
       .token-chip-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .launch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     }
 
     @media (min-width: 1360px){
@@ -1200,6 +1344,52 @@
             </div>
           </div>
 
+
+          <section class="launch-desk" aria-labelledby="launchDeskTitle">
+            <div class="launch-desk-inner">
+              <div class="launch-desk-top">
+                <div class="eyebrow"><span></span> Live trading desk</div>
+                <h3 id="launchDeskTitle">Official contract and live trading, ready for launch.</h3>
+                <p>Keep rounds inside <strong>Buy $FIRU</strong>, and keep real market trading separate here. When $FIRU goes live, paste the official Solana mint address and the live market links once, then the website unlocks copy, chart and trading actions without redesigning the page.</p>
+              </div>
+
+              <div class="launch-grid">
+                <div class="launch-card">
+                  <div class="launch-kicker">Official $FIRU contract</div>
+                  <strong data-firu-mint-display>Coming at launch</strong>
+                  <span class="launch-subline">Solana mint address · copy directly from the website</span>
+                  <p data-firu-mint-help>Before launch, this block stays visible and locked. At launch, paste the real mint address in the page config and the copy button will go live automatically.</p>
+                  <div class="launch-inline">
+                    <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
+                    <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="mint" aria-disabled="true" tabindex="-1">View Mint</a>
+                  </div>
+                </div>
+
+                <div class="launch-card">
+                  <div class="launch-kicker">Live trading</div>
+                  <strong class="launch-card-status" data-firu-trading-status>Trading unlocks at launch</strong>
+                  <span class="launch-subline">Jupiter · Raydium · Chart · Tracker</span>
+                  <p data-firu-trading-help>Users will be able to buy the live token from the web through your official market links, while the round flow stays separate above.</p>
+                  <div class="launch-chip-row" aria-hidden="true">
+                    <div class="launch-chip">Buy on Jupiter</div>
+                    <div class="launch-chip">Buy on Raydium</div>
+                    <div class="launch-chip">View Chart</div>
+                    <div class="launch-chip">Track Price</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="launch-actions">
+                <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="raydium" aria-disabled="true" tabindex="-1">Buy on Raydium</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="birdeye" aria-disabled="true" tabindex="-1">Track Price</a>
+              </div>
+
+              <div class="launch-footnote" data-firu-launch-note>Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.</div>
+            </div>
+          </section>
+
           <div class="hybrid-grid">
             <div class="hybrid-panel">
               <div class="eyebrow"><span></span> Clean launch logic</div>
@@ -1339,7 +1529,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Info · Premium map</div>
                 <h2>Official SuperFirulai paths</h2>
-                <p>One clean mobile map for airdrop access, round access, and both claim flows.</p>
+                <p>One clean premium map for airdrop access, round access, and both claim flows.</p>
               </div>
             </div>
             <div class="roadmap-grid">
@@ -1373,6 +1563,28 @@
             <div class="actions" style="margin-top:18px">
               <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics details</button>
             </div>
+          </div>
+
+
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Live trading</div>
+                <h3>Official contract and launch buttons</h3>
+                <p>The website is already prepared for the real $FIRU mint address, copy action, chart links and live trading routes.</p>
+              </div>
+            </div>
+            <div class="roadmap-grid">
+              <div class="mini-card"><strong data-firu-mint-display>Coming at launch</strong><span>Official $FIRU contract / Solana mint address.</span></div>
+              <div class="mini-card"><strong data-firu-trading-status>Trading unlocks at launch</strong><span>Jupiter, Raydium, chart and tracker links can go live from one config update.</span></div>
+              <div class="mini-card"><strong>Separate from rounds</strong><span>Buy $FIRU keeps the round flow. Live trading is the post-launch market path.</span></div>
+            </div>
+            <div class="actions" style="margin-top:18px">
+              <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
+              <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
+              <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
+            </div>
+            <div class="launch-footnote" style="margin-top:18px" data-firu-launch-note>Launch setup ready. Paste the official mint address and the market URLs later in <strong>FIRU_LAUNCH_CONFIG</strong>.</div>
           </div>
 
           <div class="card">
@@ -1704,6 +1916,127 @@
         if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlg.close();
       });
     });
+
+
+    const FIRU_LAUNCH_CONFIG = {
+      mintAddress: "",
+      mintExplorerUrl: "",
+      tradingEnabled: false,
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: "",
+      birdeyeUrl: ""
+    };
+
+    function setLaunchLinkState(elements, url, enabled) {
+      elements.forEach((el) => {
+        if (!el) return;
+        if (enabled && url) {
+          el.href = url;
+          el.classList.remove("is-locked");
+          el.removeAttribute("aria-disabled");
+          el.removeAttribute("tabindex");
+        } else {
+          el.href = "#";
+          el.classList.add("is-locked");
+          el.setAttribute("aria-disabled", "true");
+          el.setAttribute("tabindex", "-1");
+        }
+      });
+    }
+
+    async function copyTextValue(value) {
+      const finalValue = String(value || "").trim();
+      if (!finalValue) return false;
+      try {
+        await navigator.clipboard.writeText(finalValue);
+        return true;
+      } catch (_) {
+        const temp = document.createElement("textarea");
+        temp.value = finalValue;
+        temp.setAttribute("readonly", "");
+        temp.style.position = "absolute";
+        temp.style.left = "-9999px";
+        document.body.appendChild(temp);
+        temp.select();
+        const ok = document.execCommand("copy");
+        temp.remove();
+        return ok;
+      }
+    }
+
+    function syncFiruLaunchDesk() {
+      const config = {
+        mintAddress: String(FIRU_LAUNCH_CONFIG.mintAddress || "").trim(),
+        mintExplorerUrl: String(FIRU_LAUNCH_CONFIG.mintExplorerUrl || "").trim(),
+        tradingEnabled: Boolean(FIRU_LAUNCH_CONFIG.tradingEnabled),
+        jupiterUrl: String(FIRU_LAUNCH_CONFIG.jupiterUrl || "").trim(),
+        raydiumUrl: String(FIRU_LAUNCH_CONFIG.raydiumUrl || "").trim(),
+        dexscreenerUrl: String(FIRU_LAUNCH_CONFIG.dexscreenerUrl || "").trim(),
+        birdeyeUrl: String(FIRU_LAUNCH_CONFIG.birdeyeUrl || "").trim()
+      };
+
+      const hasMint = Boolean(config.mintAddress);
+      const mintUrl = config.mintExplorerUrl || (hasMint ? `https://solscan.io/token/${encodeURIComponent(config.mintAddress)}` : "");
+      const liveTrading = hasMint && config.tradingEnabled;
+
+      document.querySelectorAll("[data-firu-mint-display]").forEach((el) => {
+        el.textContent = hasMint ? config.mintAddress : "Coming at launch";
+      });
+
+      document.querySelectorAll("[data-firu-mint-help]").forEach((el) => {
+        el.textContent = hasMint
+          ? "The official mint address is now loaded. Users can copy it directly from the website."
+          : "Before launch, this block stays visible and locked. At launch, paste the real mint address in the page config and the copy button will go live automatically.";
+      });
+
+      document.querySelectorAll("[data-firu-trading-status]").forEach((el) => {
+        el.textContent = liveTrading ? "Live trading is active" : (hasMint ? "Contract ready · trading still locked" : "Trading unlocks at launch");
+      });
+
+      document.querySelectorAll("[data-firu-trading-help]").forEach((el) => {
+        el.textContent = liveTrading
+          ? "The official contract and live market links are active. Users can buy, view chart and track price directly from this website."
+          : (hasMint
+            ? "The contract is already loaded. Turn tradingEnabled on and paste the official market links when you are ready to open trading."
+            : "Users will be able to buy the live token from the web through your official market links, while the round flow stays separate above.");
+      });
+
+      document.querySelectorAll("[data-firu-launch-note]").forEach((el) => {
+        el.innerHTML = liveTrading
+          ? "Launch desk live. Contract copy, chart access and official trading links are now active."
+          : (hasMint
+            ? "Contract loaded. Paste the official market URLs and switch <strong>tradingEnabled</strong> to <strong>true</strong> when live trading opens."
+            : "Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.");
+      });
+
+      document.querySelectorAll("[data-copy-firu-contract]").forEach((btn) => {
+        btn.disabled = !hasMint;
+        if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent.trim() || "Copy Contract";
+        btn.textContent = btn.dataset.defaultLabel;
+      });
+
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="mint"]')], mintUrl, hasMint);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="jupiter"]')], config.jupiterUrl, liveTrading);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="raydium"]')], config.raydiumUrl, liveTrading);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="dexscreener"]')], config.dexscreenerUrl, liveTrading);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="birdeye"]')], config.birdeyeUrl, liveTrading);
+    }
+
+
+
+    document.querySelectorAll("[data-copy-firu-contract]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const success = await copyTextValue(FIRU_LAUNCH_CONFIG.mintAddress);
+        const defaultLabel = btn.dataset.defaultLabel || "Copy Contract";
+        btn.textContent = success ? "Copied" : "Copy Contract";
+        window.setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 1400);
+      });
+    });
+
+    syncFiruLaunchDesk();
 
     function formatCompactNumber(value) {
       const n = Number(value || 0);
