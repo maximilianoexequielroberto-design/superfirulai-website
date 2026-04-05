@@ -105,12 +105,10 @@ async function getRaisedFiruByRound(round) {
 
 export default async function handler(req, res) {
   try {
-    const projectReceiveWallet = String(
-      process.env.ROUND_RECEIVER_WALLET || process.env.PROJECT_RECEIVE_WALLET || ""
-    ).trim();
+    const projectReceiveWallet = String(process.env.ROUND_RECEIVER_WALLET || "").trim();
 
     if (!projectReceiveWallet) {
-      return res.status(500).json({ error: "Project receive wallet is not configured" });
+      return res.status(500).json({ error: "Round receiver wallet is not configured" });
     }
 
     const usdcMint = String(process.env.USDC_MINT_ADDRESS || DEFAULT_USDC_MINT).trim();

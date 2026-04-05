@@ -8,9 +8,7 @@ const supabase = createClient(
 );
 
 const SOLANA_RPC_URL = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
-const PROJECT_RECEIVE_WALLET = String(
-  process.env.ROUND_RECEIVER_WALLET || process.env.PROJECT_RECEIVE_WALLET || ""
-).trim();
+const ROUND_RECEIVER_WALLET = String(process.env.ROUND_RECEIVER_WALLET || "").trim();
 const ROUND_RECEIVER_USDT_ATA = String(process.env.ROUND_RECEIVER_USDT_ATA || "").trim();
 const ROUND_RECEIVER_USDC_ATA = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
@@ -226,8 +224,8 @@ export default async function handler(req, res) {
   }
 
   try {
-    if (!PROJECT_RECEIVE_WALLET) {
-      return res.status(500).json({ error: "Project receive wallet is not configured" });
+    if (!ROUND_RECEIVER_WALLET) {
+      return res.status(500).json({ error: "Round receiver wallet is not configured" });
     }
 
     const { wallet, tx_hash, round, payment_token, telegram, x } = req.body || {};
@@ -297,7 +295,7 @@ export default async function handler(req, res) {
     const usdcMint = String(process.env.USDC_MINT_ADDRESS || DEFAULT_USDC_MINT).trim();
     const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
     const tokenMint = token === "USDT" ? usdtMint : token === "USDC" ? usdcMint : null;
-    const destinationAddress = getDestinationAddress(token, PROJECT_RECEIVE_WALLET, tokenMint);
+    const destinationAddress = getDestinationAddress(token, ROUND_RECEIVER_WALLET, tokenMint);
 
     const paymentAmount = token === "SOL"
       ? extractSolPayment(tx, destinationAddress)
@@ -367,7 +365,7 @@ export default async function handler(req, res) {
     const insertPayload = {
       wallet: inputWallet || senderWallet,
       sender_wallet: senderWallet,
-      project_wallet: PROJECT_RECEIVE_WALLET,
+      project_wallet: ROUND_RECEIVER_WALLET,
       tx_hash: txHash,
       round: roundConfig.round,
       sol_amount: token === "SOL" ? paymentAmount : null,
