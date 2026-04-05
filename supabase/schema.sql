@@ -1,4 +1,11 @@
+-- SuperFirulai - Supabase single source schema
+-- Final schema + minimal compatibility backfills for existing installs.
+
 create extension if not exists pgcrypto;
+
+-- =========================================================
+-- AIRDROP
+-- =========================================================
 
 create table if not exists public.airdrop_registrations (
   id uuid primary key default gen_random_uuid(),
@@ -22,13 +29,16 @@ create table if not exists public.airdrop_registrations (
   constraint airdrop_telegram_unique unique (telegram_username),
   constraint airdrop_x_unique unique (x_username),
   constraint airdrop_nonce_unique unique (nonce),
-  constraint airdrop_status_check check (status in ('pending', 'approved', 'rejected', 'claimed', 'airdrop_sent')),
+  constraint airdrop_status_check check (
+    status in ('pending', 'approved', 'rejected', 'claimed', 'airdrop_sent')
+  ),
   constraint airdrop_wallet_length_check check (char_length(wallet) between 32 and 64),
   constraint airdrop_telegram_format_check check (telegram_username ~ '^[A-Za-z0-9_]{3,32}$'),
   constraint airdrop_x_format_check check (x_username ~ '^[A-Za-z0-9_]{1,15}$'),
   constraint airdrop_nonce_length_check check (char_length(nonce) >= 8)
 );
 
+-- Compatibility for older databases that were created before claim columns existed.
 alter table public.airdrop_registrations
   add column if not exists approved_at timestamptz,
   add column if not exists claim_requested_at timestamptz,
@@ -36,6 +46,7 @@ alter table public.airdrop_registrations
   add column if not exists claim_tx text,
   add column if not exists airdrop_amount numeric(30,0);
 
+-- Normalize legacy delivered-like status into the current claimed status.
 update public.airdrop_registrations
 set status = 'claimed'
 where status = 'airdrop_sent'
@@ -53,10 +64,34 @@ drop policy if exists "deny all public inserts" on public.airdrop_registrations;
 drop policy if exists "deny all public updates" on public.airdrop_registrations;
 drop policy if exists "deny all public deletes" on public.airdrop_registrations;
 
-create policy "deny all public reads" on public.airdrop_registrations for select to public using (false);
-create policy "deny all public inserts" on public.airdrop_registrations for insert to public with check (false);
-create policy "deny all public updates" on public.airdrop_registrations for update to public using (false) with check (false);
-create policy "deny all public deletes" on public.airdrop_registrations for delete to public using (false);
+create policy "deny all public reads"
+  on public.airdrop_registrations
+  for select
+  to public
+  using (false);
+
+create policy "deny all public inserts"
+  on public.airdrop_registrations
+  for insert
+  to public
+  with check (false);
+
+create policy "deny all public updates"
+  on public.airdrop_registrations
+  for update
+  to public
+  using (false)
+  with check (false);
+
+create policy "deny all public deletes"
+  on public.airdrop_registrations
+  for delete
+  to public
+  using (false);
+
+-- =========================================================
+-- ROUNDS
+-- =========================================================
 
 create table if not exists public.round_registrations (
   id uuid primary key default gen_random_uuid(),
@@ -92,11 +127,18 @@ create table if not exists public.round_registrations (
   constraint round_registrations_usd_positive check (payment_amount_usd > 0),
   constraint round_registrations_price_positive check (token_price_usd > 0 and firu_price_usd > 0),
   constraint round_registrations_allocation_positive check (firu_allocation > 0),
-  constraint round_registrations_tg_format check (telegram_username is null or telegram_username ~ '^[A-Za-z0-9_]{3,32}$'),
-  constraint round_registrations_x_format check (x_username is null or x_username ~ '^[A-Za-z0-9_]{1,15}$'),
-  constraint round_registrations_delivery_status_check check (delivery_status in ('pending', 'processing', 'delivered', 'failed', 'cancelled'))
+  constraint round_registrations_tg_format check (
+    telegram_username is null or telegram_username ~ '^[A-Za-z0-9_]{3,32}$'
+  ),
+  constraint round_registrations_x_format check (
+    x_username is null or x_username ~ '^[A-Za-z0-9_]{1,15}$'
+  ),
+  constraint round_registrations_delivery_status_check check (
+    delivery_status in ('pending', 'processing', 'delivered', 'failed', 'cancelled')
+  )
 );
 
+-- Compatibility for older databases that were created before payment/delivery columns existed.
 alter table public.round_registrations
   add column if not exists payment_token text not null default 'SOL',
   add column if not exists payment_amount numeric(30,9) not null default 0,
@@ -108,14 +150,18 @@ alter table public.round_registrations
   add column if not exists delivered_at timestamptz,
   add column if not exists delivery_notes text;
 
+-- Backfill delivery status for older rows.
 update public.round_registrations
 set delivery_status = case
-  when coalesce(distribution_tx, delivery_tx) is not null or coalesce(distribution_sent_at, delivered_at) is not null then 'delivered'
+  when coalesce(distribution_tx, delivery_tx) is not null
+    or coalesce(distribution_sent_at, delivered_at) is not null
+  then 'delivered'
   else 'pending'
 end
 where delivery_status is null
    or delivery_status not in ('pending', 'processing', 'delivered', 'failed', 'cancelled');
 
+-- Add the delivery status constraint on legacy installs when it is still missing.
 do $$
 begin
   if not exists (
@@ -129,6 +175,11 @@ begin
   end if;
 end $$;
 
+create index if not exists idx_round_wallet on public.round_registrations (wallet);
+create index if not exists idx_round_sender_wallet on public.round_registrations (sender_wallet);
+create index if not exists idx_round_payment_token on public.round_registrations (payment_token);
+create index if not exists idx_round_created_at on public.round_registrations (created_at desc);
+create index if not exists idx_round_distribution_tx on public.round_registrations (distribution_tx);
 create index if not exists idx_round_delivery_status on public.round_registrations (delivery_status);
 create index if not exists idx_round_delivery_tx on public.round_registrations (delivery_tx);
 create index if not exists idx_round_delivered_at on public.round_registrations (delivered_at desc);
@@ -175,12 +226,6 @@ from public.round_registrations
 group by delivery_status
 order by delivery_status;
 
-create index if not exists idx_round_wallet on public.round_registrations (wallet);
-create index if not exists idx_round_sender_wallet on public.round_registrations (sender_wallet);
-create index if not exists idx_round_payment_token on public.round_registrations (payment_token);
-create index if not exists idx_round_created_at on public.round_registrations (created_at desc);
-create index if not exists idx_round_distribution_tx on public.round_registrations (distribution_tx);
-
 alter table public.round_registrations enable row level security;
 
 drop policy if exists "deny all round reads" on public.round_registrations;
@@ -188,7 +233,27 @@ drop policy if exists "deny all round inserts" on public.round_registrations;
 drop policy if exists "deny all round updates" on public.round_registrations;
 drop policy if exists "deny all round deletes" on public.round_registrations;
 
-create policy "deny all round reads" on public.round_registrations for select to public using (false);
-create policy "deny all round inserts" on public.round_registrations for insert to public with check (false);
-create policy "deny all round updates" on public.round_registrations for update to public using (false) with check (false);
-create policy "deny all round deletes" on public.round_registrations for delete to public using (false);
+create policy "deny all round reads"
+  on public.round_registrations
+  for select
+  to public
+  using (false);
+
+create policy "deny all round inserts"
+  on public.round_registrations
+  for insert
+  to public
+  with check (false);
+
+create policy "deny all round updates"
+  on public.round_registrations
+  for update
+  to public
+  using (false)
+  with check (false);
+
+create policy "deny all round deletes"
+  on public.round_registrations
+  for delete
+  to public
+  using (false);
