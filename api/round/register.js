@@ -17,6 +17,14 @@ const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
 const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
 const TX_TIMEOUT_MS = 15000;
+
+function getFallbackPrices() {
+  return {
+    SOL: Number(process.env.FALLBACK_SOL_PRICE_USD || 90.84),
+    USDT: Number(process.env.FALLBACK_USDT_PRICE_USD || 1),
+    USDC: Number(process.env.FALLBACK_USDC_PRICE_USD || 1)
+  };
+}
 const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const SOL_EQ_EPSILON = 1e-9;
@@ -73,16 +81,34 @@ function getRoundConfig(round) {
 }
 
 async function fetchLivePrices() {
-  const resp = await fetch(PRICE_URL, {
-    headers: { accept: "application/json" }
-  });
-  const data = await resp.json();
+  try {
+    const resp = await fetch(PRICE_URL, {
+      headers: {
+        accept: "application/json",
+        "user-agent": "SuperFirulai/1.0"
+      }
+    });
 
-  return {
-    SOL: Number(data?.solana?.usd || 0),
-    USDT: Number(data?.tether?.usd || 0),
-    USDC: Number(data?.["usd-coin"]?.usd || 0)
-  };
+    if (!resp.ok) {
+      throw new Error(`price_http_${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const prices = {
+      SOL: Number(data?.solana?.usd || 0),
+      USDT: Number(data?.tether?.usd || 0),
+      USDC: Number(data?.["usd-coin"]?.usd || 0)
+    };
+
+    if (!(prices.SOL > 0) || !(prices.USDT > 0) || !(prices.USDC > 0)) {
+      throw new Error("price_payload_invalid");
+    }
+
+    return prices;
+  } catch (error) {
+    console.error("live price fallback", error);
+    return getFallbackPrices();
+  }
 }
 
 async function rpcCall(method, params) {
