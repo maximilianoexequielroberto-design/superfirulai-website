@@ -1,6 +1,6 @@
 # SuperFirulai website
 
-Static landing page + Vercel serverless API for the SuperFirulai website, airdrop registration, claim-status checks, and round registration flow.
+Static landing page + Vercel serverless API for the SuperFirulai website, airdrop registration, claim-status checks, and the active round registration flow.
 
 ## Active project structure
 
@@ -22,7 +22,26 @@ Main active files in the current site:
 
 Legacy / not part of the active mounted flow:
 
-- `/app.js` — legacy file kept in the repo for reference only. The current site is mounted from `/index.html` with the modular frontend files listed above.
+- `/app.js` — legacy reference file only. The active site is mounted from `/index.html` with the modular frontend files listed above.
+
+## Frozen round configuration
+
+Current frozen values for the active setup:
+
+- `ROUND_RECEIVER_WALLET` = main public Solana wallet
+- `ROUND_RECEIVER_USDT_ATA` = USDT ATA
+- `ROUND_RECEIVER_USDC_ATA` = USDC ATA
+- `ROUND_1_ENABLED=true`
+- `ROUND_2_ENABLED=false`
+- `ROUND_1_FIRU_PRICE=0.000168`
+- `ROUND_2_FIRU_PRICE=0.000269`
+- `ROUND_1_TOKEN_CAP=25000000`
+- `ROUND_2_TOKEN_CAP=25000000`
+- `ROUND_MIN=0.1`
+- `ROUND_MAX=2`
+- `CLAIM_LIVE=false`
+
+Round 2 stays published but disabled until you explicitly decide to activate it.
 
 ## Environment variables
 
@@ -67,7 +86,6 @@ Legacy / not part of the active mounted flow:
 - `X_FOLLOWERS_COUNT`
 - `TOTAL_SUPPLY`
 - `TELEGRAM_MEMBERS_FALLBACK`
-- `PROJECT_RECEIVE_WALLET` (legacy compatibility alias; prefer `ROUND_RECEIVER_WALLET`)
 
 ## Current round / buy logic
 
@@ -79,6 +97,7 @@ Legacy / not part of the active mounted flow:
 - USDT / USDC go to their configured ATA if explicitly provided; otherwise the API derives the ATA from `ROUND_RECEIVER_WALLET`.
 - `/api/round/config` returns the public runtime configuration used by the frontend.
 - `/api/round/register` validates on-chain payment details before saving the registration.
+- `/api/round/register` now falls back to the configured fallback prices if the live price request fails.
 
 ## Current airdrop logic
 
@@ -109,4 +128,3 @@ This repo reflects the current active modular flow. If you update documentation 
 - `/api/airdrop/register.js`
 - `/api/airdrop/claim-status.js`
 - `/supabase/schema.sql`
-
