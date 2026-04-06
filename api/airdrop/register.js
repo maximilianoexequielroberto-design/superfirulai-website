@@ -11,6 +11,8 @@ const supabase = createClient(
 const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const NONCE_TTL_MS = 5 * 60 * 1000;
+const TELEGRAM_AUTH_MAX_AGE_SEC = 10 * 60;
+const TELEGRAM_API_BASE = "https://api.telegram.org";
 
 async function verifyTurnstile(token, ip) {
   const form = new FormData();
@@ -89,6 +91,83 @@ function verifyChallenge({ nonce, timestamp, challenge }) {
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(provided));
 }
 
+function buildTelegramCheckString(auth) {
+  return Object.keys(auth)
+    .filter((key) => auth[key] !== undefined && auth[key] !== null && key !== "hash")
+    .sort()
+    .map((key) => `${key}=${auth[key]}`)
+    .join("\n");
+}
+
+function verifyTelegramLogin(auth) {
+  const botToken = String(process.env.TELEGRAM_BOT_TOKEN || "").trim();
+  if (!botToken) {
+    throw new Error("Telegram bot token is not configured");
+  }
+
+  const payload = auth && typeof auth === "object" ? auth : {};
+  const hash = String(payload.hash || "").trim();
+  const authDate = Number(payload.auth_date || 0);
+  const userId = Number(payload.id || 0);
+
+  if (!hash || !authDate || !userId) {
+    throw new Error("Telegram verification is incomplete");
+  }
+
+  if (Math.abs(Math.floor(Date.now() / 1000) - authDate) > TELEGRAM_AUTH_MAX_AGE_SEC) {
+    throw new Error("Telegram verification expired. Verify again.");
+  }
+
+  const checkString = buildTelegramCheckString({
+    auth_date: authDate,
+    first_name: payload.first_name,
+    id: userId,
+    last_name: payload.last_name,
+    photo_url: payload.photo_url,
+    username: payload.username
+  });
+
+  const secretKey = crypto.createHash("sha256").update(botToken).digest();
+  const expectedHash = crypto.createHmac("sha256", secretKey).update(checkString).digest("hex");
+
+  if (expectedHash !== hash) {
+    throw new Error("Telegram login signature is invalid");
+  }
+
+  return {
+    id: userId,
+    username: normalizeTelegramHandle(payload.username || ""),
+    auth_date: authDate,
+    first_name: String(payload.first_name || "").trim(),
+    last_name: String(payload.last_name || "").trim(),
+    photo_url: String(payload.photo_url || "").trim(),
+    hash
+  };
+}
+
+async function getTelegramMembership(userId) {
+  const token = String(process.env.TELEGRAM_BOT_TOKEN || "").trim();
+  const chatId = String(process.env.TELEGRAM_CHAT_ID || "").trim();
+  if (!token || !chatId) {
+    throw new Error("Telegram chat is not configured");
+  }
+
+  const url = `${TELEGRAM_API_BASE}/bot${token}/getChatMember?chat_id=${encodeURIComponent(chatId)}&user_id=${encodeURIComponent(userId)}`;
+  const response = await fetch(url, { cache: "no-store" });
+  const data = await response.json();
+
+  if (!response.ok || !data?.ok) {
+    throw new Error(data?.description || "Could not verify Telegram membership");
+  }
+
+  const status = String(data?.result?.status || "").toLowerCase();
+  const restrictedIsMember = Boolean(data?.result?.is_member);
+  const activeStatuses = new Set(["creator", "administrator", "member"]);
+  const isMember = activeStatuses.has(status) || (status === "restricted" && restrictedIsMember);
+
+  return { isMember, status };
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -98,6 +177,7 @@ export default async function handler(req, res) {
     const {
       wallet,
       telegram_username,
+      telegram_auth,
       x_username,
       signed_message,
       signature,
@@ -107,7 +187,7 @@ export default async function handler(req, res) {
       turnstileToken
     } = req.body || {};
 
-    if (!wallet || !telegram_username || !x_username || !signed_message || !signature || !nonce || !timestamp || !challenge || !turnstileToken) {
+    if (!wallet || !telegram_username || !telegram_auth || !x_username || !signed_message || !signature || !nonce || !timestamp || !challenge || !turnstileToken) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -120,6 +200,20 @@ export default async function handler(req, res) {
 
     if (!X_HANDLE_RE.test(xh)) {
       return res.status(400).json({ error: "Invalid X username" });
+    }
+
+    const telegramAuth = verifyTelegramLogin(telegram_auth);
+    if (!telegramAuth.username) {
+      return res.status(400).json({ error: "Your Telegram account needs a public username to register." });
+    }
+
+    if (tg !== telegramAuth.username) {
+      return res.status(400).json({ error: "Telegram username mismatch. Verify the same Telegram account again." });
+    }
+
+    const membership = await getTelegramMembership(telegramAuth.id);
+    if (!membership.isMember) {
+      return res.status(403).json({ error: "Join SuperFirulai Community on Telegram before registering." });
     }
 
     const issuedAt = Date.parse(timestamp);
