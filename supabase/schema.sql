@@ -614,3 +614,49 @@ comment on column public.round_registrations.token_price_usd is
 
 comment on column public.round_registrations.firu_price_usd is
 'FIRU price applied to that purchase.';
+
+-- =====================================================
+-- CLEAN READ-ONLY VIEWS FOR DASHBOARD
+-- =====================================================
+drop view if exists public.v_airdrop_clean;
+drop view if exists public.v_round_clean;
+
+create or replace view public."00_airdrop_limpio" as
+select
+  id,
+  wallet,
+  telegram_username,
+  x_username,
+  status,
+  reason,
+  created_at,
+  approved_at,
+  claim_requested_at,
+  claimed_at,
+  claim_tx,
+  airdrop_amount
+from public.airdrop_registrations
+order by created_at desc;
+
+create or replace view public."01_rounds_limpio" as
+select
+  id,
+  wallet,
+  round,
+  payment_token,
+  payment_amount,
+  payment_amount_usd,
+  firu_allocation,
+  tx_hash,
+  created_at,
+  delivery_status,
+  delivery_tx,
+  delivered_at
+from public.round_registrations
+order by created_at desc;
+
+comment on view public."00_airdrop_limpio" is
+'Vista limpia de lectura para revisar registros de airdrop en el panel.';
+
+comment on view public."01_rounds_limpio" is
+'Vista limpia de lectura para revisar rounds en el panel.';
