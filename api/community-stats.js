@@ -1,3 +1,5 @@
+import { fetchXFollowersCount } from "../lib/x-auth.js";
+
 const DEFAULT_HOLDERS = 2418;
 const DEFAULT_X_FOLLOWERS = 61;
 const DEFAULT_TELEGRAM_MEMBERS = 24;
@@ -101,12 +103,17 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const xFollowers = Number(process.env.X_FOLLOWERS_COUNT || DEFAULT_X_FOLLOWERS);
+  const fallbackXFollowers = Number(process.env.X_FOLLOWERS_COUNT || DEFAULT_X_FOLLOWERS);
   const totalSupply = Number(process.env.TOTAL_SUPPLY || DEFAULT_TOTAL_SUPPLY);
   const fallbackHolders = Number(process.env.HOLDERS_COUNT || DEFAULT_HOLDERS);
   const commitment = String(process.env.HOLDERS_RPC_COMMITMENT || DEFAULT_COMMITMENT).trim() || DEFAULT_COMMITMENT;
 
   let telegramMembers = Number(process.env.TELEGRAM_MEMBERS_FALLBACK || DEFAULT_TELEGRAM_MEMBERS);
+  let xFollowers = fallbackXFollowers;
+  let xFollowersMode = "fallback";
+  let xFollowersUpdatedAt = new Date().toISOString();
+  let xFollowersError = null;
+
   let holders = fallbackHolders;
   let holdersMode = "fallback";
   let holdersUpdatedAt = new Date().toISOString();
@@ -130,6 +137,15 @@ export default async function handler(req, res) {
     }
   } catch {
     // fallback to env/default
+  }
+
+  try {
+    const liveFollowers = await fetchXFollowersCount();
+    xFollowers = liveFollowers.followersCount;
+    xFollowersMode = "live";
+    xFollowersUpdatedAt = liveFollowers.checkedAt;
+  } catch (error) {
+    xFollowersError = error instanceof Error ? error.message : "x followers unavailable";
   }
 
   try {
@@ -159,6 +175,9 @@ export default async function handler(req, res) {
     holdersRefreshMs: FALLBACK_REFRESH_MS,
     telegramMembers,
     xFollowers,
+    xFollowersMode,
+    xFollowersUpdatedAt,
+    xFollowersError,
     totalSupply
   });
 }
