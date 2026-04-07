@@ -34,8 +34,8 @@ function injectStyles() {
       overflow:hidden;
       margin-top:0;
       display:grid;
-      gap:10px;
-      padding:16px;
+      gap:8px;
+      padding:14px;
       border-radius:24px;
       border:1px solid rgba(255,255,255,.08);
       background:
@@ -67,8 +67,8 @@ function injectStyles() {
     }
     .sf-claim-title{margin:0;color:#fff;font-size:22px;line-height:1.08;letter-spacing:-.02em}
     .sf-claim-subtitle{margin:0;color:#c8d6f2;font-size:13px;line-height:1.48}
-    .sf-claim-steps{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:8px}
-    .sf-claim-step{display:grid;gap:5px;padding:10px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);min-height:78px}
+    .sf-claim-steps{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:7px}
+    .sf-claim-step{display:grid;gap:4px;padding:9px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.035);min-height:68px}
     .sf-claim-step-id{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#eef6ff;font-size:12px;font-weight:900}
     .sf-claim-step strong{color:#fff;font-size:13px;line-height:1.25}
     .sf-claim-step span{color:#bfccea;font-size:12px;line-height:1.45}
@@ -108,7 +108,7 @@ function formatWhole(value) {
 }
 
 function renderTestingNotice(copy) {
-  return `<div class="sf-claim-testing"><strong>Testing enabled.</strong> ${copy}</div>`;
+  return `<div class="sf-claim-testing"><strong>Preview only.</strong> ${copy}</div>`;
 }
 
 export function mountClaimStatus(selector = "#airdrop-claim-status") {
@@ -133,7 +133,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
           <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from registration.</span></div>
           <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Check Status</strong><span>Pending, approved, rejected or claimed.</span></div>
           <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Approved Only</strong><span>Only approved wallets continue.</span></div>
-          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Airdrop</strong><span>Testing stays on for UI checks.</span></div>
+          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Airdrop</strong><span>Available when claim goes live.</span></div>
         </div>
 
         <div class="sf-claim-module">
@@ -152,15 +152,15 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
       </div>
 
       <div class="sf-claim-card round-claim sf-claim-panel" id="sf-round-claim-card" data-claim-panel="round" hidden>
-        <div class="sf-claim-eyebrow">Claim Round $FIRU · Testing</div>
+        <div class="sf-claim-eyebrow">Claim Round $FIRU · Premium</div>
         <h3 class="sf-claim-title">Claim Round $FIRU with your buyer wallet</h3>
-        <p class="sf-claim-subtitle">Use the same wallet from your round purchase. The page loads your reserved $FIRU position first, then keeps the claim action enabled for testing.</p>
+        <p class="sf-claim-subtitle">Use the same wallet from your round purchase. The page loads your reserved $FIRU position first and keeps the claim flow visible until official delivery is announced.</p>
 
         <div id="sf-round-steps" class="sf-claim-steps">
           <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from BUY $FIRU.</span></div>
-          <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Load Position</strong><span>View your reserved and delivered $FIRU.</span></div>
-          <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Review Allocation</strong><span>Check rounds, purchases and delivery status.</span></div>
-          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Round $FIRU</strong><span>Button stays enabled for testing.</span></div>
+          <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Check Position</strong><span>View your reserved and delivered $FIRU.</span></div>
+          <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Review Summary</strong><span>Check rounds, purchases and delivery status.</span></div>
+          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Round $FIRU</strong><span>Available when round delivery goes live.</span></div>
         </div>
 
         <div class="sf-claim-module">
@@ -175,9 +175,9 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
           <div id="sf-round-wallet" class="sf-claim-note warn">Connect the same wallet used for your round purchase.</div>
           <div id="sf-round-status" class="sf-claim-note">After connecting, the page loads your reserved $FIRU, delivery status and purchase count from your round history.</div>
           <div id="sf-round-summary" class="sf-round-summary" hidden>
-            <div class="sf-round-stat"><strong>Reserved $FIRU</strong><span id="sf-round-reserved">-</span></div>
-            <div class="sf-round-stat"><strong>Delivered $FIRU</strong><span id="sf-round-delivered">-</span></div>
-            <div class="sf-round-stat"><strong>Purchases</strong><span id="sf-round-purchases">-</span></div>
+            <div class="sf-round-stat"><strong>Reserved $FIRU</strong><span id="sf-round-reserved">Not available yet</span></div>
+            <div class="sf-round-stat"><strong>Delivered $FIRU</strong><span id="sf-round-delivered">Not available yet</span></div>
+            <div class="sf-round-stat"><strong>Purchases</strong><span id="sf-round-purchases">Not available yet</span></div>
           </div>
           <div id="sf-round-cta"></div>
         </div>
@@ -275,12 +275,12 @@ function mountAirdropClaim(root) {
       ctaEl.innerHTML = `
         <div class="sf-claim-row">
           <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
-          ${renderTestingNotice("The Claim Airdrop button stays active for UI testing. No live token delivery happens until you disable testing and connect the final claim endpoint.")}
+          ${renderTestingNotice("This preview stays visible before launch. Live token delivery only starts after the official claim announcement and final endpoint activation.")}
         </div>`;
       root.querySelector("#sf-claim-submit")?.addEventListener("click", () => {
         setStepState(4, true, false);
         if (CLAIM_TESTING_MODE && !data.claimLive) {
-          setStatusMessage(`<strong>Testing mode active.</strong><br>This confirms the Claim Airdrop UI flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the final endpoint is still disabled.`, "ok");
+          setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Airdrop flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the official claim window is not open yet.`, "ok");
           return;
         }
         setStatusMessage(`<strong>Claim Airdrop ready.</strong><br>The wallet is approved and the live claim flow can continue here.`, "ok");
@@ -327,8 +327,8 @@ function mountAirdropClaim(root) {
           connectBtn.textContent = "Open Wallet";
           connectBtn.onclick = () => openInPreferredWallet("#claim");
           showOpenWalletButton(false);
-          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser, then tap Connect Wallet again.", "warn");
-          setStatusMessage("No wallet provider is available in this browser. Open the page inside Phantom or use a desktop wallet extension and try again.", "warn");
+          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser and tap Connect Wallet again.", "warn");
+          setStatusMessage("No wallet provider is available here. Open the page inside Phantom or use a desktop wallet extension.", "warn");
           return;
         }
         connectBtn.disabled = false;
@@ -489,13 +489,13 @@ function mountRoundClaim(root) {
     ctaEl.innerHTML = `
       <div class="sf-claim-row">
         <div class="sf-claim-inline"><button id="sf-round-claim-submit" class="btn btn-gold" type="button">Claim Round $FIRU</button></div>
-        ${renderTestingNotice("The Claim Round $FIRU button stays enabled for full UI testing. No live round delivery happens until you disable testing and connect the final delivery endpoint.")}
+        ${renderTestingNotice("This preview stays visible before launch. Live round delivery only starts after the official announcement and final delivery endpoint activation.")}
       </div>`;
 
     root.querySelector("#sf-round-claim-submit")?.addEventListener("click", () => {
       setStepState(4, true, false);
       const pendingText = totalReserved > 0 ? `<br>Reserved and pending delivery: <strong>${formatWhole(totalReserved)} $FIRU</strong>.` : "";
-      setStatusMessage(`<strong>Testing mode active.</strong><br>This confirms the Claim Round $FIRU UI flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live delivery was sent.${pendingText}${totalDelivered > 0 ? `<br>Already delivered: <strong>${formatWhole(totalDelivered)} $FIRU</strong>.` : ""}`, "ok");
+      setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Round $FIRU flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live delivery was sent because the official round delivery window is not open yet.${pendingText}${totalDelivered > 0 ? `<br>Already delivered: <strong>${formatWhole(totalDelivered)} $FIRU</strong>.` : ""}`, "ok");
     });
   }
 
@@ -516,8 +516,8 @@ function mountRoundClaim(root) {
           connectBtn.disabled = false;
           connectBtn.textContent = "Open Wallet";
           connectBtn.onclick = () => openInPreferredWallet("#claim");
-          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser, then tap Connect Wallet again.", "warn");
-          setStatusMessage("No wallet provider is available in this browser. Open the page inside Phantom or use a desktop wallet extension and try again.", "warn");
+          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser and tap Connect Wallet again.", "warn");
+          setStatusMessage("No wallet provider is available here. Open the page inside Phantom or use a desktop wallet extension.", "warn");
           return;
         }
         connectBtn.disabled = false;

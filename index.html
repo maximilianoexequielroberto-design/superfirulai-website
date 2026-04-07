@@ -124,6 +124,17 @@
     .drawer-links button strong,.drawer-links a strong{font-size:14px;font-weight:900;line-height:1.05}
     .drawer-links button span,.drawer-links a span{margin-top:5px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:none;color:#9fb2d1}
     .drawer-links button:disabled,.drawer-links a.is-locked{opacity:.62;cursor:not-allowed}
+    .drawer-group-label{padding:8px 4px 2px;color:#7f95bb;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+    .drawer-links button.compact span,.drawer-links a.compact span{font-size:11px;letter-spacing:.03em;color:#aac0e4}
+    .info-accordion{display:grid;gap:12px}
+    .info-item{border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));overflow:hidden}
+    .info-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;color:#fff;font-weight:900;font-size:24px;line-height:1.05}
+    .info-item summary::-webkit-details-marker{display:none}
+    .info-item summary span{display:block;color:#9fb2d1;font-size:13px;font-weight:700;line-height:1.5;margin-top:8px;max-width:860px}
+    .info-item summary::after{content:"+";flex:0 0 auto;width:34px;height:34px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:24px;font-weight:500}
+    .info-item[open] summary::after{content:"−"}
+    .info-item-body{padding:0 20px 20px;display:grid;gap:12px}
+    .info-item-body .mini-card,.info-item-body .stat-card,.info-item-body .dialog-item{margin:0}
     .section-shortcut-target{scroll-margin-top:96px}
 
     .app{padding:0 0 188px}
@@ -1120,14 +1131,14 @@
       .mobile-top-links{display:none !important}
       .buy-float{display:none !important}
       .desktop-top-nav{
-        display:flex;align-items:center;gap:10px;position:absolute;left:39%;top:18px;transform:translateX(-50%);z-index:1405;pointer-events:auto
+        display:flex;align-items:center;gap:8px;position:absolute;left:42%;top:18px;transform:translateX(-50%);z-index:1405;pointer-events:auto
       }
       .desktop-top-nav button,.desktop-top-nav a{
         min-height:48px;padding:0 18px;border-radius:999px;
         background:linear-gradient(180deg,rgba(12,20,46,.94),rgba(7,14,34,.88));
         border:1px solid rgba(255,255,255,.10);
         box-shadow:0 14px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.06);
-        color:#eef5ff;font-size:17px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;opacity:1;pointer-events:auto;
+        color:#eef5ff;font-size:16px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;opacity:1;pointer-events:auto;
         transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease
       }
       .desktop-top-nav button:hover,.desktop-top-nav a:hover{
@@ -1201,18 +1212,21 @@
     <div class="drawer-panel">
       <div class="drawer-section-title"><span></span><span class="drawer-title-mobile">Mobile menu</span><span class="drawer-title-desktop">Menu</span></div>
       <nav class="drawer-links">
+        <div class="drawer-group-label">Main</div>
         <button type="button" data-view-btn="home"><strong>Home</strong><span>Hero and main overview</span></button>
         <button type="button" data-view-btn="register"><strong>Register Airdrop</strong><span>Official wallet registration</span></button>
         <button type="button" data-view-btn="buy"><strong>Buy $FIRU</strong><span>Official round access</span></button>
-        <button type="button" data-launch-shortcut="copy"><strong>Copy Contract</strong><span>Mint at launch</span></button>
-        <button type="button" data-launch-shortcut="jupiter"><strong>Buy $FIRU on Jupiter</strong><span>Official buy access</span></button>
-        <button type="button" data-launch-shortcut="raydium"><strong>Live Trading</strong><span>Market access</span></button>
-        <button type="button" data-launch-shortcut="dexscreener"><strong>View Chart</strong><span>Price and tracker</span></button>
         <button type="button" data-view-btn="claim"><strong>Claim</strong><span>Claim Airdrop + Claim Round $FIRU</span></button>
-        <button type="button" data-shortcut-action="airdrop"><strong>Airdrop</strong><span>Eligibility, details and claim path</span></button>
-        <button type="button" data-home-section="tokenomics-section"><strong>Tokenomics</strong><span>Premium allocation section</span></button>
-        <button type="button" data-home-section="community-section"><strong>Community</strong><span>X, Telegram and holder pulse</span></button>
         <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
+        <div class="drawer-group-label">Launch tools</div>
+        <button type="button" data-launch-shortcut="copy" class="compact"><strong>Copy Contract</strong><span>Mint at launch</span></button>
+        <button type="button" data-launch-shortcut="jupiter" class="compact"><strong>Buy on Jupiter</strong><span>Official market access</span></button>
+        <button type="button" data-launch-shortcut="raydium" class="compact"><strong>Live Trading</strong><span>Market access</span></button>
+        <button type="button" data-launch-shortcut="dexscreener" class="compact"><strong>View Chart</strong><span>Price and tracker</span></button>
+        <div class="drawer-group-label">Sections</div>
+        <button type="button" data-shortcut-action="airdrop" class="compact"><strong>Airdrop</strong><span>Eligibility, details and claim path</span></button>
+        <button type="button" data-home-section="tokenomics-section" class="compact"><strong>Tokenomics</strong><span>Premium allocation section</span></button>
+        <button type="button" data-home-section="community-section" class="compact"><strong>Community</strong><span>X, Telegram and holder pulse</span></button>
       </nav>
     </div>
   </aside>
@@ -1531,7 +1545,7 @@
                 <button type="button" data-open="airdropDialog">Airdrop details</button>
               </div>
             </div>
-            <div class="summary-note">12,500 $FIRU per approved wallet · first 100 approved wallets only · same wallet required later for claim.</div>
+            <div class="summary-note">12,500 $FIRU per approved wallet · first 100 approved wallets only · claim date stays TBA until the official announcement.</div>
           </div>
           <div class="card"><div id="airdrop-register"></div></div>
         </div>
@@ -1580,92 +1594,70 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Info · Premium map</div>
                 <h2>Official SuperFirulai paths</h2>
-                <p>One clearer premium map for airdrop access, round access, and the future claim windows without publishing dates too early.</p>
+                <p>Tap each block to open the full information without filling the screen with repeated text.</p>
               </div>
             </div>
-            <div class="roadmap-grid">
-              <div class="mini-card"><strong>Airdrop Path</strong><span>Register first, pass review, and return later with the same approved wallet when Claim Airdrop is officially opened.</span></div>
-              <div class="mini-card"><strong>Round Path</strong><span>Buy $FIRU through the official round flow while Round 1 is open. Round 2 remains announced separately and inactive for now.</span></div>
-              <div class="mini-card"><strong>Same wallet rule</strong><span>Use one personal Solana wallet across register, buy and any future claim step.</span></div>
-              <div class="mini-card"><strong>Timing policy</strong><span>No fixed claim calendar is posted yet. Timing stays TBA until it is confirmed on X first and Telegram second.</span></div>
-            </div>
-            <div class="actions" style="margin-top:18px">
-              <button class="btn btn-dark" type="button" data-open="pathDialog">Open full path</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="module-title">
-              <div class="left">
-                <div class="eyebrow"><span></span> Tokenomics</div>
-                <h3>Official allocation</h3>
-                <p>Premium allocation structure with the official community breakdown already included.</p>
-              </div>
-            </div>
-            <div class="grid-stats">
-              <div class="stat-card stat-card-supply"><strong>1,000,000,000</strong><span>Total supply</span></div>
-              <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
-              <div class="stat-card"><strong>20%</strong><span>Community</span></div>
-              <div class="stat-card"><strong>10%</strong><span>Marketing</span></div>
-              <div class="stat-card"><strong>10%</strong><span>Team</span></div>
-              <div class="stat-card"><strong>5%</strong><span>Burn</span></div>
-              <div class="stat-card"><strong>2.5% / 2.5%</strong><span>Round 1 / Round 2</span></div>
-              <div class="stat-card"><strong>15%</strong><span>Community outside rounds</span></div>
-            </div>
-            <div class="actions" style="margin-top:18px">
-              <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics details</button>
-            </div>
-          </div>
-
-
-          <div class="card">
-            <div class="module-title">
-              <div class="left">
-                <div class="eyebrow"><span></span> Live trading</div>
-                <h3>Official contract and launch buttons</h3>
-                <p>The website is already prepared for the real $FIRU mint address, copy action, chart links and live trading routes.</p>
-              </div>
-            </div>
-            <div class="roadmap-grid">
-              <div class="mini-card"><strong data-firu-mint-display>Coming at launch</strong><span>Official $FIRU contract / Solana mint address.</span></div>
-              <div class="mini-card"><strong data-firu-trading-status>Trading unlocks at launch</strong><span>Jupiter, Raydium, chart and tracker links can go live from one config update.</span></div>
-              <div class="mini-card"><strong>Separate from rounds</strong><span>Buy $FIRU keeps the round flow. Live trading is the post-launch market path.</span></div>
-            </div>
-            <div class="actions" style="margin-top:18px">
-              <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
-              <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
-              <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
-            </div>
-            <div class="launch-footnote" style="margin-top:18px" data-firu-launch-note>Launch setup ready. Paste the official mint address and the market URLs later in <strong>FIRU_LAUNCH_CONFIG</strong>.</div>
-          </div>
-
-          <div class="card">
-            <div class="module-title">
-              <div class="left">
-                <div class="eyebrow"><span></span> Official channels</div>
-                <h3>X first, Telegram second</h3>
-                <p>Keep launch reminders, buy updates, Claim Airdrop and Claim Round $FIRU announcements in one place.</p>
-              </div>
-            </div>
-            <div class="actions">
-              <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
-              <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
-              <button class="btn btn-dark" type="button" data-open="socialDialog">More info</button>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="module-title">
-              <div class="left">
-                <div class="eyebrow"><span></span> Live views</div>
-                <h3>What each screen is for</h3>
-                <p>Each view stays focused on one action so the user always knows what comes next.</p>
-              </div>
-            </div>
-            <div class="roadmap-grid">
-              <div class="mini-card"><strong>Register Airdrop</strong><span>Connect one personal wallet, verify the official X flow, complete Telegram and enter review.</span></div>
-              <div class="mini-card"><strong>Claim Airdrop</strong><span>Approved wallets only. Claim opens later on an official TBA date after the project confirms it.</span></div>
-              <div class="mini-card"><strong>Claim Round $FIRU</strong><span>Reserved for a later stage only if the project enables separate round delivery after the buy flow.</span></div>
+            <div class="info-accordion">
+              <details class="info-item" open>
+                <summary><div>Official paths<span>Airdrop, rounds, same wallet rule and claim timing in one place.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>Airdrop Path</strong><span>Register first, pass review, and return later with the same approved wallet when Claim Airdrop is officially opened.</span></div>
+                  <div class="mini-card"><strong>Round Path</strong><span>Buy $FIRU through the official round flow while Round 1 is open. Round 2 remains announced separately and inactive for now.</span></div>
+                  <div class="mini-card"><strong>Same wallet rule</strong><span>Use one personal Solana wallet across register, buy and any future claim step.</span></div>
+                  <div class="mini-card"><strong>Timing policy</strong><span>No fixed claim calendar is posted yet. Timing stays TBA until it is confirmed on X first and Telegram second.</span></div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>Tokenomics<span>Official allocation with the community split already included.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="grid-stats">
+                    <div class="stat-card stat-card-supply"><strong>1,000,000,000</strong><span>Total supply</span></div>
+                    <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
+                    <div class="stat-card"><strong>20%</strong><span>Community</span></div>
+                    <div class="stat-card"><strong>10%</strong><span>Marketing</span></div>
+                    <div class="stat-card"><strong>10%</strong><span>Team</span></div>
+                    <div class="stat-card"><strong>5%</strong><span>Burn</span></div>
+                    <div class="stat-card"><strong>2.5% / 2.5%</strong><span>Round 1 / Round 2</span></div>
+                    <div class="stat-card"><strong>15%</strong><span>Community outside rounds</span></div>
+                  </div>
+                  <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics details</button></div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>Trading and contract<span>Launch buttons, contract copy and market links.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>Coming at launch</strong><span>Official $FIRU contract / Solana mint address.</span></div>
+                  <div class="mini-card"><strong>Trading unlocks at launch</strong><span>Jupiter, Raydium, chart and tracker links can go live from one config update.</span></div>
+                  <div class="mini-card"><strong>Separate from rounds</strong><span>Buy $FIRU keeps the round flow. Live trading is the post-launch market path.</span></div>
+                  <div class="launch-actions">
+                    <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
+                    <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
+                    <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
+                  </div>
+                  <div class="launch-footnote" data-firu-launch-note>Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.</div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>Official channels<span>X first, Telegram second, with one source of truth.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>X first</strong><span>Launch reminders, buy updates and claim announcements.</span></div>
+                  <div class="mini-card"><strong>Telegram second</strong><span>Community chat, pinned instructions and support.</span></div>
+                  <div class="actions">
+                    <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
+                    <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+                    <button class="btn btn-dark" type="button" data-open="socialDialog">More info</button>
+                  </div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>What each screen is for<span>A fast explanation of Register, Buy and Claim without duplicate blocks.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>Register Airdrop</strong><span>Connect one personal wallet, verify the official X flow, complete Telegram and enter review.</span></div>
+                  <div class="mini-card"><strong>Buy $FIRU</strong><span>Use the official Solana round flow, respect the active limits and save the payment receipt.</span></div>
+                  <div class="mini-card"><strong>Claim Airdrop</strong><span>Approved wallets only. Claim opens later on an official TBA date after the project confirms it.</span></div>
+                  <div class="mini-card"><strong>Claim Round $FIRU</strong><span>Reserved for a later stage only if the project enables separate round delivery after the buy flow.</span></div>
+                </div>
+              </details>
             </div>
           </div>
         </div>
@@ -1803,7 +1795,7 @@
         <button class="dialog-close" data-close="socialDialog">✕</button>
       </div>
       <div class="dialog-grid">
-        <div class="dialog-item"><strong>X / Twitter</strong><span>Launch reminders, buy updates and claim announcement.</span></div>
+        <div class="dialog-item"><strong>X</strong><span>Launch reminders, buy updates and claim announcement.</span></div>
         <div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div>
       </div>
       <div class="dialog-actions">
@@ -1819,7 +1811,7 @@
       <div class="dialog-head">
         <div>
           <h3>Airdrop path + round path</h3>
-          <p>The project now shows both official flows clearly: the airdrop claim path and the round claim path.</p>
+          <p>The project shows the official airdrop path, round path and the future claim windows in one place.</p>
         </div>
         <button class="dialog-close" data-close="pathDialog">✕</button>
       </div>

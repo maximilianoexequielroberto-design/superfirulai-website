@@ -33,16 +33,16 @@ function injectStyles() {
   const style = document.createElement("style");
   style.id = "sf-round-styles";
   style.textContent = `
-    .sf-round-form{display:grid;gap:12px;position:relative;z-index:1}
-    .sf-checkout-cluster{display:grid;gap:10px;padding:14px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.07)}
+    .sf-round-form{display:grid;gap:10px;position:relative;z-index:1}
+     .sf-checkout-cluster{display:grid;gap:8px;padding:12px;border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.018));border:1px solid rgba(255,255,255,.07)}
     .sf-checkout-cluster .sf-row,.sf-checkout-cluster .sf-row-tight,.sf-checkout-cluster .sf-price-grid,.sf-checkout-cluster .sf-summary,.sf-checkout-cluster .sf-round-actions{margin:0}
     .sf-round-note{color:#c9d5f3;font-size:14px;line-height:1.6;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px}
     .sf-round-note strong{color:#fff}
     .sf-round-note.ok{color:#8bf0b2}
     .sf-round-note.warn{color:#ffd87d}
     .sf-round-note.error{color:#ffb2b2}
-    .sf-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
-    .sf-row-tight{display:grid;grid-template-columns:1fr 180px 180px;gap:12px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
+     .sf-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
+     .sf-row-tight{display:grid;grid-template-columns:1fr 180px 180px;gap:10px;padding:12px;border-radius:18px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
     .sf-field{display:grid;gap:8px}
     .sf-copy-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden}
     .sf-copy-shell .sf-input{flex:1;min-width:0}
@@ -242,7 +242,7 @@ export function mountRoundRegister(selector) {
         <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
           <div class="sf-steps-head">
             <div>
-              <strong>Buy in 5 guided steps</strong>
+              <strong>Buy in 5 steps</strong>
               <span>Connect wallet first, then choose token, amount and confirm the official Solana buy flow.</span>
             </div>
             <div class="sf-steps-kicker">Live progress</div>
@@ -321,9 +321,9 @@ export function mountRoundRegister(selector) {
 
           <div class="sf-price-grid">
             <div class="sf-metric"><strong>Live token price</strong><span id="sfLiveTokenPrice">-</span></div>
-            <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">-</span></div>
-            <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">-</span></div>
-            <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">-</span></div>
+            <div class="sf-metric"><strong>Estimated market value</strong><span id="sfEstimatedUsd">Not available yet</span></div>
+            <div class="sf-metric"><strong>Estimated $FIRU</strong><span id="sfEstimatedFiru">Not available yet</span></div>
+            <div class="sf-metric"><strong>Official destination</strong><span id="sfDestinationShort">Not available yet</span></div>
           </div>
 
           <div class="sf-row">
@@ -340,7 +340,7 @@ export function mountRoundRegister(selector) {
                 <input class="sf-input" id="sfDestinationAddress" readonly />
                 <button type="button" class="sf-copy-btn" id="sfCopyDestination">COPY ADDRESS</button>
               </div>
-              <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official token destination shown here.</span>
+              <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official destination shown here.</span>
             </label>
           </div>
 

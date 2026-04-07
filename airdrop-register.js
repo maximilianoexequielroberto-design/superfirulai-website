@@ -222,20 +222,20 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <span class="sf-prefix">@</span>
           <input id="sf-x" class="sf-input" placeholder="connect-x-to-autofill" autocomplete="off" autocapitalize="off" spellcheck="false" disabled />
         </div>
-        <div class="sf-help">This field auto-fills after real X login and follow verification.</div>
+        <div class="sf-help">Auto-filled after X verification.</div>
       </div>
 
       <div class="sf-verify-shell">
         <div class="sf-verify-head">
           <div class="sf-verify-title">X verification</div>
-          <div class="sf-verify-copy">Connect your real <strong>X</strong> account, authorize the official app and confirm that the account follows <strong>@${X_TARGET_USERNAME}</strong>. Manual usernames are disabled.</div>
+          <div class="sf-verify-copy">Connect your real <strong>X</strong> account and confirm that it follows <strong>@${X_TARGET_USERNAME}</strong>.</div>
         </div>
         <div class="sf-verify-actions">
           <button id="sf-x-connect" class="btn btn-blue" type="button">Connect X</button>
           <button id="sf-x-reset" class="btn btn-dark" type="button" style="display:none">Use another X</button>
         </div>
         <div id="sf-x-verify-status" class="sf-verify-status warn">X not verified yet.</div>
-        <div id="sf-x-verify-meta" class="sf-verify-meta">Use the same X account that follows @${X_TARGET_USERNAME}. After the popup closes, this field fills in automatically.</div>
+        <div id="sf-x-verify-meta" class="sf-verify-meta">Use the same X account that follows @${X_TARGET_USERNAME}. This field fills automatically after verification.</div>
       </div>
 
       <div class="sf-field">
@@ -244,25 +244,25 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <span class="sf-prefix">t.me/</span>
           <input id="sf-telegram" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
         </div>
-        <div class="sf-help">This field will auto-fill after Telegram verification. Keep it public on your Telegram account.</div>
+        <div class="sf-help">Auto-filled after Telegram verification. Keep your username public.</div>
       </div>
 
       <div class="sf-verify-shell">
         <div class="sf-verify-head">
           <div class="sf-verify-title">Telegram verification</div>
-          <div class="sf-verify-copy">Log in with Telegram and confirm that the account is inside <strong>SuperFirulai Community</strong>. The airdrop stays blocked until Telegram is verified.</div>
+          <div class="sf-verify-copy">Log in with Telegram and confirm that the account is inside <strong>SuperFirulai Community</strong>.</div>
         </div>
         <div id="sf-telegram-widget-slot" class="sf-telegram-widget-slot"></div>
         <div id="sf-telegram-verify-status" class="sf-verify-status warn">Telegram not verified yet.</div>
-        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same Telegram account that follows the community. If your Telegram account has no public username, registration will stay blocked.</div>
+        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same Telegram account that joined the community. Public username required.</div>
         <div class="sf-verify-actions">
           <button id="sf-telegram-reset" class="btn btn-dark" type="button" style="display:none">Verify another Telegram</button>
         </div>
       </div>
 
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
-      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register Access</button>
-      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, verify X + Telegram, then pass captcha and join.</div>
+      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register for Airdrop</button>
+      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, verify X and Telegram, then complete captcha to continue.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
         <div class="sf-confirm-copy">Your wallet and social handles were verified successfully. Your airdrop access is now locked in.</div>
@@ -322,6 +322,17 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const telegramVerifyStatusEl = root.querySelector("#sf-telegram-verify-status");
   const telegramVerifyMetaEl = root.querySelector("#sf-telegram-verify-meta");
   const telegramResetBtn = root.querySelector("#sf-telegram-reset");
+
+  const telegramWidgetObserver = new MutationObserver(() => {
+    const slotText = (telegramWidgetSlot.textContent || "").trim();
+    if (/bot domain invalid/i.test(slotText)) {
+      telegramWidgetSlot.innerHTML = "";
+      telegramWidgetSlot.style.display = "none";
+      setTelegramVerifyStatus("Telegram not verified yet.", "warn");
+      telegramVerifyMetaEl.textContent = "Telegram login will be tested on the final domain. Public username required.";
+    }
+  });
+  telegramWidgetObserver.observe(telegramWidgetSlot, { childList: true, subtree: true, characterData: true });
   const confirmEl = root.querySelector("#sf-confirm");
   const stepCards = Array.from(root.querySelectorAll(".sf-step-card"));
   const modalBackdrop = root.querySelector("#sf-modal-backdrop");
@@ -345,7 +356,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     },
     2: {
       step: "Step 2",
-      title: "Connect X + verify Telegram",
+      title: "Verify X & Telegram",
       copy: "Use the official X login popup plus the Telegram widget. The form auto-fills the verified accounts and blocks manual edits.",
       points: [
         "Tap <strong>Connect X</strong> and approve the official X popup.",
@@ -359,7 +370,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       copy: "The final step is quick: pass the captcha and submit your verified entry.",
       points: [
         "Complete the <strong>captcha</strong>.",
-        "Tap <strong>Register Access</strong>.",
+        "Tap <strong>Register for Airdrop</strong>.",
         "Wait for the confirmation card that says your access is locked in."
       ]
     }
@@ -513,7 +524,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     xConnectBtn.disabled = false;
     xConnectBtn.textContent = "Connect X";
     setXVerifyStatus(copy, "warn");
-    xVerifyMetaEl.textContent = `Use the same X account that follows @${X_TARGET_USERNAME}. After the popup closes, this field fills in automatically.`;
+    xVerifyMetaEl.textContent = `Use the same X account that follows @${X_TARGET_USERNAME}. This field fills automatically after verification.`;
   }
 
   async function verifyXAccessToken(accessToken, expectedUsername = "") {
@@ -573,7 +584,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     telegramEl.value = "";
     telegramResetBtn.style.display = "none";
     setTelegramVerifyStatus(copy, "warn");
-    telegramVerifyMetaEl.textContent = "Use the same Telegram account that follows the community. If your Telegram account has no public username, registration will stay blocked.";
+    telegramVerifyMetaEl.textContent = "Use the same Telegram account that joined the community. Public username required.";
   }
 
   async function verifyTelegramMembership(authData) {
@@ -743,8 +754,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           connectBtn.textContent = "Open in Wallet";
           connectBtn.onclick = () => openInPreferredWallet("#airdrop");
           showOpenWalletButton(false);
-          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser, then tap Connect Wallet again.", "warn");
-          setMsg("No wallet provider is available in this browser. Open the page inside Phantom or use a desktop wallet extension and try again.", "warn");
+          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser and tap Connect Wallet again.", "warn");
+          setMsg("No wallet provider is available here. Open the page inside Phantom or use a desktop wallet extension.", "warn");
           updateStepCards();
           return;
         }
@@ -782,7 +793,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       showWalletActions(true);
       showOpenWalletButton(false);
       setRegisterEnabled(true);
-      setMsg("Wallet verified. Connect X + verify Telegram, then pass captcha and join the airdrop.", "ok");
+      setMsg("Wallet verified. Verify X & Telegram, then pass captcha and join the airdrop.", "ok");
       updateStepCards();
     } catch (err) {
       resetWalletState("Wallet not connected");
@@ -867,7 +878,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       isSubmitting = false;
       registered = false;
       registerBtn.disabled = false;
-      registerBtn.textContent = "Register Access";
+      registerBtn.textContent = "Register for Airdrop";
       updateStepCards();
       setMsg(err?.message || "Error registering the airdrop.", "error");
     }
