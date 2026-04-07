@@ -220,22 +220,21 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <label class="sf-label" for="sf-x">X</label>
         <div id="sf-x-shell" class="sf-handle-shell">
           <span class="sf-prefix">@</span>
-          <input id="sf-x" class="sf-input" placeholder="connect-x-to-autofill" autocomplete="off" autocapitalize="off" spellcheck="false" disabled />
+          <input id="sf-x" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
         </div>
-        <div class="sf-help">Auto-filled after X verification.</div>
+        <div class="sf-help">Enter your public X username manually.</div>
       </div>
 
       <div class="sf-verify-shell">
         <div class="sf-verify-head">
-          <div class="sf-verify-title">X verification</div>
-          <div class="sf-verify-copy">Connect your real <strong>X</strong> account and confirm that it follows <strong>@${X_TARGET_USERNAME}</strong>.</div>
+          <div class="sf-verify-title">X</div>
+          <div class="sf-verify-copy">Follow <strong>@${X_TARGET_USERNAME}</strong> on X and enter your username manually below.</div>
         </div>
         <div class="sf-verify-actions">
-          <button id="sf-x-connect" class="btn btn-blue" type="button">Connect X</button>
-          <button id="sf-x-reset" class="btn btn-dark" type="button" style="display:none">Use another X</button>
+          <button id="sf-x-open" class="btn btn-blue" type="button">Open X</button>
         </div>
-        <div id="sf-x-verify-status" class="sf-verify-status warn">X not verified yet.</div>
-        <div id="sf-x-verify-meta" class="sf-verify-meta">Use the same X account that follows @${X_TARGET_USERNAME}. This field fills automatically after verification.</div>
+        <div id="sf-x-verify-status" class="sf-verify-status info">Automatic X verification is off.</div>
+        <div id="sf-x-verify-meta" class="sf-verify-meta">No X API check is used. Type the same public username you use on X.</div>
       </div>
 
       <div class="sf-field">
@@ -262,10 +261,10 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
       <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register for Airdrop</button>
-      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, verify X and Telegram, then complete captcha to continue.</div>
+      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, enter your X username, verify Telegram, then complete captcha to continue.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
-        <div class="sf-confirm-copy">Your wallet and social handles were verified successfully. Your airdrop access is now locked in.</div>
+        <div class="sf-confirm-copy">Your wallet and social handles were submitted successfully. Your airdrop access is now locked in.</div>
       </div>
     </div>
 
@@ -297,10 +296,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   let turnstileWatcher = null;
   let telegramAuth = null;
   let telegramVerified = false;
-  let xAuth = null;
-  let xVerified = false;
-  let xAccessToken = "";
-  let xPopup = null;
 
   const connectBtn = root.querySelector("#sf-connect");
   const openPhantomBtn = root.querySelector("#sf-open-phantom");
@@ -314,8 +309,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const xEl = root.querySelector("#sf-x");
   const telegramShell = root.querySelector("#sf-telegram-shell");
   const xShell = root.querySelector("#sf-x-shell");
-  const xConnectBtn = root.querySelector("#sf-x-connect");
-  const xResetBtn = root.querySelector("#sf-x-reset");
+  const xOpenBtn = root.querySelector("#sf-x-open");
   const xVerifyStatusEl = root.querySelector("#sf-x-verify-status");
   const xVerifyMetaEl = root.querySelector("#sf-x-verify-meta");
   const telegramWidgetSlot = root.querySelector("#sf-telegram-widget-slot");
@@ -331,6 +325,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       setTelegramVerifyStatus("Telegram not verified yet.", "warn");
       telegramVerifyMetaEl.textContent = "Telegram login will be tested on the final domain. Public username required.";
     }
+    telegramWidgetSlot.querySelectorAll("*").forEach((node) => {
+      if (/bot domain invalid/i.test((node.textContent || "").trim())) node.remove();
+    });
   });
   telegramWidgetObserver.observe(telegramWidgetSlot, { childList: true, subtree: true, characterData: true });
   const confirmEl = root.querySelector("#sf-confirm");
@@ -356,11 +353,11 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     },
     2: {
       step: "Step 2",
-      title: "Verify X & Telegram",
-      copy: "Use the official X login popup plus the Telegram widget. The form auto-fills the verified accounts and blocks manual edits.",
+      title: "Add X & verify Telegram",
+      copy: "Enter your public X username manually and verify your Telegram account with the official widget before joining the airdrop.",
       points: [
-        "Tap <strong>Connect X</strong> and approve the official X popup.",
-        "Make sure the same X account follows <strong>@${X_TARGET_USERNAME}</strong>.",
+        "Follow <strong>@${X_TARGET_USERNAME}</strong> on X.",
+        "Type your public <strong>X username</strong> manually in the field.",
         "Verify your <strong>Telegram</strong> account with the official widget and stay inside the community chat."
       ]
     },
@@ -408,168 +405,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   function showOpenWalletButton(show) { openPhantomBtn.style.display = show ? "inline-flex" : "none"; }
   function showWalletActions(show) { walletActionsEl.classList.toggle("show", Boolean(show)); }
 
-  function setXVerifyStatus(html, tone = "warn") {
+  function setXVerifyStatus(html, tone = "info") {
     xVerifyStatusEl.className = `sf-verify-status ${tone}`;
     xVerifyStatusEl.innerHTML = html;
-  }
-
-  function buildXLoginUrl() {
-    const params = new URLSearchParams();
-    params.set("return_to", window.location.href);
-    return `${X_LOGIN_PATH}?${params.toString()}`;
-  }
-
-  function readStoredXAuthResult() {
-    try {
-      const raw = window.localStorage.getItem(X_AUTH_STORAGE_KEY);
-      if (!raw) return null;
-      window.localStorage.removeItem(X_AUTH_STORAGE_KEY);
-      return JSON.parse(raw);
-    } catch (_) {
-      return null;
-    }
-  }
-
-  function getFieldState() {
-    const telegram = normalizeTelegramHandle(telegramEl.value);
-    const x = normalizeXHandle(xEl.value);
-    const telegramMatchesVerification = telegramVerified && telegramAuth && telegram === normalizeTelegramHandle(telegramAuth.username || "");
-    const xMatchesVerification = xVerified && xAuth && x === normalizeXHandle(xAuth.username || "");
-    return { telegram, x, telegramMatchesVerification, xMatchesVerification, complete: Boolean(telegram && x && telegramMatchesVerification && xMatchesVerification) };
-  }
-  function getCaptchaComplete() { return Boolean(getTurnstileToken(root)); }
-  function getFlowState() {
-    const fields = getFieldState();
-    return {
-      step1: Boolean(walletAddress && signedMessage && signature && nonce && timestamp && challenge),
-      step2: fields.complete,
-      step3: Boolean(getCaptchaComplete() && registered)
-    };
-  }
-
-  function clearFieldHighlights() { telegramShell.classList.remove("sf-missing"); xShell.classList.remove("sf-missing"); }
-  function applyFieldHighlights() {
-    const fields = getFieldState();
-    const needsHighlight = lastMissingStep === 2 && !fields.complete;
-    telegramShell.classList.toggle("sf-missing", needsHighlight && (!fields.telegram || !fields.telegramMatchesVerification));
-    xShell.classList.toggle("sf-missing", needsHighlight && (!fields.x || !fields.xMatchesVerification));
-  }
-
-  function updateStepCards() {
-    const state = getFlowState();
-    const doneMap = { 1: state.step1, 2: state.step2, 3: state.step3 };
-    let activeStep = 0;
-    if (!state.step1) activeStep = 1;
-    else if (!state.step2) activeStep = 2;
-    else if (!state.step3) activeStep = 3;
-
-    stepCards.forEach((card) => {
-      const step = Number(card.dataset.step);
-      const stateEl = card.querySelector(".sf-step-state");
-      const done = doneMap[step];
-      const missing = lastMissingStep === step && !done;
-      const active = !missing && activeStep === step && !done;
-      card.classList.remove("done", "active", "missing");
-      if (done) card.classList.add("done");
-      else if (missing) card.classList.add("missing");
-      else if (active) card.classList.add("active");
-      stateEl.textContent = done ? "Done" : missing ? "Required" : active ? (step === 3 && isSubmitting ? "Finishing" : "Now") : "Pending";
-    });
-
-    applyFieldHighlights();
-    confirmEl.classList.toggle("show", Boolean(state.step3));
-  }
-
-  function setMissingStep(step, message) { lastMissingStep = step; updateStepCards(); setMsg(message, "error"); }
-  function clearMissingStep() { if (!lastMissingStep) return; lastMissingStep = 0; updateStepCards(); }
-
-  function applyXVerificationResult(result) {
-    const username = normalizeXHandle(result?.username || result?.user?.username || "");
-    const userId = String(result?.userId || result?.user?.id || "").trim();
-    const targetUsername = normalizeXHandle(result?.targetUsername || X_TARGET_USERNAME) || X_TARGET_USERNAME;
-    const isFollowing = Boolean(result?.isFollowing);
-
-    if (!username || !userId) {
-      throw new Error("X verification did not return a valid account.");
-    }
-
-    xAuth = { id: userId, username, targetUsername };
-    xEl.value = username;
-    xEl.disabled = true;
-    xResetBtn.style.display = "inline-flex";
-    xConnectBtn.disabled = false;
-    xAccessToken = String(result?.accessToken || xAccessToken || "").trim();
-
-    if (isFollowing) {
-      xVerified = true;
-      xConnectBtn.textContent = "Re-check X";
-      setXVerifyStatus(`<strong>X verified:</strong> @${username}`, "ok");
-      xVerifyMetaEl.textContent = `Real X login verified. This account follows @${targetUsername}.`;
-      if (lastMissingStep === 2) clearMissingStep();
-    } else {
-      xVerified = false;
-      xConnectBtn.textContent = xAccessToken ? "Re-check X" : "Connect X";
-      setXVerifyStatus(`<strong>X connected:</strong> @${username} · Follow @${targetUsername} and run the check again.`, "warn");
-      xVerifyMetaEl.textContent = `The connected account is real, but it is not following @${targetUsername} yet. Follow it on X, then tap Re-check X.`;
-    }
-  }
-
-  function resetXVerification(copy = "X not verified yet.") {
-    xAuth = null;
-    xVerified = false;
-    xAccessToken = "";
-    xEl.value = "";
-    xEl.disabled = true;
-    xResetBtn.style.display = "none";
-    xConnectBtn.disabled = false;
-    xConnectBtn.textContent = "Connect X";
-    setXVerifyStatus(copy, "warn");
-    xVerifyMetaEl.textContent = `Use the same X account that follows @${X_TARGET_USERNAME}. This field fills automatically after verification.`;
-  }
-
-  async function verifyXAccessToken(accessToken, expectedUsername = "") {
-    const response = await fetch(X_VERIFY_PATH, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        access_token: accessToken,
-        expected_username: expectedUsername || undefined
-      })
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error || "X verification failed");
-    }
-    return data;
-  }
-
-  function handleXAuthMessage(message) {
-    if (!message || message.source !== X_AUTH_MESSAGE_SOURCE) return false;
-
-    if (!message.ok) {
-      resetXVerification(message.error || "X verification failed.");
-      evaluateReadyState();
-      setMsg(message.error || "X verification failed. Try again.", "error");
-      return true;
-    }
-
-    try {
-      applyXVerificationResult(message.payload || {});
-      evaluateReadyState();
-      setMsg(
-        xVerified
-          ? "X verified. Now make sure Telegram is verified too, then pass captcha and join."
-          : `X connected, but it still needs to follow @${(message.payload || {}).targetUsername || X_TARGET_USERNAME}.`,
-        xVerified ? "ok" : "warn"
-      );
-    } catch (error) {
-      resetXVerification(error?.message || "X verification failed.");
-      evaluateReadyState();
-      setMsg(error?.message || "X verification failed. Try again.", "error");
-    }
-
-    return true;
   }
 
   function setTelegramVerifyStatus(html, tone = "warn") {
@@ -712,27 +550,14 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     if (lastMissingStep === 2) clearMissingStep();
     evaluateReadyState();
   });
+  xEl.addEventListener("input", () => {
+    xEl.value = normalizeXHandle(xEl.value);
+    if (lastMissingStep === 2) clearMissingStep();
+    evaluateReadyState();
+  });
   openPhantomBtn.addEventListener("click", () => openInPreferredWallet("#airdrop"));
-  xConnectBtn.addEventListener("click", async () => {
-    if (xAccessToken) {
-      await recheckXFollow();
-      return;
-    }
-    await startXLogin();
-  });
-  xResetBtn.addEventListener("click", () => {
-    resetXVerification("X verification reset. Connect the correct X account again.");
-    evaluateReadyState();
-  });
-  telegramResetBtn.addEventListener("click", () => {
-    resetTelegramVerification("Telegram verification reset. Log in again with the account that joined the community.");
-    renderTelegramWidget();
-    evaluateReadyState();
-  });
-
-  window.addEventListener("message", (event) => {
-    if (event.origin !== window.location.origin) return;
-    handleXAuthMessage(event.data);
+  xOpenBtn.addEventListener("click", () => {
+    window.open(`https://x.com/${X_TARGET_USERNAME}`, "_blank", "noopener,noreferrer");
   });
 
   connectBtn.addEventListener("click", async () => {
@@ -793,7 +618,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       showWalletActions(true);
       showOpenWalletButton(false);
       setRegisterEnabled(true);
-      setMsg("Wallet verified. Verify X & Telegram, then pass captcha and join the airdrop.", "ok");
+      setMsg("Wallet verified. Enter your X username, verify Telegram, then pass captcha and join the airdrop.", "ok");
       updateStepCards();
     } catch (err) {
       resetWalletState("Wallet not connected");
@@ -829,7 +654,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       const x = xEl.value;
       const turnstileToken = getTurnstileToken(root);
       if (!telegram || !x) {
-        setMissingStep(2, "Complete Step 2: connect X, verify the real follow and verify the Telegram account inside the community.");
+        setMissingStep(2, "Complete Step 2: enter your X username and verify the Telegram account inside the community.");
         return;
       }
       if (!turnstileToken) {
@@ -851,7 +676,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           wallet: walletAddress,
           telegram_username: telegram,
           x_username: x,
-          x_access_token: xAccessToken,
           telegram_auth: telegramAuth,
           signed_message: signedMessage,
           signature,
@@ -871,7 +695,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       registerBtn.disabled = true;
       telegramEl.disabled = true;
       xEl.disabled = true;
-      xConnectBtn.disabled = true;
+      if (xOpenBtn) xOpenBtn.disabled = true;
       clearMissingStep();
       updateStepCards();
     } catch (err) {
@@ -889,14 +713,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   }
 
   ensureTelegramWidgetScript();
-  resetXVerification();
+  setXVerifyStatus("Automatic X verification is off.", "info");
   resetTelegramVerification();
   renderTelegramWidget();
-
-  const storedXAuth = readStoredXAuthResult();
-  if (storedXAuth) {
-    handleXAuthMessage(storedXAuth);
-  }
 
   turnstileWatcher = window.setInterval(() => {
     if (!root.isConnected) {
