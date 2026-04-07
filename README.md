@@ -1,6 +1,8 @@
 # SuperFirulai website
 
-Static landing page + Vercel serverless API for the SuperFirulai website, airdrop registration, claim-status checks, and the active round registration flow.
+Static landing page + Node.js API for the SuperFirulai website, airdrop registration, claim-status checks, and the active round registration flow.
+
+This package is prepared to run directly on Hostinger Node.js hosting using `server.js` as the startup entry.
 
 ## Active project structure
 
@@ -89,7 +91,7 @@ Round 2 stays published but disabled until you explicitly decide to activate it.
 
 ## Current round / buy logic
 
-- Round 1 and Round 2 use FIRU prices from Vercel environment variables.
+- Round 1 and Round 2 use FIRU prices from environment variables.
 - `ROUND_MIN` and `ROUND_MAX` are interpreted as **SOL-equivalent per purchase**.
 - `ROUND_1_TOKEN_CAP` and `ROUND_2_TOKEN_CAP` are interpreted as **FIRU token caps per round**.
 - Round caps are enforced by querying `round_registrations` in Supabase and summing `firu_allocation` by round.
@@ -109,10 +111,11 @@ Round 2 stays published but disabled until you explicitly decide to activate it.
 
 ## Deploy
 
-1. Push the repo to GitHub.
-2. In Vercel, configure the environment variables listed above.
-3. Redeploy.
-4. Test these endpoints after deploy:
+1. Upload the ZIP to Hostinger Node.js hosting or connect the repo in Hostinger.
+2. Set the startup file to `server.js`.
+3. Configure the environment variables listed above in Hostinger.
+4. Redeploy / restart the app.
+5. Test these endpoints after deploy:
    - `/api/round/config`
    - `/api/round/register`
    - `/api/airdrop/nonce`
