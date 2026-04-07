@@ -222,20 +222,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <span class="sf-prefix">@</span>
           <input id="sf-x" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
         </div>
-        <div class="sf-help">Enter your public X username manually.</div>
+        <div class="sf-help">Enter your public X username.</div>
       </div>
 
-      <div class="sf-verify-shell">
-        <div class="sf-verify-head">
-          <div class="sf-verify-title">X</div>
-          <div class="sf-verify-copy">Follow <strong>@${X_TARGET_USERNAME}</strong> on X and enter your username manually below.</div>
-        </div>
-        <div class="sf-verify-actions">
-          <button id="sf-x-open" class="btn btn-blue" type="button">Open X</button>
-        </div>
-        <div id="sf-x-verify-status" class="sf-verify-status info">Automatic X verification is off.</div>
-        <div id="sf-x-verify-meta" class="sf-verify-meta">No X API check is used. Type the same public username you use on X.</div>
-      </div>
 
       <div class="sf-field">
         <label class="sf-label" for="sf-telegram">Telegram</label>
@@ -309,9 +298,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const xEl = root.querySelector("#sf-x");
   const telegramShell = root.querySelector("#sf-telegram-shell");
   const xShell = root.querySelector("#sf-x-shell");
-  const xOpenBtn = root.querySelector("#sf-x-open");
-  const xVerifyStatusEl = root.querySelector("#sf-x-verify-status");
-  const xVerifyMetaEl = root.querySelector("#sf-x-verify-meta");
   const telegramWidgetSlot = root.querySelector("#sf-telegram-widget-slot");
   const telegramVerifyStatusEl = root.querySelector("#sf-telegram-verify-status");
   const telegramVerifyMetaEl = root.querySelector("#sf-telegram-verify-meta");
@@ -405,10 +391,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   function showOpenWalletButton(show) { openPhantomBtn.style.display = show ? "inline-flex" : "none"; }
   function showWalletActions(show) { walletActionsEl.classList.toggle("show", Boolean(show)); }
 
-  function setXVerifyStatus(html, tone = "info") {
-    xVerifyStatusEl.className = `sf-verify-status ${tone}`;
-    xVerifyStatusEl.innerHTML = html;
-  }
 
   function setTelegramVerifyStatus(html, tone = "warn") {
     telegramVerifyStatusEl.className = `sf-verify-status ${tone}`;
@@ -556,9 +538,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     evaluateReadyState();
   });
   openPhantomBtn.addEventListener("click", () => openInPreferredWallet("#airdrop"));
-  xOpenBtn.addEventListener("click", () => {
-    window.open(`https://x.com/${X_TARGET_USERNAME}`, "_blank", "noopener,noreferrer");
-  });
 
   connectBtn.addEventListener("click", async () => {
     try {
@@ -695,7 +674,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       registerBtn.disabled = true;
       telegramEl.disabled = true;
       xEl.disabled = true;
-      if (xOpenBtn) xOpenBtn.disabled = true;
       clearMissingStep();
       updateStepCards();
     } catch (err) {
@@ -713,7 +691,6 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   }
 
   ensureTelegramWidgetScript();
-  setXVerifyStatus("Automatic X verification is off.", "info");
   resetTelegramVerification();
   renderTelegramWidget();
 
