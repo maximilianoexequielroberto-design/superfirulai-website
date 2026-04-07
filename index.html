@@ -1120,12 +1120,26 @@
       .mobile-top-links{display:none !important}
       .buy-float{display:none !important}
       .desktop-top-nav{
-        display:flex;align-items:center;gap:18px;position:absolute;left:34%;top:30px;transform:translateX(-50%);z-index:1405;pointer-events:auto
+        display:flex;align-items:center;gap:10px;position:absolute;left:39%;top:18px;transform:translateX(-50%);z-index:1405;pointer-events:auto
       }
       .desktop-top-nav button,.desktop-top-nav a{
-        color:#eef5ff;font-size:18px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;opacity:.95;pointer-events:auto
+        min-height:48px;padding:0 18px;border-radius:999px;
+        background:linear-gradient(180deg,rgba(12,20,46,.94),rgba(7,14,34,.88));
+        border:1px solid rgba(255,255,255,.10);
+        box-shadow:0 14px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.06);
+        color:#eef5ff;font-size:17px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;opacity:1;pointer-events:auto;
+        transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease
       }
-      .desktop-top-nav button:hover,.desktop-top-nav a:hover{color:#fff;text-shadow:0 0 16px rgba(255,208,96,.45)}
+      .desktop-top-nav button:hover,.desktop-top-nav a:hover{
+        color:#fff;border-color:rgba(255,208,96,.30);box-shadow:0 16px 32px rgba(0,0,0,.24),0 0 18px rgba(255,208,96,.10), inset 0 1px 0 rgba(255,255,255,.08);
+        transform:translateY(-1px)
+      }
+      .desktop-top-nav button.active,.desktop-top-nav a.active{
+        background:linear-gradient(135deg,rgba(255,208,96,.16),rgba(41,145,255,.16)),linear-gradient(180deg,rgba(12,20,46,.96),rgba(7,14,34,.92));
+        border-color:rgba(255,208,96,.34);
+        color:#fff;
+        box-shadow:0 18px 34px rgba(0,0,0,.24),0 0 22px rgba(255,208,96,.12), inset 0 1px 0 rgba(255,255,255,.08)
+      }
       .app{padding:0 0 120px}
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -1139,7 +1153,7 @@
       .hero-launch-chip strong{font-size:14px}
       .hero-launch-chip span{font-size:10px}
       .hero-assets-desktop{
-        display:flex;position:absolute;right:20px;top:0px;z-index:1406;gap:16px;align-items:flex-start;pointer-events:none
+        display:flex;position:absolute;right:18px;top:0px;z-index:1406;gap:10px;align-items:flex-start;pointer-events:none
       }
       .bottom-nav{display:none}
       .metrics-highlight{grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr)}
@@ -1153,7 +1167,7 @@
     }
 
     @media (min-width: 1360px){
-      .hero-assets-desktop{right:20px;top:0px;gap:8px}
+      .hero-assets-desktop{right:16px;top:0px;gap:6px}
       .asset-img-btn img{height:140px}
     }
 
@@ -1450,8 +1464,8 @@
                 <div class="bullet-item">
                   <div class="bullet-dot"></div>
                   <div class="bullet-copy">
-                    <strong>Real claim at launch</strong>
-                    <span>Testing can run now, while the real claim follows the official launch confirmation on X and Telegram.</span>
+                    <strong>Claim date stays TBA</strong>
+                    <span>Do not rely on a fixed date yet. The live claim window should only be announced on official X and Telegram once it is confirmed.</span>
                   </div>
                 </div>
               </div>
@@ -1479,7 +1493,7 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Asset 08 · Roadmap</div>
                 <h3>Three clear phases</h3>
-                <p>The roadmap closes the lower home with a fast read: register first, buy when live, then use the Claim flow when enabled.</p>
+                <p>The roadmap now reads cleaner: register first, buy through the official round flow while it is open, then return later only when claim is officially announced.</p>
               </div>
             </div>
             <div class="phase-grid">
@@ -1496,7 +1510,7 @@
               <div class="phase-card">
                 <div class="phase-kicker">Phase 3</div>
                 <strong>Claim</strong>
-                <span>Approved wallets verify status and use the official Claim view. Testing can be checked before launch.</span>
+                <span>Approved wallets verify status and use the official Claim view later, only after the project announces the live claim window.</span>
               </div>
             </div>
           </div>
@@ -1517,7 +1531,7 @@
                 <button type="button" data-open="airdropDialog">Airdrop details</button>
               </div>
             </div>
-            <div class="summary-note">20,000 $FIRU per approved wallet · first 100 approved wallets only · use the same wallet later for buy and claim.</div>
+            <div class="summary-note">12,500 $FIRU per approved wallet · first 100 approved wallets only · same wallet required later for claim.</div>
           </div>
           <div class="card"><div id="airdrop-register"></div></div>
         </div>
@@ -1530,10 +1544,10 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 2</div>
                 <h2>Buy $FIRU when live</h2>
-                <p>Choose token, enter amount and confirm the official Solana purchase flow below.</p>
+                <p>Choose token, enter amount and confirm the official Solana purchase flow below. Round 1 is the current live round while available; Round 2 stays inactive until announced separately.</p>
               </div>
             </div>
-            <div class="summary-note">Official BUY flow only · Solana network only · X first, Telegram second for launch updates.</div>
+            <div class="summary-note">Round 1 uses the official live price and caps inside BUY · Round 2 stays announced but inactive until a separate official update · Solana network only.</div>
           </div>
           <div class="card"><div id="round-register"></div></div>
         </div>
@@ -1546,14 +1560,14 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Step 3</div>
                 <h2>Claim access</h2>
-                <p>Use the same wallet to check status and test both claim flows. Real distribution follows the official launch announcement.</p>
+                <p>Use the same wallet later to check status and claim when the official distribution window is announced. No fixed claim date is published yet.</p>
               </div>
               <div class="pill-nav">
                 <button type="button" data-open="claimDialog">Claim info</button>
                 <button type="button" data-open="socialDialog">Official channels</button>
               </div>
             </div>
-            <div class="summary-note">Approved wallets only · same wallet required · official distribution after launch, with testing enabled now.</div>
+            <div class="summary-note">Approved wallets only · same wallet required · claim date stays TBA until the official X and Telegram announcement.</div>
           </div>
           <div class="card"><div id="airdrop-claim-status"></div></div>
         </div>
@@ -1566,13 +1580,14 @@
               <div class="left">
                 <div class="eyebrow"><span></span> Info · Premium map</div>
                 <h2>Official SuperFirulai paths</h2>
-                <p>One clean premium map for airdrop access, round access, and both claim flows.</p>
+                <p>One clearer premium map for airdrop access, round access, and the future claim windows without publishing dates too early.</p>
               </div>
             </div>
             <div class="roadmap-grid">
-              <div class="mini-card"><strong>Airdrop Path</strong><span>Register Airdrop first, then return later for Claim Airdrop with the same approved wallet.</span></div>
-              <div class="mini-card"><strong>Round Path</strong><span>Buy $FIRU when live, then use Claim Round $FIRU later if round delivery is enabled.</span></div>
-              <div class="mini-card"><strong>Same wallet rule</strong><span>Use one personal Solana wallet across register, buy and both claim flows.</span></div>
+              <div class="mini-card"><strong>Airdrop Path</strong><span>Register first, pass review, and return later with the same approved wallet when Claim Airdrop is officially opened.</span></div>
+              <div class="mini-card"><strong>Round Path</strong><span>Buy $FIRU through the official round flow while Round 1 is open. Round 2 remains announced separately and inactive for now.</span></div>
+              <div class="mini-card"><strong>Same wallet rule</strong><span>Use one personal Solana wallet across register, buy and any future claim step.</span></div>
+              <div class="mini-card"><strong>Timing policy</strong><span>No fixed claim calendar is posted yet. Timing stays TBA until it is confirmed on X first and Telegram second.</span></div>
             </div>
             <div class="actions" style="margin-top:18px">
               <button class="btn btn-dark" type="button" data-open="pathDialog">Open full path</button>
@@ -1648,9 +1663,9 @@
               </div>
             </div>
             <div class="roadmap-grid">
-              <div class="mini-card"><strong>Register Airdrop</strong><span>Submit wallet, X and Telegram, pass review, keep the same wallet.</span></div>
-              <div class="mini-card"><strong>Claim Airdrop</strong><span>Approved wallets only, with testing enabled now and official claim later.</span></div>
-              <div class="mini-card"><strong>Claim Round $FIRU</strong><span>Reserved for later use if round delivery is enabled after the buy flow.</span></div>
+              <div class="mini-card"><strong>Register Airdrop</strong><span>Connect one personal wallet, verify the official X flow, complete Telegram and enter review.</span></div>
+              <div class="mini-card"><strong>Claim Airdrop</strong><span>Approved wallets only. Claim opens later on an official TBA date after the project confirms it.</span></div>
+              <div class="mini-card"><strong>Claim Round $FIRU</strong><span>Reserved for a later stage only if the project enables separate round delivery after the buy flow.</span></div>
             </div>
           </div>
         </div>
@@ -1676,7 +1691,7 @@
       <div class="dialog-head">
         <div>
           <h3>Registration info</h3>
-          <p>Use one personal wallet, add your X and Telegram usernames, complete captcha and submit once.</p>
+          <p>Use one personal wallet, connect your real X account, complete Telegram and captcha, and submit once.</p>
         </div>
         <button class="dialog-close" data-close="registerDialog">✕</button>
       </div>
@@ -1699,7 +1714,7 @@
         <button class="dialog-close" data-close="airdropDialog">✕</button>
       </div>
       <div class="dialog-grid">
-        <div class="dialog-item"><strong>20,000 $FIRU</strong><span>Reserved per approved wallet.</span></div>
+        <div class="dialog-item"><strong>12,500 $FIRU</strong><span>Reserved per approved wallet.</span></div>
         <div class="dialog-item"><strong>100 wallets only</strong><span>Once the cap is reached, this round closes.</span></div>
         <div class="dialog-item"><strong>Same wallet required</strong><span>Register, buy and claim later with the same wallet.</span></div>
       </div>
@@ -1742,14 +1757,14 @@
       <div class="dialog-head">
         <div>
           <h3>Claim info</h3>
-          <p>Claim testing is live now. Real claim opens at launch and only for approved wallets.</p>
+          <p>Claim opens later and only for approved wallets. The live claim date stays TBA until the official announcement.</p>
         </div>
         <button class="dialog-close" data-close="claimDialog">✕</button>
       </div>
       <div class="dialog-grid">
         <div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div>
         <div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div>
-        <div class="dialog-item"><strong>Real distribution at launch</strong><span>Use testing now if needed, but wait for the official X and Telegram announcement for live distribution.</span></div>
+        <div class="dialog-item"><strong>Official claim window later</strong><span>Wait for the official X and Telegram announcement before treating claim as live. No fixed claim date is published yet.</span></div>
       </div>
     </div>
   </dialog>
@@ -1809,10 +1824,10 @@
         <button class="dialog-close" data-close="pathDialog">✕</button>
       </div>
       <div class="dialog-grid">
-        <div class="dialog-item"><strong>1 · Register Airdrop</strong><span>Connect one wallet, submit X first, then Telegram, and enter review.</span></div>
-        <div class="dialog-item"><strong>2 · Claim Airdrop</strong><span>Approved wallets return with the same wallet once claim testing or launch claim is active.</span></div>
-        <div class="dialog-item"><strong>3 · Buy $FIRU</strong><span>When the round opens, fund the wallet and save the reserved allocation inside BUY.</span></div>
-        <div class="dialog-item"><strong>4 · Claim Round $FIRU</strong><span>Use later only if the project enables round delivery through a separate claim flow.</span></div>
+        <div class="dialog-item"><strong>1 · Register Airdrop</strong><span>Connect one wallet, verify the real X account, complete Telegram, and enter review.</span></div>
+        <div class="dialog-item"><strong>2 · Claim Airdrop</strong><span>Approved wallets return with the same wallet only after the project publishes the official TBA claim window.</span></div>
+        <div class="dialog-item"><strong>3 · Buy $FIRU</strong><span>Round 1 uses the live price and cap inside BUY while open. Round 2 remains inactive until a separate official update.</span></div>
+        <div class="dialog-item"><strong>4 · Claim Round $FIRU</strong><span>Use later only if the project enables a separate round delivery flow after buy.</span></div>
       </div>
     </div>
   </dialog>
