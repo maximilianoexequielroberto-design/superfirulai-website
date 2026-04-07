@@ -237,12 +237,12 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       <div class="sf-verify-shell">
         <div class="sf-verify-head">
-          <div class="sf-verify-title">Telegram verification</div>
-          <div class="sf-verify-copy">Log in with Telegram and confirm that the account is inside <strong>SuperFirulai Community</strong>.</div>
+          <div class="sf-verify-title">Telegram</div>
+          <div class="sf-verify-copy">Verify your Telegram to continue.</div>
         </div>
         <div id="sf-telegram-widget-slot" class="sf-telegram-widget-slot"></div>
         <div id="sf-telegram-verify-status" class="sf-verify-status warn">Telegram not verified yet.</div>
-        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same Telegram account that joined the community. Public username required.</div>
+        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Quick verification. You’ll return here automatically.</div>
         <div class="sf-verify-actions">
           <button id="sf-telegram-reset" class="btn btn-dark" type="button" style="display:none">Verify another Telegram</button>
         </div>
@@ -303,17 +303,28 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const telegramVerifyMetaEl = root.querySelector("#sf-telegram-verify-meta");
   const telegramResetBtn = root.querySelector("#sf-telegram-reset");
 
+  function hideTurnstileErrorBlocks() {
+    root.querySelectorAll("div, span, p, iframe").forEach((node) => {
+      const text = (node.textContent || "").trim();
+      if (/no es posible conectarse al sitio web/i.test(text) || /soluci[oó]n de problemas/i.test(text) || /unable to connect to the website/i.test(text)) {
+        const block = node.closest("div") || node;
+        if (block && block !== root) block.style.display = "none";
+      }
+    });
+  }
+
   const telegramWidgetObserver = new MutationObserver(() => {
     const slotText = (telegramWidgetSlot.textContent || "").trim();
     if (/bot domain invalid/i.test(slotText)) {
       telegramWidgetSlot.innerHTML = "";
       telegramWidgetSlot.style.display = "none";
       setTelegramVerifyStatus("Telegram not verified yet.", "warn");
-      telegramVerifyMetaEl.textContent = "Telegram login will be tested on the final domain. Public username required.";
+      telegramVerifyMetaEl.textContent = "Quick verification. You’ll return here automatically.";
     }
     telegramWidgetSlot.querySelectorAll("*").forEach((node) => {
       if (/bot domain invalid/i.test((node.textContent || "").trim())) node.remove();
     });
+    hideTurnstileErrorBlocks();
   });
   telegramWidgetObserver.observe(telegramWidgetSlot, { childList: true, subtree: true, characterData: true });
   const confirmEl = root.querySelector("#sf-confirm");
@@ -340,7 +351,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     2: {
       step: "Step 2",
       title: "Add X & verify Telegram",
-      copy: "Enter your public X username manually and verify your Telegram account with the official widget before joining the airdrop.",
+      copy: "Enter your public X username manually and verify your Telegram account before joining the airdrop.",
       points: [
         "Follow <strong>@${X_TARGET_USERNAME}</strong> on X.",
         "Type your public <strong>X username</strong> manually in the field.",
@@ -404,7 +415,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     telegramEl.value = "";
     telegramResetBtn.style.display = "none";
     setTelegramVerifyStatus(copy, "warn");
-    telegramVerifyMetaEl.textContent = "Use the same Telegram account that joined the community. Public username required.";
+    telegramVerifyMetaEl.textContent = "Quick verification. You’ll return here automatically.";
   }
 
   async function verifyTelegramMembership(authData) {
@@ -444,7 +455,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       telegramEl.disabled = true;
       telegramResetBtn.style.display = "inline-flex";
       setTelegramVerifyStatus(`<strong>Telegram verified:</strong> @${verification.telegram_username}`, "ok");
-      telegramVerifyMetaEl.textContent = verification.message || "Telegram account verified inside the community.";
+      telegramVerifyMetaEl.textContent = verification.message || "Telegram verified. You can continue with the airdrop.";
       if (lastMissingStep === 2) clearMissingStep();
       evaluateReadyState();
     } catch (error) {
@@ -699,6 +710,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       window.clearInterval(turnstileWatcher);
       return;
     }
+    hideTurnstileErrorBlocks();
     if (lastMissingStep === 3 && getCaptchaComplete()) clearMissingStep();
     evaluateReadyState();
   }, 800);
