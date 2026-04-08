@@ -2,7 +2,6 @@ import crypto from "crypto";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import { createClient } from "@supabase/supabase-js";
-import { assertValidXHandle, verifyXFollow } from "../../lib/x-auth.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -10,6 +9,7 @@ const supabase = createClient(
 );
 
 const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
+const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const NONCE_TTL_MS = 5 * 60 * 1000;
 const TELEGRAM_AUTH_MAX_AGE_SEC = 10 * 60;
 const TELEGRAM_API_BASE = "https://api.telegram.org";
@@ -54,6 +54,25 @@ function normalizeTelegramHandle(value) {
     .replace(/^\/+/, "");
 
   return firstSegment(cleaned).toLowerCase();
+}
+
+function normalizeXHandle(value) {
+  let cleaned = stripSpaces(value)
+    .replace(/^https?:\/\//i, "")
+    .replace(/^www\./i, "")
+    .replace(/^(x\.com|twitter\.com)\//i, "")
+    .replace(/^@/, "")
+    .replace(/^\/+/, "");
+
+  return firstSegment(cleaned).toLowerCase();
+}
+
+function assertValidXHandle(value) {
+  const normalized = normalizeXHandle(value);
+  if (!X_HANDLE_RE.test(normalized)) {
+    throw new Error("X username is invalid");
+  }
+  return normalized;
 }
 
 function getExpectedMessage({ wallet, nonce, timestamp }) {
@@ -168,7 +187,6 @@ export default async function handler(req, res) {
       telegram_username,
       telegram_auth,
       x_username,
-      x_access_token,
       signed_message,
       signature,
       nonce,
@@ -177,7 +195,7 @@ export default async function handler(req, res) {
       turnstileToken
     } = req.body || {};
 
-    if (!wallet || !telegram_username || !telegram_auth || !x_username || !x_access_token || !signed_message || !signature || !nonce || !timestamp || !challenge || !turnstileToken) {
+    if (!wallet || !telegram_username || !telegram_auth || !x_username || !signed_message || !signature || !nonce || !timestamp || !challenge || !turnstileToken) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
@@ -200,15 +218,6 @@ export default async function handler(req, res) {
     const membership = await getTelegramMembership(telegramAuth.id);
     if (!membership.isMember) {
       return res.status(403).json({ error: "Join SuperFirulai Community on Telegram before registering." });
-    }
-
-    const xVerification = await verifyXFollow({
-      accessToken: String(x_access_token || "").trim(),
-      expectedUsername: xh
-    });
-
-    if (!xVerification.isFollowing) {
-      return res.status(403).json({ error: `Follow @${xVerification.targetUsername} on X before registering.` });
     }
 
     const issuedAt = Date.parse(timestamp);
@@ -259,7 +268,7 @@ export default async function handler(req, res) {
     const { error } = await supabase.from("airdrop_registrations").insert({
       wallet,
       telegram_username: tg,
-      x_username: xVerification.username,
+      x_username: xh,
       signed_message,
       signature,
       nonce,
