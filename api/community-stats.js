@@ -1,5 +1,3 @@
-import { fetchXFollowersCount } from "../lib/x-auth.js";
-
 const DEFAULT_HOLDERS = 2418;
 const DEFAULT_X_FOLLOWERS = 61;
 const DEFAULT_TELEGRAM_MEMBERS = 24;
@@ -139,14 +137,9 @@ export default async function handler(req, res) {
     // fallback to env/default
   }
 
-  try {
-    const liveFollowers = await fetchXFollowersCount();
-    xFollowers = liveFollowers.followersCount;
-    xFollowersMode = "live";
-    xFollowersUpdatedAt = liveFollowers.checkedAt;
-  } catch (error) {
-    xFollowersError = error instanceof Error ? error.message : "x followers unavailable";
-  }
+  xFollowersMode = "manual";
+  xFollowersUpdatedAt = new Date().toISOString();
+  xFollowersError = null;
 
   try {
     if (rpcUrl && mintAddress) {
