@@ -1,8 +1,33 @@
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
+const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const CLAIM_TESTING_MODE = true;
-const AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED = false;
 const ROUND_CLAIM_TESTING_MODE = true;
+
+function encodeBase58(input) {
+  const source = input instanceof Uint8Array ? input : Uint8Array.from(input || []);
+  if (!source.length) return "";
+
+  const digits = [0];
+  for (let i = 0; i < source.length; i++) {
+    let carry = source[i];
+    for (let j = 0; j < digits.length; j++) {
+      const value = digits[j] * 256 + carry;
+      digits[j] = value % 58;
+      carry = Math.floor(value / 58);
+    }
+    while (carry > 0) {
+      digits.push(carry % 58);
+      carry = Math.floor(carry / 58);
+    }
+  }
+
+  for (let i = 0; i < source.length && source[i] === 0; i++) {
+    digits.push(0);
+  }
+
+  return digits.reverse().map((digit) => BASE58_ALPHABET[digit]).join("");
+}
 
 function getWalletLabel(provider) {
   if (provider?.isPhantom) return "Phantom";
@@ -110,6 +135,62 @@ function formatWhole(value) {
 
 function renderTestingNotice(copy) {
   return `<div class="sf-claim-testing"><strong>Preview only.</strong> ${copy}</div>`;
+}
+
+async function requestClaimNonce() {
+  const resp = await fetch("/api/airdrop/nonce", { cache: "no-store" });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || "Failed to get claim nonce");
+  return data;
+}
+
+function getClaimMessage({ wallet, nonce, timestamp }) {
+  return [
+    "SuperFirulai Airdrop Claim",
+    `Wallet: ${wallet}`,
+    `Nonce: ${nonce}`,
+    `Timestamp: ${timestamp}`
+  ].join("\n");
+}
+
+async function signAirdropClaim(provider, wallet) {
+  if (!provider?.signMessage) {
+    throw new Error("This wallet cannot sign messages for claim.");
+  }
+
+  const nonceData = await requestClaimNonce();
+  const signedMessage = getClaimMessage({
+    wallet,
+    nonce: nonceData.nonce,
+    timestamp: nonceData.timestamp
+  });
+
+  const encoded = new TextEncoder().encode(signedMessage);
+  const sig = await provider.signMessage(encoded, "utf8");
+  const rawSignature = sig?.signature || sig;
+  const signature = window.bs58?.encode
+    ? window.bs58.encode(rawSignature)
+    : encodeBase58(rawSignature);
+
+  return {
+    wallet,
+    signed_message: signedMessage,
+    signature,
+    nonce: nonceData.nonce,
+    timestamp: nonceData.timestamp,
+    challenge: nonceData.challenge
+  };
+}
+
+async function submitAirdropClaim(payload) {
+  const resp = await fetch("/api/airdrop/claim", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.error || "Claim failed");
+  return data;
 }
 
 export function mountClaimStatus(selector = "#airdrop-claim-status") {
@@ -273,26 +354,47 @@ function mountAirdropClaim(root) {
 
   function renderCta(state, data) {
     if (state === "approved" && (data.claimLive || CLAIM_TESTING_MODE)) {
-      const buttonLabel = AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED ? "Claim Airdrop" : "Preview Claim Airdrop";
-      const previewCopy = AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED
-        ? "Testing view is active. If the live endpoint is installed, the claim can continue here."
-        : "This repo still uses a preview-only airdrop claim button. The real backend claim endpoint is not installed yet.";
       ctaEl.innerHTML = `
         <div class="sf-claim-row">
-          <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">${buttonLabel}</button></div>
-          ${renderTestingNotice(previewCopy)}
+          <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
+          ${renderTestingNotice(data.claimLive
+            ? "Testing claim is enabled. This flow marks the approved wallet as claimed in Supabase after a fresh wallet signature."
+            : "This preview stays visible before launch. Live token delivery only starts after the official claim announcement and final endpoint activation.")}
         </div>`;
-      root.querySelector("#sf-claim-submit")?.addEventListener("click", () => {
+      root.querySelector("#sf-claim-submit")?.addEventListener("click", async () => {
         setStepState(4, true, false);
-        if (!AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED) {
-          setStatusMessage(`<strong>Preview only.</strong><br>This wallet is approved, but this repo still does not include the final live airdrop-claim endpoint. The button is working as a preview only for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>.`, "warn");
-          return;
-        }
         if (CLAIM_TESTING_MODE && !data.claimLive) {
           setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Airdrop flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the official claim window is not open yet.`, "ok");
           return;
         }
-        setStatusMessage(`<strong>Claim Airdrop ready.</strong><br>The wallet is approved and the live claim flow can continue here.`, "ok");
+
+        const wallet = connectedWallet || data.wallet || "";
+        const provider = connectedProvider;
+        const submitBtn = root.querySelector("#sf-claim-submit");
+        if (!wallet || !provider) {
+          setStatusMessage("Connect the approved wallet again before claiming.", "error");
+          return;
+        }
+
+        try {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Signing claim...";
+          setStatusMessage(`<strong>Claim signature required.</strong><br>Approve the signature in your wallet to continue the claim test.`, "warn");
+
+          const claimPayload = await signAirdropClaim(provider, wallet);
+          submitBtn.textContent = "Submitting claim...";
+          const result = await submitAirdropClaim(claimPayload);
+
+          ctaEl.innerHTML = `<div class="sf-btn-disabled" aria-disabled="true">CLAIMED</div>`;
+          setStatusMessage(`<strong>${result.message || "Airdrop claim confirmed."}</strong><br>Claim TX: <code class="sf-claim-code">${result.claimTx || "test-claim"}</code><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong>`, "ok");
+          setStepState(4, false, true);
+        } catch (err) {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Claim Airdrop";
+          }
+          setStatusMessage(err?.message || "Claim failed.", "error");
+        }
       });
       return;
     }
