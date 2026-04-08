@@ -33,6 +33,10 @@ const bs58 = {
 };
 
 const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
+const TELEGRAM_WIDGET_SCRIPT = "https://telegram.org/js/telegram-widget.js?22";
+const TELEGRAM_BOT_USERNAME = (window.SF_TELEGRAM_BOT_USERNAME || "SuperFirulaiAirdropBot").replace(/^@/, "");
+const TELEGRAM_SESSION_KEY = "sf_airdrop_telegram_verified_v2";
+const TELEGRAM_SESSION_MAX_AGE_MS = 9 * 60 * 1000;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
@@ -59,6 +63,15 @@ function ensureTurnstileScript() {
   document.head.appendChild(s);
 }
 
+function ensureTelegramWidgetScript() {
+  if (document.querySelector('script[data-telegram-widget="1"]')) return;
+  const s = document.createElement("script");
+  s.src = TELEGRAM_WIDGET_SCRIPT;
+  s.async = true;
+  s.dataset.telegramWidget = "1";
+  document.head.appendChild(s);
+}
+
 function injectStyles() {
   if (document.getElementById("sf-airdrop-styles")) return;
   const style = document.createElement("style");
@@ -75,9 +88,6 @@ function injectStyles() {
     .sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-handle-shell.sf-missing{border-color:rgba(255,115,115,.75);box-shadow:0 0 0 3px rgba(255,115,115,.12)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
-    .sf-check-shell{display:flex;align-items:flex-start;gap:10px;padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer}
-    .sf-check-shell input{margin-top:3px;accent-color:#4f8dff;width:18px;height:18px;flex:0 0 auto}
-    .sf-check-copy{font-size:13px;color:#dfe9ff;line-height:1.55}
     .sf-verify-shell{display:grid;gap:10px;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
     .sf-verify-head{display:grid;gap:6px}
     .sf-verify-title{font-size:13px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:#8fb3ff}
@@ -154,7 +164,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <div class="sf-steps-head">
           <div>
             <div class="sf-steps-title">Airdrop in 3 simple steps</div>
-            <div class="sf-steps-sub">Cleaner flow. Tap <strong>Info</strong> on any step to see the explanation in a small window instead of loading the whole page with text.</div>
+            <div class="sf-steps-sub">Clear order: verify Telegram first, connect wallet second, then finish X + Cloudflare + Register.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -162,7 +172,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
             <div class="sf-step-index">1</div>
             <div>
               <div class="sf-step-title-row">
-                <div class="sf-step-title">Connect wallet</div>
+                <div class="sf-step-title">Verify Telegram</div>
                 <div class="sf-step-state">Pending</div>
               </div>
             </div>
@@ -172,7 +182,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
             <div class="sf-step-index">2</div>
             <div>
               <div class="sf-step-title-row">
-                <div class="sf-step-title">Add usernames</div>
+                <div class="sf-step-title">Connect wallet</div>
                 <div class="sf-step-state">Pending</div>
               </div>
             </div>
@@ -182,13 +192,35 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
             <div class="sf-step-index">3</div>
             <div>
               <div class="sf-step-title-row">
-                <div class="sf-step-title">Verify and join</div>
+                <div class="sf-step-title">Add X + captcha + register</div>
                 <div class="sf-step-state">Pending</div>
               </div>
             </div>
             <button class="sf-step-trigger" type="button" data-modal-step="3">Info</button>
           </div>
         </div>
+      </div>
+
+      <div class="sf-verify-shell">
+        <div class="sf-verify-head">
+          <div class="sf-verify-title">Step 1 · Telegram</div>
+          <div class="sf-verify-copy">Verify your <strong>Telegram</strong> first. We use the exact public username returned by Telegram and lock it automatically.</div>
+        </div>
+        <div id="sf-telegram-widget-slot" class="sf-telegram-widget-slot"></div>
+        <div id="sf-telegram-verify-status" class="sf-verify-status warn">Telegram not verified yet.</div>
+        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same Telegram account that joined the community. A public @username is required.</div>
+        <div class="sf-verify-actions">
+          <button id="sf-telegram-reset" class="btn btn-dark" type="button" style="display:none">Verify another Telegram</button>
+        </div>
+      </div>
+
+      <div class="sf-field">
+        <label class="sf-label" for="sf-telegram">Telegram username</label>
+        <div id="sf-telegram-shell" class="sf-handle-shell">
+          <span class="sf-prefix">@</span>
+          <input id="sf-telegram" class="sf-input" placeholder="filled automatically after verification" autocomplete="off" autocapitalize="off" spellcheck="false" readonly />
+        </div>
+        <div class="sf-help">This field fills itself after Telegram verification and stays locked so the username cannot be changed manually.</div>
       </div>
 
       <div class="sf-wallet-shell">
@@ -203,52 +235,27 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <div id="sf-wallet" class="sf-wallet-note warn">Wallet not connected</div>
       </div>
 
-      <div class="sf-field">
-        <label class="sf-label" for="sf-x">X</label>
-        <div id="sf-x-shell" class="sf-handle-shell">
-          <span class="sf-prefix">@</span>
-          <input id="sf-x" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
-        </div>
-        <div class="sf-help">Write your public X username manually.</div>
-      </div>
-
-      <div class="sf-verify-shell">
+      <div id="sf-step3-shell" class="sf-verify-shell sf-hidden">
         <div class="sf-verify-head">
-          <div class="sf-verify-title">X username</div>
-          <div class="sf-verify-copy">The <strong>X</strong> field is manual only. Write your public username exactly as you want it saved.</div>
+          <div class="sf-verify-title">Step 3 · Finish registration</div>
+          <div class="sf-verify-copy">Now write your public <strong>X</strong> username manually, complete <strong>Cloudflare</strong>, and submit your entry.</div>
         </div>
-        <div id="sf-x-verify-status" class="sf-verify-status warn">Manual field only. No X login required.</div>
-        <div id="sf-x-verify-meta" class="sf-verify-meta">Your airdrop registration stays pending for manual review after submission.</div>
+        <div class="sf-field">
+          <label class="sf-label" for="sf-x">X username</label>
+          <div id="sf-x-shell" class="sf-handle-shell">
+            <span class="sf-prefix">@</span>
+            <input id="sf-x" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
+          </div>
+          <div class="sf-help">Write your public X username manually. Real-time X verification is disabled.</div>
+        </div>
+        <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
+        <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register for Airdrop</button>
       </div>
 
-      <div class="sf-field">
-        <label class="sf-label" for="sf-telegram">Telegram</label>
-        <div id="sf-telegram-shell" class="sf-handle-shell">
-          <span class="sf-prefix">t.me/</span>
-          <input id="sf-telegram" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
-        </div>
-        <div class="sf-help">Write your public Telegram username manually.</div>
-      </div>
-
-      <div class="sf-verify-shell">
-        <div class="sf-verify-head">
-          <div class="sf-verify-title">Telegram confirmation</div>
-          <div class="sf-verify-copy">No Telegram login is required now. Just write your Telegram username and confirm you already joined <strong>SuperFirulai Community</strong>.</div>
-        </div>
-        <label class="sf-check-shell" for="sf-telegram-joined">
-          <input id="sf-telegram-joined" type="checkbox" />
-          <span class="sf-check-copy">I already joined the Telegram community.</span>
-        </label>
-        <div id="sf-telegram-verify-status" class="sf-verify-status warn">Pending user confirmation.</div>
-        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Telegram is now manual in the airdrop form. Membership can be reviewed later during approval.</div>
-      </div>
-
-      <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
-      <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register for Airdrop</button>
-      <div id="sf-msg" class="sf-wallet-note info">Connect your wallet, write your X and Telegram usernames, confirm you joined Telegram, then complete captcha to continue.</div>
+      <div id="sf-msg" class="sf-wallet-note info">Step 1: verify Telegram first.</div>
       <div id="sf-confirm" class="sf-confirm-card">
-        <div class="sf-confirm-title">Airdrop registration submitted</div>
-        <div class="sf-confirm-copy">Your entry was saved successfully and is now pending manual review.</div>
+        <div class="sf-confirm-title">Airdrop registration confirmed</div>
+        <div class="sf-confirm-copy">Your wallet and social handles were verified successfully. Your airdrop access is now locked in.</div>
       </div>
     </div>
 
@@ -278,6 +285,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   let isSubmitting = false;
   let registered = false;
   let turnstileWatcher = null;
+  let telegramAuth = null;
+  let telegramVerified = false;
 
   const connectBtn = root.querySelector("#sf-connect");
   const openPhantomBtn = root.querySelector("#sf-open-phantom");
@@ -291,11 +300,23 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const xEl = root.querySelector("#sf-x");
   const telegramShell = root.querySelector("#sf-telegram-shell");
   const xShell = root.querySelector("#sf-x-shell");
-  const xVerifyStatusEl = root.querySelector("#sf-x-verify-status");
-  const xVerifyMetaEl = root.querySelector("#sf-x-verify-meta");
+  const step3Shell = root.querySelector("#sf-step3-shell");
+  const telegramWidgetSlot = root.querySelector("#sf-telegram-widget-slot");
   const telegramVerifyStatusEl = root.querySelector("#sf-telegram-verify-status");
   const telegramVerifyMetaEl = root.querySelector("#sf-telegram-verify-meta");
-  const telegramJoinedEl = root.querySelector("#sf-telegram-joined");
+  const telegramResetBtn = root.querySelector("#sf-telegram-reset");
+
+  const telegramWidgetObserver = new MutationObserver(() => {
+    const slotText = (telegramWidgetSlot.textContent || "").trim();
+    if (/bot domain invalid/i.test(slotText)) {
+      telegramWidgetSlot.innerHTML = "";
+      telegramWidgetSlot.style.display = "none";
+      setTelegramVerifyStatus("Telegram not verified yet.", "warn");
+      telegramVerifyMetaEl.textContent = "Telegram login will only work on the final approved domain. A public @username is required.";
+      clearTelegramSession();
+    }
+  });
+  telegramWidgetObserver.observe(telegramWidgetSlot, { childList: true, subtree: true, characterData: true });
   const confirmEl = root.querySelector("#sf-confirm");
   const stepCards = Array.from(root.querySelectorAll(".sf-step-card"));
   const modalBackdrop = root.querySelector("#sf-modal-backdrop");
@@ -309,32 +330,32 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const stepInfo = {
     1: {
       step: "Step 1",
-      title: "Connect wallet",
-      copy: "This verifies one real wallet per user and prepares the signature used to protect the airdrop from fake entries.",
+      title: "Verify Telegram",
+      copy: "Start with Telegram so mobile users do not lose the wallet connection in the middle of the process.",
       points: [
-        "Tap <strong>Connect Wallet</strong>.",
-        "Approve the connection in Phantom.",
-        "Approve the signature once. That keeps your entry tied to your wallet."
+        "Tap the <strong>Telegram</strong> button.",
+        "Use the account that already joined <strong>SuperFirulai Community</strong>.",
+        "The correct public username is filled automatically and locked."
       ]
     },
     2: {
       step: "Step 2",
-      title: "Add X and Telegram",
-      copy: "Write both usernames manually. No Telegram login is required in this form anymore.",
+      title: "Connect wallet",
+      copy: "Connect your wallet only after Telegram is verified. That keeps the order cleaner on mobile and avoids disconnect confusion.",
       points: [
-        "Type your public <strong>X</strong> username manually.",
-        "Type your public <strong>Telegram</strong> username manually.",
-        "Use the real accounts you want saved for manual review later."
+        "Tap <strong>Connect Wallet</strong>.",
+        "Approve the connection in Phantom.",
+        "Approve the signature once to secure the registration."
       ]
     },
     3: {
       step: "Step 3",
-      title: "Confirm Telegram and register",
-      copy: "Confirm that you already joined the Telegram community, complete the captcha, and submit your entry.",
+      title: "Add X, pass Cloudflare and register",
+      copy: "The last step is short: write your public X username manually, complete Cloudflare, then submit.",
       points: [
-        "Tick the box that says you already joined <strong>SuperFirulai Community</strong>.",
-        "Complete the <strong>captcha</strong>.",
-        "Tap <strong>Register for Airdrop</strong> to send the entry for manual review."
+        "Type your public <strong>X</strong> username manually.",
+        "Complete the <strong>Cloudflare</strong> check.",
+        "Tap <strong>Register for Airdrop</strong>."
       ]
     }
   };
@@ -371,45 +392,38 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   function showOpenWalletButton(show) { openPhantomBtn.style.display = show ? "inline-flex" : "none"; }
   function showWalletActions(show) { walletActionsEl.classList.toggle("show", Boolean(show)); }
 
-  function setXVerifyStatus(html, tone = "warn") {
-    xVerifyStatusEl.className = `sf-verify-status ${tone}`;
-    xVerifyStatusEl.innerHTML = html;
-  }
-
-  function initManualXField() {
-    xEl.disabled = false;
-    setXVerifyStatus("Manual field only. No X login required.", "warn");
-    xVerifyMetaEl.textContent = "Telegram is also manual now. Your entry will be reviewed later.";
-  }
-
   function getFieldState() {
     const telegram = normalizeTelegramHandle(telegramEl.value);
     const x = normalizeXHandle(xEl.value);
-    const telegramValid = TELEGRAM_HANDLE_RE.test(telegram);
+    const hasVerifiedTelegram = Boolean(telegramVerified && telegramAuth && telegram && telegram === normalizeTelegramHandle(telegramAuth.username || ""));
     const xValid = X_HANDLE_RE.test(x);
-    const telegramJoined = Boolean(telegramJoinedEl?.checked);
-    return { telegram, x, telegramValid, xValid, telegramJoined, complete: Boolean(telegramValid && xValid && telegramJoined) };
+    return { telegram, x, hasVerifiedTelegram, xValid };
   }
+
   function getCaptchaComplete() { return Boolean(getTurnstileToken(root)); }
   function getFlowState() {
     const fields = getFieldState();
     return {
-      step1: Boolean(walletAddress && signedMessage && signature && nonce && timestamp && challenge),
-      step2: fields.complete,
-      step3: Boolean(getCaptchaComplete() && registered)
+      step1: fields.hasVerifiedTelegram,
+      step2: Boolean(walletAddress && signedMessage && signature && nonce && timestamp && challenge),
+      step3: Boolean(registered)
     };
   }
 
-  function clearFieldHighlights() { telegramShell.classList.remove("sf-missing"); xShell.classList.remove("sf-missing"); }
+  function clearFieldHighlights() {
+    telegramShell.classList.remove("sf-missing");
+    xShell.classList.remove("sf-missing");
+  }
+
   function applyFieldHighlights() {
     const fields = getFieldState();
-    const needsHighlight = (lastMissingStep === 2 || lastMissingStep === 3) && !fields.complete;
-    telegramShell.classList.toggle("sf-missing", needsHighlight && !fields.telegramValid);
-    xShell.classList.toggle("sf-missing", needsHighlight && !fields.xValid);
+    telegramShell.classList.toggle("sf-missing", lastMissingStep === 1 && !fields.hasVerifiedTelegram);
+    xShell.classList.toggle("sf-missing", lastMissingStep === 3 && !fields.xValid);
   }
 
   function updateStepCards() {
     const state = getFlowState();
+    const fields = getFieldState();
     const doneMap = { 1: state.step1, 2: state.step2, 3: state.step3 };
     let activeStep = 0;
     if (!state.step1) activeStep = 1;
@@ -429,8 +443,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       stateEl.textContent = done ? "Done" : missing ? "Required" : active ? (step === 3 && isSubmitting ? "Finishing" : "Now") : "Pending";
     });
 
-    applyFieldHighlights();
+    step3Shell.classList.toggle("sf-hidden", !(state.step1 && state.step2) || registered);
     confirmEl.classList.toggle("show", Boolean(state.step3));
+    applyFieldHighlights();
   }
 
   function setMissingStep(step, message) { lastMissingStep = step; updateStepCards(); setMsg(message, "error"); }
@@ -441,30 +456,101 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     telegramVerifyStatusEl.innerHTML = html;
   }
 
-  function updateTelegramConfirmationStatus() {
-    const telegram = normalizeTelegramHandle(telegramEl.value);
-    const telegramValid = TELEGRAM_HANDLE_RE.test(telegram);
-    const joined = Boolean(telegramJoinedEl?.checked);
-
-    if (!telegramValid && !joined) {
-      setTelegramVerifyStatus("Add your Telegram username and confirm that you joined the community.", "warn");
-      telegramVerifyMetaEl.textContent = "Telegram is manual now. Your approval can still be reviewed later.";
-      return;
-    }
-    if (!telegramValid) {
-      setTelegramVerifyStatus("Enter a valid Telegram username first.", "warn");
-      telegramVerifyMetaEl.textContent = "Use only your public Telegram username, without @ or links.";
-      return;
-    }
-    if (!joined) {
-      setTelegramVerifyStatus(`<strong>Telegram username saved:</strong> @${telegram} · Confirm that you already joined the community.`, "warn");
-      telegramVerifyMetaEl.textContent = "Tick the box when you are inside SuperFirulai Community.";
-      return;
-    }
-
-    setTelegramVerifyStatus(`<strong>Telegram confirmed by user:</strong> @${telegram}`, "ok");
-    telegramVerifyMetaEl.textContent = "Manual Telegram flow active. Final approval can still be accepted or rejected later.";
+  function saveTelegramSession() {
+    try {
+      if (!telegramAuth || !telegramVerified) return;
+      sessionStorage.setItem(TELEGRAM_SESSION_KEY, JSON.stringify({ auth: telegramAuth, username: telegramEl.value, savedAt: Date.now() }));
+    } catch (_) {}
   }
+
+  function clearTelegramSession() {
+    try { sessionStorage.removeItem(TELEGRAM_SESSION_KEY); } catch (_) {}
+  }
+
+  function resetTelegramVerification(copy = "Telegram not verified yet.") {
+    telegramAuth = null;
+    telegramVerified = false;
+    telegramEl.value = "";
+    telegramEl.readOnly = true;
+    telegramResetBtn.style.display = "none";
+    setTelegramVerifyStatus(copy, "warn");
+    telegramVerifyMetaEl.textContent = "Use the same Telegram account that joined the community. A public @username is required.";
+    clearTelegramSession();
+  }
+
+  async function verifyTelegramMembership(authData) {
+    const response = await fetch("/api/telegram/verify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ auth: authData })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.error || "Telegram verification failed");
+    }
+    return data;
+  }
+
+  function renderTelegramWidget() {
+    telegramWidgetSlot.style.display = "";
+    telegramWidgetSlot.innerHTML = "";
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = TELEGRAM_WIDGET_SCRIPT;
+    script.setAttribute("data-telegram-login", TELEGRAM_BOT_USERNAME);
+    script.setAttribute("data-size", "large");
+    script.setAttribute("data-radius", "14");
+    script.setAttribute("data-userpic", "false");
+    script.setAttribute("data-onauth", "sfTelegramAuthCallback(user)");
+    telegramWidgetSlot.appendChild(script);
+  }
+
+  function tryRestoreTelegramSession() {
+    try {
+      const raw = sessionStorage.getItem(TELEGRAM_SESSION_KEY);
+      if (!raw) return false;
+      const saved = JSON.parse(raw);
+      if (!saved?.auth || !saved?.username || !saved?.savedAt) return false;
+      if (Date.now() - Number(saved.savedAt) > TELEGRAM_SESSION_MAX_AGE_MS) {
+        clearTelegramSession();
+        return false;
+      }
+      telegramAuth = saved.auth;
+      telegramVerified = true;
+      telegramEl.value = normalizeTelegramHandle(saved.username || saved.auth?.username || "");
+      telegramEl.readOnly = true;
+      telegramResetBtn.style.display = "inline-flex";
+      telegramWidgetSlot.innerHTML = "";
+      setTelegramVerifyStatus(`<strong>Telegram restored:</strong> @${telegramEl.value}`, "ok");
+      telegramVerifyMetaEl.textContent = "Telegram verification was restored in this browser session.";
+      return true;
+    } catch (_) {
+      clearTelegramSession();
+      return false;
+    }
+  }
+
+  window.sfTelegramAuthCallback = async function sfTelegramAuthCallback(user) {
+    try {
+      setTelegramVerifyStatus("Checking Telegram membership inside SuperFirulai Community...", "warn");
+      const verification = await verifyTelegramMembership(user);
+      telegramAuth = user;
+      telegramVerified = true;
+      telegramEl.value = verification.telegram_username || normalizeTelegramHandle(user?.username || "");
+      telegramEl.readOnly = true;
+      telegramResetBtn.style.display = "inline-flex";
+      telegramWidgetSlot.innerHTML = "";
+      setTelegramVerifyStatus(`<strong>Telegram verified:</strong> @${verification.telegram_username}`, "ok");
+      telegramVerifyMetaEl.textContent = verification.message || "Telegram account verified inside the community.";
+      saveTelegramSession();
+      if (lastMissingStep === 1) clearMissingStep();
+      evaluateReadyState();
+    } catch (error) {
+      resetTelegramVerification(error?.message || "Telegram verification failed.");
+      renderTelegramWidget();
+      evaluateReadyState();
+    }
+  };
 
   function resetWalletState(message = "Wallet not connected") {
     walletAddress = "";
@@ -490,29 +576,55 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     xEl.value = normalizeXHandle(xEl.value);
   }
 
+  function refreshMessage() {
+    const state = getFlowState();
+    const fields = getFieldState();
+    if (registered) {
+      setMsg("Airdrop registration verified.", "ok");
+      return;
+    }
+    if (isSubmitting) {
+      setMsg("Submitting your verified registration...", "warn");
+      return;
+    }
+    if (!state.step1) {
+      setMsg("Step 1: verify Telegram first.", "warn");
+      return;
+    }
+    if (!state.step2) {
+      setMsg("Step 2: connect and sign your wallet.", "warn");
+      return;
+    }
+    if (!fields.xValid) {
+      setMsg("Step 3: write your public X username.", "warn");
+      return;
+    }
+    if (!getCaptchaComplete()) {
+      setMsg("Step 3: complete Cloudflare and then register.", "warn");
+      return;
+    }
+    setMsg("Everything is ready. Tap Register for Airdrop.", "ok");
+  }
+
   function evaluateReadyState() {
     const state = getFlowState();
-    setRegisterEnabled(Boolean(state.step1 && state.step2));
+    const fields = getFieldState();
+    setRegisterEnabled(Boolean(state.step1 && state.step2 && fields.xValid && getCaptchaComplete() && !registered));
     updateStepCards();
+    refreshMessage();
   }
 
   xEl.addEventListener("input", () => {
     xEl.value = normalizeXHandle(xEl.value);
-    if (lastMissingStep === 2) clearMissingStep();
-    evaluateReadyState();
-  });
-  telegramEl.addEventListener("input", () => {
-    telegramEl.value = normalizeTelegramHandle(telegramEl.value);
-    if (lastMissingStep === 2 || lastMissingStep === 3) clearMissingStep();
-    updateTelegramConfirmationStatus();
-    evaluateReadyState();
-  });
-  telegramJoinedEl.addEventListener("change", () => {
-    if (lastMissingStep === 2 || lastMissingStep === 3) clearMissingStep();
-    updateTelegramConfirmationStatus();
+    if (lastMissingStep === 3) clearMissingStep();
     evaluateReadyState();
   });
   openPhantomBtn.addEventListener("click", () => openInPreferredWallet("#airdrop"));
+  telegramResetBtn.addEventListener("click", () => {
+    resetTelegramVerification("Telegram verification reset. Verify again with the account that joined the community.");
+    renderTelegramWidget();
+    evaluateReadyState();
+  });
 
   connectBtn.addEventListener("click", async () => {
     try {
@@ -571,9 +683,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       connectBtn.disabled = true;
       showWalletActions(true);
       showOpenWalletButton(false);
-      setRegisterEnabled(true);
-      setMsg("Wallet verified. Write your X and Telegram usernames, confirm Telegram, then pass captcha and register.", "ok");
-      updateStepCards();
+      setRegisterEnabled(false);
+      setMsg("Wallet verified.", "ok");
+      evaluateReadyState();
     } catch (err) {
       resetWalletState("Wallet not connected");
       setMsg(err?.message || "Could not connect or sign the wallet.", "error");
@@ -599,27 +711,24 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   registerBtn.addEventListener("click", async () => {
     try {
       clearMissingStep();
-      if (!walletAddress || !signedMessage || !signature || !nonce || !timestamp || !challenge) {
-        setMissingStep(1, "Complete Step 1: connect and verify your wallet first.");
-        return;
-      }
       cleanInputs();
-      const telegram = telegramEl.value;
-      const x = xEl.value;
+      const fields = getFieldState();
       const turnstileToken = getTurnstileToken(root);
-      const telegramValid = TELEGRAM_HANDLE_RE.test(telegram);
-      const xValid = X_HANDLE_RE.test(x);
-      const telegramJoined = Boolean(telegramJoinedEl?.checked);
-      if (!telegramValid || !xValid) {
-        setMissingStep(2, "Complete Step 2: write valid X and Telegram usernames.");
+
+      if (!fields.hasVerifiedTelegram) {
+        setMissingStep(1, "Complete Step 1: verify the Telegram account that joined the community.");
         return;
       }
-      if (!telegramJoined) {
-        setMissingStep(3, "Complete Step 3: confirm that you already joined the Telegram community.");
+      if (!walletAddress || !signedMessage || !signature || !nonce || !timestamp || !challenge) {
+        setMissingStep(2, "Complete Step 2: connect and verify your wallet.");
+        return;
+      }
+      if (!fields.xValid) {
+        setMissingStep(3, "Complete Step 3: write your public X username.");
         return;
       }
       if (!turnstileToken) {
-        setMissingStep(3, "Complete Step 3: pass the captcha before registering.");
+        setMissingStep(3, "Complete Step 3: pass the Cloudflare check before registering.");
         return;
       }
 
@@ -627,7 +736,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       registered = false;
       registerBtn.disabled = true;
       registerBtn.textContent = "Registering...";
-      setMsg("Submitting your registration for manual review...", "warn");
+      refreshMessage();
       updateStepCards();
 
       const resp = await fetch("/api/airdrop/register", {
@@ -635,8 +744,9 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           wallet: walletAddress,
-          telegram_username: telegram,
-          x_username: x,
+          telegram_username: fields.telegram,
+          x_username: fields.x,
+          telegram_auth: telegramAuth,
           signed_message: signedMessage,
           signature,
           nonce,
@@ -650,14 +760,12 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       registered = true;
       isSubmitting = false;
-      setMsg(data.message || "Registration received and pending review.", "ok");
-      registerBtn.textContent = "Submitted";
+      registerBtn.textContent = "Registered";
       registerBtn.disabled = true;
-      telegramEl.disabled = true;
       xEl.disabled = true;
-      telegramJoinedEl.disabled = true;
       clearMissingStep();
-      updateStepCards();
+      evaluateReadyState();
+      setMsg(data.message || "Airdrop registration verified", "ok");
     } catch (err) {
       isSubmitting = false;
       registered = false;
@@ -672,8 +780,11 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     showOpenWalletButton(true);
   }
 
-  initManualXField();
-  updateTelegramConfirmationStatus();
+  ensureTelegramWidgetScript();
+  resetTelegramVerification();
+  if (!tryRestoreTelegramSession()) {
+    renderTelegramWidget();
+  }
 
   turnstileWatcher = window.setInterval(() => {
     if (!root.isConnected) {
