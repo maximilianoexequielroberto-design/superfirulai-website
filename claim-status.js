@@ -1,6 +1,7 @@
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
 const CLAIM_TESTING_MODE = true;
+const AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED = false;
 const ROUND_CLAIM_TESTING_MODE = true;
 
 function getWalletLabel(provider) {
@@ -272,13 +273,21 @@ function mountAirdropClaim(root) {
 
   function renderCta(state, data) {
     if (state === "approved" && (data.claimLive || CLAIM_TESTING_MODE)) {
+      const buttonLabel = AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED ? "Claim Airdrop" : "Preview Claim Airdrop";
+      const previewCopy = AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED
+        ? "Testing view is active. If the live endpoint is installed, the claim can continue here."
+        : "This repo still uses a preview-only airdrop claim button. The real backend claim endpoint is not installed yet.";
       ctaEl.innerHTML = `
         <div class="sf-claim-row">
-          <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
-          ${renderTestingNotice("This preview stays visible before launch. Live token delivery only starts after the official claim announcement and final endpoint activation.")}
+          <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">${buttonLabel}</button></div>
+          ${renderTestingNotice(previewCopy)}
         </div>`;
       root.querySelector("#sf-claim-submit")?.addEventListener("click", () => {
         setStepState(4, true, false);
+        if (!AIRDROP_REAL_CLAIM_ENDPOINT_INSTALLED) {
+          setStatusMessage(`<strong>Preview only.</strong><br>This wallet is approved, but this repo still does not include the final live airdrop-claim endpoint. The button is working as a preview only for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>.`, "warn");
+          return;
+        }
         if (CLAIM_TESTING_MODE && !data.claimLive) {
           setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Airdrop flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the official claim window is not open yet.`, "ok");
           return;
