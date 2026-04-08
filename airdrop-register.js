@@ -43,6 +43,22 @@ function getWalletLabel(provider) {
   return "Wallet";
 }
 
+function normalizeRegistrationError(message) {
+  const raw = String(message || "").trim();
+  const lower = raw.toLowerCase();
+  if (!raw) return "Registration failed. Please try again.";
+  if (lower.includes("wallet already registered")) return "This wallet is already registered.";
+  if (lower.includes("telegram already registered")) return "This Telegram username is already registered.";
+  if (lower.includes("x account already registered")) return "This X username is already registered.";
+  if (lower.includes("registration already exists")) return "This registration already exists.";
+  if (lower.includes("nonce already used")) return "This session already expired. Reconnect your wallet and try again.";
+  if (lower.includes("captcha validation failed")) return "Cloudflare verification failed. Complete it again and retry.";
+  if (lower.includes("invalid wallet signature")) return "Wallet signature invalid. Reconnect your wallet and try again.";
+  if (lower.includes("missing required fields")) return "Complete all required fields before registering.";
+  return raw;
+}
+
+
 async function disconnectSolanaWallet(provider) {
   try {
     if (provider?.disconnect) await provider.disconnect();
@@ -666,7 +682,15 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       registerBtn.disabled = false;
       registerBtn.textContent = "Register for Airdrop";
       updateStepCards();
-      setMsg(err?.message || "Error registering the airdrop.", "error");
+      const errorMessage = normalizeRegistrationError(err?.message || "Error registering the airdrop.");
+      if (errorMessage.includes("wallet is already registered") || errorMessage.includes("session already expired") || errorMessage.includes("signature invalid")) {
+        setMissingStep(1, errorMessage);
+      } else if (errorMessage.includes("Telegram username is already registered") || errorMessage.includes("X username is already registered")) {
+        setMissingStep(2, errorMessage);
+      } else if (errorMessage.includes("Cloudflare verification failed")) {
+        setMissingStep(3, errorMessage);
+      }
+      setMsg(errorMessage, "error");
     }
   });
 
