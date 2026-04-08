@@ -294,6 +294,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   let registered = false;
   let turnstileWatcher = null;
   let telegramConfirmed = false;
+  let backendErrorMessage = "";
+  let backendErrorTone = "error";
 
   const connectBtn = root.querySelector("#sf-connect");
   const openPhantomBtn = root.querySelector("#sf-open-phantom");
@@ -478,6 +480,10 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   function refreshMessage() {
     const state = getFlowState();
     const fields = getFieldState();
+    if (backendErrorMessage) {
+      setMsg(backendErrorMessage, backendErrorTone);
+      return;
+    }
     if (registered) {
       setMsg("Airdrop registration verified.", "ok");
       return;
@@ -518,16 +524,19 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   }
 
   telegramEl.addEventListener("input", () => {
+    backendErrorMessage = "";
     telegramEl.value = normalizeTelegramHandle(telegramEl.value);
     if (lastMissingStep === 2) clearMissingStep();
     evaluateReadyState();
   });
   xEl.addEventListener("input", () => {
+    backendErrorMessage = "";
     xEl.value = normalizeXHandle(xEl.value);
     if (lastMissingStep === 2) clearMissingStep();
     evaluateReadyState();
   });
   telegramConfirmEl.addEventListener("change", () => {
+    backendErrorMessage = "";
     telegramConfirmed = telegramConfirmEl.checked;
     evaluateReadyState();
   });
@@ -537,6 +546,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     try {
       registered = false;
       isSubmitting = false;
+      backendErrorMessage = "";
       clearMissingStep();
       connectBtn.disabled = true;
       connectBtn.textContent = "Checking wallet...";
@@ -601,12 +611,14 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
   disconnectBtn.addEventListener("click", async () => {
     await disconnectSolanaWallet(connectedProvider);
+    backendErrorMessage = "";
     resetWalletState("Wallet disconnected");
     setMsg("Wallet disconnected. You can connect again with the same or another account.", "warn");
   });
 
   switchWalletBtn.addEventListener("click", async () => {
     await disconnectSolanaWallet(connectedProvider);
+    backendErrorMessage = "";
     resetWalletState("Switch your account in Phantom, then connect again.");
     if (isMobileDevice()) {
       setMsg("Open Phantom, switch the active account there, return to the page, then tap Connect Wallet again.", "warn");
@@ -617,6 +629,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
   registerBtn.addEventListener("click", async () => {
     try {
+      backendErrorMessage = "";
       clearMissingStep();
       cleanInputs();
       const fields = getFieldState();
@@ -670,6 +683,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
 
       registered = true;
       isSubmitting = false;
+      backendErrorMessage = "";
       registerBtn.textContent = "Registered";
       registerBtn.disabled = true;
       xEl.disabled = true;
@@ -683,6 +697,8 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       registerBtn.textContent = "Register for Airdrop";
       updateStepCards();
       const errorMessage = normalizeRegistrationError(err?.message || "Error registering the airdrop.");
+      backendErrorMessage = errorMessage;
+      backendErrorTone = "error";
       if (errorMessage.includes("wallet is already registered") || errorMessage.includes("session already expired") || errorMessage.includes("signature invalid")) {
         setMissingStep(1, errorMessage);
       } else if (errorMessage.includes("Telegram username is already registered") || errorMessage.includes("X username is already registered")) {
