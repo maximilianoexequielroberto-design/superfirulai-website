@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuperFirulai $FIRU — Official Register, Buy & Claim Path</title>
+  <meta name="description" content="Official SuperFirulai path: register first, buy when live, then use the Claim flow when enabled. Clean + epic layout with premium CTA panels and community metrics." />
+  <meta property="og:title" content="SuperFirulai $FIRU — Official Register, Buy & Claim Path" />
+  <meta property="og:description" content="Register first. Buy when live. Claim flow ready when enabled. Official channels only." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="/superfirulai-social.webp.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SuperFirulai $FIRU — Official Register, Buy & Claim Path" />
+  <meta name="twitter:description" content="Register first. Buy when live. Claim flow ready when enabled. Official channels only." />
+  <meta name="twitter:image" content="/superfirulai-social.webp.png" />
+  <meta name="theme-color" content="#050d1f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#050d1f;
+      --panel:rgba(9,17,40,.88);
+      --panel-strong:rgba(7,14,34,.95);
+      --glass:rgba(255,255,255,.045);
+      --line:rgba(255,255,255,.08);
+      --text:#eef5ff;
+      --muted:#9bb2d7;
+      --muted-2:#7f99c5;
+      --blue:#2991ff;
+      --blue2:#0a59da;
+      --gold:#ffd060;
+      --gold2:#ffaf12;
+      --green:#1ae28a;
+      --shadow:0 24px 60px rgba(0,0,0,.42);
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:"Inter",system-ui,sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-2;
+      background:url("hero-mobile-image.png?v=hero-mobile-image-v4-20260328") center top/cover no-repeat;
+      filter:blur(40px) brightness(.13) saturate(1.03);
+      transform:scale(1.08);
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      z-index:-1;
+      background:
+        radial-gradient(circle at 14% 0%,rgba(41,145,255,.10),transparent 28%),
+        linear-gradient(180deg,rgba(4,9,24,.12),rgba(4,9,24,.94) 48%);
+    }
+
+    a{text-decoration:none;color:inherit}
+    button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+    img{display:block;max-width:100%}
+    .container{width:min(calc(100% - 28px),var(--max));margin:0 auto}
+
+    .topbar{position:fixed;top:8px;left:0;right:0;z-index:1300;padding:0 12px;pointer-events:none}
+    .topbar-inner{width:100%;max-width:none;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1301}
+    .float-btn,.buy-float{pointer-events:auto;display:inline-flex;align-items:center;justify-content:center}
+    .float-btn{
+      width:50px;height:50px;border-radius:16px;background:rgba(8,14,32,.74);
+      border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 24px rgba(0,0,0,.26);backdrop-filter:blur(10px);
+      position:relative;z-index:1410; margin-left:2px;flex:0 0 50px;
+    }
+    .float-btn span{display:block;width:15px;height:2px;background:#c9ddff;border-radius:99px;position:relative}
+    .float-btn span::before,.float-btn span::after{
+      content:"";position:absolute;left:0;width:15px;height:2px;background:#c9ddff;border-radius:99px
+    }
+    .float-btn span::before{top:-5px}
+    .float-btn span::after{top:5px}
+    .buy-float{
+      min-width:138px;height:50px;padding:0 16px;border-radius:16px;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));color:#171007;
+      font-weight:900;font-size:12.4px;letter-spacing:.03em;box-shadow:0 14px 28px rgba(255,160,0,.24);flex:0 0 auto
+    }
+
+    .mobile-top-links{display:flex;align-items:center;gap:10px;pointer-events:auto;margin-left:auto;margin-right:0}
+    .quick-social-btn{
+      width:50px;height:50px;border-radius:16px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 50px;
+      background:rgba(8,14,32,.76);border:1px solid rgba(255,255,255,.12);box-shadow:0 10px 24px rgba(0,0,0,.22);
+      color:#eef5ff;font-weight:900;font-size:15px;line-height:1;backdrop-filter:blur(10px)
+    }
+    .quick-social-btn svg{width:16px;height:16px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .quick-social-btn:hover{color:#fff;border-color:rgba(255,220,126,.34)}
+
+    .drawer{position:fixed;inset:0;z-index:1290;background:rgba(3,7,20,.56);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .22s ease}
+    .drawer.open{opacity:1;pointer-events:auto}
+    .drawer-panel{
+      position:absolute;top:74px;left:12px;right:12px;bottom:96px;max-width:420px;
+      background:rgba(4,10,26,.96);border:1px solid rgba(255,255,255,.08);border-radius:28px;box-shadow:var(--shadow);
+      padding:18px 14px 18px;transform:translateX(calc(-100% - 18px));transition:transform .24s ease
+    }
+    .drawer.open .drawer-panel{transform:translateX(0)}
+    .drawer-section-title{
+      display:flex;align-items:center;gap:10px;margin:0 0 14px;padding:0 4px;color:#eef5ff;font-size:12px;font-weight:900;
+      letter-spacing:.16em;text-transform:uppercase;opacity:.88
+    }
+    .drawer-title-desktop{display:none}
+    .drawer-section-title > span:first-child{width:10px;height:10px;border-radius:999px;background:linear-gradient(135deg,var(--gold),#ff9f43);box-shadow:0 0 0 4px rgba(255,202,72,.10);flex:0 0 10px}
+    .drawer-title-mobile,.drawer-title-desktop{width:auto;height:auto;background:none;box-shadow:none;white-space:nowrap}
+    .drawer-title-mobile{display:inline-block}
+    .drawer-title-desktop{display:none}
+    .drawer-links{display:grid;gap:9px}
+    .drawer-links button,.drawer-links a{
+      display:flex;flex-direction:column;align-items:flex-start;justify-content:center;width:100%;padding:12px 14px 11px;border-radius:18px;
+      background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.03));border:1px solid rgba(255,255,255,.08);color:#edf5ff;
+      letter-spacing:.05em;text-transform:uppercase;box-shadow:0 10px 24px rgba(0,0,0,.18);text-decoration:none
+    }
+    .drawer-links button strong,.drawer-links a strong{font-size:14px;font-weight:900;line-height:1.05}
+    .drawer-links button span,.drawer-links a span{margin-top:5px;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:none;color:#9fb2d1}
+    .drawer-links button:disabled,.drawer-links a.is-locked{opacity:.62;cursor:not-allowed}
+    .drawer-group-label{padding:8px 4px 2px;color:#7f95bb;font-size:11px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;opacity:.9}
+    .drawer-links button.compact span,.drawer-links a.compact span{font-size:11px;letter-spacing:.03em;color:#aac0e4}
+    .info-accordion{display:grid;gap:12px}
+    .info-item{border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));overflow:hidden}
+    .info-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;color:#fff;font-weight:900;font-size:24px;line-height:1.05}
+    .info-item summary::-webkit-details-marker{display:none}
+    .info-item summary span{display:block;color:#9fb2d1;font-size:13px;font-weight:700;line-height:1.5;margin-top:8px;max-width:860px}
+    .info-item summary::after{content:"+";flex:0 0 auto;width:34px;height:34px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:24px;font-weight:500}
+    .info-item[open] summary::after{content:"−"}
+    .info-item-body{padding:0 20px 20px;display:grid;gap:12px}
+    .info-item-body .mini-card,.info-item-body .stat-card,.info-item-body .dialog-item{margin:0}
+    .section-shortcut-target{scroll-margin-top:96px}
+
+    .app{padding:0 0 188px}
+    .view{display:none}
+    .view.active{display:block}
+    .view:not([data-view="home"]){padding-top:98px}
+    .stack{display:grid;gap:18px}
+    .view[data-view="home"] .stack{gap:18px}
+
+    .hero-card{background:transparent;border:none;box-shadow:none;padding:0}
+    .hero-media{
+      width:100%;
+      background:transparent;
+      border:none;
+      border-radius:0;
+      overflow:visible;
+      box-shadow:none;
+    }
+    .hero-media picture,.hero-media img{width:100%;display:block}
+    .hero-media img{height:auto;object-fit:contain;object-position:center top}
+    .hero-caption{
+      margin-top:14px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      padding:0 2px;
+    }
+
+    h1,h2,h3{font-family:"Barlow Condensed",sans-serif;letter-spacing:-.02em;line-height:1}
+    h1{font-size:clamp(48px,12vw,92px)}
+    h2{font-size:clamp(40px,10vw,66px)}
+    h3{font-size:clamp(34px,8vw,50px)}
+
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:13px;
+      font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d6e6ff
+    }
+    .eyebrow span{
+      width:9px;height:9px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 0 0 4px rgba(255,208,96,.14)
+    }
+
+    .home-band,
+    .card,
+    .metrics-shell,
+    .asset-cta,
+    .token-chip,
+    .phase-card,
+    .mini-card,
+    .fact-card{
+      border:1px solid var(--line);
+      box-shadow:var(--shadow);
+    }
+
+    .card,
+    .home-band,
+    .metrics-shell,
+    .hybrid-panel{
+      padding:22px;
+      border-radius:28px;
+      background:linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.94));
+    }
+
+    .home-band{
+      padding:22px 22px 20px;
+      overflow:hidden;
+      position:relative;
+    }
+    .home-band::after{
+      content:"";
+      position:absolute;
+      inset:auto -70px -70px auto;
+      width:180px;
+      height:180px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(255,208,96,.18),transparent 70%);
+      pointer-events:none;
+    }
+    .home-band-inner{display:grid;gap:14px;position:relative;z-index:1}
+    .home-band h3{font-size:40px}
+    .home-band p{color:var(--muted);line-height:1.65}
+
+    .hero-stage{
+      position:relative;
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      height:100svh;
+      min-height:640px;
+      background:#040b19;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .hero-desktop-image,.hero-mobile-image{
+      position:absolute;
+      inset:0;
+      background-repeat:no-repeat;
+      background-position:center top;
+      z-index:0;
+    }
+    .hero-mobile-image{background-size:cover;}
+    .hero-desktop-image{
+      display:none;
+      background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328");
+    }
+    .hero-mobile-image{
+      display:block;
+      background-image:url("hero-mobile-image.png?v=hero-mobile-image-v4-20260328");
+    }
+    .hero-stage::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:radial-gradient(circle at 50% 78%,rgba(255,184,43,.16),transparent 24%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .hero-stage::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      bottom:0;
+      height:140px;
+      background:linear-gradient(180deg,rgba(5,13,31,0),rgba(5,13,31,.30) 48%,rgba(5,13,31,.86) 100%);
+      pointer-events:none;
+      z-index:1;
+    }
+
+    .hero-assets{
+      position:absolute;
+      left:50%;
+      bottom:118px;
+      transform:translateX(-50%);
+      width:min(calc(100% - 28px),760px);
+      display:none;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      z-index:2;
+    }
+    .hero-asset{
+      position:relative;
+      overflow:hidden;
+      display:grid;
+      grid-template-columns:42px minmax(0,1fr) 16px;
+      align-items:center;
+      gap:10px;
+      min-height:74px;
+      padding:12px 14px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(180deg,rgba(8,17,38,.78),rgba(5,12,28,.88));
+      box-shadow:0 20px 40px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.03);
+      backdrop-filter:blur(14px);
+      color:#f5f8ff;
+      text-align:left;
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease;
+    }
+    .hero-asset::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg,rgba(255,208,96,.12),transparent 46%);
+      pointer-events:none;
+    }
+    .hero-asset:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,.18);
+      box-shadow:0 26px 54px rgba(0,0,0,.40);
+    }
+    .hero-asset-icon{
+      position:relative;
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,rgba(255,208,96,.22),rgba(255,157,39,.10));
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+    }
+    .hero-asset-icon svg{
+      width:20px;
+      height:20px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+      color:#ffe9ae;
+    }
+    .hero-asset-copy{position:relative; min-width:0;}
+    .hero-asset-copy strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:24px;
+      line-height:.92;
+      letter-spacing:-.01em;
+      color:#fff;
+    }
+    .hero-asset-copy span{
+      display:block;
+      margin-top:4px;
+      font-size:11px;
+      line-height:1.25;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:#b8c9e7;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .hero-asset-arrow{
+      position:relative;
+      font-size:16px;
+      color:#ffe9ae;
+      opacity:.9;
+      text-align:right;
+    }
+    .hero-asset.is-x .hero-asset-icon,
+    .hero-asset.is-buy .hero-asset-icon{
+      background:linear-gradient(135deg,rgba(42,146,255,.16),rgba(255,208,96,.10));
+    }
+
+    .home-quick-shell{
+      margin-top:2px;
+      padding:18px;
+      border-radius:26px;
+      background:linear-gradient(180deg,rgba(9,17,40,.84),rgba(7,14,34,.94));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+    .home-quick-head{display:grid;gap:10px}
+    .home-quick-head strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(28px,6vw,44px);
+      line-height:.95;
+      letter-spacing:-.01em;
+    }
+    .home-quick-head p{color:var(--muted);line-height:1.6;max-width:54ch}
+    .quick-action-row{display:grid;gap:12px;margin-top:16px}
+
+    .actions,.section-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 22px;border-radius:18px;
+      font-weight:900;font-size:16px;letter-spacing:.03em;
+      transition:transform .15s ease,filter .15s ease,background .15s ease,border-color .15s ease
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#141006;box-shadow:0 18px 34px rgba(255,160,0,.26)}
+    .btn-blue{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;box-shadow:0 18px 34px rgba(30,144,255,.24)}
+    .btn-dark{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#edf5ff}
+
+    .asset-grid{display:grid;gap:14px}
+    .asset-cta{
+      width:100%;
+      text-align:left;
+      padding:22px;
+      border-radius:28px;
+      background:
+        radial-gradient(circle at top right,rgba(255,208,96,.12),transparent 28%),
+        linear-gradient(180deg,rgba(12,22,52,.94),rgba(7,14,34,.96));
+      position:relative;
+      overflow:hidden;
+      transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;
+    }
+    .asset-cta:hover{
+      transform:translateY(-2px);
+      border-color:rgba(255,255,255,.16);
+      box-shadow:0 28px 60px rgba(0,0,0,.44);
+    }
+    .asset-cta::before{
+      content:"";
+      position:absolute;
+      inset:auto -36px -36px auto;
+      width:120px;
+      height:120px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(41,145,255,.22),transparent 70%);
+      opacity:.88;
+      pointer-events:none;
+    }
+    .asset-kicker{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;letter-spacing:.12em;
+      text-transform:uppercase;color:#dbe9ff
+    }
+    .asset-kicker::before{
+      content:"";
+      width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+    }
+    .asset-cta strong{
+      display:block;
+      margin-top:16px;
+      font-size:28px;
+      font-family:"Barlow Condensed",sans-serif;
+      letter-spacing:-.01em;
+      line-height:.96;
+    }
+    .asset-cta p{
+      margin-top:10px;
+      color:var(--muted);
+      line-height:1.65;
+      font-size:15px;
+      max-width:32ch;
+    }
+    .asset-link{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:18px;
+      font-weight:900;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+      color:#fff2c8;
+      font-size:13px;
+    }
+    .asset-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
+
+    .metrics-shell{
+      position:relative;
+      overflow:hidden;
+      padding:22px;
+      border-radius:34px;
+      background:
+        linear-gradient(180deg,rgba(12,19,43,.90),rgba(7,14,33,.95)),
+        radial-gradient(circle at 0% 0%,rgba(68,161,255,.16),transparent 28%),
+        radial-gradient(circle at 100% 100%,rgba(255,200,74,.12),transparent 34%);
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:0 26px 80px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05);
+      isolation:isolate;
+    }
+    .metrics-shell::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(circle at 10% 0%,rgba(41,145,255,.13),transparent 24%),
+        radial-gradient(circle at 100% 100%,rgba(255,208,96,.12),transparent 26%),
+        linear-gradient(90deg,rgba(38,122,255,.11),transparent 26%,transparent 74%,rgba(38,122,255,.09));
+      pointer-events:none;
+      z-index:0;
+    }
+    .metrics-shell::after{
+      content:"";
+      position:absolute;
+      inset:14px;
+      border-radius:28px;
+      border:1px solid rgba(255,255,255,.05);
+      pointer-events:none;
+      z-index:0;
+    }
+    .metrics-inner{position:relative;z-index:1;display:grid;gap:18px}
+    .metrics-top{display:grid;gap:12px}
+    .metrics-top .left{display:grid;gap:10px}
+    .metrics-top h3{font-size:44px;line-height:.94;max-width:9ch}
+    .metrics-top p{color:var(--muted);line-height:1.65;max-width:34ch;font-size:15px}
+    .metrics-highlight{
+      display:grid;
+      grid-template-columns:1.2fr .8fr;
+      gap:12px;
+    }
+    .metrics-feature,.metrics-mini-stack{display:grid;gap:12px}
+    .metrics-highlight--single{grid-template-columns:minmax(0,1fr)}
+    .metric-hero-card,.metric-mini-card,.metric-card{
+      position:relative;
+      overflow:hidden;
+      border-radius:24px;
+      background:linear-gradient(180deg,rgba(16,24,52,.90),rgba(10,17,40,.94));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+    }
+    .metric-hero-card{padding:20px;min-height:154px}
+    .metric-hero-card::before,.metric-mini-card::before,.metric-card::before{
+      content:"";position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(circle at 100% 0%,rgba(255,196,58,.10),transparent 30%), radial-gradient(circle at 0% 100%,rgba(51,144,255,.10),transparent 28%);
+    }
+    .metric-kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#eaf1ff}
+    .metric-kicker::before{content:"";width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));box-shadow:0 0 0 5px rgba(255,208,96,.10)}
+    .metric-hero-main{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:14px}
+    .metric-hero-value{font-family:"Barlow Condensed",sans-serif;font-size:64px;line-height:.88;letter-spacing:-.03em}
+    .metric-hero-main strong:last-child{font-size:14px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#d7e6ff;text-align:right;max-width:10ch}
+    .metric-hero-card p{margin-top:10px;color:var(--muted);line-height:1.55;max-width:30ch;font-size:14px}
+    .metrics-mini-stack{grid-template-rows:repeat(2,minmax(0,1fr))}
+    .metric-mini-card{padding:18px;display:grid;align-content:space-between;min-height:71px}
+    .metric-mini-value{font-family:"Barlow Condensed",sans-serif;font-size:42px;line-height:.9}
+    .metric-mini-label{margin-top:4px;color:#d7e6ff;font-size:13px;font-weight:900;letter-spacing:.10em;text-transform:uppercase}
+    .metric-mini-note{margin-top:6px;color:var(--muted-2);font-size:12px;line-height:1.45}
+    .metrics-grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .metric-card{
+      padding:18px;
+      min-height:132px;
+    }
+    .metric-card::after{content:"";position:absolute;left:0;top:18px;bottom:18px;width:4px;border-radius:999px;background:var(--metric-accent,linear-gradient(180deg,var(--gold),var(--gold2)))}
+    .metric-card strong{
+      display:block;
+      position:relative;
+      z-index:1;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:44px;
+      line-height:.92;
+    }
+    .metric-card .metric-supply-value{font-size:24px;line-height:1.02;letter-spacing:-.03em;word-break:normal;overflow-wrap:normal;white-space:normal}
+    .metrics-grid--compact .metric-card--wide{grid-column:1 / -1;min-height:132px}
+    .metrics-grid--compact .metric-card--wide .metric-supply-value{font-size:21px;line-height:1.02;letter-spacing:-.03em}
+    .metric-card.is-supply{
+      background:
+        radial-gradient(circle at 100% 0%,rgba(74,247,255,.18),transparent 34%),
+        radial-gradient(circle at 0% 100%,rgba(41,145,255,.16),transparent 30%),
+        linear-gradient(135deg,rgba(10,22,58,.97),rgba(7,15,38,.98));
+      border-color:rgba(124,240,255,.16);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 18px 40px rgba(3,10,26,.32);
+    }
+    .metric-card.is-supply::before{
+      background:
+        radial-gradient(circle at 100% 0%,rgba(74,247,255,.13),transparent 34%),
+        radial-gradient(circle at 0% 100%,rgba(41,145,255,.13),transparent 30%);
+    }
+    .metric-card.is-supply::after{width:5px;top:16px;bottom:16px;background:linear-gradient(180deg,#55e8ff,#38cfff)}
+    .metric-card.is-supply .metric-supply-value{text-shadow:0 6px 20px rgba(76,230,255,.10)}
+    .metric-card.is-supply .metric-note{max-width:24ch}
+    .metric-card span{
+      display:block;
+      position:relative;
+      z-index:1;
+      margin-top:8px;
+      color:#d7e6ff;
+      font-size:13px;
+      font-weight:900;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+    }
+    .metric-note{
+      position:relative;
+      z-index:1;
+      margin-top:8px;
+      color:var(--muted-2);
+      font-size:13px;
+      line-height:1.5;
+      max-width:20ch;
+    }
+    .metric-card.is-holders{--metric-accent:linear-gradient(180deg,#3da1ff,#6fc5ff)}
+    .metric-card.is-telegram{--metric-accent:linear-gradient(180deg,#f0c85d,#ffd56a)}
+    .metric-card.is-x{--metric-accent:linear-gradient(180deg,#8a7dff,#b29aff)}
+    .metric-card.is-supply{--metric-accent:linear-gradient(180deg,#3fd9da,#82f0ea)}
+
+    .hybrid-grid{display:grid;gap:14px}
+    .hybrid-panel{
+      padding:22px;border-radius:28px;
+      background:linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.94));
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+    .hybrid-panel h3{font-size:42px}
+    .hybrid-panel p{margin-top:10px;color:var(--muted);line-height:1.65}
+    .bullet-list{display:grid;gap:10px;margin-top:16px}
+    .bullet-item{
+      display:flex;gap:12px;align-items:flex-start;padding:14px;border-radius:18px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08)
+    }
+    .bullet-dot{
+      margin-top:3px;width:11px;height:11px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 0 0 5px rgba(255,208,96,.10);flex:0 0 11px
+    }
+    .bullet-copy strong{display:block;font-size:16px}
+    .bullet-copy span{display:block;margin-top:4px;color:var(--muted);line-height:1.55}
+
+    .token-chip-grid{
+      display:grid;
+      gap:10px;
+      margin-top:16px;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+    .token-chip{
+      padding:16px;
+      border-radius:22px;
+      background:rgba(255,255,255,.045);
+    }
+    .token-chip strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:32px;
+      line-height:.95;
+    }
+    .token-chip span{
+      display:block;
+      margin-top:6px;
+      color:var(--muted);
+      line-height:1.45;
+      font-size:13px;
+    }
+    .token-footnote{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      line-height:1.6;
+      font-size:14px;
+    }
+
+
+    .launch-desk{
+      position:relative;
+      overflow:hidden;
+      padding:24px;
+      border-radius:32px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 0% 0%,rgba(104,188,255,.16),transparent 28%),
+        radial-gradient(circle at 100% 0%,rgba(255,208,96,.14),transparent 30%),
+        linear-gradient(180deg,rgba(10,19,45,.94),rgba(6,13,31,.98));
+      box-shadow:0 28px 64px rgba(0,0,0,.42);
+      isolation:isolate;
+    }
+    .launch-desk::before{
+      content:"";
+      position:absolute;
+      inset:auto auto -100px -100px;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(255,208,96,.10),transparent 70%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .launch-desk::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,rgba(255,255,255,.03),transparent 40%,rgba(61,161,255,.06));
+      pointer-events:none;
+      z-index:0;
+    }
+    .launch-desk-inner{position:relative;z-index:1;display:grid;gap:16px}
+    .launch-desk-top{display:grid;gap:10px}
+    .launch-desk-top p{color:var(--muted);line-height:1.58;max-width:58ch;font-size:15px}
+    .launch-grid{display:grid;gap:12px}
+    .launch-card{
+      position:relative;
+      overflow:hidden;
+      padding:20px;
+      border-radius:24px;
+      background:rgba(255,255,255,.045);
+      border:1px solid rgba(255,255,255,.08);
+      backdrop-filter:blur(14px);
+      box-shadow:var(--shadow);
+      display:grid;
+      gap:12px;
+    }
+    .launch-kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 12px;
+      border-radius:999px;
+      width:max-content;
+      max-width:100%;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.13em;
+      text-transform:uppercase;
+      color:#dfeaff;
+    }
+    .launch-kicker::before{
+      content:"";
+      width:8px;
+      height:8px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--gold),var(--gold2));
+      box-shadow:0 0 0 5px rgba(255,208,96,.12);
+    }
+    .launch-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(34px,7vw,56px);
+      line-height:.92;
+      color:#fff;
+      letter-spacing:-.01em;
+      word-break:break-word;
+      overflow-wrap:anywhere;
+    }
+    .launch-card strong.launch-card-status{font-size:clamp(30px,6vw,46px)}
+    .launch-subline{
+      display:block;
+      color:#bdd0ee;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    .launch-card p{color:var(--muted);line-height:1.58;font-size:14px;max-width:46ch}
+    .launch-inline,.launch-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      align-items:center;
+    }
+    .launch-actions .btn,.launch-inline .btn{min-height:52px}
+    .launch-chip-row{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+    }
+    .launch-chip{
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:#d9e8ff;
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+      text-align:center;
+    }
+    .launch-footnote{
+      padding:14px 16px;
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);
+      color:var(--muted);
+      line-height:1.58;
+      font-size:14px;
+    }
+    .launch-lock-note{
+      color:#97afd6;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+    }
+    .btn.is-locked,
+    .btn[aria-disabled="true"]{
+      opacity:.58;
+      pointer-events:none;
+      filter:saturate(.74);
+      box-shadow:none;
+    }
+
+    .tokenomics-premium{
+      position:relative;
+      overflow:hidden;
+      padding:24px;
+      border-radius:32px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(circle at 0% 0%,rgba(41,145,255,.16),transparent 26%),
+        radial-gradient(circle at 100% 0%,rgba(255,208,96,.18),transparent 30%),
+        linear-gradient(180deg,rgba(10,19,45,.94),rgba(6,13,31,.98));
+      box-shadow:0 28px 64px rgba(0,0,0,.42);
+      isolation:isolate;
+    }
+    .tokenomics-premium::before{
+      content:"";
+      position:absolute;
+      inset:auto -100px -100px auto;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(41,145,255,.16),transparent 70%);
+      pointer-events:none;
+      z-index:0;
+    }
+    .tokenomics-premium::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,rgba(255,255,255,.03),transparent 40%,rgba(255,208,96,.04));
+      pointer-events:none;
+      z-index:0;
+    }
+    .tokenomics-premium-inner{position:relative;z-index:1;display:grid;gap:16px}
+    .tokenomics-premium-top{display:grid;gap:10px}
+    .tokenomics-premium-top p{color:var(--muted);line-height:1.55;max-width:52ch;font-size:15px}
+    .tokenomics-premium-grid{display:grid;gap:12px}
+    .tokenomics-main-card,
+    .tokenomics-side-card,
+    .allocation-card,
+    .round-card,
+    .tokenomics-bar,
+    .tokenomics-note{
+      border:1px solid rgba(255,255,255,.08);
+      box-shadow:var(--shadow);
+    }
+    .tokenomics-main-card,
+    .tokenomics-side-card,
+    .round-card,
+    .tokenomics-note{
+      border-radius:24px;
+      background:rgba(255,255,255,.04);
+      backdrop-filter:blur(14px);
+    }
+    .tokenomics-main-card{padding:20px}
+    .tokenomics-main-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:clamp(42px,9vw,84px);
+      line-height:.9;
+      color:#fff;
+    }
+    .tokenomics-main-card span{
+      display:block;
+      margin-top:8px;
+      color:#c1d2ed;
+      font-weight:800;
+      letter-spacing:.11em;
+      text-transform:uppercase;
+      font-size:12px;
+    }
+    .tokenomics-main-card p{margin-top:12px;color:var(--muted);line-height:1.52;max-width:34ch;font-size:15px}
+    .tokenomics-side-card{padding:18px;display:grid;gap:12px}
+    .tokenomics-side-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:32px;
+      line-height:.94;
+      color:#fff;
+    }
+    .tokenomics-side-card p{color:var(--muted);line-height:1.5;font-size:15px}
+    .tokenomics-distribution{display:grid;gap:12px}
+    .allocation-card{
+      position:relative;
+      overflow:hidden;
+      padding:16px 16px 17px;
+      border-radius:22px;
+      background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.035));
+    }
+    .allocation-card::before{
+      content:"";
+      position:absolute;
+      left:0;top:0;bottom:0;
+      width:4px;
+      background:var(--accent,linear-gradient(180deg,var(--blue),var(--gold)));
+      opacity:.95;
+    }
+    .allocation-card-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+    .allocation-card strong{
+      display:block;
+      font-family:"Barlow Condensed",sans-serif;
+      font-size:34px;
+      line-height:.92;
+    }
+    .allocation-card span{
+      display:block;
+      margin-top:4px;
+      color:#9eb6dc;
+      font-size:12px;
+      font-weight:800;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+    }
+    .allocation-card p{margin-top:8px;color:var(--muted);line-height:1.45;font-size:15px;max-width:24ch}
+    .allocation-card.is-liquidity{--accent:linear-gradient(180deg,#2991ff,#68bcff)}
+    .allocation-card.is-community{--accent:linear-gradient(180deg,#ffda7a,#ffb347)}
+    .allocation-card.is-marketing{--accent:linear-gradient(180deg,#8c7dff,#c29eff)}
+    .allocation-card.is-team{--accent:linear-gradient(180deg,#43dfd2,#54bfff)}
+    .allocation-card.is-burn{--accent:linear-gradient(180deg,#ff8c72,#ffc07a)}
+    .tokenomics-bar{overflow:hidden;border-radius:999px;height:16px;background:rgba(255,255,255,.05);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -8px 18px rgba(0,0,0,.16)}
+    .tokenomics-bar-fill{
+      width:100%;height:100%;
+      background:linear-gradient(90deg,#2991ff 0 55%,#ffcf67 55% 75%,#8b80ff 75% 85%,#42ddd1 85% 95%,#ff9472 95% 100%);
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 0 18px rgba(41,145,255,.16);
+    }
+    .tokenomics-rounds{display:grid;gap:12px}
+    .round-card{padding:18px}
+    .round-card strong{display:block;font-size:22px;line-height:1.08;color:#fff}
+    .round-card span{display:block;margin-top:6px;color:#bfd0ee;font-size:11px;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+    .round-card p{margin-top:8px;color:var(--muted);line-height:1.48;font-size:15px;max-width:24ch}
+    .tokenomics-note{padding:15px 16px;color:var(--muted);line-height:1.56;font-size:15px}
+
+    .module-title{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+    .module-title .left{display:grid;gap:10px}
+    .module-title .left p{color:var(--muted);line-height:1.6}
+    .pill-nav{display:flex;gap:10px;flex-wrap:wrap}
+    .pill-nav button{
+      padding:10px 16px;border-radius:999px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);font-weight:800
+    }
+
+    .grid-2,.grid-3,.grid-stats,.roadmap-grid,.phase-grid{display:grid;gap:12px}
+    .mini-card,.step-card,.fact-card,.phase-card,.stat-card{
+      padding:18px;border-radius:22px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)
+    }
+    .mini-card strong,.step-card strong,.phase-card strong{display:block;font-size:22px;font-weight:900;color:#fff}
+    .mini-card span,.step-card span,.phase-card span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+    .phase-kicker{
+      display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);font-size:12px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:#d6e6ff
+    }
+    .phase-kicker::before{
+      content:"";width:8px;height:8px;border-radius:999px;background:linear-gradient(135deg,var(--gold),var(--gold2))
+    }
+    .summary-note{
+      padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08);color:var(--muted);line-height:1.65
+    }
+    .stat-card strong{
+      display:block;
+      font-size:38px;
+      font-family:"Barlow Condensed",sans-serif;
+      line-height:.96;
+    }
+    .stat-card-supply strong{font-size:24px;line-height:1.02;word-break:break-word;overflow-wrap:anywhere}
+    .stat-card span{
+      display:block;
+      margin-top:4px;
+      color:#95afd9;
+      font-size:13px;
+      font-weight:800;
+      letter-spacing:.09em;
+      text-transform:uppercase;
+    }
+
+    footer{padding:12px 0 0;color:#88a4d0;text-align:center;font-size:14px}
+
+    .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:850;padding:0 10px 12px}
+    .bottom-shell{
+      width:min(calc(100% - 0px),760px);margin:0 auto;padding:11px 10px 12px;border-radius:28px;
+      background:
+        radial-gradient(circle at 50% 0%,rgba(255,210,92,.08),transparent 38%),
+        linear-gradient(180deg,rgba(10,18,40,.96),rgba(4,10,26,.96));
+      border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(18px);display:grid;
+      grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;box-shadow:0 26px 52px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.05);position:relative;overflow:hidden
+    }
+    .bottom-shell::before{
+      content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.04), inset 0 -1px 0 rgba(255,255,255,.02)
+    }
+    .mnav{
+      display:grid;place-items:center;gap:12px;min-height:84px;border-radius:20px;color:#c5d6f4;font-size:9.5px;
+      font-weight:900;letter-spacing:.06em;text-transform:uppercase;border:1px solid rgba(255,255,255,.06);line-height:1.04;text-align:center;padding:9px 2px 7px;
+      position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.028),rgba(255,255,255,.015));
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.03)
+    }
+    .mnav::before{
+      content:"";width:40px;height:40px;border-radius:15px;display:block;
+      position:absolute;top:8px;left:50%;transform:translateX(-50%);
+      background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.025));
+      border:1px solid rgba(255,255,255,.07);box-shadow:0 12px 22px rgba(0,0,0,.16), inset 0 1px 0 rgba(255,255,255,.08)
+    }
+    .mnav span{display:block;position:relative;z-index:1;text-shadow:0 1px 0 rgba(0,0,0,.22);margin-top:8px;line-height:1.10}
+    .mnav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.18));margin-top:3px}
+    .mnav.active{
+      background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.045));color:#fff;
+      border-color:rgba(255,228,150,.18);box-shadow:0 14px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,248,214,.08)
+    }
+    .mnav.active::before{
+      background:radial-gradient(circle at 50% 20%,rgba(255,246,204,.34),rgba(255,190,66,.18) 55%,rgba(255,176,26,.10) 100%);
+      border-color:rgba(255,220,126,.34);box-shadow:0 10px 22px rgba(255,176,26,.16), inset 0 1px 0 rgba(255,250,220,.28)
+    }
+
+
+    .desktop-top-nav{display:none;pointer-events:auto}
+    .hero-assets-desktop{display:none;pointer-events:none}
+    .asset-img-btn{display:block; background:transparent; border:0; padding:0; line-height:0; cursor:pointer; pointer-events:auto}
+    .asset-img-btn img{display:block; width:100%; height:auto; filter:drop-shadow(0 10px 18px rgba(0,0,0,.30));}
+
+    dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
+    dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
+    .dialog-shell{
+      padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(8,15,37,.98),rgba(5,12,29,.98));
+      border:1px solid rgba(255,255,255,.08);box-shadow:0 26px 60px rgba(0,0,0,.42)
+    }
+    .dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-top:16px}
+    .dialog-head h3{font-size:42px}
+    .dialog-head p{margin-top:8px;color:var(--muted);line-height:1.6}
+    .dialog-close{
+      width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);
+      color:#fff;flex:0 0 44px
+    }
+    .dialog-grid{
+      display:grid;gap:12px;margin-top:18px;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr))
+    }
+    .dialog-item{
+      padding:16px;border-radius:20px;background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.08)
+    }
+    .dialog-item strong{display:block;font-size:18px}
+    .dialog-item span{display:block;margin-top:8px;color:var(--muted);line-height:1.6}
+    .dialog-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .buy-premium-shell{position:relative;overflow:hidden;background:linear-gradient(180deg,rgba(10,18,44,.99),rgba(4,10,25,.99));border-color:rgba(255,215,110,.14);box-shadow:0 30px 70px rgba(0,0,0,.46), inset 0 1px 0 rgba(255,249,220,.06)}
+    .buy-premium-shell::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 14%,rgba(255,190,66,.18),transparent 28%),radial-gradient(circle at 14% 100%,rgba(64,165,255,.12),transparent 28%);pointer-events:none}
+    .buy-premium-shell>*{position:relative;z-index:1}
+    .buy-premium-hero{display:grid;gap:14px;margin-top:18px;padding:18px;border-radius:24px;background:linear-gradient(135deg,rgba(255,196,78,.12),rgba(255,255,255,.03) 38%,rgba(49,110,255,.08));border:1px solid rgba(255,255,255,.10);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+    .buy-premium-kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+    .buy-kpi{padding:14px;border-radius:18px;background:rgba(4,11,28,.52);border:1px solid rgba(255,255,255,.08)}
+    .buy-kpi strong{display:block;font-family:"Barlow Condensed",sans-serif;font-size:28px;line-height:.95;color:#fff}
+    .buy-kpi span{display:block;margin-top:6px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#c9d4f3}
+    .buy-premium-grid{display:grid;gap:12px;margin-top:18px;grid-template-columns:repeat(2,minmax(0,1fr))}
+    .buy-premium-item{padding:16px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+    .buy-premium-item strong{display:block;font-size:18px}
+    .buy-premium-item span{display:block;margin-top:8px;color:var(--muted);line-height:1.55}
+    .buy-premium-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .buy-premium-actions button{min-width:160px}
+
+    @media(max-width:640px){
+      .tokenomics-premium{padding:18px 16px 52px;border-radius:28px;margin-bottom:34px}
+      .tokenomics-premium-inner{gap:14px}
+      .tokenomics-premium-top{gap:8px}
+      .tokenomics-premium-top h2{font-size:clamp(31px,8.2vw,40px);line-height:.96;max-width:7.2ch}
+      .tokenomics-premium-top p{max-width:29ch;font-size:13.5px;line-height:1.5}
+      .tokenomics-main-card{padding:18px}
+      .tokenomics-main-card strong{font-size:clamp(36px,10vw,48px)}
+      .tokenomics-main-card p{font-size:13.5px;max-width:24ch}
+      .tokenomics-side-card{padding:16px;gap:10px}
+      .dialog-head h3{font-size:34px}
+      .buy-premium-hero{padding:16px}
+      .buy-premium-kpis{grid-template-columns:1fr}
+      .buy-kpi strong{font-size:24px}
+      .buy-premium-grid{grid-template-columns:1fr}
+      .buy-premium-item{padding:14px}
+      .tokenomics-side-card strong{font-size:20px;max-width:9ch}
+      .tokenomics-side-card p{font-size:13.5px;line-height:1.42;max-width:21ch}
+      .tokenomics-bar{height:15px}
+      .allocation-card{padding:15px 16px 16px}
+      .allocation-card-head{align-items:flex-start;gap:12px}
+      .allocation-card strong{font-size:30px}
+      .allocation-card span{padding-top:7px;text-align:right;max-width:8.8ch;white-space:normal;font-size:10.5px;letter-spacing:.07em;line-height:1.08;flex:0 0 auto}
+      .allocation-card p{font-size:13.5px;max-width:16ch}
+      .round-card{padding:17px}
+      .round-card strong{font-size:19px;line-height:1.12}
+      .round-card span{font-size:10.5px}
+      .round-card p{font-size:13.5px;max-width:18ch}
+      .tokenomics-note{margin-top:2px;font-size:13.5px;line-height:1.5;padding:15px 15px 16px}
+      .actions .btn{width:min(100%,250px);justify-content:center;min-height:52px;border-radius:18px;font-size:16px;padding-inline:20px}
+      .mobile-top-links{gap:10px;margin-right:0}
+      .quick-social-btn{width:50px;height:50px;border-radius:16px;font-size:15px}
+    }
+
+    @media(max-width:859px){
+      .metrics-shell{padding:20px 18px;border-radius:30px}
+      .metrics-top h3{font-size:34px;max-width:8ch}
+      .metrics-top p{font-size:14px;max-width:32ch}
+      .metrics-highlight{grid-template-columns:1fr;gap:12px}
+      .metric-hero-card{min-height:auto;padding:18px}
+      .metric-hero-value{font-size:58px}
+      .metric-hero-main strong:last-child{font-size:12px;max-width:9ch}
+      .metrics-mini-stack{grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}
+      .metric-mini-card{min-height:116px}
+      .metric-mini-value{font-size:36px}
+      .metrics-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+      .metric-card{min-height:124px;padding:18px 16px 18px 18px}
+      .metric-card strong{font-size:40px}
+      .metric-card .metric-supply-value{font-size:23px;line-height:1.02}
+      .metric-card span{font-size:12px;letter-spacing:.1em}
+      .metric-note{font-size:12px;max-width:16ch}
+    }
+
+
+      .hero-launch-strip{position:absolute;left:14px;right:14px;bottom:122px;z-index:1403;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;pointer-events:auto}
+      .hero-launch-chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:66px;padding:10px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(8,14,38,.96),rgba(8,14,38,.9));box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.03);color:#eef5ff;text-decoration:none;text-align:left;backdrop-filter:blur(8px)}
+      .hero-launch-chip strong{font-size:12px;line-height:1.02;letter-spacing:.01em;font-weight:900}
+      .hero-launch-chip span{font-size:9px;line-height:1.08;color:rgba(225,235,255,.72);text-transform:uppercase;letter-spacing:.08em}
+      .hero-launch-chip.is-live{background:linear-gradient(180deg,#2f95ff,#1d6dff);border-color:rgba(115,185,255,.4);color:#fff}
+      .hero-launch-chip.is-live span{color:rgba(255,255,255,.84)}
+      .hero-launch-chip[disabled], .hero-launch-chip.is-locked[aria-disabled="true"]{opacity:.96}
+
+    @media(min-width:860px){
+      .drawer-panel{
+        top:74px;
+        left:18px;
+        right:auto;
+        bottom:auto;
+        width:340px;
+        max-width:340px;
+        padding:18px 14px 16px;
+        border-radius:26px;
+      }
+      .drawer-title-mobile{display:none !important}
+      .drawer-title-desktop{display:inline-block !important}
+      .tokenomics-premium-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+      .launch-desk{padding:20px 18px 22px;border-radius:30px}
+      .launch-card{padding:18px}
+      .tokenomics-distribution{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .tokenomics-rounds{grid-template-columns:repeat(2,minmax(0,1fr))}
+      body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
+      .topbar{padding:0 18px}
+      .topbar-inner{position:relative;justify-content:flex-start}
+      .float-btn{margin-left:-4px}
+      .mobile-top-links{display:none !important}
+      .buy-float{display:none !important}
+      .desktop-top-nav{
+        display:flex;align-items:center;gap:8px;position:absolute;left:42%;top:18px;transform:translateX(-50%);z-index:1405;pointer-events:auto
+      }
+      .desktop-top-nav button,.desktop-top-nav a{
+        min-height:48px;padding:0 18px;border-radius:999px;
+        background:linear-gradient(180deg,rgba(12,20,46,.94),rgba(7,14,34,.88));
+        border:1px solid rgba(255,255,255,.10);
+        box-shadow:0 14px 28px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.06);
+        color:#eef5ff;font-size:16px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;opacity:1;pointer-events:auto;
+        transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease,color .18s ease
+      }
+      .desktop-top-nav button:hover,.desktop-top-nav a:hover{
+        color:#fff;border-color:rgba(255,208,96,.30);box-shadow:0 16px 32px rgba(0,0,0,.24),0 0 18px rgba(255,208,96,.10), inset 0 1px 0 rgba(255,255,255,.08);
+        transform:translateY(-1px)
+      }
+      .desktop-top-nav button.active,.desktop-top-nav a.active{
+        background:linear-gradient(135deg,rgba(255,208,96,.16),rgba(41,145,255,.16)),linear-gradient(180deg,rgba(12,20,46,.96),rgba(7,14,34,.92));
+        border-color:rgba(255,208,96,.34);
+        color:#fff;
+        box-shadow:0 18px 34px rgba(0,0,0,.24),0 0 22px rgba(255,208,96,.12), inset 0 1px 0 rgba(255,255,255,.08)
+      }
+      .app{padding:0 0 120px}
+      .view:not([data-view="home"]){padding-top:112px}
+      .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .hero-stage{height:auto;min-height:0;aspect-ratio:2048 / 1365}
+      .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
+      .hero-mobile-image{display:none}
+      .hero-assets{display:none}
+      .hero-launch-strip{left:40px;right:auto;bottom:34px;width:min(760px,calc(100% - 80px));grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+      .hero-launch-chip{min-height:66px;padding:12px 14px;border-radius:20px}
+      .hero-launch-chip strong{font-size:14px}
+      .hero-launch-chip span{font-size:10px}
+      .hero-assets-desktop{
+        display:flex;position:absolute;right:18px;top:0px;z-index:1406;gap:10px;align-items:flex-start;pointer-events:none
+      }
+      .bottom-nav{display:none}
+      .metrics-highlight{grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr)}
+      .metrics-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .hybrid-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr)}
+      .grid-3,.roadmap-grid,.phase-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid-stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .token-chip-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .launch-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+
+    @media (min-width: 1360px){
+      .hero-assets-desktop{right:16px;top:0px;gap:6px}
+      .asset-img-btn img{height:140px}
+    }
+
+    @media(min-width:860px) and (max-aspect-ratio:3/2){
+      .hero-desktop-image{background-size:100% auto;background-position:center top;}
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <button class="float-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
+      <div class="mobile-top-links" aria-label="Quick social links">
+        <a class="quick-social-btn quick-social-x" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="Open X">X</a>
+        <a class="quick-social-btn quick-social-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Open Telegram">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 3.8 10.2c-.8.3-.8 1.4.1 1.7l4.4 1.5 1.6 4.9c.3.9 1.5 1 1.9.1L21 3Z"></path><path d="m8.3 13.4 8-7.2"></path></svg>
+        </a>
+      </div>
+      <nav class="desktop-top-nav" aria-label="Desktop navigation">
+        <button type="button" data-view-btn="home">Home</button>
+        <button type="button" data-view-btn="register">Register Airdrop</button>
+        <button type="button" data-view-btn="buy">Buy $FIRU</button>
+        <button type="button" data-view-btn="claim">Claim</button>
+        <button type="button" data-view-btn="info">Info</button>
+      </nav>
+      <button class="buy-float" id="buyFloat" type="button">BUY $FIRU</button>
+    </div>
+  </header>
+
+  <aside class="drawer" id="drawer">
+    <div class="drawer-panel">
+      <div class="drawer-section-title"><span></span><span class="drawer-title-mobile">Mobile menu</span><span class="drawer-title-desktop">Menu</span></div>
+      <nav class="drawer-links">
+        <div class="drawer-group-label">Main</div>
+        <button type="button" data-view-btn="home"><strong>Home</strong><span>Hero and main overview</span></button>
+        <button type="button" data-view-btn="register"><strong>Register Airdrop</strong><span>Official wallet registration</span></button>
+        <button type="button" data-view-btn="buy"><strong>Buy $FIRU</strong><span>Official round access</span></button>
+        <button type="button" data-view-btn="claim"><strong>Claim</strong><span>Claim Airdrop + Claim Round $FIRU</span></button>
+        <button type="button" data-view-btn="info"><strong>Info</strong><span>Project details and socials</span></button>
+        <div class="drawer-group-label">Launch tools</div>
+        <button type="button" data-launch-shortcut="copy" class="compact"><strong>Copy Contract</strong><span>Mint at launch</span></button>
+        <button type="button" data-launch-shortcut="jupiter" class="compact"><strong>Buy on Jupiter</strong><span>Official market access</span></button>
+        <button type="button" data-launch-shortcut="raydium" class="compact"><strong>Live Trading</strong><span>Market access</span></button>
+        <button type="button" data-launch-shortcut="dexscreener" class="compact"><strong>View Chart</strong><span>Price and tracker</span></button>
+        <div class="drawer-group-label">Sections</div>
+        <button type="button" data-shortcut-action="airdrop" class="compact"><strong>Airdrop</strong><span>Eligibility, details and claim path</span></button>
+        <button type="button" data-home-section="tokenomics-section" class="compact"><strong>Tokenomics</strong><span>Premium allocation section</span></button>
+        <button type="button" data-home-section="community-section" class="compact"><strong>Community</strong><span>X, Telegram and holder pulse</span></button>
+      </nav>
+    </div>
+  </aside>
+
+  <main class="app">
+    <div class="container">
+      <section class="view active" data-view="home">
+        <div class="stack">
+          <div class="hero-stage" role="img" aria-label="SuperFirulai $FIRU official locked hero">
+            <div class="hero-desktop-image" aria-hidden="true"></div>
+            <div class="hero-mobile-image" aria-hidden="true"></div>
+
+            <div class="hero-assets" aria-label="Main hero assets">
+              <button class="hero-asset is-register" type="button" data-view-btn="register">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M7 7h10v10H7z" opacity=".28"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Register</strong><span>Airdrop access</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <button class="hero-asset is-buy" type="button" data-view-btn="buy">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M7 16V9"></path><path d="M12 16V5"></path><path d="M17 16v-7"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Buy $FIRU</strong><span>Official round</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </button>
+
+              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M21 5L3 11l7 2 2 6 9-14z"></path><path d="M10 13l11-8"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>Telegram</strong><span>Official community</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </a>
+
+              <a class="hero-asset is-x" href="https://x.com/superfirulai" target="_blank" rel="noopener">
+                <span class="hero-asset-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><path d="M4 4l16 16"></path><path d="M20 4L4 20"></path></svg>
+                </span>
+                <span class="hero-asset-copy"><strong>X</strong><span>Launch alerts</span></span>
+                <span class="hero-asset-arrow" aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <div class="hero-assets-desktop" aria-label="Main hero assets desktop">
+              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
+              <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join Telegram"></a>
+              <button class="asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
+              <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
+            </div>
+
+            <div class="hero-launch-strip" aria-label="Official $FIRU live launch shortcuts">
+              <button class="hero-launch-chip" type="button" data-copy-firu-contract disabled>
+                <strong>Copy Contract</strong>
+                <span>Mint at launch</span>
+              </button>
+              <a class="hero-launch-chip is-live is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">
+                <strong>Buy $FIRU</strong>
+                <span>On Jupiter</span>
+              </a>
+              <a class="hero-launch-chip is-locked" href="#" target="_blank" rel="noopener" data-firu-link="raydium" aria-disabled="true" tabindex="-1">
+                <strong>Live Trading</strong>
+                <span>Market access</span>
+              </a>
+              <a class="hero-launch-chip is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">
+                <strong>View Chart</strong>
+                <span>Price / tracker</span>
+              </a>
+            </div>
+          </div>
+
+          <section class="tokenomics-premium section-shortcut-target" id="tokenomics-section" aria-labelledby="tokenomics-premium-title">
+            <div class="tokenomics-premium-inner">
+              <div class="tokenomics-premium-top">
+                <div class="eyebrow"><span></span> Tokenomics · Premium allocation</div>
+                <h2 id="tokenomics-premium-title">Premium tokenomics, clear at a glance.</h2>
+                <p>A cleaner premium section for mobile first reading. Community stays at 20% total, with Round 1 and Round 2 inside that allocation.</p>
+              </div>
+
+              <div class="tokenomics-premium-grid">
+                <div class="tokenomics-main-card">
+                  <strong>1,000,000,000 $FIRU</strong>
+                  <span>Total supply fixed</span>
+                  <p>Deep liquidity first, then community, team, marketing and burn.</p>
+                </div>
+
+                <div class="tokenomics-side-card">
+                  <strong>55% liquidity leads the structure</strong>
+                  <p>Liquidity leads from day one.</p>
+                  <div class="tokenomics-bar" aria-hidden="true"><div class="tokenomics-bar-fill"></div></div>
+                </div>
+              </div>
+
+              <div class="tokenomics-distribution">
+                <div class="allocation-card is-liquidity">
+                  <div class="allocation-card-head"><strong>55%</strong><span>Liquidity</span></div>
+                  <p>Main launch depth.</p>
+                </div>
+                <div class="allocation-card is-community">
+                  <div class="allocation-card-head"><strong>20%</strong><span>Community</span></div>
+                  <p>Rounds plus the long-term reserve.</p>
+                </div>
+                <div class="allocation-card is-marketing">
+                  <div class="allocation-card-head"><strong>10%</strong><span>Marketing</span></div>
+                  <p>Growth and exposure.</p>
+                </div>
+                <div class="allocation-card is-team">
+                  <div class="allocation-card-head"><strong>10%</strong><span>Team</span></div>
+                  <p>Core execution.</p>
+                </div>
+                <div class="allocation-card is-burn">
+                  <div class="allocation-card-head"><strong>5%</strong><span>Burn</span></div>
+                  <p>Protected burn reserve.</p>
+                </div>
+              </div>
+
+              <div class="tokenomics-rounds">
+                <div class="round-card">
+                  <strong>Round 1 · 25,000,000 $FIRU</strong>
+                  <span>2.5% inside community</span>
+                  <p>First round inside community.</p>
+                </div>
+                <div class="round-card">
+                  <strong>Round 2 · 25,000,000 $FIRU</strong>
+                  <span>2.5% inside community</span>
+                  <p>Second round inside community.</p>
+                </div>
+              </div>
+
+              <div class="tokenomics-note">Community remains <strong>20%</strong> in total: <strong>2.5%</strong> for Round 1, <strong>2.5%</strong> for Round 2, and the remaining <strong>15%</strong> stays outside the rounds for the broader community path.</div>
+
+              <div class="actions">
+                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open allocation</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="metrics-shell section-shortcut-target" id="community-section">
+            <div class="metrics-inner">
+              <div class="metrics-top">
+                <div class="left">
+                  <div class="eyebrow"><span></span> Community pulse</div>
+                  <h3>Premium live momentum.</h3>
+                </div>
+                <p>Fast visibility for holders, X, Telegram and total supply, now presented as a stronger premium section with cleaner hierarchy for mobile.</p>
+              </div>
+
+              <div class="metrics-highlight metrics-highlight--single">
+                <div class="metrics-feature">
+                  <div class="metric-hero-card">
+                    <div class="metric-kicker">Live holders signal</div>
+                    <div class="metric-hero-main">
+                      <strong class="metric-hero-value" id="metricHolders">2,418</strong>
+                      <strong>Official holders</strong>
+                    </div>
+                    <p>The strongest community indicator sits first, with a more premium live-counter presentation.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="metrics-grid metrics-grid--compact" id="metricsGrid">
+                <div class="metric-card is-x">
+                  <strong id="metricXSecondary">61</strong>
+                  <span>X followers</span>
+                  <div class="metric-note">Official launch reach and momentum.</div>
+                </div>
+                <div class="metric-card is-telegram">
+                  <strong id="metricTelegramSecondary">24</strong>
+                  <span>Telegram members</span>
+                  <div class="metric-note">Official group growth and retention.</div>
+                </div>
+                <div class="metric-card is-supply metric-card--wide">
+                  <strong id="metricSupply" class="metric-supply-value">1,000,000,000</strong>
+                  <span>Total supply</span>
+                  <div class="metric-note">Fixed supply target for $FIRU.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <section class="launch-desk" aria-labelledby="launchDeskTitle">
+            <div class="launch-desk-inner">
+              <div class="launch-desk-top">
+                <div class="eyebrow"><span></span> Live trading desk</div>
+                <h3 id="launchDeskTitle">Official contract and live trading, ready for launch.</h3>
+                <p>Keep rounds inside <strong>Buy $FIRU</strong>, and keep real market trading separate here. When $FIRU goes live, paste the official Solana mint address and the live market links once, then the website unlocks copy, chart and trading actions without redesigning the page.</p>
+              </div>
+
+              <div class="launch-grid">
+                <div class="launch-card">
+                  <div class="launch-kicker">Official $FIRU contract</div>
+                  <strong data-firu-mint-display>Coming at launch</strong>
+                  <span class="launch-subline">Solana mint address · copy directly from the website</span>
+                  <p data-firu-mint-help>Before launch, this block stays visible and locked. At launch, paste the real mint address in the page config and the copy button will go live automatically.</p>
+                  <div class="launch-inline">
+                    <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
+                    <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="mint" aria-disabled="true" tabindex="-1">View Mint</a>
+                  </div>
+                </div>
+
+                <div class="launch-card">
+                  <div class="launch-kicker">Live trading</div>
+                  <strong class="launch-card-status" data-firu-trading-status>Trading unlocks at launch</strong>
+                  <span class="launch-subline">Jupiter · Raydium · Chart · Tracker</span>
+                  <p data-firu-trading-help>Users will be able to buy the live token from the web through your official market links, while the round flow stays separate above.</p>
+                  <div class="launch-chip-row" aria-hidden="true">
+                    <div class="launch-chip">Buy on Jupiter</div>
+                    <div class="launch-chip">Buy on Raydium</div>
+                    <div class="launch-chip">View Chart</div>
+                    <div class="launch-chip">Track Price</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="launch-actions">
+                <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="raydium" aria-disabled="true" tabindex="-1">Buy on Raydium</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
+                <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="birdeye" aria-disabled="true" tabindex="-1">Track Price</a>
+              </div>
+
+              <div class="launch-footnote" data-firu-launch-note>Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.</div>
+            </div>
+          </section>
+
+          <div class="hybrid-grid">
+            <div class="hybrid-panel">
+              <div class="eyebrow"><span></span> Clean launch logic</div>
+              <h3>One wallet. One path. No scattered steps.</h3>
+              <p>Register, buy and claim are separated clearly so the home feels lighter, while each step still stays close to the others and easy to understand on mobile.</p>
+              <div class="bullet-list">
+                <div class="bullet-item">
+                  <div class="bullet-dot"></div>
+                  <div class="bullet-copy">
+                    <strong>Register first</strong>
+                    <span>The airdrop review comes before everything else and keeps the first user action simple.</span>
+                  </div>
+                </div>
+                <div class="bullet-item">
+                  <div class="bullet-dot"></div>
+                  <div class="bullet-copy">
+                    <strong>Buy with the same wallet</strong>
+                    <span>The buy step remains tied to the same wallet for a cleaner delivery path and fewer mistakes.</span>
+                  </div>
+                </div>
+                <div class="bullet-item">
+                  <div class="bullet-dot"></div>
+                  <div class="bullet-copy">
+                    <strong>Claim date stays TBA</strong>
+                    <span>Do not rely on a fixed date yet. The live claim window should only be announced on official X and Telegram once it is confirmed.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="hybrid-panel">
+              <div class="eyebrow"><span></span> Allocation logic</div>
+              <h3>Community stays whole.</h3>
+              <p>The premium tokenomics section above now carries the full visual weight, so this panel stays focused on the one thing that matters most: the rounds do not sit outside community.</p>
+              <div class="token-chip-grid">
+                <div class="token-chip"><strong>20%</strong><span>Total community</span></div>
+                <div class="token-chip"><strong>2.5%</strong><span>Round 1</span></div>
+                <div class="token-chip"><strong>2.5%</strong><span>Round 2</span></div>
+                <div class="token-chip"><strong>15%</strong><span>Community outside rounds</span></div>
+              </div>
+              <div class="token-footnote">This keeps the structure cleaner and more credible: 55% Liquidity, 20% Community, 10% Marketing, 10% Team and 5% Burn.</div>
+              <div class="actions" style="margin-top:16px">
+                <button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open allocation details</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Asset 08 · Roadmap</div>
+                <h3>Three clear phases</h3>
+                <p>The roadmap now reads cleaner: register first, buy through the official round flow while it is open, then return later only when claim is officially announced.</p>
+              </div>
+            </div>
+            <div class="phase-grid">
+              <div class="phase-card">
+                <div class="phase-kicker">Phase 1</div>
+                <strong>Register</strong>
+                <span>Community growth, wallet submissions, approval review and early access filtering.</span>
+              </div>
+              <div class="phase-card">
+                <div class="phase-kicker">Phase 2</div>
+                <strong>Buy</strong>
+                <span>Official Solana round access, wallet funding, purchase confirmation and allocation tracking.</span>
+              </div>
+              <div class="phase-card">
+                <div class="phase-kicker">Phase 3</div>
+                <strong>Claim</strong>
+                <span>Approved wallets verify status and use the official Claim view later, only after the project announces the live claim window.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" data-view="register">
+        <div class="stack">
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Step 1</div>
+                <h2>Register Airdrop</h2>
+                <p>Submit one personal Solana wallet, verify your social handles, and enter the approval queue.</p>
+              </div>
+              <div class="pill-nav">
+                <button type="button" data-open="registerDialog">Registration info</button>
+                <button type="button" data-open="airdropDialog">Airdrop details</button>
+              </div>
+            </div>
+            <div class="summary-note">12,500 $FIRU per approved wallet · first 100 approved wallets only · claim date stays TBA until the official announcement.</div>
+          </div>
+          <div class="card"><div id="airdrop-register"></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="buy">
+        <div class="stack">
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Step 2</div>
+                <h2>Buy $FIRU when live</h2>
+                <p>Choose token, enter amount and confirm the official Solana purchase flow below. Round 1 is the current live round while available; Round 2 stays inactive until announced separately.</p>
+              </div>
+            </div>
+            <div class="summary-note">Round 1 uses the official live price and caps inside BUY · Round 2 stays announced but inactive until a separate official update · Solana network only.</div>
+          </div>
+          <div class="card"><div id="round-register"></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="claim">
+        <div class="stack">
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Step 3</div>
+                <h2>Claim access</h2>
+                <p>Use the same wallet later to check status and claim when the official distribution window is announced. No fixed claim date is published yet.</p>
+              </div>
+              <div class="pill-nav">
+                <button type="button" data-open="claimDialog">Claim info</button>
+                <button type="button" data-open="socialDialog">Official channels</button>
+              </div>
+            </div>
+            <div class="summary-note">Approved wallets only · same wallet required · claim date stays TBA until the official X and Telegram announcement.</div>
+          </div>
+          <div class="card"><div id="airdrop-claim-status"></div></div>
+        </div>
+      </section>
+
+      <section class="view" data-view="info">
+        <div class="stack">
+          <div class="card">
+            <div class="module-title">
+              <div class="left">
+                <div class="eyebrow"><span></span> Info · Premium map</div>
+                <h2>Official SuperFirulai paths</h2>
+                <p>Tap each block to open the full information without filling the screen with repeated text.</p>
+              </div>
+            </div>
+            <div class="info-accordion">
+              <details class="info-item" open>
+                <summary><div>Official paths<span>Airdrop, rounds, same wallet rule and claim timing in one place.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>Airdrop Path</strong><span>Register first, pass review, and return later with the same approved wallet when Claim Airdrop is officially opened.</span></div>
+                  <div class="mini-card"><strong>Round Path</strong><span>Buy $FIRU through the official round flow while Round 1 is open. Round 2 remains announced separately and inactive for now.</span></div>
+                  <div class="mini-card"><strong>Same wallet rule</strong><span>Use one personal Solana wallet across register, buy and any future claim step.</span></div>
+                  <div class="mini-card"><strong>Timing policy</strong><span>No fixed claim calendar is posted yet. Timing stays TBA until it is confirmed on X first and Telegram second.</span></div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>Tokenomics<span>Official allocation with the community split already included.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="grid-stats">
+                    <div class="stat-card stat-card-supply"><strong>1,000,000,000</strong><span>Total supply</span></div>
+                    <div class="stat-card"><strong>55%</strong><span>Liquidity</span></div>
+                    <div class="stat-card"><strong>20%</strong><span>Community</span></div>
+                    <div class="stat-card"><strong>10%</strong><span>Marketing</span></div>
+                    <div class="stat-card"><strong>10%</strong><span>Team</span></div>
+                    <div class="stat-card"><strong>5%</strong><span>Burn</span></div>
+                    <div class="stat-card"><strong>2.5% / 2.5%</strong><span>Round 1 / Round 2</span></div>
+                    <div class="stat-card"><strong>15%</strong><span>Community outside rounds</span></div>
+                  </div>
+                  <div class="actions"><button class="btn btn-dark" type="button" data-open="tokenomicsDialog">Open tokenomics details</button></div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>Trading and contract<span>Launch buttons, contract copy and market links.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>Coming at launch</strong><span>Official $FIRU contract / Solana mint address.</span></div>
+                  <div class="mini-card"><strong>Trading unlocks at launch</strong><span>Jupiter, Raydium, chart and tracker links can go live from one config update.</span></div>
+                  <div class="mini-card"><strong>Separate from rounds</strong><span>Buy $FIRU keeps the round flow. Live trading is the post-launch market path.</span></div>
+                  <div class="launch-actions">
+                    <button class="btn btn-dark" type="button" data-copy-firu-contract disabled>Copy Contract</button>
+                    <a class="btn btn-blue is-locked" href="#" target="_blank" rel="noopener" data-firu-link="jupiter" aria-disabled="true" tabindex="-1">Buy on Jupiter</a>
+                    <a class="btn btn-dark is-locked" href="#" target="_blank" rel="noopener" data-firu-link="dexscreener" aria-disabled="true" tabindex="-1">View Chart</a>
+                  </div>
+                  <div class="launch-footnote" data-firu-launch-note>Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.</div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>Official channels<span>X first, Telegram second, with one source of truth.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>X first</strong><span>Launch reminders, buy updates and claim announcements.</span></div>
+                  <div class="mini-card"><strong>Telegram second</strong><span>Community chat, pinned instructions and support.</span></div>
+                  <div class="actions">
+                    <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
+                    <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+                    <button class="btn btn-dark" type="button" data-open="socialDialog">More info</button>
+                  </div>
+                </div>
+              </details>
+              <details class="info-item">
+                <summary><div>What each screen is for<span>A fast explanation of Register, Buy and Claim without duplicate blocks.</span></div></summary>
+                <div class="info-item-body">
+                  <div class="mini-card"><strong>Register Airdrop</strong><span>Connect one personal wallet, verify the official X flow, complete Telegram and enter review.</span></div>
+                  <div class="mini-card"><strong>Buy $FIRU</strong><span>Use the official Solana round flow, respect the active limits and save the payment receipt.</span></div>
+                  <div class="mini-card"><strong>Claim Airdrop</strong><span>Approved wallets only. Claim opens later on an official TBA date after the project confirms it.</span></div>
+                  <div class="mini-card"><strong>Claim Round $FIRU</strong><span>Reserved for a later stage only if the project enables separate round delivery after the buy flow.</span></div>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer><strong>SuperFirulai</strong> · $FIRU on Solana · Official channels only · © 2026</footer>
+    </div>
+  </main>
+
+  <nav class="bottom-nav" aria-label="Bottom navigation">
+    <div class="bottom-shell">
+      <button class="mnav active" type="button" data-view-btn="home"><svg viewBox="0 0 24 24"><path d="M3 11.5L12 4l9 7.5"></path><path d="M5 10.5V20h14v-9.5"></path></svg><span>Home</span></button>
+      <button class="mnav" type="button" data-view-btn="register"><svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path><path d="M7 7h10v10H7z" opacity=".2"></path></svg><span>Register<br>Airdrop</span></button>
+      <button class="mnav" type="button" data-view-btn="buy"><svg viewBox="0 0 24 24"><path d="M4 19h16"></path><path d="M7 16V9"></path><path d="M12 16V5"></path><path d="M17 16v-7"></path></svg><span>Buy<br>$FIRU</span></button>
+      <button class="mnav" type="button" data-view-btn="claim"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 9h8"></path><path d="M8 13h5"></path></svg><span>Claim</span></button>
+      <button class="mnav" type="button" data-view-btn="info"><svg viewBox="0 0 24 24"><path d="M4 7h16"></path><path d="M4 12h16"></path><path d="M4 17h16"></path></svg><span>Info</span></button>
+    </div>
+  </nav>
+
+  <dialog id="registerDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Register</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Registration info</h3>
+          <p>Use one personal wallet, connect your real X account, complete Telegram and captcha, and submit once.</p>
+        </div>
+        <button class="dialog-close" data-close="registerDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>One wallet only</strong><span>Avoid exchange deposit addresses and use one personal Solana wallet.</span></div>
+        <div class="dialog-item"><strong>Same wallet later</strong><span>Use the exact same wallet later for buy and both claim flows.</span></div>
+        <div class="dialog-item"><strong>Fast review queue</strong><span>Once submitted, the wallet enters review and status can be checked later.</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="airdropDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Founding access</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Airdrop details</h3>
+          <p>Only the earliest approved wallets qualify for the founding access round.</p>
+        </div>
+        <button class="dialog-close" data-close="airdropDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>12,500 $FIRU</strong><span>Reserved per approved wallet.</span></div>
+        <div class="dialog-item"><strong>100 wallets only</strong><span>Once the cap is reached, this round closes.</span></div>
+        <div class="dialog-item"><strong>Same wallet required</strong><span>Register, buy and claim later with the same wallet.</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="buyInfoDialog">
+    <div class="dialog-shell buy-premium-shell">
+      <div class="eyebrow"><span></span> BUY $FIRU</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Premium buy flow</h3>
+          <p>Open the official round flow, fund with supported Solana assets, and keep the whole purchase path clean, visible and saved inside the app.</p>
+        </div>
+        <button class="dialog-close" data-close="buyInfoDialog">✕</button>
+      </div>
+      <div class="buy-premium-hero">
+        <div class="buy-premium-kpis">
+          <div class="buy-kpi"><strong>SOL · USDT · USDC</strong><span>Supported payment assets</span></div>
+          <div class="buy-kpi"><strong>Official flow only</strong><span>No third-party screenshots</span></div>
+          <div class="buy-kpi"><strong>Receipt saved</strong><span>History stays in BUY</span></div>
+        </div>
+      </div>
+      <div class="buy-premium-grid">
+        <div class="buy-premium-item"><strong>1 · Fund wallet first</strong><span>Keep enough SOL, USDT or USDC on Solana before you open the round flow.</span></div>
+        <div class="buy-premium-item"><strong>2 · Use the app destination</strong><span>Send only to the official destination shown by the app inside the BUY view.</span></div>
+        <div class="buy-premium-item"><strong>3 · Keep the same wallet</strong><span>Use the same wallet later for register, buy history and both claim flows.</span></div>
+        <div class="buy-premium-item"><strong>4 · Save your reserved allocation</strong><span>After confirmation, the app stores the purchase and keeps the receipt visible in your BUY history.</span></div>
+      </div>
+      <div class="buy-premium-actions">
+        <button class="btn btn-blue" type="button" data-view-btn="buy">Open BUY view</button>
+        <button class="btn btn-dark" type="button" data-open="pathDialog">See full path</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="claimDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Claim</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Claim info</h3>
+          <p>Claim opens later and only for approved wallets. The live claim date stays TBA until the official announcement.</p>
+        </div>
+        <button class="dialog-close" data-close="claimDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>Use the same wallet</strong><span>Come back with the exact wallet used during registration.</span></div>
+        <div class="dialog-item"><strong>Status check first</strong><span>The page will show pending, approved, rejected or claimed.</span></div>
+        <div class="dialog-item"><strong>Official claim window later</strong><span>Wait for the official X and Telegram announcement before treating claim as live. No fixed claim date is published yet.</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="tokenomicsDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Tokenomics</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Official allocation</h3>
+          <p>Clean distribution with a fixed 1,000,000,000 $FIRU supply.</p>
+        </div>
+        <button class="dialog-close" data-close="tokenomicsDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>55% Liquidity</strong><span>Core launch base and market depth.</span></div>
+        <div class="dialog-item"><strong>20% Community</strong><span>Total community allocation before the internal split.</span></div>
+        <div class="dialog-item"><strong>Round 1 · 25,000,000 $FIRU</strong><span>2.5% inside Community.</span></div>
+        <div class="dialog-item"><strong>Round 2 · 25,000,000 $FIRU</strong><span>2.5% inside Community.</span></div>
+        <div class="dialog-item"><strong>15% Community reserve</strong><span>Remaining community allocation outside the two rounds.</span></div>
+        <div class="dialog-item"><strong>10% Marketing</strong><span>Project growth and promotion.</span></div>
+        <div class="dialog-item"><strong>10% Team</strong><span>Core execution allocation.</span></div>
+        <div class="dialog-item"><strong>5% Burn</strong><span>Fixed burn reserve.</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="socialDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Official channels</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Stay on official links only</h3>
+          <p>Everything important happens first on X and Telegram.</p>
+        </div>
+        <button class="dialog-close" data-close="socialDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>X</strong><span>Launch reminders, buy updates and claim announcement.</span></div>
+        <div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div>
+      </div>
+      <div class="dialog-actions">
+        <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a>
+        <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="pathDialog">
+    <div class="dialog-shell">
+      <div class="eyebrow"><span></span> Full path</div>
+      <div class="dialog-head">
+        <div>
+          <h3>Airdrop path + round path</h3>
+          <p>The project shows the official airdrop path, round path and the future claim windows in one place.</p>
+        </div>
+        <button class="dialog-close" data-close="pathDialog">✕</button>
+      </div>
+      <div class="dialog-grid">
+        <div class="dialog-item"><strong>1 · Register Airdrop</strong><span>Connect one wallet, verify the real X account, complete Telegram, and enter review.</span></div>
+        <div class="dialog-item"><strong>2 · Claim Airdrop</strong><span>Approved wallets return with the same wallet only after the project publishes the official TBA claim window.</span></div>
+        <div class="dialog-item"><strong>3 · Buy $FIRU</strong><span>Round 1 uses the live price and cap inside BUY while open. Round 2 remains inactive until a separate official update.</span></div>
+        <div class="dialog-item"><strong>4 · Claim Round $FIRU</strong><span>Use later only if the project enables a separate round delivery flow after buy.</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <noscript><div class="container" style="padding:20px 0 110px;color:#fff">Enable JavaScript to use wallet registration and claim status.</div></noscript>
+
+  <script type="module">
+    import { mountAirdropRegister } from "./airdrop-register.js";
+    import { mountClaimStatus } from "./claim-status.js";
+    import { mountRoundRegister } from "./round-register.js";
+
+    try {
+      mountAirdropRegister("#airdrop-register");
+      mountClaimStatus("#airdrop-claim-status");
+      mountRoundRegister("#round-register");
+    } catch (e) {
+      console.error("mount", e);
+    }
+
+    function enforceXBeforeTelegram(){
+      const root = document.querySelector("#airdrop-register");
+      if (!root) return;
+      const form = root.querySelector(".sf-airdrop-form");
+      const xField = root.querySelector("#sf-x")?.closest(".sf-field");
+      const tgField = root.querySelector("#sf-telegram")?.closest(".sf-field");
+      if (form && xField && tgField) form.insertBefore(xField, tgField);
+    }
+    enforceXBeforeTelegram();
+    setTimeout(enforceXBeforeTelegram, 0);
+
+    const drawer = document.getElementById("drawer");
+    document.getElementById("menuBtn")?.addEventListener("click", () => drawer.classList.toggle("open"));
+    drawer.addEventListener("click", (e) => { if (e.target === drawer) drawer.classList.remove("open"); });
+
+    const views = [...document.querySelectorAll(".view")];
+    const navBtns = [...document.querySelectorAll("[data-view-btn]")];
+    const validViews = new Set(views.map((v) => v.dataset.view));
+
+    function normalizeViewName(value) {
+      const clean = String(value || "").replace(/^#/, "").trim().toLowerCase();
+      return validViews.has(clean) ? clean : "home";
+    }
+
+    function setHashForView(name) {
+      const nextHash = name === "home" ? "" : `#${name}`;
+      const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+      window.history.replaceState(null, "", nextUrl);
+    }
+
+    function showView(name, options = {}) {
+      const finalName = normalizeViewName(name);
+      const shouldScroll = options.scroll !== false;
+      const shouldUpdateHash = options.updateHash !== false;
+
+      views.forEach((v) => v.classList.toggle("active", v.dataset.view === finalName));
+      navBtns.forEach((btn) => btn.classList.toggle("active", btn.dataset.viewBtn === finalName));
+      drawer.classList.remove("open");
+      if (shouldUpdateHash) setHashForView(finalName);
+      if (shouldScroll) window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    navBtns.forEach((btn) => {
+      btn.addEventListener("click", () => showView(btn.dataset.viewBtn));
+    });
+
+    document.getElementById("buyFloat")?.addEventListener("click", () => showView("buy"));
+
+    document.querySelectorAll("[data-home-section]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.dataset.homeSection;
+        showView("home", { scroll: false });
+        requestAnimationFrame(() => {
+          const target = document.getElementById(targetId);
+          target?.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    });
+
+    document.querySelectorAll("[data-shortcut-action]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const action = btn.dataset.shortcutAction;
+        if (action === "airdrop") {
+          showView("register", { scroll: false });
+          setTimeout(() => openDialog("airdropDialog"), 120);
+        }
+      });
+    });
+
+    document.addEventListener("click", (event) => {
+      const anchor = event.target.closest('a[href^="#"]');
+      if (!anchor) return;
+      const rawTarget = String(anchor.getAttribute("href") || "");
+      const targetView = normalizeViewName(rawTarget);
+      const requested = rawTarget.replace(/^#/, "").trim().toLowerCase();
+      if (!validViews.has(requested)) return;
+      event.preventDefault();
+      showView(targetView);
+    });
+
+    window.addEventListener("hashchange", () => {
+      showView(window.location.hash, { updateHash: false, scroll: false });
+    });
+
+    showView(window.location.hash || "home", { updateHash: false, scroll: false });
+
+    const heroDesktop = document.querySelector(".hero-desktop-image");
+    const heroMobile = document.querySelector(".hero-mobile-image");
+
+    function syncHeroVariant() {
+      const isDesktop = window.matchMedia("(min-width: 860px)").matches;
+      if (heroDesktop) {
+        heroDesktop.hidden = !isDesktop;
+        heroDesktop.style.display = isDesktop ? "block" : "none";
+      }
+      if (heroMobile) {
+        heroMobile.hidden = isDesktop;
+        heroMobile.style.display = isDesktop ? "none" : "block";
+      }
+    }
+
+    syncHeroVariant();
+    window.addEventListener("resize", syncHeroVariant, { passive: true });
+
+    const openDialog = (id) => document.getElementById(id)?.showModal?.();
+    const closeDialog = (id) => document.getElementById(id)?.close?.();
+
+    document.querySelectorAll("[data-open]").forEach((el) => {
+      el.addEventListener("click", () => openDialog(el.dataset.open));
+    });
+
+    document.querySelectorAll("[data-close]").forEach((el) => {
+      el.addEventListener("click", () => closeDialog(el.dataset.close));
+    });
+
+    document.querySelectorAll("dialog").forEach((dlg) => {
+      dlg.addEventListener("click", (e) => {
+        const r = dlg.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlg.close();
+      });
+    });
+
+
+    const FIRU_LAUNCH_CONFIG = {
+      mintAddress: "",
+      mintExplorerUrl: "",
+      tradingEnabled: false,
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: "",
+      birdeyeUrl: ""
+    };
+
+    let CURRENT_FIRU_LAUNCH_STATE = {
+      hasMint: false,
+      liveTrading: false,
+      mintUrl: "",
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: ""
+    };
+
+    function setLaunchLinkState(elements, url, enabled) {
+      elements.forEach((el) => {
+        if (!el) return;
+        if (enabled && url) {
+          el.href = url;
+          el.classList.remove("is-locked");
+          el.removeAttribute("aria-disabled");
+          el.removeAttribute("tabindex");
+        } else {
+          el.href = "#";
+          el.classList.add("is-locked");
+          el.setAttribute("aria-disabled", "true");
+          el.setAttribute("tabindex", "-1");
+        }
+      });
+    }
+
+    function syncLaunchShortcutRows(state) {
+      document.querySelectorAll('[data-launch-shortcut="copy"]').forEach((btn) => {
+        btn.disabled = !state.hasMint;
+        btn.classList.toggle("is-locked", !state.hasMint);
+        btn.setAttribute("aria-disabled", state.hasMint ? "false" : "true");
+      });
+      document.querySelectorAll('[data-launch-shortcut="jupiter"], [data-launch-shortcut="raydium"], [data-launch-shortcut="dexscreener"]').forEach((btn) => {
+        btn.disabled = !state.liveTrading;
+        btn.classList.toggle("is-locked", !state.liveTrading);
+        btn.setAttribute("aria-disabled", state.liveTrading ? "false" : "true");
+      });
+    }
+
+    async function copyTextValue(value) {
+      const finalValue = String(value || "").trim();
+      if (!finalValue) return false;
+      try {
+        await navigator.clipboard.writeText(finalValue);
+        return true;
+      } catch (_) {
+        const temp = document.createElement("textarea");
+        temp.value = finalValue;
+        temp.setAttribute("readonly", "");
+        temp.style.position = "absolute";
+        temp.style.left = "-9999px";
+        document.body.appendChild(temp);
+        temp.select();
+        const ok = document.execCommand("copy");
+        temp.remove();
+        return ok;
+      }
+    }
+
+    function syncFiruLaunchDesk() {
+      const config = {
+        mintAddress: String(FIRU_LAUNCH_CONFIG.mintAddress || "").trim(),
+        mintExplorerUrl: String(FIRU_LAUNCH_CONFIG.mintExplorerUrl || "").trim(),
+        tradingEnabled: Boolean(FIRU_LAUNCH_CONFIG.tradingEnabled),
+        jupiterUrl: String(FIRU_LAUNCH_CONFIG.jupiterUrl || "").trim(),
+        raydiumUrl: String(FIRU_LAUNCH_CONFIG.raydiumUrl || "").trim(),
+        dexscreenerUrl: String(FIRU_LAUNCH_CONFIG.dexscreenerUrl || "").trim(),
+        birdeyeUrl: String(FIRU_LAUNCH_CONFIG.birdeyeUrl || "").trim()
+      };
+
+      const hasMint = Boolean(config.mintAddress);
+      const mintUrl = config.mintExplorerUrl || (hasMint ? `https://solscan.io/token/${encodeURIComponent(config.mintAddress)}` : "");
+      const liveTrading = hasMint && config.tradingEnabled;
+
+      CURRENT_FIRU_LAUNCH_STATE = {
+        hasMint,
+        liveTrading,
+        mintUrl,
+        jupiterUrl: config.jupiterUrl,
+        raydiumUrl: config.raydiumUrl,
+        dexscreenerUrl: config.dexscreenerUrl
+      };
+
+      document.querySelectorAll("[data-firu-mint-display]").forEach((el) => {
+        el.textContent = hasMint ? config.mintAddress : "Coming at launch";
+      });
+
+      document.querySelectorAll("[data-firu-mint-help]").forEach((el) => {
+        el.textContent = hasMint
+          ? "The official mint address is now loaded. Users can copy it directly from the website."
+          : "Before launch, this block stays visible and locked. At launch, paste the real mint address in the page config and the copy button will go live automatically.";
+      });
+
+      document.querySelectorAll("[data-firu-trading-status]").forEach((el) => {
+        el.textContent = liveTrading ? "Live trading is active" : (hasMint ? "Contract ready · trading still locked" : "Trading unlocks at launch");
+      });
+
+      document.querySelectorAll("[data-firu-trading-help]").forEach((el) => {
+        el.textContent = liveTrading
+          ? "The official contract and live market links are active. Users can buy, view chart and track price directly from this website."
+          : (hasMint
+            ? "The contract is already loaded. Turn tradingEnabled on and paste the official market links when you are ready to open trading."
+            : "Users will be able to buy the live token from the web through your official market links, while the round flow stays separate above.");
+      });
+
+      document.querySelectorAll("[data-firu-launch-note]").forEach((el) => {
+        el.innerHTML = liveTrading
+          ? "Launch desk live. Contract copy, chart access and official trading links are now active."
+          : (hasMint
+            ? "Contract loaded. Paste the official market URLs and switch <strong>tradingEnabled</strong> to <strong>true</strong> when live trading opens."
+            : "Launch setup ready. When $FIRU goes live, update the mint address and official trading links in <strong>FIRU_LAUNCH_CONFIG</strong> once.");
+      });
+
+      document.querySelectorAll("[data-copy-firu-contract]").forEach((btn) => {
+        btn.disabled = !hasMint;
+        if (!btn.dataset.defaultLabel) btn.dataset.defaultLabel = btn.textContent.trim() || "Copy Contract";
+        btn.textContent = btn.dataset.defaultLabel;
+      });
+
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="mint"]')], mintUrl, hasMint);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="jupiter"]')], config.jupiterUrl, liveTrading);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="raydium"]')], config.raydiumUrl, liveTrading);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="dexscreener"]')], config.dexscreenerUrl, liveTrading);
+      setLaunchLinkState([...document.querySelectorAll('[data-firu-link="birdeye"]')], config.birdeyeUrl, liveTrading);
+      syncLaunchShortcutRows(CURRENT_FIRU_LAUNCH_STATE);
+    }
+
+
+
+    document.querySelectorAll("[data-copy-firu-contract]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const success = await copyTextValue(FIRU_LAUNCH_CONFIG.mintAddress);
+        const defaultLabel = btn.dataset.defaultLabel || "Copy Contract";
+        btn.textContent = success ? "Copied" : "Copy Contract";
+        window.setTimeout(() => {
+          btn.textContent = defaultLabel;
+        }, 1400);
+      });
+    });
+
+    document.querySelectorAll("[data-launch-shortcut]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const action = String(btn.dataset.launchShortcut || "").trim();
+        if (!action) return;
+        if (action === "copy") {
+          if (!CURRENT_FIRU_LAUNCH_STATE.hasMint) return;
+          const success = await copyTextValue(FIRU_LAUNCH_CONFIG.mintAddress);
+          const strong = btn.querySelector("strong");
+          const original = strong?.textContent || "Copy Contract";
+          if (strong) strong.textContent = success ? "Copied" : "Copy Contract";
+          window.setTimeout(() => {
+            if (strong) strong.textContent = original;
+          }, 1400);
+          drawer.classList.remove("open");
+          return;
+        }
+        const urlMap = {
+          jupiter: CURRENT_FIRU_LAUNCH_STATE.jupiterUrl,
+          raydium: CURRENT_FIRU_LAUNCH_STATE.raydiumUrl,
+          dexscreener: CURRENT_FIRU_LAUNCH_STATE.dexscreenerUrl
+        };
+        const finalUrl = String(urlMap[action] || "").trim();
+        if (!CURRENT_FIRU_LAUNCH_STATE.liveTrading || !finalUrl) return;
+        drawer.classList.remove("open");
+        window.open(finalUrl, "_blank", "noopener");
+      });
+    });
+
+    syncFiruLaunchDesk();
+
+    function formatCompactNumber(value) {
+      const n = Number(value || 0);
+      if (!Number.isFinite(n)) return "0";
+      return n.toLocaleString("en-US");
+    }
+
+    async function loadCommunityStats() {
+      const holdersEl = document.getElementById("metricHolders");
+      const holdersElSecondary = document.getElementById("metricHoldersSecondary");
+      const telegramEl = document.getElementById("metricTelegram");
+      const telegramElSecondary = document.getElementById("metricTelegramSecondary");
+      const xEl = document.getElementById("metricX");
+      const xElSecondary = document.getElementById("metricXSecondary");
+      const supplyEl = document.getElementById("metricSupply");
+
+      try {
+        const response = await fetch("/api/community-stats", { cache: "no-store" });
+        if (!response.ok) throw new Error("community stats request failed");
+        const data = await response.json();
+
+        if (Number.isFinite(Number(data.holders))) {
+          const holdersValue = Number(data.holders).toLocaleString("en-US");
+          if (holdersEl) holdersEl.textContent = holdersValue;
+          if (holdersElSecondary) holdersElSecondary.textContent = holdersValue;
+        }
+        if (Number.isFinite(Number(data.telegramMembers))) {
+          const telegramValue = Number(data.telegramMembers).toLocaleString("en-US");
+          if (telegramEl) telegramEl.textContent = telegramValue;
+          if (telegramElSecondary) telegramElSecondary.textContent = telegramValue;
+        }
+        if (Number.isFinite(Number(data.xFollowers))) {
+          const xValue = Number(data.xFollowers).toLocaleString("en-US");
+          if (xEl) xEl.textContent = xValue;
+          if (xElSecondary) xElSecondary.textContent = xValue;
+        }
+        if (supplyEl && Number.isFinite(Number(data.totalSupply))) {
+          supplyEl.textContent = formatCompactNumber(Number(data.totalSupply));
+        }
+      } catch (error) {
+        console.warn("community stats", error);
+      }
+    }
+
+    loadCommunityStats();
+    window.setInterval(loadCommunityStats, 60000);
+  </script>
+</body>
+</html>
