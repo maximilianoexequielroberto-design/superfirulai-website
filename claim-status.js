@@ -1,4 +1,5 @@
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
+import bs58 from "bs58";
 
 const CLAIM_TESTING_MODE = true;
 const ROUND_CLAIM_TESTING_MODE = true;
@@ -208,6 +209,39 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
   setActiveClaimTab("airdrop");
 }
 
+async function submitAirdropClaim({ wallet, provider }) {
+  const timestamp = new Date().toISOString();
+  const message = [
+    "SuperFirulai Airdrop Claim",
+    `Wallet: ${wallet}`,
+    `Timestamp: ${timestamp}`
+  ].join("\n");
+
+  const encodedMessage = new TextEncoder().encode(message);
+  const signed = await provider.signMessage(encodedMessage, "utf8");
+  const signatureBytes = signed?.signature || signed;
+  const signature = typeof bs58 !== "undefined"
+    ? bs58.encode(signatureBytes)
+    : Array.from(signatureBytes || []).map((b) => b.toString(16).padStart(2, "0")).join("");
+
+  const resp = await fetch("/api/airdrop/claim", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      wallet,
+      signed_message: message,
+      signature,
+      timestamp
+    })
+  });
+
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok) {
+    throw new Error(data?.error || "Could not complete claim");
+  }
+  return data;
+}
+
 function mountAirdropClaim(root) {
   const connectBtn = root.querySelector("#sf-claim-connect");
   const openPhantomBtn = root.querySelector("#sf-claim-open-phantom");
@@ -272,18 +306,48 @@ function mountAirdropClaim(root) {
 
   function renderCta(state, data) {
     if (state === "approved" && (data.claimLive || CLAIM_TESTING_MODE)) {
+      const liveNotice = data.claimLive
+        ? `<div class="sf-claim-testing"><strong>Live claim active.</strong> This wallet can now complete the airdrop claim flow.</div>`
+        : renderTestingNotice("This preview stays visible before launch. Live token delivery only starts after the official claim announcement and final endpoint activation.");
       ctaEl.innerHTML = `
         <div class="sf-claim-row">
           <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
-          ${renderTestingNotice("This preview stays visible before launch. Live token delivery only starts after the official claim announcement and final endpoint activation.")}
+          ${liveNotice}
         </div>`;
-      root.querySelector("#sf-claim-submit")?.addEventListener("click", () => {
+      root.querySelector("#sf-claim-submit")?.addEventListener("click", async () => {
         setStepState(4, true, false);
-        if (CLAIM_TESTING_MODE && !data.claimLive) {
+        if (!data.claimLive && CLAIM_TESTING_MODE) {
           setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Airdrop flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the official claim window is not open yet.`, "ok");
           return;
         }
-        setStatusMessage(`<strong>Claim Airdrop ready.</strong><br>The wallet is approved and the live claim flow can continue here.`, "ok");
+        if (!data.claimLive) {
+          setStatusMessage("Claim is not live yet.", "warn");
+          return;
+        }
+        if (!connectedProvider || !connectedWallet) {
+          setStatusMessage("Connect the approved wallet again before claiming.", "warn");
+          return;
+        }
+        const submitBtn = root.querySelector("#sf-claim-submit");
+        try {
+          if (!connectedProvider?.signMessage) {
+            throw new Error("This wallet cannot sign messages for claim.");
+          }
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Signing claim...";
+          setStatusMessage("Sign the claim message in your wallet to continue.", "warn");
+          const claimRes = await submitAirdropClaim({ wallet: connectedWallet, provider: connectedProvider });
+          setStepState(4, true, true);
+          setWalletMessage(`<strong>Claim completed:</strong> ${shortAddress(connectedWallet)}`, "ok");
+          setStatusMessage(`<strong>Airdrop claimed successfully.</strong><br>Status updated to claimed for <span class="sf-claim-code">${shortAddress(connectedWallet)}</span>.`, "ok");
+          renderCta("claimed", claimRes || { wallet: connectedWallet });
+        } catch (err) {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Claim Airdrop";
+          }
+          setStatusMessage(err?.message || "Could not complete claim.", "error");
+        }
       });
       return;
     }
