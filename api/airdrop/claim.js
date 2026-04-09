@@ -42,9 +42,30 @@ function verifyChallenge({ nonce, timestamp, challenge }) {
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(provided));
 }
 
+
+function isLikelyBase58(value, { minLength = 1, maxLength = 256 } = {}) {
+  const normalized = String(value || "").trim();
+  if (!normalized || normalized.length < minLength || normalized.length > maxLength) return false;
+  return /^[1-9A-HJ-NP-Za-km-z]+$/.test(normalized);
+}
+
 function verifyWalletSignature({ wallet, message, signature }) {
-  const publicKey = bs58.decode(wallet);
-  const sigBytes = bs58.decode(signature);
+  if (!isLikelyBase58(wallet, { minLength: 32, maxLength: 64 })) {
+    throw new Error("Invalid wallet format");
+  }
+  if (!isLikelyBase58(signature, { minLength: 64, maxLength: 128 })) {
+    throw new Error("Invalid signature format");
+  }
+
+  let publicKey;
+  let sigBytes;
+  try {
+    publicKey = bs58.decode(wallet);
+    sigBytes = bs58.decode(signature);
+  } catch (_) {
+    throw new Error("Wallet signature must be valid base58");
+  }
+
   const msgBytes = new TextEncoder().encode(message);
   return nacl.sign.detached.verify(msgBytes, sigBytes, publicKey);
 }
