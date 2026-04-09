@@ -133,7 +133,7 @@ function formatWhole(value) {
 }
 
 function renderTestingNotice(copy) {
-  return `<div class="sf-claim-testing"><strong>Preview only.</strong> ${copy}</div>`;
+  return `<div class="sf-claim-testing"><strong>Testing mode.</strong> ${copy}</div>`;
 }
 
 async function requestClaimNonce() {
@@ -300,16 +300,11 @@ function mountAirdropClaim(root) {
         <div class="sf-claim-row">
           <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
           ${renderTestingNotice(data.claimLive
-            ? "Testing claim is enabled. This flow marks the approved wallet as claimed in Supabase after a fresh wallet signature."
-            : "This preview stays visible before launch. Live token delivery only starts after the official claim announcement and final endpoint activation.")}
+            ? "This flow marks the approved wallet as claimed in Supabase after a fresh wallet signature. Token delivery remains manual after claim."
+            : "This flow now attempts the real test/manual claim endpoint. If the backend claim window is still closed, the server will reject it until CLAIM_LIVE is enabled.")}
         </div>`;
       root.querySelector("#sf-claim-submit")?.addEventListener("click", async () => {
         setStepState(4, true, false);
-        if (CLAIM_TESTING_MODE && !data.claimLive) {
-          setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Airdrop flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live claim was sent because the official claim window is not open yet.`, "ok");
-          return;
-        }
-
         const wallet = connectedWallet || data.wallet || "";
         const provider = connectedProvider;
         const submitBtn = root.querySelector("#sf-claim-submit");
@@ -321,7 +316,7 @@ function mountAirdropClaim(root) {
         try {
           submitBtn.disabled = true;
           submitBtn.textContent = "Signing claim...";
-          setStatusMessage(`<strong>Claim signature required.</strong><br>Approve the signature in your wallet to continue the claim test.`, "warn");
+          setStatusMessage(`<strong>Claim signature required.</strong><br>Approve the signature in your wallet to continue the test/manual claim flow.`, "warn");
 
           const claimPayload = await signAirdropClaim(provider, wallet);
           submitBtn.textContent = "Submitting claim...";
@@ -405,7 +400,7 @@ function mountAirdropClaim(root) {
 
       if (data.state === "approved") {
         const amountLine = data.airdropAmount ? `<br>Airdrop amount: <strong>${Number(data.airdropAmount).toLocaleString("en-US")} $FIRU</strong>` : "";
-        setStatusMessage(`<strong>${data.message}</strong>${amountLine}<br>Approved airdrop claims are processed manually. Please allow up to <strong>7 days after claim</strong> for manual $FIRU delivery.`, (data.claimLive || CLAIM_TESTING_MODE) ? "ok" : "warn");
+        setStatusMessage(`<strong>${data.message}</strong>${amountLine}<br>Approved airdrop claims are processed manually. Please allow up to <strong>7 days after claim</strong> for manual $FIRU delivery.`, "ok");
         setStepState(4, true, false);
       } else if (data.state === "pending") {
         setStatusMessage(`<strong>${data.message}</strong><br>This wallet is registered and still waiting for review.`, "warn");
