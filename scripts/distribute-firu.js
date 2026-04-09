@@ -19,6 +19,41 @@ function required(name, value) {
   return value;
 }
 
+function toRawAmount(firuAllocation, decimals) {
+  const allocation = Number(firuAllocation || 0);
+  if (!(allocation > 0)) {
+    return 0n;
+  }
+  return BigInt(Math.round(allocation * 10 ** decimals));
+}
+
+async function markDelivered(rowId, signature, deliveredAt) {
+  const payload = {
+    distribution_tx: signature,
+    distribution_sent_at: deliveredAt,
+    delivery_tx: signature,
+    delivered_at: deliveredAt,
+    delivery_status: "delivered",
+    delivery_notes: null
+  };
+
+  const firstAttempt = await supabase
+    .from("round_registrations")
+    .update(payload)
+    .eq("id", rowId);
+
+  if (firstAttempt.error) {
+    const secondAttempt = await supabase
+      .from("round_registrations")
+      .update(payload)
+      .eq("id", rowId);
+
+    if (secondAttempt.error) {
+      throw secondAttempt.error;
+    }
+  }
+}
+
 async function main() {
   required("TOKEN_MINT_ADDRESS", TOKEN_MINT_ADDRESS);
   required("TREASURY_PRIVATE_KEY_JSON", TREASURY_PRIVATE_KEY_JSON);
@@ -28,10 +63,12 @@ async function main() {
   const mint = new PublicKey(TOKEN_MINT_ADDRESS);
   const treasuryAta = await getAssociatedTokenAddress(mint, treasury.publicKey);
   const mintInfo = await getMint(connection, mint);
+  const treasuryBalanceInfo = await connection.getTokenAccountBalance(treasuryAta);
+  const treasuryRawBalance = BigInt(treasuryBalanceInfo?.value?.amount || "0");
 
   const { data, error } = await supabase
     .from("round_registrations")
-    .select("id, wallet, firu_allocation, delivery_status")
+    .select("id, wallet, firu_allocation, delivery_status, delivery_tx, distribution_tx")
     .in("delivery_status", ["pending", "failed"])
     .gt("firu_allocation", 0)
     .order("created_at", { ascending: true });
@@ -42,19 +79,45 @@ async function main() {
     return;
   }
 
+  let remainingRawBalance = treasuryRawBalance;
+
   for (const row of data) {
+    let signature = null;
+
     try {
       if (!row.wallet) {
         console.log(`Skipping row ${row.id}: wallet missing.`);
         continue;
       }
 
-      const { error: markProcessingError } = await supabase
+      if (row.delivery_tx || row.distribution_tx) {
+        console.log(`Skipping row ${row.id}: delivery transaction already recorded.`);
+        continue;
+      }
+
+      const amount = toRawAmount(row.firu_allocation, mintInfo.decimals);
+      if (!(amount > 0n)) {
+        throw new Error("Invalid FIRU allocation amount");
+      }
+
+      if (remainingRawBalance < amount) {
+        throw new Error("Treasury token balance is insufficient for pending distribution");
+      }
+
+      const { data: lockRows, error: lockError } = await supabase
         .from("round_registrations")
         .update({ delivery_status: "processing", delivery_notes: null })
-        .eq("id", row.id);
+        .eq("id", row.id)
+        .in("delivery_status", ["pending", "failed"])
+        .is("delivery_tx", null)
+        .is("distribution_tx", null)
+        .select("id");
 
-      if (markProcessingError) throw markProcessingError;
+      if (lockError) throw lockError;
+      if (!lockRows?.length) {
+        console.log(`Skipping row ${row.id}: another process already took this allocation.`);
+        continue;
+      }
 
       const destinationOwner = new PublicKey(row.wallet);
       const destinationAta = await getAssociatedTokenAddress(mint, destinationOwner);
@@ -74,7 +137,6 @@ async function main() {
         );
       }
 
-      const amount = BigInt(Math.round(Number(row.firu_allocation) * 10 ** mintInfo.decimals));
       transaction.add(
         createTransferInstruction(
           treasuryAta,
@@ -86,34 +148,47 @@ async function main() {
         )
       );
 
-      const signature = await sendAndConfirmTransaction(connection, transaction, [treasury], {
+      signature = await sendAndConfirmTransaction(connection, transaction, [treasury], {
         commitment: "confirmed"
       });
+      remainingRawBalance -= amount;
 
       const deliveredAt = new Date().toISOString();
-      const { error: updateError } = await supabase
-        .from("round_registrations")
-        .update({
-          distribution_tx: signature,
-          distribution_sent_at: deliveredAt,
-          delivery_tx: signature,
-          delivered_at: deliveredAt,
-          delivery_status: "delivered",
-          delivery_notes: null
-        })
-        .eq("id", row.id);
-
-      if (updateError) throw updateError;
+      await markDelivered(row.id, signature, deliveredAt);
       console.log(`Distributed ${row.firu_allocation} FIRU to ${row.wallet}: ${signature}`);
     } catch (error) {
-      console.error(`Delivery failed for row ${row.id}:`, error?.message || error);
+      const message = error?.message || String(error);
+      console.error(`Delivery failed for row ${row.id}:`, message);
+
+      if (signature) {
+        try {
+          const deliveredAt = new Date().toISOString();
+          await markDelivered(row.id, signature, deliveredAt);
+          console.log(`Recovered delivery state for row ${row.id} after post-send update issue.`);
+          continue;
+        } catch (recoveryError) {
+          const recoveryMessage = recoveryError?.message || String(recoveryError);
+          console.error(`CRITICAL: token transfer for row ${row.id} was sent but the database could not be updated:`, recoveryMessage);
+          await supabase
+            .from("round_registrations")
+            .update({
+              delivery_status: "processing",
+              delivery_notes: `MANUAL_REVIEW_REQUIRED: tx sent (${signature}) but delivery confirmation could not be saved automatically. ${recoveryMessage}`
+            })
+            .eq("id", row.id);
+          continue;
+        }
+      }
+
       await supabase
         .from("round_registrations")
         .update({
           delivery_status: "failed",
-          delivery_notes: error?.message || String(error)
+          delivery_notes: message
         })
-        .eq("id", row.id);
+        .eq("id", row.id)
+        .is("delivery_tx", null)
+        .is("distribution_tx", null);
     }
   }
 }
