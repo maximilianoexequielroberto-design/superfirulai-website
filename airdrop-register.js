@@ -171,7 +171,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <div class="sf-steps-head">
           <div>
             <div class="sf-steps-title">Airdrop in 3 simple steps</div>
-            <div class="sf-steps-sub">Clear order: connect wallet first, add your X + Telegram manually, then finish Cloudflare + Register.</div>
+            <div class="sf-steps-sub">Clear order: connect wallet first, add your X + Telegram manually, then finish Cloudflare + Register. This campaign is limited to the first 100 approved wallets.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -226,7 +226,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <div class="sf-verify-copy">Write your public <strong>X</strong> and <strong>Telegram</strong> usernames manually, then confirm you already joined the community. Review stays manual before approval.</div>
         </div>
         <div id="sf-telegram-verify-status" class="sf-verify-status warn">Telegram will be reviewed manually after registration.</div>
-        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same public @username that you use inside the community.</div>
+        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same public @username that you use inside the community. This campaign is limited to the first 100 approved wallets. Any future airdrop campaigns will be announced separately.</div>
       </div>
 
       <div class="sf-field">
@@ -263,7 +263,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       <div id="sf-msg" class="sf-wallet-note info">Step 1: connect and sign your wallet.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
-        <div class="sf-confirm-copy">Your registration was received successfully and is now pending manual review.</div>
+        <div class="sf-confirm-copy">Your registration was received successfully and is now pending manual review for this first-100 approved-wallet campaign.</div>
       </div>
     </div>
 
@@ -337,7 +337,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     2: {
       step: "Step 2",
       title: "Add X + Telegram",
-      copy: "Write both public usernames manually and confirm that you already joined the Telegram community.",
+      copy: "Write both public usernames manually and confirm that you already joined the Telegram community. This airdrop is limited to the first 100 approved wallets.",
       points: [
         "Type your public <strong>X</strong> username.",
         "Type your public <strong>Telegram</strong> username.",

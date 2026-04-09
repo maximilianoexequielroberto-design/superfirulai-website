@@ -201,11 +201,6 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
 
   root.innerHTML = `
     <div class="sf-claim-stack">
-      <div class="sf-claim-switcher" aria-label="Claim flows">
-        <button id="sf-claim-tab-airdrop" class="sf-claim-switch active" type="button" aria-pressed="true">Claim Airdrop</button>
-        <button id="sf-claim-tab-round" class="sf-claim-switch" type="button" aria-pressed="false">Claim Round $FIRU</button>
-      </div>
-
       <div class="sf-claim-card sf-claim-panel" id="sf-airdrop-claim-card" data-claim-panel="airdrop">
         <div class="sf-claim-eyebrow">Claim Airdrop · Premium</div>
         <h3 class="sf-claim-title">Claim Airdrop with the same wallet</h3>
@@ -215,7 +210,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
           <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from registration.</span></div>
           <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Check Status</strong><span>Pending, approved, rejected or claimed.</span></div>
           <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Approved Only</strong><span>Only approved wallets continue.</span></div>
-          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Airdrop</strong><span>Available when claim goes live.</span></div>
+          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Airdrop</strong><span>Manual delivery after claim.</span></div>
         </div>
 
         <div class="sf-claim-module">
@@ -232,62 +227,10 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
           <div id="sf-claim-cta" class="sf-claim-row"></div>
         </div>
       </div>
-
-      <div class="sf-claim-card round-claim sf-claim-panel" id="sf-round-claim-card" data-claim-panel="round" hidden>
-        <div class="sf-claim-eyebrow">Claim Round $FIRU · Premium</div>
-        <h3 class="sf-claim-title">Claim Round $FIRU with your buyer wallet</h3>
-        <p class="sf-claim-subtitle">Use the same wallet from your round purchase. The page loads your reserved $FIRU position first and keeps the claim flow visible until official delivery is announced.</p>
-
-        <div id="sf-round-steps" class="sf-claim-steps">
-          <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from BUY $FIRU.</span></div>
-          <div class="sf-claim-step" data-step="2"><div class="sf-claim-step-id">2</div><strong>Check Position</strong><span>View your reserved and delivered $FIRU.</span></div>
-          <div class="sf-claim-step" data-step="3"><div class="sf-claim-step-id">3</div><strong>Review Summary</strong><span>Check rounds, purchases and delivery status.</span></div>
-          <div class="sf-claim-step" data-step="4"><div class="sf-claim-step-id">4</div><strong>Claim Round $FIRU</strong><span>Available when round delivery goes live.</span></div>
-        </div>
-
-        <div class="sf-claim-module">
-          <div class="sf-claim-actions">
-            <button id="sf-round-connect" class="btn btn-blue" type="button">Connect Wallet</button>
-            <button id="sf-round-open-wallet" class="btn btn-dark" type="button" style="display:none">Open Wallet</button>
-            <div id="sf-round-wallet-tools" class="sf-claim-wallet-tools">
-              <button id="sf-round-disconnect" class="btn btn-dark" type="button">Disconnect</button>
-              <button id="sf-round-switch" class="btn btn-dark" type="button">Change Wallet</button>
-            </div>
-          </div>
-          <div id="sf-round-wallet" class="sf-claim-note warn">Connect the same wallet used for your round purchase.</div>
-          <div id="sf-round-status" class="sf-claim-note">After connecting, the page loads your reserved $FIRU, delivery status and purchase count from your round history.</div>
-          <div id="sf-round-summary" class="sf-round-summary" hidden>
-            <div class="sf-round-stat"><strong>Reserved $FIRU</strong><span id="sf-round-reserved">Not available yet</span></div>
-            <div class="sf-round-stat"><strong>Delivered $FIRU</strong><span id="sf-round-delivered">Not available yet</span></div>
-            <div class="sf-round-stat"><strong>Purchases</strong><span id="sf-round-purchases">Not available yet</span></div>
-          </div>
-          <div id="sf-round-cta"></div>
-        </div>
-      </div>
     </div>
   `;
 
   mountAirdropClaim(root);
-  mountRoundClaim(root);
-
-  const airdropTab = root.querySelector("#sf-claim-tab-airdrop");
-  const roundTab = root.querySelector("#sf-claim-tab-round");
-  const airdropPanel = root.querySelector('[data-claim-panel="airdrop"]');
-  const roundPanel = root.querySelector('[data-claim-panel="round"]');
-
-  function setActiveClaimTab(mode = "airdrop") {
-    const isAirdrop = mode === "airdrop";
-    airdropTab.classList.toggle("active", isAirdrop);
-    roundTab.classList.toggle("active", !isAirdrop);
-    airdropTab.setAttribute("aria-pressed", String(isAirdrop));
-    roundTab.setAttribute("aria-pressed", String(!isAirdrop));
-    airdropPanel.hidden = !isAirdrop;
-    roundPanel.hidden = isAirdrop;
-  }
-
-  airdropTab?.addEventListener("click", () => setActiveClaimTab("airdrop"));
-  roundTab?.addEventListener("click", () => setActiveClaimTab("round"));
-  setActiveClaimTab("airdrop");
 }
 
 function mountAirdropClaim(root) {
