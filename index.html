@@ -147,12 +147,14 @@
     .info-item-body .mini-card,.info-item-body .stat-card,.info-item-body .dialog-item{margin:0}
     .section-shortcut-target{scroll-margin-top:96px}
 
-    .app{padding:0 0 188px}
+    .app{padding:0 0 212px}
     .view{display:none}
     .view.active{display:block}
     .view:not([data-view="home"]){padding-top:98px}
+    .view[data-view="home"]{padding-bottom:18px}
     .stack{display:grid;gap:18px}
-    .view[data-view="home"] .stack{gap:18px}
+    .view[data-view="home"] .stack{gap:22px}
+    .view[data-view="home"] .stack > :not(.hero-stage){scroll-margin-top:132px}
 
     .hero-card{background:transparent;border:none;box-shadow:none;padding:0}
     .hero-media{
@@ -1055,7 +1057,8 @@
     .buy-premium-actions button{min-width:160px}
 
     @media(max-width:640px){
-      .tokenomics-premium{padding:18px 16px 52px;border-radius:28px;margin-bottom:34px}
+      .view[data-view="home"] .stack{gap:26px}
+      .tokenomics-premium{padding:24px 16px 58px;border-radius:28px;margin-bottom:34px}
       .tokenomics-premium-inner{gap:14px}
       .tokenomics-premium-top{gap:8px}
       .tokenomics-premium-top h2{font-size:clamp(31px,8.2vw,40px);line-height:.96;max-width:7.2ch}
@@ -1089,7 +1092,12 @@
     }
 
     @media(max-width:859px){
-      .metrics-shell{padding:20px 18px;border-radius:30px}
+      .view[data-view="home"]{padding-bottom:28px}
+      .view[data-view="home"] .stack > :not(.hero-stage){scroll-margin-top:140px}
+      .metrics-shell{padding:26px 18px 24px;border-radius:30px}
+      .launch-desk{padding:26px 18px 24px;border-radius:30px}
+      .hybrid-panel{padding:24px 18px 22px}
+      footer{padding:22px 0 8px}
       .metrics-top h3{font-size:34px;max-width:8ch}
       .metrics-top p{font-size:14px;max-width:32ch}
       .metrics-highlight{grid-template-columns:1fr;gap:12px}
