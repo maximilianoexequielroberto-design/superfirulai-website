@@ -207,11 +207,17 @@ function formatAmount(num, digits = 6) {
   return Number(num || 0).toFixed(digits).replace(/0+$/, "").replace(/\.$/, "") || "0";
 }
 
+function toWholeFiruAmount(amount) {
+  if (!(amount > 0)) return 0;
+  return Math.floor(Number(amount));
+}
+
 async function getRoundRaisedFiru(round) {
   const { data, error } = await supabase
     .from("round_registrations")
     .select("firu_allocation")
-    .eq("round", round);
+    .eq("round", round)
+    .neq("delivery_status", "cancelled");
 
   if (error) throw error;
 
@@ -328,7 +334,11 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: `Maximum purchase is ${formatAmount(maxSol)} SOL` });
     }
 
-    const firuAllocation = paymentAmountUsd / roundConfig.firuPriceUsd;
+    const firuAllocation = toWholeFiruAmount(paymentAmountUsd / roundConfig.firuPriceUsd);
+    if (!(firuAllocation > 0)) {
+      return res.status(400).json({ error: "Payment is too small to allocate at least 1 FIRU" });
+    }
+
     const roundRaisedFiru = await getRoundRaisedFiru(roundConfig.round);
     const remainingFiruBefore = Math.max(roundConfig.tokenCap - roundRaisedFiru, 0);
 
@@ -357,10 +367,6 @@ export default async function handler(req, res) {
         });
       }
     }
-
-    const raisedFiruAfter = roundRaisedFiru + firuAllocation;
-    const remainingFiruAfter = roundConfig.tokenCap > 0 ? Math.max(roundConfig.tokenCap - raisedFiruAfter, 0) : null;
-    const soldOutAfter = roundConfig.tokenCap > 0 ? remainingFiruAfter <= FIRU_EPSILON : false;
 
     const insertPayload = {
       wallet: inputWallet || senderWallet,
@@ -392,18 +398,58 @@ export default async function handler(req, res) {
         paymentAmountSolEquivalent,
         roundTokenCap: roundConfig.tokenCap,
         roundRaisedFiruBefore: roundRaisedFiru,
-        roundRemainingFiruBefore: remainingFiruBefore,
-        roundRaisedFiruAfter: raisedFiruAfter,
-        roundRemainingFiruAfter: remainingFiruAfter,
-        soldOutAfter
+        roundRemainingFiruBefore: remainingFiruBefore
       }
     };
 
-    const { error: insertError } = await supabase
+    const { data: insertedRows, error: insertError } = await supabase
       .from("round_registrations")
-      .insert([insertPayload]);
+      .insert([insertPayload])
+      .select("id")
+      .limit(1);
 
     if (insertError) throw insertError;
+
+    const insertedId = insertedRows?.[0]?.id;
+    const raisedFiruAfter = await getRoundRaisedFiru(roundConfig.round);
+    const remainingFiruAfter = roundConfig.tokenCap > 0 ? Math.max(roundConfig.tokenCap - raisedFiruAfter, 0) : null;
+    const soldOutAfter = roundConfig.tokenCap > 0 ? remainingFiruAfter <= FIRU_EPSILON : false;
+
+    if (roundConfig.tokenCap > 0 && raisedFiruAfter > roundConfig.tokenCap + FIRU_EPSILON) {
+      if (insertedId) {
+        await supabase
+          .from("round_registrations")
+          .update({
+            delivery_status: "cancelled",
+            delivery_notes: "Auto-cancelled because the round cap was reached by another nearly simultaneous purchase."
+          })
+          .eq("id", insertedId);
+      }
+
+      const currentRaised = await getRoundRaisedFiru(roundConfig.round);
+      const currentRemaining = Math.max(roundConfig.tokenCap - currentRaised, 0);
+      return res.status(409).json({
+        error: `This round just sold out during validation. Please try again with a new transaction only if official remaining allocation is still available.`,
+        round_status: {
+          cap_tokens: Math.round(roundConfig.tokenCap),
+          raised_firu: Math.round(currentRaised),
+          remaining_firu: Math.max(Math.floor(currentRemaining), 0),
+          sold_out: currentRemaining <= FIRU_EPSILON
+        }
+      });
+    }
+
+    await supabase
+      .from("round_registrations")
+      .update({
+        raw_validation: {
+          ...insertPayload.raw_validation,
+          roundRaisedFiruAfter: raisedFiruAfter,
+          roundRemainingFiruAfter: remainingFiruAfter,
+          soldOutAfter
+        }
+      })
+      .eq("id", insertedId);
 
     return res.status(200).json({
       success: true,
@@ -416,7 +462,7 @@ export default async function handler(req, res) {
       token_price_usd: Number(tokenPriceUsd.toFixed(6)),
       sol_price_usd: Number(solPriceUsd.toFixed(6)),
       firu_price_usd: roundConfig.firuPriceUsd,
-      firu_allocation: Math.round(firuAllocation),
+      firu_allocation: firuAllocation,
       round: roundConfig.round,
       destination_address: destinationAddress,
       tx_hash: txHash,
