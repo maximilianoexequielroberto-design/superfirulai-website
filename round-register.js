@@ -655,7 +655,7 @@ export function mountRoundRegister(selector) {
       if (hashWarningEl) hashWarningEl.style.display = "none";
       if (submitBtn) submitBtn.style.display = "none";
       if (destField) destField.style.display = "";
-      if (connectBtn) connectBtn.style.display = outsidePhantomMobile ? "none" : "";
+      if (connectBtn) connectBtn.style.display = "";
       if (walletToolsEl) walletToolsEl.style.display = outsidePhantomMobile ? "none" : (walletAddress ? "grid" : "none");
       if (openBtn) openBtn.style.display = outsidePhantomMobile ? "" : "none";
       if (autoBuyBtn) autoBuyBtn.style.display = outsidePhantomMobile ? "none" : "";
@@ -1108,7 +1108,7 @@ export function mountRoundRegister(selector) {
   });
 
   openBtn.addEventListener("click", () => openInPreferredWallet("#buy"));
-  openBtn.textContent = "Open Wallet";
+  openBtn.textContent = "Open Phantom";
   if (isMobileDevice() && !isInPhantomBrowser()) {
     openBtn.classList.add("show");
   }
