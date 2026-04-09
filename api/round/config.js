@@ -95,12 +95,15 @@ function getPublicRpcUrl() {
 async function getRaisedFiruByRound(round) {
   const { data, error } = await supabase
     .from("round_registrations")
-    .select("firu_allocation")
+    .select("firu_allocation,delivery_status")
     .eq("round", round);
 
   if (error) throw error;
 
-  return (data || []).reduce((sum, row) => sum + Number(row?.firu_allocation || 0), 0);
+  return (data || []).reduce((sum, row) => {
+    if (String(row?.delivery_status || "").toLowerCase() === "cancelled") return sum;
+    return sum + Number(row?.firu_allocation || 0);
+  }, 0);
 }
 
 export default async function handler(req, res) {
