@@ -27,30 +27,9 @@ async function verifyTurnstile(token, ip) {
   return !!data.success;
 }
 
-
-function isLikelyBase58(value, { minLength = 1, maxLength = 256 } = {}) {
-  const normalized = String(value || "").trim();
-  if (!normalized || normalized.length < minLength || normalized.length > maxLength) return false;
-  return /^[1-9A-HJ-NP-Za-km-z]+$/.test(normalized);
-}
-
 function verifyWalletSignature({ wallet, message, signature }) {
-  if (!isLikelyBase58(wallet, { minLength: 32, maxLength: 64 })) {
-    throw new Error("Invalid wallet format");
-  }
-  if (!isLikelyBase58(signature, { minLength: 64, maxLength: 128 })) {
-    throw new Error("Invalid signature format");
-  }
-
-  let publicKey;
-  let sigBytes;
-  try {
-    publicKey = bs58.decode(wallet);
-    sigBytes = bs58.decode(signature);
-  } catch (_) {
-    throw new Error("Wallet signature must be valid base58");
-  }
-
+  const publicKey = bs58.decode(wallet);
+  const sigBytes = bs58.decode(signature);
   const msgBytes = new TextEncoder().encode(message);
   return nacl.sign.detached.verify(msgBytes, sigBytes, publicKey);
 }
@@ -101,6 +80,17 @@ function getExpectedMessage({ wallet, nonce, timestamp }) {
     `Nonce: ${nonce}`,
     `Timestamp: ${timestamp}`
   ].join("\n");
+}
+
+async function getLockedAirdropSlots() {
+  const lockedStatuses = ["approved", "claim_processing", "claimed", "airdrop_sent"];
+  const { count, error } = await supabase
+    .from("airdrop_registrations")
+    .select("id", { count: "exact", head: true })
+    .in("status", lockedStatuses);
+
+  if (error) throw error;
+  return Number(count || 0);
 }
 
 function verifyChallenge({ nonce, timestamp, challenge }) {
@@ -170,19 +160,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Captcha validation failed" });
     }
 
-    let isValidSignature = false;
-    try {
-      isValidSignature = verifyWalletSignature({
-        wallet,
-        message: signed_message,
-        signature
-      });
-    } catch (validationError) {
-      return res.status(400).json({ error: validationError instanceof Error ? validationError.message : "Invalid wallet signature" });
-    }
+    const isValidSignature = verifyWalletSignature({
+      wallet,
+      message: signed_message,
+      signature
+    });
 
     if (!isValidSignature) {
       return res.status(400).json({ error: "Invalid wallet signature" });
+    }
+
+    const lockedSlots = await getLockedAirdropSlots();
+    if (AIRDROP_APPROVED_LIMIT > 0 && lockedSlots >= AIRDROP_APPROVED_LIMIT) {
+      return res.status(409).json({
+        error: "The current airdrop campaign is full. Please wait for an official future announcement."
+      });
     }
 
     const duplicateChecks = await Promise.all([

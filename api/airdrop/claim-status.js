@@ -1,3 +1,4 @@
+import { PublicKey } from "@solana/web3.js";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -10,7 +11,11 @@ function normalizeWallet(value) {
 }
 
 function looksLikeSolanaWallet(wallet) {
-  return wallet.length >= 32 && wallet.length <= 64;
+  try {
+    return new PublicKey(wallet).toBase58() === wallet;
+  } catch {
+    return false;
+  }
 }
 
 function parseBool(value, fallback = false) {
