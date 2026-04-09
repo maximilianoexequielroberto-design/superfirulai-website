@@ -14,7 +14,6 @@ Main active files in the current site:
 - `/api/airdrop/nonce.js` — nonce + challenge generator
 - `/api/airdrop/register.js` — airdrop registration backend
 - `/api/airdrop/claim-status.js` — claim-status backend
-- `/api/telegram/verify.js` — Telegram Login Widget verification + membership check
 - `/api/round/config.js` — public config for round pricing, limits, destinations, and progress
 - `/api/round/register.js` — round validation + registration backend
 - `/api/round-register.js` — compatibility re-export for `/api/round/register.js`
@@ -23,8 +22,6 @@ Main active files in the current site:
 
 ## Current integration notes
 
-- Telegram verification route is intentionally lower-case: `/api/telegram/verify.js`. Keep it lower-case for Linux/Vercel compatibility.
-- The current repo keeps the approved X patch mounted through `/lib/x-auth.js` and `/api/x/*`.
 
 ## Frozen round configuration
 
@@ -107,7 +104,7 @@ Round 2 stays published but disabled until you explicitly decide to activate it.
 - `/api/airdrop/register` validates the challenge, wallet signature, Turnstile token, and uniqueness checks before saving the registration.
 - `/api/airdrop/claim-status` checks whether a wallet is pending, approved, rejected, or already claimed.
 - `CLAIM_LIVE` controls whether approved wallets are treated as claim-enabled by the status endpoint.
-- The current frontend claim flow checks eligibility/status, but the final live claim execution endpoint is not yet mounted in this repo.
+- The current frontend claim flow checks eligibility/status and uses `/api/airdrop/claim.js` for the current test/manual claim flow.
 
 ## Deploy
 

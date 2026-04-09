@@ -221,6 +221,7 @@ export function mountRoundRegister(selector) {
           <div>
             <h3>My $FIRU Position</h3>
             <p>Connect your wallet to view your verified purchases, your reserved $FIRU allocation and delivery status.</p>
+            <p class="sf-history-note">Round 1 and Round 2 are the currently published rounds. Purchased round allocations will be delivered manually on launch day to the same buyer wallet used during the round purchase. Additional future rounds may be announced separately if applicable.</p>
           </div>
           <button type="button" class="sf-history-refresh" id="sfHistoryRefresh">Refresh</button>
         </div>

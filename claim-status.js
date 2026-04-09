@@ -2,7 +2,6 @@ import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, 
 
 const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const CLAIM_TESTING_MODE = true;
-const ROUND_CLAIM_TESTING_MODE = true;
 
 function encodeBase58(input) {
   const source = input instanceof Uint8Array ? input : Uint8Array.from(input || []);
@@ -204,7 +203,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
       <div class="sf-claim-card sf-claim-panel" id="sf-airdrop-claim-card" data-claim-panel="airdrop">
         <div class="sf-claim-eyebrow">Claim Airdrop · Premium</div>
         <h3 class="sf-claim-title">Claim Airdrop with the same wallet</h3>
-        <p class="sf-claim-subtitle">Connect the same wallet from registration. The page checks status first and unlocks claim only for approved wallets.</p>
+        <p class="sf-claim-subtitle">Connect the same wallet from registration. The page checks status first and unlocks claim only for approved wallets. Manual $FIRU delivery is processed after claim and may take up to 7 days.</p>
 
         <div id="sf-claim-steps" class="sf-claim-steps">
           <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from registration.</span></div>
@@ -329,7 +328,7 @@ function mountAirdropClaim(root) {
           const result = await submitAirdropClaim(claimPayload);
 
           ctaEl.innerHTML = `<div class="sf-btn-disabled" aria-disabled="true">CLAIMED</div>`;
-          setStatusMessage(`<strong>${result.message || "Airdrop claim confirmed."}</strong><br>Claim TX: <code class="sf-claim-code">${result.claimTx || "test-claim"}</code><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong>`, "ok");
+          setStatusMessage(`<strong>${result.message || "Airdrop claim confirmed."}</strong><br>Claim TX: <code class="sf-claim-code">${result.claimTx || "test-claim"}</code><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong><br>Manual token delivery is processed in batches. Please allow up to <strong>7 days after claim</strong>.`, "ok");
           setStepState(4, false, true);
         } catch (err) {
           if (submitBtn) {
@@ -406,7 +405,7 @@ function mountAirdropClaim(root) {
 
       if (data.state === "approved") {
         const amountLine = data.airdropAmount ? `<br>Airdrop amount: <strong>${Number(data.airdropAmount).toLocaleString("en-US")} $FIRU</strong>` : "";
-        setStatusMessage(`<strong>${data.message}</strong>${amountLine}`, (data.claimLive || CLAIM_TESTING_MODE) ? "ok" : "warn");
+        setStatusMessage(`<strong>${data.message}</strong>${amountLine}<br>Approved airdrop claims are processed manually. Please allow up to <strong>7 days after claim</strong> for manual $FIRU delivery.`, (data.claimLive || CLAIM_TESTING_MODE) ? "ok" : "warn");
         setStepState(4, true, false);
       } else if (data.state === "pending") {
         setStatusMessage(`<strong>${data.message}</strong><br>This wallet is registered and still waiting for review.`, "warn");
@@ -442,197 +441,6 @@ function mountAirdropClaim(root) {
   switchBtn.addEventListener("click", async () => {
     await disconnectSolanaWallet(connectedProvider);
     resetWalletUi("Choose another wallet account and connect again.");
-    if (isMobileDevice()) {
-      openInPreferredWallet("#claim");
-      setStatusMessage("Open your wallet, switch account there, then tap Connect Wallet again.", "warn");
-      return;
-    }
-    setStatusMessage("Open Phantom, Backpack or Solflare, switch account there, then tap Connect Wallet again.", "warn");
-  });
-
-  if (isMobileDevice() && !getAvailableSolanaWallets().length) showOpenWalletButton(true);
-}
-
-function mountRoundClaim(root) {
-  const connectBtn = root.querySelector("#sf-round-connect");
-  const openWalletBtn = root.querySelector("#sf-round-open-wallet");
-  const walletToolsEl = root.querySelector("#sf-round-wallet-tools");
-  const disconnectBtn = root.querySelector("#sf-round-disconnect");
-  const switchBtn = root.querySelector("#sf-round-switch");
-  const walletEl = root.querySelector("#sf-round-wallet");
-  const statusEl = root.querySelector("#sf-round-status");
-  const summaryEl = root.querySelector("#sf-round-summary");
-  const reservedEl = root.querySelector("#sf-round-reserved");
-  const deliveredEl = root.querySelector("#sf-round-delivered");
-  const purchasesEl = root.querySelector("#sf-round-purchases");
-  const ctaEl = root.querySelector("#sf-round-cta");
-  const stepsEl = root.querySelector("#sf-round-steps");
-
-  let connectedProvider = null;
-  let connectedWallet = "";
-
-  function setStepState(current = 1, hasPosition = false, delivered = false) {
-    const steps = stepsEl.querySelectorAll(".sf-claim-step");
-    steps.forEach((stepEl, index) => {
-      const step = index + 1;
-      stepEl.classList.remove("active", "done");
-      if (delivered) {
-        stepEl.classList.add("done");
-        return;
-      }
-      if (hasPosition && step <= 3) stepEl.classList.add("done");
-      if (step < current) stepEl.classList.add("done");
-      else if (step === current) stepEl.classList.add("active");
-    });
-  }
-
-  function setWalletMessage(html, tone = "warn") {
-    walletEl.className = `sf-claim-note ${tone}`;
-    walletEl.innerHTML = html;
-  }
-
-  function setStatusMessage(html, tone = "") {
-    statusEl.className = `sf-claim-note ${tone}`.trim();
-    statusEl.innerHTML = html;
-  }
-
-  function showOpenWalletButton(show) {
-    openWalletBtn.style.display = show ? "inline-flex" : "none";
-  }
-
-  function showWalletTools(show) {
-    walletToolsEl.classList.toggle("show", Boolean(show));
-  }
-
-  function resetWalletUi(message = "Connect the same wallet used for your round purchase.") {
-    connectedProvider = null;
-    connectedWallet = "";
-    connectBtn.disabled = false;
-    connectBtn.textContent = "Connect Wallet";
-    connectBtn.onclick = null;
-    showWalletTools(false);
-    showOpenWalletButton(false);
-    setWalletMessage(message, "warn");
-    setStatusMessage("After connecting, the page loads your reserved $FIRU, delivery status and purchase count from your round history.");
-    summaryEl.hidden = true;
-    reservedEl.textContent = "-";
-    deliveredEl.textContent = "-";
-    purchasesEl.textContent = "-";
-    ctaEl.innerHTML = "";
-    setStepState(1, false, false);
-  }
-
-  async function loadRoundHistory(wallet) {
-    const resp = await fetch(`/api/round/history?wallet=${encodeURIComponent(wallet)}`, { cache: "no-store" });
-    const data = await resp.json();
-    if (!resp.ok) throw new Error(data.error || "Could not load round history");
-    return data;
-  }
-
-  function renderRoundCta(data) {
-    const totalReserved = Number(data?.summary?.reserved_firu || 0);
-    const totalDelivered = Number(data?.summary?.delivered_firu || 0);
-    const totalFiru = Number(data?.summary?.total_firu || 0);
-    const hasPosition = Number(data?.summary?.total_purchases || 0) > 0 && totalFiru > 0;
-
-    if (!hasPosition) {
-      ctaEl.innerHTML = `<div class="sf-claim-inline"><a class="btn btn-gold" href="#buy">Buy $FIRU</a></div>`;
-      return;
-    }
-
-    ctaEl.innerHTML = `
-      <div class="sf-claim-row">
-        <div class="sf-claim-inline"><button id="sf-round-claim-submit" class="btn btn-gold" type="button">Claim Round $FIRU</button></div>
-        ${renderTestingNotice("This preview stays visible before launch. Live round delivery only starts after the official announcement and final delivery endpoint activation.")}
-      </div>`;
-
-    root.querySelector("#sf-round-claim-submit")?.addEventListener("click", () => {
-      setStepState(4, true, false);
-      const pendingText = totalReserved > 0 ? `<br>Reserved and pending delivery: <strong>${formatWhole(totalReserved)} $FIRU</strong>.` : "";
-      setStatusMessage(`<strong>Preview mode active.</strong><br>This confirms the Claim Round $FIRU flow for <span class="sf-claim-code">${shortAddress(connectedWallet || data.wallet || "wallet")}</span>. No live delivery was sent because the official round delivery window is not open yet.${pendingText}${totalDelivered > 0 ? `<br>Already delivered: <strong>${formatWhole(totalDelivered)} $FIRU</strong>.` : ""}`, "ok");
-    });
-  }
-
-  openWalletBtn.addEventListener("click", () => openInPreferredWallet("#claim"));
-
-  connectBtn.addEventListener("click", async () => {
-    try {
-      connectBtn.disabled = true;
-      connectBtn.textContent = "Checking wallet...";
-      setStatusMessage("Checking wallet provider...", "warn");
-      setStepState(1, false, false);
-
-      const preferredWallet = await getPreferredSolanaProvider();
-      const provider = preferredWallet?.provider;
-      const providerLabel = preferredWallet?.name || getWalletLabel(provider);
-      if (!provider) {
-        if (isMobileDevice()) {
-          connectBtn.disabled = false;
-          connectBtn.textContent = "Open Wallet";
-          connectBtn.onclick = () => openInPreferredWallet("#claim");
-          setWalletMessage("<strong>Mobile detected.</strong> Open this page inside your wallet browser and tap Connect Wallet again.", "warn");
-          setStatusMessage("No wallet provider is available here. Open the page inside Phantom or use a desktop wallet extension.", "warn");
-          return;
-        }
-        connectBtn.disabled = false;
-        connectBtn.textContent = "Retry Wallet Detection";
-        connectBtn.onclick = () => window.location.reload();
-        setWalletMessage("<strong>No compatible wallet found.</strong> Install or enable Phantom, Backpack or Solflare, then reload the page.", "error");
-        setStatusMessage("No compatible wallet provider is available in this browser.", "error");
-        return;
-      }
-
-      connectBtn.textContent = "Connecting...";
-      const connectRes = await provider.connect();
-      connectedProvider = provider;
-      connectedWallet = connectRes.publicKey.toString();
-      setWalletMessage(`<strong>${providerLabel} connected:</strong> ${shortAddress(connectedWallet)}`, "ok");
-      setStatusMessage("Loading your round position...", "warn");
-      setStepState(2, false, false);
-
-      const data = await loadRoundHistory(connectedWallet);
-      const purchases = Number(data?.summary?.total_purchases || 0);
-      const totalReserved = Number(data?.summary?.reserved_firu || 0);
-      const totalDelivered = Number(data?.summary?.delivered_firu || 0);
-      const totalFiru = Number(data?.summary?.total_firu || 0);
-      const hasPosition = purchases > 0 && totalFiru > 0;
-
-      summaryEl.hidden = false;
-      reservedEl.textContent = `${formatWhole(totalReserved)} $FIRU`;
-      deliveredEl.textContent = `${formatWhole(totalDelivered)} $FIRU`;
-      purchasesEl.textContent = formatWhole(purchases);
-
-      if (!hasPosition) {
-        setStatusMessage("<strong>No round position found yet.</strong><br>This wallet does not have verified round purchases yet. Use BUY $FIRU first, then come back here to test the claim flow.", "warn");
-        setStepState(2, false, false);
-      } else {
-        const deliveryLine = totalDelivered > 0
-          ? `<br>Already delivered: <strong>${formatWhole(totalDelivered)} $FIRU</strong>.`
-          : `<br>Pending delivery: <strong>${formatWhole(totalReserved)} $FIRU</strong>.`;
-        setStatusMessage(`<strong>Round position loaded.</strong><br>Verified purchases: <strong>${formatWhole(purchases)}</strong>${deliveryLine}`, "ok");
-        setStepState(4, true, false);
-      }
-
-      renderRoundCta(data);
-      connectBtn.textContent = shortAddress(connectedWallet);
-      connectBtn.disabled = true;
-      showWalletTools(true);
-      showOpenWalletButton(false);
-    } catch (err) {
-      resetWalletUi();
-      setStatusMessage(err?.message || "Could not load round position.", "error");
-    }
-  });
-
-  disconnectBtn.addEventListener("click", async () => {
-    await disconnectSolanaWallet(connectedProvider);
-    resetWalletUi("Wallet disconnected");
-    setStatusMessage("Wallet disconnected. Connect again to check your round position.", "warn");
-  });
-
-  switchBtn.addEventListener("click", async () => {
-    await disconnectSolanaWallet(connectedProvider);
-    resetWalletUi("Choose another buyer wallet account and connect again.");
     if (isMobileDevice()) {
       openInPreferredWallet("#claim");
       setStatusMessage("Open your wallet, switch account there, then tap Connect Wallet again.", "warn");
