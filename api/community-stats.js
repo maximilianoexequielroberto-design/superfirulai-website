@@ -1,3 +1,4 @@
+import { PublicKey } from "@solana/web3.js";
 const DEFAULT_HOLDERS = 2418;
 const DEFAULT_X_FOLLOWERS = 61;
 const DEFAULT_TELEGRAM_MEMBERS = 24;
@@ -6,6 +7,30 @@ const DEFAULT_COMMITMENT = "finalized";
 const TOKEN_PROGRAM_ID = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 const TOKEN_2022_PROGRAM_ID = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
 const FALLBACK_REFRESH_MS = 120000;
+
+const RPC_TIMEOUT_MS = 8000;
+const TELEGRAM_TIMEOUT_MS = 5000;
+
+function isValidPublicKey(value) {
+  const normalized = String(value || "").trim();
+  if (!normalized) return false;
+  try {
+    return new PublicKey(normalized).toBase58() === normalized;
+  } catch {
+    return false;
+  }
+}
+
+async function fetchJsonWithTimeout(url, options = {}, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, { ...options, signal: controller.signal });
+    return response;
+  } finally {
+    clearTimeout(timer);
+  }
+}
 
 function parseAddressList(value) {
   return new Set(
@@ -17,11 +42,11 @@ function parseAddressList(value) {
 }
 
 async function rpcRequest(rpcUrl, method, params) {
-  const response = await fetch(rpcUrl, {
+  const response = await fetchJsonWithTimeout(rpcUrl, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params })
-  });
+  }, RPC_TIMEOUT_MS);
 
   if (!response.ok) {
     throw new Error(`RPC ${method} failed with status ${response.status}`);
@@ -124,10 +149,14 @@ export default async function handler(req, res) {
   const excludedWallets = parseAddressList(process.env.HOLDERS_EXCLUDED_WALLETS);
   const excludedTokenAccounts = parseAddressList(process.env.HOLDERS_EXCLUDED_TOKEN_ACCOUNTS);
 
+  const invalidExcludedWallets = [...excludedWallets].filter((value) => !isValidPublicKey(value));
+  const invalidExcludedTokenAccounts = [...excludedTokenAccounts].filter((value) => !isValidPublicKey(value));
+  const mintAddressValid = !mintAddress || isValidPublicKey(mintAddress);
+
   try {
     if (token && chatId) {
       const url = `https://api.telegram.org/bot${token}/getChatMemberCount?chat_id=${encodeURIComponent(chatId)}`;
-      const resp = await fetch(url);
+      const resp = await fetchJsonWithTimeout(url, {}, TELEGRAM_TIMEOUT_MS);
       const data = await resp.json();
       if (data && data.ok && typeof data.result === "number") {
         telegramMembers = data.result;
@@ -142,7 +171,19 @@ export default async function handler(req, res) {
   xFollowersError = null;
 
   try {
-    if (rpcUrl && mintAddress) {
+    if (invalidExcludedWallets.length) {
+      throw new Error(`Invalid HOLDERS_EXCLUDED_WALLETS entries: ${invalidExcludedWallets.join(", ")}`);
+    }
+
+    if (invalidExcludedTokenAccounts.length) {
+      throw new Error(`Invalid HOLDERS_EXCLUDED_TOKEN_ACCOUNTS entries: ${invalidExcludedTokenAccounts.join(", ")}`);
+    }
+
+    if (rpcUrl && mintAddress && !mintAddressValid) {
+      throw new Error("Invalid TOKEN_MINT_ADDRESS");
+    }
+
+    if (rpcUrl && mintAddress && mintAddressValid) {
       const live = await fetchLiveHolders({
         rpcUrl,
         mintAddress,
