@@ -58,12 +58,7 @@ function injectStyles() {
     .sf-input-shell:focus-within,.sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
     .sf-round-actions{display:grid;gap:10px;padding:0;border-radius:0;background:transparent;border:none}
-    .sf-wallet-flow{display:grid;gap:10px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.022));border:1px solid rgba(255,255,255,.08)}
-    .sf-wallet-priority{display:grid;gap:8px;padding:14px 15px;border-radius:18px;background:linear-gradient(180deg,rgba(255,214,101,.12),rgba(24,163,255,.08));border:1px solid rgba(255,255,255,.10)}
-    .sf-wallet-priority-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-    .sf-wallet-kicker{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:999px;background:rgba(255,214,101,.14);border:1px solid rgba(255,214,101,.22);color:#ffd665;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
-    .sf-wallet-priority strong{display:block;color:#fff;font-size:18px;line-height:1.05}
-    .sf-wallet-priority p{margin:0;color:#c8d8f8;font-size:13px;line-height:1.5}
+    .sf-wallet-flow{display:grid;gap:10px;padding:14px;border-radius:20px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08)}
     .sf-wallet-flow .sf-row{padding:0;border:none;background:transparent}
     .sf-wallet-flow .sf-round-actions{margin:0}
     .sf-wallet-flow .sf-stable-guide{margin-top:0}
@@ -90,19 +85,19 @@ function injectStyles() {
     .sf-metric strong{display:block;color:#fff;font-size:13px;margin-bottom:4px}
     .sf-metric span{display:block;color:#9db7e8;font-size:12px;line-height:1.45}
     .sf-progress{padding:14px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08)} .sf-progress-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;margin-bottom:8px} .sf-progress-head strong{color:#fff}.sf-progress-head span{color:#9db7e8;font-weight:800}.sf-progress-bar{height:10px;background:rgba(255,255,255,.08);border-radius:999px;overflow:hidden}.sf-progress-fill{height:100%;width:0%;background:linear-gradient(90deg,#18a3ff,#ffd665);transition:width .4s ease}
-    .sf-steps{display:grid;gap:10px;padding:13px 14px;border-radius:18px;background:linear-gradient(180deg,rgba(255,214,101,.07),rgba(24,163,255,.05));border:1px solid rgba(255,255,255,.09)}
-    .sf-steps-compact{margin-top:0}
+    .sf-steps{display:grid;gap:12px;padding:15px;border-radius:20px;background:linear-gradient(180deg,rgba(255,214,101,.08),rgba(24,163,255,.06));border:1px solid rgba(255,255,255,.10)}
+    .sf-steps-compact{margin-top:8px}
     .sf-steps-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
-    .sf-steps-head strong{display:block;color:#fff;font-size:16px;line-height:1.1}
-    .sf-steps-head span{display:block;margin-top:4px;color:#b9cdf5;font-size:12px;line-height:1.45;max-width:58ch}
-    .sf-steps-kicker{display:inline-flex;align-items:center;justify-content:center;padding:7px 11px;border-radius:999px;background:rgba(255,214,101,.14);border:1px solid rgba(255,214,101,.22);color:#ffd665;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .sf-steps-head strong{display:block;color:#fff;font-size:18px;line-height:1.1}
+    .sf-steps-head span{display:block;margin-top:6px;color:#b9cdf5;font-size:13px;line-height:1.5;max-width:58ch}
+    .sf-steps-kicker{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;background:rgba(255,214,101,.14);border:1px solid rgba(255,214,101,.22);color:#ffd665;font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
     .sf-steps-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
     .sf-steps-grid-compact{grid-template-columns:repeat(4,1fr)}
-    .sf-step{position:relative;min-height:82px;padding:11px 12px 11px 14px;border-radius:16px;background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.08);overflow:hidden}
+    .sf-step{position:relative;min-height:112px;padding:13px 13px 13px 15px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);overflow:hidden}
     .sf-step:before{content:"";position:absolute;inset:0 auto 0 0;width:3px;background:linear-gradient(180deg,#ffd665,#18a3ff);opacity:.95}
     .sf-step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:999px;background:linear-gradient(180deg,#ffd665,#ffb81f);color:#081224;font-size:14px;font-weight:900;box-shadow:0 10px 28px rgba(255,214,101,.18)}
-    .sf-step strong{display:block;margin-top:9px;color:#fff;font-size:13px;line-height:1.2}
-    .sf-step span{display:block;margin-top:5px;color:#a9bee7;font-size:11px;line-height:1.4}
+    .sf-step strong{display:block;margin-top:12px;color:#fff;font-size:14px;line-height:1.2}
+    .sf-step span{display:block;margin-top:8px;color:#a9bee7;font-size:12px;line-height:1.5}
     .sf-step{transition:border-color .2s ease,background .2s ease,transform .2s ease,box-shadow .2s ease}
     .sf-step.active{border-color:rgba(255,214,101,.5);background:linear-gradient(180deg,rgba(255,214,101,.12),rgba(24,163,255,.08));box-shadow:0 16px 36px rgba(8,17,34,.22),0 0 0 1px rgba(255,214,101,.08) inset;transform:translateY(-1px)}
     .sf-step.active:before{width:4px;background:linear-gradient(180deg,#ffe08a,#18a3ff)}
@@ -176,7 +171,7 @@ function injectStyles() {
     .sf-history-link:hover{background:rgba(255,255,255,.08)}
     .sf-history-meta{margin-top:12px;color:#9fb5df;font-size:12px;line-height:1.55}
     body.sf-modal-open{overflow:hidden}
-    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary,.sf-checkout-cluster,.sf-wallet-flow{padding:12px;border-radius:18px}.sf-checkout-cluster{gap:8px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-wallet-priority{padding:13px 14px;border-radius:16px}.sf-wallet-priority-top{flex-direction:column;gap:8px}.sf-wallet-priority strong{font-size:17px}.sf-wallet-priority p{font-size:12px;line-height:1.45}.sf-steps{padding:12px;gap:8px}.sf-steps-head{flex-direction:column;gap:8px}.sf-steps-head strong{font-size:15px}.sf-steps-head span{font-size:11px;line-height:1.35}.sf-steps-kicker{padding:6px 10px;font-size:10px}.sf-steps-grid{grid-template-columns:1fr;gap:7px}.sf-step{display:grid;grid-template-columns:26px 1fr;column-gap:10px;row-gap:2px;align-items:start;min-height:auto;padding:10px 11px 10px 13px;border-radius:15px}.sf-step-num{width:26px;height:26px;font-size:13px;grid-row:1 / span 2}.sf-step strong{margin-top:1px;font-size:12px}.sf-step span{margin-top:1px;font-size:10px;line-height:1.3}.sf-step:last-child{grid-column:auto}.sf-trust-bar{grid-template-columns:1fr}}
+    @media (max-width:640px){.sf-row,.sf-row-tight,.sf-summary,.sf-action-grid,.sf-price-grid,.sf-receipt-hero,.sf-receipt-grid,.sf-history-summary,.sf-history-grid{grid-template-columns:1fr}.sf-row,.sf-row-tight,.sf-price-grid,.sf-summary,.sf-checkout-cluster,.sf-wallet-flow{padding:12px;border-radius:18px}.sf-checkout-cluster{gap:8px}.sf-receipt-overlay{padding:14px}.sf-receipt-card{padding:20px}.sf-receipt-top{align-items:flex-start}.sf-receipt-actions{flex-direction:column}.sf-receipt-btn{width:100%}.sf-steps{padding:14px;gap:10px}.sf-steps-head{flex-direction:column;gap:10px}.sf-steps-head strong{font-size:17px}.sf-steps-head span{font-size:12px;line-height:1.4}.sf-steps-kicker{padding:7px 11px;font-size:10px}.sf-steps-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sf-step{min-height:96px;padding:12px 12px 12px 14px;border-radius:16px}.sf-step-num{width:26px;height:26px;font-size:13px}.sf-step strong{margin-top:8px;font-size:13px}.sf-step span{margin-top:6px;font-size:11px;line-height:1.35}.sf-step:last-child{grid-column:1/-1}.sf-trust-bar{grid-template-columns:1fr}}
   `;
   document.head.appendChild(style);
 }
@@ -245,18 +240,44 @@ export function mountRoundRegister(selector) {
       <div class="sf-progress"><div class="sf-progress-head"><strong id="sfProgressText">Loading...</strong><span id="sfProgressPercent">0%</span></div><div class="sf-progress-bar"><div class="sf-progress-fill" id="sfProgressFill"></div></div></div>
 
       <div class="sf-checkout-cluster">
-        <div class="sf-wallet-flow">
-          <section class="sf-wallet-priority" aria-label="Connect wallet first">
-            <div class="sf-wallet-priority-top">
-              <div>
-                <strong>Connect Wallet</strong>
-                <p>Start here, just like Airdrop and Claim. Once your Phantom wallet is connected, the round form unlocks right below.</p>
-              </div>
-              <div class="sf-wallet-kicker">Step 1</div>
+        <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
+          <div class="sf-steps-head">
+            <div>
+              <strong>Buy in 5 steps</strong>
+              <span>Connect wallet first, then choose token, amount and confirm the official Solana buy flow.</span>
             </div>
-          </section>
+            <div class="sf-steps-kicker">Live progress</div>
+          </div>
+          <div class="sf-steps-grid">
+            <article class="sf-step" data-step="1">
+              <div class="sf-step-num">1</div>
+              <strong>Connect wallet</strong>
+              <span>Use Phantom and keep the correct Solana wallet active.</span>
+            </article>
+            <article class="sf-step" data-step="2">
+              <div class="sf-step-num">2</div>
+              <strong>Choose token</strong>
+              <span>Select SOL, USDT or USDC on Solana before continuing.</span>
+            </article>
+            <article class="sf-step" data-step="3">
+              <div class="sf-step-num">3</div>
+              <strong>Enter amount</strong>
+              <span>Type a valid amount inside the active round limits.</span>
+            </article>
+            <article class="sf-step" data-step="4">
+              <div class="sf-step-num">4</div>
+              <strong>Confirm payment</strong>
+              <span>Approve Phantom for SOL, or submit the confirmed TX hash.</span>
+            </article>
+            <article class="sf-step" data-step="5">
+              <div class="sf-step-num">5</div>
+              <strong>Receipt saved</strong>
+              <span>Your verified payment locks the reserved $FIRU allocation.</span>
+            </article>
+          </div>
+        </section>
 
-
+        <div class="sf-wallet-flow">
           <div class="sf-round-actions">
             <button type="button" class="btn btn-gold" id="sfRoundConnect">Connect Wallet</button>
             <button type="button" class="btn btn-dark sf-open-phantom" id="sfRoundOpenPhantom">Open Wallet</button>
@@ -323,43 +344,6 @@ export function mountRoundRegister(selector) {
               <span class="sf-help">Send only on Solana. SOL uses the project wallet. USDT and USDC use the official destination shown here.</span>
             </label>
           </div>
-
-          <section class="sf-steps sf-steps-compact" aria-label="Buy flow steps">
-            <div class="sf-steps-head">
-              <div>
-                <strong>Quick buy flow</strong>
-                <span>After your wallet is connected, choose token and amount, confirm the official Solana payment, then save the receipt.</span>
-              </div>
-              <div class="sf-steps-kicker">After connect</div>
-            </div>
-            <div class="sf-steps-grid">
-              <article class="sf-step" data-step="1">
-                <div class="sf-step-num">1</div>
-                <strong>Connect Wallet</strong>
-                <span>Keep the correct Phantom account active before buying.</span>
-              </article>
-              <article class="sf-step" data-step="2">
-                <div class="sf-step-num">2</div>
-                <strong>Choose token</strong>
-                <span>Select SOL, USDT or USDC on Solana.</span>
-              </article>
-              <article class="sf-step" data-step="3">
-                <div class="sf-step-num">3</div>
-                <strong>Enter amount</strong>
-                <span>Stay inside the active round limits shown below.</span>
-              </article>
-              <article class="sf-step" data-step="4">
-                <div class="sf-step-num">4</div>
-                <strong>Confirm payment</strong>
-                <span>Approve Phantom for SOL, or paste the confirmed TX hash.</span>
-              </article>
-              <article class="sf-step" data-step="5">
-                <div class="sf-step-num">5</div>
-                <strong>Receipt saved</strong>
-                <span>Your verified payment locks the reserved $FIRU allocation.</span>
-              </article>
-            </div>
-          </section>
 
           <div class="sf-stable-guide" id="sfStableGuide">
           <div><strong>How it works:</strong></div>
