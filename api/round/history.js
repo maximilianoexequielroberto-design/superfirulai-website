@@ -9,6 +9,11 @@ function normalizeWallet(value) {
   return String(value || "").trim();
 }
 
+function isValidWallet(value) {
+  const normalized = normalizeWallet(value);
+  return /^[1-9A-HJ-NP-Za-km-z]{32,64}$/.test(normalized);
+}
+
 function toNumber(value) {
   const num = Number(value || 0);
   return Number.isFinite(num) ? num : 0;
@@ -40,6 +45,9 @@ export default async function handler(req, res) {
     const wallet = normalizeWallet(req.query?.wallet);
     if (!wallet) {
       return res.status(400).json({ error: "Wallet is required" });
+    }
+    if (!isValidWallet(wallet)) {
+      return res.status(400).json({ error: "Wallet format is invalid" });
     }
 
     const { data, error } = await supabase
