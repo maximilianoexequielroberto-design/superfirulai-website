@@ -1,7 +1,7 @@
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
 const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
-const CLAIM_TESTING_MODE = true;
+const CLAIM_TESTING_MODE = false;
 
 function encodeBase58(input) {
   const source = input instanceof Uint8Array ? input : Uint8Array.from(input || []);
@@ -295,13 +295,10 @@ function mountAirdropClaim(root) {
   }
 
   function renderCta(state, data) {
-    if (state === "approved" && (data.claimLive || CLAIM_TESTING_MODE)) {
+    if (state === "approved" && data.claimLive) {
       ctaEl.innerHTML = `
         <div class="sf-claim-row">
           <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
-          ${renderTestingNotice(data.claimLive
-            ? "This flow marks the approved wallet as claimed in Supabase after a fresh wallet signature. Token delivery remains manual after claim."
-            : "This flow now attempts the real test/manual claim endpoint. If the backend claim window is still closed, the server will reject it until CLAIM_LIVE is enabled.")}
         </div>`;
       root.querySelector("#sf-claim-submit")?.addEventListener("click", async () => {
         setStepState(4, true, false);
@@ -336,7 +333,7 @@ function mountAirdropClaim(root) {
       return;
     }
     if (state === "approved") {
-      ctaEl.innerHTML = `<div class="sf-claim-inline"><span class="sf-btn-disabled" aria-disabled="true">CLAIM AFTER LAUNCH</span></div>`;
+      ctaEl.innerHTML = `<div class="sf-claim-inline"><span class="sf-btn-disabled" aria-disabled="true">CLAIM NOT LIVE YET</span></div>`;
       return;
     }
     if (state === "not_registered") {
