@@ -394,6 +394,8 @@
     .quick-action-row{display:grid;gap:12px;margin-top:16px}
 
     .actions,.section-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .community-links{margin-top:18px}
+    .section-note{margin:14px 2px 0;color:var(--muted);font-size:14px;line-height:1.6;max-width:70ch}
     .btn{
       display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 22px;border-radius:18px;
       font-weight:900;font-size:16px;letter-spacing:.03em;
@@ -1211,7 +1213,7 @@
       <button class="float-btn" id="menuBtn" aria-label="Open menu"><span></span></button>
       <div class="mobile-top-links" aria-label="Quick social links">
         <a class="quick-social-btn quick-social-x" href="https://x.com/superfirulai" target="_blank" rel="noopener" aria-label="Open X">X</a>
-        <a class="quick-social-btn quick-social-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener" aria-label="Open Telegram">
+        <a class="quick-social-btn quick-social-telegram" href="https://t.me/superfirulai" target="_blank" rel="noopener" aria-label="Open Telegram Channel">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 3 3.8 10.2c-.8.3-.8 1.4.1 1.7l4.4 1.5 1.6 4.9c.3.9 1.5 1 1.9.1L21 3Z"></path><path d="m8.3 13.4 8-7.2"></path></svg>
         </a>
       </div>
@@ -1274,11 +1276,11 @@
                 <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </button>
 
-              <a class="hero-asset is-telegram" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">
+              <a class="hero-asset is-telegram" href="https://t.me/superfirulai" target="_blank" rel="noopener">
                 <span class="hero-asset-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24"><path d="M21 5L3 11l7 2 2 6 9-14z"></path><path d="M10 13l11-8"></path></svg>
                 </span>
-                <span class="hero-asset-copy"><strong>Telegram</strong><span>Official community</span></span>
+                <span class="hero-asset-copy"><strong>Telegram</strong><span>Official channel</span></span>
                 <span class="hero-asset-arrow" aria-hidden="true">→</span>
               </a>
 
@@ -1293,7 +1295,7 @@
 
             <div class="hero-assets-desktop" aria-label="Main hero assets desktop">
               <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
-              <a class="asset-img-btn" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join Telegram"></a>
+              <a class="asset-img-btn" href="https://t.me/superfirulai" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Official Telegram Channel"></a>
               <button class="asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
               <button class="asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
             </div>
@@ -1416,7 +1418,7 @@
                 <div class="metric-card is-telegram">
                   <strong id="metricTelegramSecondary">24</strong>
                   <span>Telegram members</span>
-                  <div class="metric-note">Official group growth and retention.</div>
+                  <div class="metric-note">Official channel plus community growth.</div>
                 </div>
                 <div class="metric-card is-supply metric-card--wide">
                   <strong id="metricSupply" class="metric-supply-value">1,000,000,000</strong>
@@ -1424,6 +1426,13 @@
                   <div class="metric-note">Fixed supply target for $FIRU.</div>
                 </div>
               </div>
+
+              <div class="actions section-actions community-links" aria-label="Official social links">
+                <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Official X</a>
+                <a class="btn btn-dark" href="https://t.me/superfirulai" target="_blank" rel="noopener">Official Channel</a>
+                <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Community Chat</a>
+              </div>
+              <p class="section-note">Announcements stay in the official Telegram channel. Community Chat stays separate for conversation, questions and memes.</p>
             </div>
           </div>
 
@@ -1656,13 +1665,15 @@
                 </div>
               </details>
               <details class="info-item">
-                <summary><div>Official channels<span>X first, Telegram second, with one source of truth.</span></div></summary>
+                <summary><div>Official channels<span>X first, official channel first, community chat separate.</span></div></summary>
                 <div class="info-item-body">
-                  <div class="mini-card"><strong>X first</strong><span>Launch reminders, buy updates and claim announcements.</span></div>
-                  <div class="mini-card"><strong>Telegram second</strong><span>Community chat, pinned instructions and support.</span></div>
+                  <div class="mini-card"><strong>Official X</strong><span>Launch reminders, buy updates and official project communication.</span></div>
+                  <div class="mini-card"><strong>Official Telegram Channel</strong><span>Main Telegram source for announcements and key updates.</span></div>
+                  <div class="mini-card"><strong>Community Chat</strong><span>Separate space for conversation, questions, memes and community support.</span></div>
                   <div class="actions">
                     <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Follow on X</a>
-                    <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Join Telegram</a>
+                    <a class="btn btn-dark" href="https://t.me/superfirulai" target="_blank" rel="noopener">Open Channel</a>
+                    <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Community Chat</a>
                     <button class="btn btn-dark" type="button" data-open="socialDialog">More info</button>
                   </div>
                 </div>
@@ -1808,17 +1819,19 @@
       <div class="dialog-head">
         <div>
           <h3>Stay on official links only</h3>
-          <p>Everything important happens first on X and Telegram.</p>
+          <p>Everything important happens first on X and in the official Telegram channel, while Community Chat stays separate for conversation.</p>
         </div>
         <button class="dialog-close" data-close="socialDialog">✕</button>
       </div>
       <div class="dialog-grid">
-        <div class="dialog-item"><strong>X</strong><span>Launch reminders, buy updates and claim announcement.</span></div>
-        <div class="dialog-item"><strong>Telegram</strong><span>Community chat, pinned instructions and support.</span></div>
+        <div class="dialog-item"><strong>Official X</strong><span>Launch reminders, buy updates and official project communication.</span></div>
+        <div class="dialog-item"><strong>Official Telegram Channel</strong><span>Main Telegram source for announcements and key updates.</span></div>
+        <div class="dialog-item"><strong>Community Chat</strong><span>Separate community space for conversation, questions, memes and support.</span></div>
       </div>
       <div class="dialog-actions">
         <a class="btn btn-blue" href="https://x.com/superfirulai" target="_blank" rel="noopener">Open X</a>
-        <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Open Telegram</a>
+        <a class="btn btn-dark" href="https://t.me/superfirulai" target="_blank" rel="noopener">Open Channel</a>
+        <a class="btn btn-dark" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Community Chat</a>
       </div>
     </div>
   </dialog>
