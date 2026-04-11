@@ -37,14 +37,14 @@ Main active files in the current site:
 ### Airdrop
 
 - Official airdrop amount: **12,500 FIRU** per approved wallet
-- Current campaign limit is controlled by `AIRDROP_APPROVED_LIMIT` in Vercel
+- Current campaign limit: **first 100 approved wallets**
 - Registration is **manual-review based**
 - Telegram in the form is **manual username + confirmation checkbox**, not real-time Telegram verification
 - X in the form is a **manual username field**, not OAuth or live follow verification
 - Claim flow is currently **test/manual**:
   - the claim endpoint marks the row as `claimed` in Supabase
   - token delivery is still handled manually by the operator
-  - approved claims are communicated as manual delivery after claim, without on-chain automation at this stage
+  - approved claims are communicated as manual delivery with up to 7 days after claim
 
 ### Rounds
 
@@ -113,11 +113,8 @@ Important removed/legacy items that must **not** be reintroduced casually:
 ### Required only for the distribution script
 
 - `TOKEN_MINT_ADDRESS`
-- `TREASURY_PRIVATE_KEY_JSON`
-
-### Airdrop runtime controls
-
 - `AIRDROP_APPROVED_LIMIT` (use `100` for the current campaign, or `0` / `off` / `unlimited` for no limit)
+- `TREASURY_PRIVATE_KEY_JSON`
 
 ### Optional but recommended
 
@@ -212,3 +209,17 @@ If a future cleanup removes or changes one of those files, update this README in
 
 
 Turnstile on the frontend reads the public site key from `/api/public-config`, so future site-key changes can be done in Vercel without editing frontend files.
+
+
+## UI and stage controls
+
+The frontend can now react to these Vercel variables without changing `index.html` again:
+
+- `PROJECT_STAGE=prelaunch|launch|postlaunch`
+- `ROADMAP_ACTIVE_PHASE=register|buy|claim`
+- `AIRDROP_UI_STATE=live|closed|hidden`
+- `BUY_UI_STATE=coming-soon|live|hidden`
+- `CLAIM_UI_STATE=hidden|manual|live`
+- `ROUND_3_ENABLED=false|true`
+
+When `ROUND_3_ENABLED=true`, the round API can also expose `ROUND_3_FIRU_PRICE` and `ROUND_3_TOKEN_CAP` for a future third round.

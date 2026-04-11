@@ -1205,6 +1205,11 @@
     @media(min-width:860px) and (max-aspect-ratio:3/2){
       .hero-desktop-image{background-size:100% auto;background-position:center top;}
     }
+  
+    .phase-card.is-active{border-color:rgba(255,216,77,.34);background:linear-gradient(180deg, rgba(255,216,77,.14), rgba(255,255,255,.04));box-shadow:0 0 0 1px rgba(255,216,77,.08) inset}
+    .phase-card.is-active .phase-kicker{color:#ffe38d}
+    [data-config-hidden="true"]{display:none !important}
+
   </style>
 </head>
 <body>
@@ -1538,17 +1543,17 @@
               </div>
             </div>
             <div class="phase-grid">
-              <div class="phase-card">
+              <div class="phase-card" data-phase-card="register">
                 <div class="phase-kicker">Phase 1</div>
                 <strong>Register</strong>
                 <span>Community growth, wallet submissions, approval review and early access filtering.</span>
               </div>
-              <div class="phase-card">
+              <div class="phase-card" data-phase-card="buy">
                 <div class="phase-kicker">Phase 2</div>
                 <strong>Buy</strong>
                 <span>Official Solana round access, wallet funding, purchase confirmation and allocation tracking.</span>
               </div>
-              <div class="phase-card">
+              <div class="phase-card" data-phase-card="claim">
                 <div class="phase-kicker">Phase 3</div>
                 <strong>Claim</strong>
                 <span>Approved wallets verify status and use the official Claim view later, only after the project announces the live claim window.</span>
@@ -1572,7 +1577,7 @@
                 <button type="button" data-open="airdropDialog">Airdrop details</button>
               </div>
             </div>
-            <div class="summary-note">12,500 $FIRU per approved wallet · current approvals follow the live campaign rules in Vercel · approved claims follow the current manual project distribution flow after claim.</div>
+            <div class="summary-note" id="registerSummaryNote">12,500 $FIRU per approved wallet · approval review follows the current project campaign settings · approved claims follow the current manual project distribution flow after claim.</div>
           </div>
           <div class="card"><div id="airdrop-register"></div></div>
         </div>
@@ -1588,7 +1593,7 @@
                 <p>Choose token, enter amount and confirm the official Solana purchase flow below. Round 1 is the current live round while available; Round 2 stays inactive until announced separately.</p>
               </div>
             </div>
-            <div class="summary-note">Round 1 uses the official live price and caps inside BUY · Round 2 stays announced but inactive until a separate official update · Solana network only.</div>
+            <div class="summary-note" id="buySummaryNote">Round 1 uses the official live price and caps inside BUY · Round 2 stays announced but inactive until a separate official update · Solana network only.</div>
           </div>
           <div class="card"><div id="round-register"></div></div>
         </div>
@@ -1862,10 +1867,88 @@
     import { mountClaimStatus } from "./claim-status.js";
     import { mountRoundRegister } from "./round-register.js";
 
+    let publicConfig = {
+      projectStage: "prelaunch",
+      roadmapActivePhase: "register",
+      airdropUiState: "live",
+      buyUiState: "live",
+      claimUiState: "manual",
+      round3Enabled: false
+    };
+
     try {
-      mountAirdropRegister("#airdrop-register");
-      mountClaimStatus("#airdrop-claim-status");
-      mountRoundRegister("#round-register");
+      const configResp = await fetch("/api/public-config", { cache: "no-store" });
+      const configData = await configResp.json().catch(() => ({}));
+      if (configResp.ok) {
+        publicConfig = { ...publicConfig, ...configData };
+      }
+    } catch (e) {
+      console.warn("public config", e);
+    }
+
+    document.body.dataset.projectStage = String(publicConfig.projectStage || "prelaunch");
+
+    function applySectionState(viewName, state) {
+      const isHidden = state === "hidden";
+      document.querySelectorAll(`[data-view="${viewName}"]`).forEach((el) => {
+        el.dataset.configHidden = isHidden ? "true" : "false";
+      });
+      document.querySelectorAll(`[data-view-btn="${viewName}"]`).forEach((el) => {
+        el.dataset.configHidden = isHidden ? "true" : "false";
+      });
+    }
+
+    applySectionState("register", String(publicConfig.airdropUiState || "live"));
+    applySectionState("buy", String(publicConfig.buyUiState || "live"));
+    applySectionState("claim", String(publicConfig.claimUiState || "manual") === "hidden" ? "hidden" : "visible");
+
+    document.querySelectorAll("[data-phase-card]").forEach((card) => {
+      card.classList.toggle("is-active", card.dataset.phaseCard === String(publicConfig.roadmapActivePhase || "register"));
+    });
+
+    const registerSummaryNote = document.getElementById("registerSummaryNote");
+    if (registerSummaryNote) {
+      const state = String(publicConfig.airdropUiState || "live");
+      registerSummaryNote.textContent = state === "closed"
+        ? "Airdrop registration is currently closed in the project configuration · the approved-wallet review flow can be reopened later without changing the website files."
+        : "12,500 $FIRU per approved wallet · approval review follows the current project campaign settings · approved claims follow the current manual project distribution flow after claim.";
+    }
+
+    const buySummaryNote = document.getElementById("buySummaryNote");
+    if (buySummaryNote) {
+      const state = String(publicConfig.buyUiState || "live");
+      if (state === "coming-soon") {
+        buySummaryNote.textContent = publicConfig.round3Enabled
+          ? "Buy view is prepared in advance · published rounds can be activated from project configuration · Round 3 is now enabled in configuration. Solana network only."
+          : "Buy view is prepared in advance · Round 1 and Round 2 can be controlled from project configuration · Solana network only.";
+      } else if (publicConfig.round3Enabled) {
+        buySummaryNote.textContent = "Published rounds now include the configured Round 3 option in addition to the existing round flow · Solana network only.";
+      }
+    }
+
+    const claimSummaryNote = document.getElementById("claimSummaryNote");
+    if (claimSummaryNote) {
+      const state = String(publicConfig.claimUiState || "manual");
+      claimSummaryNote.textContent = state === "live"
+        ? "Claim stays tied to the same approved registration wallet · the official live claim window is now enabled in project configuration."
+        : "Claim stays tied to the same approved registration wallet · manual project distribution flow remains active · the official claim window will be announced separately.";
+    }
+
+    try {
+      if (String(publicConfig.airdropUiState || "live") !== "hidden") {
+        await mountAirdropRegister("#airdrop-register");
+      }
+      if (String(publicConfig.claimUiState || "manual") !== "hidden") {
+        mountClaimStatus("#airdrop-claim-status");
+      }
+      if (String(publicConfig.buyUiState || "live") === "live") {
+        mountRoundRegister("#round-register");
+      } else {
+        const buyRoot = document.querySelector("#round-register");
+        if (buyRoot) {
+          buyRoot.innerHTML = `<div class="summary-note">BUY is currently ${String(publicConfig.buyUiState || "live").replace(/-/g, " ")} in the project configuration. You can switch it later from Vercel without changing website files.</div>`;
+        }
+      }
     } catch (e) {
       console.error("mount", e);
     }

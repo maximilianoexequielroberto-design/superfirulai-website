@@ -187,7 +187,25 @@ async function fetchRoundConfig() {
 
 function getSelectedRoundMeta(config, value) {
   const rounds = config?.rounds || {};
-  return rounds[value] || null;
+  return rounds[value] || Object.values(rounds)[0] || null;
+}
+
+function getRoundNumberFromKey(value) {
+  const match = String(value || "").match(/round(\d+)/i);
+  return match ? match[1] : "?";
+}
+
+function getRoundLabel(value, meta = null) {
+  return meta?.label || `Round ${getRoundNumberFromKey(value)}`;
+}
+
+function syncRoundOptions(selectEl, config) {
+  if (!selectEl) return;
+  const rounds = Object.entries(config?.rounds || {});
+  selectEl.innerHTML = rounds.map(([key, meta]) => `<option value="${key}">${getRoundLabel(key, meta)}</option>`).join("");
+  if (!rounds.some(([key]) => key === selectEl.value) && rounds[0]) {
+    selectEl.value = rounds[0][0];
+  }
 }
 
 function getTokenMeta(config, token) {
@@ -221,7 +239,7 @@ export function mountRoundRegister(selector) {
           <div>
             <h3>My $FIRU Position</h3>
             <p>Connect your wallet to view your verified purchases, your reserved $FIRU allocation and delivery status.</p>
-            <p class="sf-history-note">Round 1 and Round 2 are the currently published rounds. Purchased round allocations will be delivered manually on launch day to the same buyer wallet used during the round purchase. Additional future rounds may be announced separately if applicable.</p>
+            <p class="sf-history-note">Published rounds appear automatically from the current project configuration. Purchased round allocations will be delivered manually on launch day to the same buyer wallet used during the round purchase. Additional future rounds may be announced separately if applicable.</p>
           </div>
           <button type="button" class="sf-history-refresh" id="sfHistoryRefresh">Refresh</button>
         </div>
@@ -312,8 +330,7 @@ export function mountRoundRegister(selector) {
               <span class="sf-label">Round</span>
               <div class="sf-input-shell">
                 <select class="sf-select" id="sfRoundSelect">
-                  <option value="round1">Round 1</option>
-                  <option value="round2">Round 2</option>
+                  
                 </select>
               </div>
               <span class="sf-help" id="sfRoundMeta">Loading round configuration...</span>
@@ -542,7 +559,7 @@ export function mountRoundRegister(selector) {
 
     if (historyListEl) {
       historyListEl.innerHTML = purchases.map((purchase) => {
-        const roundLabel = purchase.round === "round2" ? "Round 2" : "Round 1";
+        const roundLabel = getRoundLabel(purchase.round);
         const statusLabel = purchase.ownership_status || "Reserved";
         const statusClass = getDeliveryBadgeClass(purchase.delivery_status);
         const deliveredMeta = purchase.delivered_at ? `Delivered: ${formatPurchaseDate(purchase.delivered_at)}` : `Registered: ${formatPurchaseDate(purchase.created_at)}`;
@@ -809,8 +826,8 @@ export function mountRoundRegister(selector) {
     trustHeadlineEl.textContent = pct >= 70 ? "Limited allocation remaining" : "Live round status";
     trustCopyEl.textContent =
       pct >= 70
-        ? `Round ${roundEl.value === "round1" ? "1" : "2"} is ${pct.toFixed(1)}% filled. Current range: ${formatCompact(limits.min, limits.decimals)}–${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`
-        : `Round ${roundEl.value === "round1" ? "1" : "2"} is open. Current range: ${formatCompact(limits.min, limits.decimals)}–${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
+        ? `${getRoundLabel(roundEl.value, meta)} is ${pct.toFixed(1)}% filled. Current range: ${formatCompact(limits.min, limits.decimals)}–${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`
+        : `${getRoundLabel(roundEl.value, meta)} is open. Current range: ${formatCompact(limits.min, limits.decimals)}–${formatCompact(limits.max, limits.decimals)} ${limits.suffix}.`;
   }
 
 
@@ -958,7 +975,7 @@ export function mountRoundRegister(selector) {
     if (receiptTitleEl) receiptTitleEl.textContent = "Your $FIRU allocation is locked in.";
     if (receiptSubEl) receiptSubEl.textContent = "Verified on Solana. Registered successfully. Reserved for post-launch distribution.";
     if (receiptFiruEl) receiptFiruEl.textContent = `${formatCompact(firuAllocation, 0)} FIRU`;
-    if (receiptRoundEl) receiptRoundEl.textContent = `Round ${data.round === "round2" ? "2" : "1"} confirmed`;
+    if (receiptRoundEl) receiptRoundEl.textContent = `${getRoundLabel(data.round)} confirmed`;
     if (receiptMessageEl) receiptMessageEl.textContent = "You entered early. Your verified payment is now attached to a reserved $FIRU allocation.";
     if (receiptPaymentEl) receiptPaymentEl.textContent = `${formatCompact(paymentAmount, paymentToken === "SOL" ? 4 : 2)} ${paymentToken}`;
     if (receiptUsdEl) receiptUsdEl.textContent = `$${formatCurrency(paymentUsd, 2)}`;
@@ -1118,6 +1135,7 @@ export function mountRoundRegister(selector) {
   (async () => {
     try {
       roundConfig = await fetchRoundConfig();
+      syncRoundOptions(roundEl, roundConfig);
       applyContextualUi();
       updateRoundMeta();
       updateTokenDetails();
@@ -1133,6 +1151,7 @@ export function mountRoundRegister(selector) {
   setInterval(async () => {
     try {
       roundConfig = await fetchRoundConfig();
+      syncRoundOptions(roundEl, roundConfig);
       applyContextualUi();
       updateRoundMeta();
       updateTokenDetails();

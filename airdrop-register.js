@@ -32,30 +32,29 @@ const bs58 = {
   }
 };
 
-let turnstileSiteKeyPromise = null;
+let publicConfigPromise = null;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
-function getWalletLabel(provider) {
-  if (provider?.isPhantom) return "Phantom";
-  if (provider?.isBackpack) return "Backpack";
-  if (provider?.isSolflare || window.solflare === provider) return "Solflare";
-  return "Wallet";
-}
-
-async function getTurnstileSiteKey() {
-  if (!turnstileSiteKeyPromise) {
-    turnstileSiteKeyPromise = fetch("/api/public-config")
+function getPublicConfig() {
+  if (!publicConfigPromise) {
+    publicConfigPromise = fetch("/api/public-config", { cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error(`Config request failed with status ${response.status}`);
         const data = await response.json();
-        const siteKey = String(data?.turnstileSiteKey || "").trim();
-        return siteKey;
+        return {
+          turnstileSiteKey: String(data?.turnstileSiteKey || "").trim(),
+          airdropUiState: String(data?.airdropUiState || "live").trim().toLowerCase() || "live"
+        };
       })
-      .catch(() => "");
+      .catch(() => ({ turnstileSiteKey: "", airdropUiState: "live" }));
   }
+  return publicConfigPromise;
+}
 
-  return turnstileSiteKeyPromise;
+async function getTurnstileSiteKey() {
+  const data = await getPublicConfig();
+  return String(data?.turnstileSiteKey || "").trim();
 }
 
 function normalizeRegistrationError(message) {
@@ -173,11 +172,27 @@ function normalizeXHandle(value) {
   return firstSegment(cleaned);
 }
 
-export function mountAirdropRegister(selector = "#airdrop-register") {
+function renderAirdropUnavailable(root, state) {
+  const label = state === "hidden" ? "Airdrop hidden" : "Airdrop review closed";
+  const copy = state === "hidden"
+    ? "The airdrop view is currently hidden by project configuration."
+    : "The registration form is currently closed by project configuration. Check the official project channels for the next update.";
+  root.innerHTML = `
+    <div class="sf-wallet-note warn"><strong>${label}.</strong> ${copy}</div>
+  `;
+}
+
+export async function mountAirdropRegister(selector = "#airdrop-register") {
   injectStyles();
 
   const root = document.querySelector(selector);
   if (!root) return;
+
+  const publicConfig = await getPublicConfig();
+  if (String(publicConfig?.airdropUiState || "live").toLowerCase() !== "live") {
+    renderAirdropUnavailable(root, String(publicConfig?.airdropUiState || "closed").toLowerCase());
+    return;
+  }
 
   root.innerHTML = `
     <div class="sf-airdrop-form">
@@ -185,7 +200,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <div class="sf-steps-head">
           <div>
             <div class="sf-steps-title">Airdrop in 3 simple steps</div>
-            <div class="sf-steps-sub">Clear order: connect wallet first, add your X + Telegram manually, then finish Cloudflare + Register. Approval remains manual before confirmation.</div>
+            <div class="sf-steps-sub">Clear order: connect wallet first, add your X + Telegram manually, then finish Cloudflare + Register. This campaign follows the current approved-wallet review flow.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -240,7 +255,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <div class="sf-verify-copy">Write your public <strong>X</strong> and <strong>Telegram</strong> usernames manually, then confirm you already joined the community. Review stays manual before approval.</div>
         </div>
         <div id="sf-telegram-verify-status" class="sf-verify-status warn">Telegram will be reviewed manually after registration.</div>
-        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same public @username that you use inside the community. Approval is manual and any future airdrop campaign changes will be announced separately.</div>
+        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same public @username that you use inside the community. This campaign follows the current approved-wallet review flow. Any future airdrop campaigns will be announced separately.</div>
       </div>
 
       <div class="sf-field">
@@ -277,7 +292,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
       <div id="sf-msg" class="sf-wallet-note info">Step 1: connect and sign your wallet.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
-        <div class="sf-confirm-copy">Your registration was received successfully and is now pending manual review in the current approval campaign.</div>
+        <div class="sf-confirm-copy">Your registration was received successfully and is now pending manual review under the current project campaign settings.</div>
       </div>
     </div>
 
@@ -335,18 +350,16 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   if (turnstileEl) {
     getTurnstileSiteKey()
       .then((siteKey) => {
-        turnstileEl.dataset.sitekey = siteKey || "";
-        if (!siteKey) {
-          setTelegramVerifyStatus("Cloudflare check is temporarily unavailable. Please try again shortly.", "error");
-          setMsg("Cloudflare configuration is missing. Please try again shortly.", "error");
-          return;
-        }
-        ensureTurnstileScript();
+        turnstileEl.dataset.sitekey = siteKey;
       })
       .catch(() => {
-        setTelegramVerifyStatus("Cloudflare check is temporarily unavailable. Please try again shortly.", "error");
-        setMsg("Cloudflare configuration is missing. Please try again shortly.", "error");
+        turnstileEl.dataset.sitekey = "";
+      })
+      .finally(() => {
+        ensureTurnstileScript();
       });
+  } else {
+    ensureTurnstileScript();
   }
 
   const modalStep = root.querySelector("#sf-modal-step");
@@ -369,7 +382,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     2: {
       step: "Step 2",
       title: "Add X + Telegram",
-      copy: "Write both public usernames manually and confirm that you already joined the Telegram community. Approval remains manual before confirmation.",
+      copy: "Write both public usernames manually and confirm that you already joined the Telegram community. This airdrop follows the current project campaign settings.",
       points: [
         "Type your public <strong>X</strong> username.",
         "Type your public <strong>Telegram</strong> username.",
