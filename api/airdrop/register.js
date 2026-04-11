@@ -12,6 +12,22 @@ const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const NONCE_TTL_MS = 5 * 60 * 1000;
 
+function getAirdropApprovedLimit() {
+  const raw = String(process.env.AIRDROP_APPROVED_LIMIT || "100").trim().toLowerCase();
+
+  if (!raw) return 100;
+  if (["0", "off", "false", "unlimited", "none", "no-limit"].includes(raw)) {
+    return 0;
+  }
+
+  const parsed = Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed) || parsed < 0) {
+    return 100;
+  }
+
+  return parsed;
+}
+
 async function verifyTurnstile(token, ip) {
   const form = new FormData();
   form.append("secret", process.env.TURNSTILE_SECRET_KEY);
@@ -28,10 +44,14 @@ async function verifyTurnstile(token, ip) {
 }
 
 function verifyWalletSignature({ wallet, message, signature }) {
-  const publicKey = bs58.decode(wallet);
-  const sigBytes = bs58.decode(signature);
-  const msgBytes = new TextEncoder().encode(message);
-  return nacl.sign.detached.verify(msgBytes, sigBytes, publicKey);
+  try {
+    const publicKey = bs58.decode(wallet);
+    const sigBytes = bs58.decode(signature);
+    const msgBytes = new TextEncoder().encode(message);
+    return nacl.sign.detached.verify(msgBytes, sigBytes, publicKey);
+  } catch {
+    return false;
+  }
 }
 
 function stripSpaces(value) {
@@ -114,6 +134,8 @@ export default async function handler(req, res) {
   }
 
   try {
+    const AIRDROP_APPROVED_LIMIT = getAirdropApprovedLimit();
+
     const {
       wallet,
       telegram_username,
