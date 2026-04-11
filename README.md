@@ -37,14 +37,14 @@ Main active files in the current site:
 ### Airdrop
 
 - Official airdrop amount: **12,500 FIRU** per approved wallet
-- Current campaign limit: **first 100 approved wallets**
+- Current campaign limit is controlled by `AIRDROP_APPROVED_LIMIT` in Vercel
 - Registration is **manual-review based**
 - Telegram in the form is **manual username + confirmation checkbox**, not real-time Telegram verification
 - X in the form is a **manual username field**, not OAuth or live follow verification
 - Claim flow is currently **test/manual**:
   - the claim endpoint marks the row as `claimed` in Supabase
   - token delivery is still handled manually by the operator
-  - approved claims are communicated as manual delivery with up to 7 days after claim
+  - approved claims are communicated as manual delivery after claim, without on-chain automation at this stage
 
 ### Rounds
 
@@ -113,8 +113,11 @@ Important removed/legacy items that must **not** be reintroduced casually:
 ### Required only for the distribution script
 
 - `TOKEN_MINT_ADDRESS`
-- `AIRDROP_APPROVED_LIMIT` (use `100` for the current campaign, or `0` / `off` / `unlimited` for no limit)
 - `TREASURY_PRIVATE_KEY_JSON`
+
+### Airdrop runtime controls
+
+- `AIRDROP_APPROVED_LIMIT` (use `100` for the current campaign, or `0` / `off` / `unlimited` for no limit)
 
 ### Optional but recommended
 

@@ -32,7 +32,6 @@ const bs58 = {
   }
 };
 
-const TURNSTILE_SITE_KEY_FALLBACK = "0x4AAAAAACpwkm3WDkKZBlBv";
 let turnstileSiteKeyPromise = null;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
@@ -51,9 +50,9 @@ async function getTurnstileSiteKey() {
         if (!response.ok) throw new Error(`Config request failed with status ${response.status}`);
         const data = await response.json();
         const siteKey = String(data?.turnstileSiteKey || "").trim();
-        return siteKey || TURNSTILE_SITE_KEY_FALLBACK;
+        return siteKey;
       })
-      .catch(() => TURNSTILE_SITE_KEY_FALLBACK);
+      .catch(() => "");
   }
 
   return turnstileSiteKeyPromise;
@@ -186,7 +185,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
         <div class="sf-steps-head">
           <div>
             <div class="sf-steps-title">Airdrop in 3 simple steps</div>
-            <div class="sf-steps-sub">Clear order: connect wallet first, add your X + Telegram manually, then finish Cloudflare + Register. This campaign is limited to the first 100 approved wallets.</div>
+            <div class="sf-steps-sub">Clear order: connect wallet first, add your X + Telegram manually, then finish Cloudflare + Register. Approval remains manual before confirmation.</div>
           </div>
         </div>
         <div id="sf-steps-grid" class="sf-steps-grid">
@@ -241,7 +240,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <div class="sf-verify-copy">Write your public <strong>X</strong> and <strong>Telegram</strong> usernames manually, then confirm you already joined the community. Review stays manual before approval.</div>
         </div>
         <div id="sf-telegram-verify-status" class="sf-verify-status warn">Telegram will be reviewed manually after registration.</div>
-        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same public @username that you use inside the community. This campaign is limited to the first 100 approved wallets. Any future airdrop campaigns will be announced separately.</div>
+        <div id="sf-telegram-verify-meta" class="sf-verify-meta">Use the same public @username that you use inside the community. Approval is manual and any future airdrop campaign changes will be announced separately.</div>
       </div>
 
       <div class="sf-field">
@@ -271,14 +270,14 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <div class="sf-verify-title">Step 3 · Finish registration</div>
           <div class="sf-verify-copy">Complete Cloudflare and submit your entry. Your X and Telegram usernames stay manual in the previous step.</div>
         </div>
-        <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY_FALLBACK}"></div>
+        <div class="cf-turnstile" data-sitekey=""></div>
         <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register for Airdrop</button>
       </div>
 
       <div id="sf-msg" class="sf-wallet-note info">Step 1: connect and sign your wallet.</div>
       <div id="sf-confirm" class="sf-confirm-card">
         <div class="sf-confirm-title">Airdrop registration confirmed</div>
-        <div class="sf-confirm-copy">Your registration was received successfully and is now pending manual review for this first-100 approved-wallet campaign.</div>
+        <div class="sf-confirm-copy">Your registration was received successfully and is now pending manual review in the current approval campaign.</div>
       </div>
     </div>
 
@@ -336,16 +335,18 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   if (turnstileEl) {
     getTurnstileSiteKey()
       .then((siteKey) => {
-        turnstileEl.dataset.sitekey = siteKey || TURNSTILE_SITE_KEY_FALLBACK;
+        turnstileEl.dataset.sitekey = siteKey || "";
+        if (!siteKey) {
+          setTelegramVerifyStatus("Cloudflare check is temporarily unavailable. Please try again shortly.", "error");
+          setMsg("Cloudflare configuration is missing. Please try again shortly.", "error");
+          return;
+        }
+        ensureTurnstileScript();
       })
       .catch(() => {
-        turnstileEl.dataset.sitekey = TURNSTILE_SITE_KEY_FALLBACK;
-      })
-      .finally(() => {
-        ensureTurnstileScript();
+        setTelegramVerifyStatus("Cloudflare check is temporarily unavailable. Please try again shortly.", "error");
+        setMsg("Cloudflare configuration is missing. Please try again shortly.", "error");
       });
-  } else {
-    ensureTurnstileScript();
   }
 
   const modalStep = root.querySelector("#sf-modal-step");
@@ -368,7 +369,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
     2: {
       step: "Step 2",
       title: "Add X + Telegram",
-      copy: "Write both public usernames manually and confirm that you already joined the Telegram community. This airdrop is limited to the first 100 approved wallets.",
+      copy: "Write both public usernames manually and confirm that you already joined the Telegram community. Approval remains manual before confirmation.",
       points: [
         "Type your public <strong>X</strong> username.",
         "Type your public <strong>Telegram</strong> username.",
