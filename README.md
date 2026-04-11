@@ -107,11 +107,13 @@ Important removed/legacy items that must **not** be reintroduced casually:
 ### Required for the airdrop flow
 
 - `TURNSTILE_SECRET_KEY`
+- `TURNSTILE_SITE_KEY`
 - `AIRDROP_AMOUNT_FIRU`
 
 ### Required only for the distribution script
 
 - `TOKEN_MINT_ADDRESS`
+- `AIRDROP_APPROVED_LIMIT` (use `100` for the current campaign, or `0` / `off` / `unlimited` for no limit)
 - `TREASURY_PRIVATE_KEY_JSON`
 
 ### Optional but recommended
@@ -204,3 +206,6 @@ When updating docs, env files, or deployment notes, keep them aligned with the r
 - `/supabase/schema.sql`
 
 If a future cleanup removes or changes one of those files, update this README in the same patch.
+
+
+Turnstile on the frontend reads the public site key from `/api/public-config`, so future site-key changes can be done in Vercel without editing frontend files.

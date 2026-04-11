@@ -32,7 +32,8 @@ const bs58 = {
   }
 };
 
-const TURNSTILE_SITE_KEY = "0x4AAAAAACpwkm3WDkKZBlBv";
+const TURNSTILE_SITE_KEY_FALLBACK = "0x4AAAAAACpwkm3WDkKZBlBv";
+let turnstileSiteKeyPromise = null;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 import { getAvailableSolanaWallets, getPreferredSolanaProvider, isMobileDevice, openInPreferredWallet, shortAddress } from "./wallet-provider.js";
 
@@ -41,6 +42,21 @@ function getWalletLabel(provider) {
   if (provider?.isBackpack) return "Backpack";
   if (provider?.isSolflare || window.solflare === provider) return "Solflare";
   return "Wallet";
+}
+
+async function getTurnstileSiteKey() {
+  if (!turnstileSiteKeyPromise) {
+    turnstileSiteKeyPromise = fetch("/api/public-config")
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Config request failed with status ${response.status}`);
+        const data = await response.json();
+        const siteKey = String(data?.turnstileSiteKey || "").trim();
+        return siteKey || TURNSTILE_SITE_KEY_FALLBACK;
+      })
+      .catch(() => TURNSTILE_SITE_KEY_FALLBACK);
+  }
+
+  return turnstileSiteKeyPromise;
 }
 
 function normalizeRegistrationError(message) {
@@ -159,7 +175,6 @@ function normalizeXHandle(value) {
 }
 
 export function mountAirdropRegister(selector = "#airdrop-register") {
-  ensureTurnstileScript();
   injectStyles();
 
   const root = document.querySelector(selector);
@@ -256,7 +271,7 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
           <div class="sf-verify-title">Step 3 · Finish registration</div>
           <div class="sf-verify-copy">Complete Cloudflare and submit your entry. Your X and Telegram usernames stay manual in the previous step.</div>
         </div>
-        <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY}"></div>
+        <div class="cf-turnstile" data-sitekey="${TURNSTILE_SITE_KEY_FALLBACK}"></div>
         <button id="sf-register" class="btn btn-gold" type="button" disabled style="opacity:.75;filter:grayscale(.1)">Register for Airdrop</button>
       </div>
 
@@ -316,7 +331,23 @@ export function mountAirdropRegister(selector = "#airdrop-register") {
   const confirmEl = root.querySelector("#sf-confirm");
   const stepCards = Array.from(root.querySelectorAll(".sf-step-card"));
   const modalBackdrop = root.querySelector("#sf-modal-backdrop");
+  const turnstileEl = root.querySelector(".cf-turnstile");
   const modalClose = root.querySelector("#sf-modal-close");
+  if (turnstileEl) {
+    getTurnstileSiteKey()
+      .then((siteKey) => {
+        turnstileEl.dataset.sitekey = siteKey || TURNSTILE_SITE_KEY_FALLBACK;
+      })
+      .catch(() => {
+        turnstileEl.dataset.sitekey = TURNSTILE_SITE_KEY_FALLBACK;
+      })
+      .finally(() => {
+        ensureTurnstileScript();
+      });
+  } else {
+    ensureTurnstileScript();
+  }
+
   const modalStep = root.querySelector("#sf-modal-step");
   const modalTitle = root.querySelector("#sf-modal-title");
   const modalCopy = root.querySelector("#sf-modal-copy");

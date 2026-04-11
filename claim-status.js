@@ -203,7 +203,7 @@ export function mountClaimStatus(selector = "#airdrop-claim-status") {
       <div class="sf-claim-card sf-claim-panel" id="sf-airdrop-claim-card" data-claim-panel="airdrop">
         <div class="sf-claim-eyebrow">Claim Airdrop · Premium</div>
         <h3 class="sf-claim-title">Claim Airdrop with the same wallet</h3>
-        <p class="sf-claim-subtitle">Connect the same wallet from registration. The page checks status first and unlocks claim only for approved wallets. Manual $FIRU delivery is processed after claim and may take up to 7 days.</p>
+        <p class="sf-claim-subtitle">Connect the same wallet from registration. The page checks status first and unlocks claim only for approved wallets. Manual $FIRU delivery is processed after claim through the current project distribution flow.</p>
 
         <div id="sf-claim-steps" class="sf-claim-steps">
           <div class="sf-claim-step active" data-step="1"><div class="sf-claim-step-id">1</div><strong>Connect Wallet</strong><span>Use the same wallet from registration.</span></div>
@@ -323,7 +323,7 @@ function mountAirdropClaim(root) {
           const result = await submitAirdropClaim(claimPayload);
 
           ctaEl.innerHTML = `<div class="sf-btn-disabled" aria-disabled="true">CLAIMED</div>`;
-          setStatusMessage(`<strong>${result.message || "Airdrop claim confirmed."}</strong><br>Claim TX: <code class="sf-claim-code">${result.claimTx || "test-claim"}</code><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong><br>Manual token delivery is processed in batches. Please allow up to <strong>7 days after claim</strong>.`, "ok");
+          setStatusMessage(`<strong>${result.message || "Airdrop claim confirmed."}</strong><br>Claim TX: <code class="sf-claim-code">${result.claimTx || "test-claim"}</code><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong><br>Manual token delivery is processed through the current project distribution flow after claim confirmation.`, "ok");
           setStepState(4, false, true);
         } catch (err) {
           if (submitBtn) {
@@ -400,7 +400,7 @@ function mountAirdropClaim(root) {
 
       if (data.state === "approved") {
         const amountLine = data.airdropAmount ? `<br>Airdrop amount: <strong>${Number(data.airdropAmount).toLocaleString("en-US")} $FIRU</strong>` : "";
-        setStatusMessage(`<strong>${data.message}</strong>${amountLine}<br>Approved airdrop claims are processed manually. Please allow up to <strong>7 days after claim</strong> for manual $FIRU delivery.`, "ok");
+        setStatusMessage(`<strong>${data.message}</strong>${amountLine}<br>Approved airdrop claims are processed manually through the current project distribution flow after claim confirmation.`, "ok");
         setStepState(4, true, false);
       } else if (data.state === "pending") {
         setStatusMessage(`<strong>${data.message}</strong><br>This wallet is registered and still waiting for review.`, "warn");
