@@ -65,14 +65,18 @@ function getRoundTokenCap(roundKey) {
 
 function getRoundConfig(round) {
   const id = String(round || "").toLowerCase();
-  const isRound1 = id === "round1" || id === "1";
-  const key = isRound1 ? "ROUND_1" : id === "round2" || id === "2" ? "ROUND_2" : null;
-  if (!key) return null;
-
+  const match = id.match(/^(?:round)?(\d+)$/);
+  const number = match ? Number(match[1]) : 0;
+  if (!number || number < 1) return null;
+  if (number === 3 && String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() !== "true") return null;
+  if (number > 3) return null;
+  const key = `ROUND_${number}`;
   return {
     key,
-    round: isRound1 ? "round1" : "round2",
-    enabled: String(process.env[`${key}_ENABLED`] || "true").toLowerCase() !== "false",
+    round: `round${number}`,
+    roundNumber: number,
+    label: `Round ${number}`,
+    enabled: String(process.env[`${key}_ENABLED`] || (number === 2 ? "false" : "true")).toLowerCase() !== "false",
     firuPriceUsd: Number(process.env[`${key}_FIRU_PRICE`] || 0),
     tokenCap: getRoundTokenCap(key)
   };
@@ -345,7 +349,7 @@ export default async function handler(req, res) {
     if (roundConfig.tokenCap > 0) {
       if (roundRaisedFiru >= roundConfig.tokenCap - FIRU_EPSILON) {
         return res.status(400).json({
-          error: `${roundConfig.round.toUpperCase()} is sold out`,
+          error: `${roundConfig.label} is sold out`,
           round_status: {
             cap_tokens: Math.round(roundConfig.tokenCap),
             raised_firu: Math.round(roundRaisedFiru),
@@ -357,7 +361,7 @@ export default async function handler(req, res) {
 
       if (firuAllocation > remainingFiruBefore + FIRU_EPSILON) {
         return res.status(400).json({
-          error: `Only ${Math.floor(remainingFiruBefore).toLocaleString("en-US")} FIRU remains in ${roundConfig.round.toUpperCase()}`,
+          error: `Only ${Math.floor(remainingFiruBefore).toLocaleString("en-US")} FIRU remains in ${roundConfig.label}`,
           round_status: {
             cap_tokens: Math.round(roundConfig.tokenCap),
             raised_firu: Math.round(roundRaisedFiru),

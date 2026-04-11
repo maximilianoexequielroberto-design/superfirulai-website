@@ -70,12 +70,20 @@ function getDestinationAddress(symbol, owner, mint) {
   return "";
 }
 
-function getRoundConfig(roundKey) {
-  const envPrefix = roundKey === "round1" ? "ROUND_1" : "ROUND_2";
-  const tokenCap = Number(process.env[`${envPrefix}_TOKEN_CAP`] || 0);
+function getRoundNumber(roundKey) {
+  const match = String(roundKey || "").toLowerCase().match(/^round(\d+)$/);
+  return match ? Number(match[1]) : 0;
+}
 
+function getRoundConfig(roundKey) {
+  const number = getRoundNumber(roundKey);
+  if (!number) return null;
+  const envPrefix = `ROUND_${number}`;
+  const tokenCap = Number(process.env[`${envPrefix}_TOKEN_CAP`] || 0);
   return {
-    enabled: String(process.env[`${envPrefix}_ENABLED`] || "true").toLowerCase() !== "false",
+    key: roundKey,
+    label: `Round ${number}`,
+    enabled: String(process.env[`${envPrefix}_ENABLED`] || (number === 2 ? "false" : "true")).toLowerCase() !== "false",
     firuPriceUsd: Number(process.env[`${envPrefix}_FIRU_PRICE`] || 0),
     tokenCap
   };
@@ -118,13 +126,22 @@ export default async function handler(req, res) {
     const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
     const prices = await getLivePrices();
 
-    const [round1RaisedFiru, round2RaisedFiru] = await Promise.all([
-      getRaisedFiruByRound("round1"),
-      getRaisedFiruByRound("round2")
-    ]);
+    const roundKeys = ["round1", "round2"];
+    const round3Enabled = String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() === "true";
+    if (round3Enabled) roundKeys.push("round3");
 
-    const round1 = getRoundConfig("round1");
-    const round2 = getRoundConfig("round2");
+    const raisedPairs = await Promise.all(roundKeys.map(async (roundKey) => [roundKey, await getRaisedFiruByRound(roundKey)]));
+    const raisedMap = Object.fromEntries(raisedPairs);
+    const rounds = Object.fromEntries(roundKeys.map((roundKey) => {
+      const cfg = getRoundConfig(roundKey);
+      const raisedFiru = Number(raisedMap[roundKey] || 0);
+      return [roundKey, {
+        ...cfg,
+        raisedFiru: Math.round(raisedFiru),
+        remainingFiru: cfg.tokenCap > 0 ? Math.max(Math.round(cfg.tokenCap - raisedFiru), 0) : null,
+        soldOut: cfg.tokenCap > 0 ? raisedFiru >= cfg.tokenCap : false
+      }];
+    }));
 
     const payload = {
       rpcUrl: getPublicRpcUrl(),
@@ -133,20 +150,7 @@ export default async function handler(req, res) {
         minSol: Number(process.env.ROUND_MIN || 0),
         maxSol: Number(process.env.ROUND_MAX || 0)
       },
-      rounds: {
-        round1: {
-          ...round1,
-          raisedFiru: Math.round(round1RaisedFiru),
-          remainingFiru: round1.tokenCap > 0 ? Math.max(Math.round(round1.tokenCap - round1RaisedFiru), 0) : null,
-          soldOut: round1.tokenCap > 0 ? round1RaisedFiru >= round1.tokenCap : false
-        },
-        round2: {
-          ...round2,
-          raisedFiru: Math.round(round2RaisedFiru),
-          remainingFiru: round2.tokenCap > 0 ? Math.max(Math.round(round2.tokenCap - round2RaisedFiru), 0) : null,
-          soldOut: round2.tokenCap > 0 ? round2RaisedFiru >= round2.tokenCap : false
-        }
-      },
+      rounds,
       tokens: [
         {
           symbol: "SOL",
