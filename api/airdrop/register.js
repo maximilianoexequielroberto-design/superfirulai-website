@@ -12,21 +12,22 @@ const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const NONCE_TTL_MS = 5 * 60 * 1000;
 
-function getAirdropApprovedLimit() {
-  const raw = String(process.env.AIRDROP_APPROVED_LIMIT || "100").trim().toLowerCase();
-
-  if (!raw) return 100;
-  if (["0", "off", "false", "unlimited", "none", "no-limit"].includes(raw)) {
+function resolveAirdropApprovedLimit(value) {
+  const normalized = String(value ?? "100").trim().toLowerCase();
+  if (!normalized) return 100;
+  if (["0", "off", "false", "unlimited", "none", "no-limit"].includes(normalized)) {
     return 0;
   }
 
-  const parsed = Number.parseInt(raw, 10);
+  const parsed = Number(normalized);
   if (!Number.isFinite(parsed) || parsed < 0) {
     return 100;
   }
 
-  return parsed;
+  return Math.floor(parsed);
 }
+
+const AIRDROP_APPROVED_LIMIT = resolveAirdropApprovedLimit(process.env.AIRDROP_APPROVED_LIMIT);
 
 async function verifyTurnstile(token, ip) {
   const form = new FormData();
@@ -134,8 +135,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    const AIRDROP_APPROVED_LIMIT = getAirdropApprovedLimit();
-
     const {
       wallet,
       telegram_username,
