@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-const DEFAULT_HOLDERS = 2418;
+const DEFAULT_HOLDERS = 0;
 const DEFAULT_X_FOLLOWERS = 61;
 const DEFAULT_TELEGRAM_MEMBERS = 24;
 const DEFAULT_TOTAL_SUPPLY = 1000000000;
