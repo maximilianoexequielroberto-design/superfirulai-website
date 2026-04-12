@@ -1197,15 +1197,16 @@
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .hero-stage{height:100svh;min-height:0;aspect-ratio:auto}
-      .hero-desktop-image{display:block;background-size:contain;background-position:center top}
+      .hero-stage{height:auto;min-height:0;aspect-ratio:2048 / 1365}
+      .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
       .hero-launch-strip{
         left:34px;
         right:auto;
         bottom:34px;
-        width:min(760px,calc(100% - 380px));
+        width:calc(100% - 68px);
+        max-width:none;
         grid-template-columns:repeat(4,minmax(0,1fr));
         gap:10px
       }
@@ -1241,7 +1242,7 @@
     }
 
     @media(min-width:860px) and (max-aspect-ratio:3/2){
-      .hero-desktop-image{background-size:contain;background-position:center top;}
+      .hero-desktop-image{background-size:100% auto;background-position:center top;}
     }
   
     .phase-card.is-active{border-color:rgba(255,216,77,.34);background:linear-gradient(180deg, rgba(255,216,77,.14), rgba(255,255,255,.04));box-shadow:0 0 0 1px rgba(255,216,77,.08) inset}
