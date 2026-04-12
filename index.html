@@ -1019,11 +1019,7 @@
     .asset-img-btn{display:block; background:transparent; border:0; padding:0; line-height:0; cursor:pointer; pointer-events:auto}
     .asset-img-btn img{display:block; width:100%; height:auto; filter:drop-shadow(0 10px 18px rgba(0,0,0,.30));}
 
-    
-    @media(min-width:860px){
-      .asset-img-btn img{height:132px;width:auto;max-width:none}
-    }
-dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
+    dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;padding:0;background:transparent;color:inherit}
     dialog::backdrop{background:rgba(4,8,18,.62);backdrop-filter:blur(8px)}
     .dialog-shell{
       padding:22px;border-radius:28px;background:linear-gradient(180deg,rgba(8,15,37,.98),rgba(5,12,29,.98));
@@ -1201,21 +1197,8 @@ dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;pa
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .hero-stage{
-        height:auto;
-        min-height:0;
-        aspect-ratio:auto;
-        overflow:visible;
-      }
-      .hero-desktop-image{
-        display:block;
-        position:relative;
-        inset:auto;
-        width:100%;
-        aspect-ratio:2048 / 1365;
-        background-size:contain;
-        background-position:center top;
-      }
+      .hero-stage{height:100svh;min-height:0;aspect-ratio:auto}
+      .hero-desktop-image{display:block;background-size:contain;background-position:center top}
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
       .hero-launch-strip{
@@ -1234,9 +1217,9 @@ dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;pa
         flex-direction:column;
         position:absolute;
         right:18px;
-        top:96px;
+        top:88px;
         z-index:1406;
-        gap:10px;
+        gap:8px;
         align-items:flex-end;
         pointer-events:none
       }
@@ -1253,12 +1236,12 @@ dialog{max-width:760px;width:calc(100% - 24px);border:none;border-radius:30px;pa
 
     @media (min-width: 1360px){
       .mobile-top-links{right:168px}
-      .hero-assets-desktop{right:18px;top:104px;gap:8px}
-      .asset-img-btn img{height:148px}
+      .hero-assets-desktop{right:18px;top:92px;gap:6px}
+      .asset-img-btn img{height:118px}
     }
 
     @media(min-width:860px) and (max-aspect-ratio:3/2){
-      .hero-desktop-image{background-size:100% auto;background-position:center top;}
+      .hero-desktop-image{background-size:contain;background-position:center top;}
     }
   
     .phase-card.is-active{border-color:rgba(255,216,77,.34);background:linear-gradient(180deg, rgba(255,216,77,.14), rgba(255,255,255,.04));box-shadow:0 0 0 1px rgba(255,216,77,.08) inset}
