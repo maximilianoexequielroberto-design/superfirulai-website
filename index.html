@@ -1309,7 +1309,11 @@
       .tokenomics-premium::after{
         inset:0;
         right:auto;
-        background:linear-gradient(120deg,rgba(255,255,255,.03),transparent 40%,rgba(255,208,96,.04));
+        background:
+          radial-gradient(circle at 16% 18%, rgba(255,255,255,.018), transparent 26%),
+          radial-gradient(circle at 84% 16%, rgba(255,208,96,.030), transparent 24%),
+          radial-gradient(circle at 22% 82%, rgba(41,145,255,.018), transparent 28%),
+          linear-gradient(180deg, rgba(255,255,255,.010), rgba(255,255,255,0) 38%, rgba(255,255,255,.006) 100%);
         animation:none;
       }
       .desktop-side-stars{
