@@ -1058,6 +1058,47 @@
     .buy-premium-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
     .buy-premium-actions button{min-width:160px}
 
+
+    .tokenomics-assets-desktop{display:none}
+    .tokenomics-assets-side{display:flex;align-items:center;gap:10px;pointer-events:none}
+    .tokenomics-assets-side.is-right{justify-content:flex-end}
+    .tokenomics-asset-img-btn{
+      display:block;
+      background:transparent;
+      border:0;
+      padding:0;
+      line-height:0;
+      cursor:pointer;
+      pointer-events:auto;
+      border-radius:20px;
+      transform:translate3d(0,0,0);
+      will-change:transform,filter;
+    }
+    .tokenomics-asset-img-btn img{
+      display:block;
+      width:auto;
+      height:78px;
+      filter:drop-shadow(0 12px 22px rgba(0,0,0,.24));
+      transition:transform .22s ease,filter .22s ease;
+    }
+    .tokenomics-asset-img-btn:hover{transform:translateY(-4px) scale(1.02)}
+    .tokenomics-asset-img-btn:hover img{
+      filter:drop-shadow(0 18px 28px rgba(0,0,0,.30)) brightness(1.04);
+    }
+    @keyframes sfAssetFloatA{
+      0%,100%{transform:translate3d(0,0,0)}
+      50%{transform:translate3d(0,-5px,0)}
+    }
+    @keyframes sfAssetFloatB{
+      0%,100%{transform:translate3d(0,-2px,0)}
+      50%{transform:translate3d(0,3px,0)}
+    }
+    @keyframes sfAssetGlow{
+      0%,100%{filter:drop-shadow(0 12px 22px rgba(0,0,0,.24))}
+      50%{filter:drop-shadow(0 16px 28px rgba(255,208,96,.12))}
+    }
+
+
     @media(max-width:640px){
       .view[data-view="home"] .stack{gap:26px}
       .tokenomics-premium{padding:24px 16px 58px;border-radius:28px;margin-bottom:34px}
@@ -1212,16 +1253,29 @@
       .hero-launch-chip{min-height:66px;padding:12px 14px;border-radius:20px}
       .hero-launch-chip strong{font-size:14px}
       .hero-launch-chip span{font-size:10px}
-      .hero-assets-desktop{
-        display:flex;
-        flex-direction:column;
+      .hero-assets-desktop{display:none !important}
+      .tokenomics-premium-inner{position:relative}
+      .tokenomics-assets-desktop{
+        display:grid;
+        grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+        align-items:start;
+        gap:16px;
         position:absolute;
+        left:18px;
         right:18px;
-        top:88px;
-        z-index:1406;
-        gap:8px;
-        align-items:flex-end;
+        top:18px;
+        z-index:2;
         pointer-events:none
+      }
+      .tokenomics-assets-side.is-left{justify-content:flex-start}
+      .tokenomics-assets-side.is-right{justify-content:flex-end}
+      .tokenomics-premium-top{padding-top:96px}
+      .tokenomics-asset-img-btn img{height:76px}
+      .tokenomics-assets-side .tokenomics-asset-img-btn:nth-child(odd){
+        animation:sfAssetFloatA 5.4s ease-in-out infinite, sfAssetGlow 5.8s ease-in-out infinite
+      }
+      .tokenomics-assets-side .tokenomics-asset-img-btn:nth-child(even){
+        animation:sfAssetFloatB 6.1s ease-in-out infinite, sfAssetGlow 6.4s ease-in-out infinite
       }
       .bottom-nav{display:none}
       .metrics-highlight{grid-template-columns:minmax(0,1.12fr) minmax(300px,.88fr)}
@@ -1236,7 +1290,9 @@
 
     @media (min-width: 1360px){
       .mobile-top-links{right:168px}
-      .hero-assets-desktop{right:18px;top:92px;gap:6px}
+      .tokenomics-assets-desktop{left:22px;right:22px;top:22px}
+      .tokenomics-premium-top{padding-top:104px}
+      .tokenomics-asset-img-btn img{height:84px}
       .asset-img-btn img{height:118px}
     }
 
@@ -1365,6 +1421,17 @@
 
           <section class="tokenomics-premium section-shortcut-target" id="tokenomics-section" aria-labelledby="tokenomics-premium-title">
             <div class="tokenomics-premium-inner">
+              <div class="tokenomics-assets-desktop" aria-label="Premium shortcut assets desktop">
+                <div class="tokenomics-assets-side is-left">
+                  <a class="tokenomics-asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="X button"></a>
+                  <a class="tokenomics-asset-img-btn" href="https://t.me/superfirulai" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Official Telegram Channel"></a>
+                </div>
+                <div class="tokenomics-assets-side is-right">
+                  <button class="tokenomics-asset-img-btn" type="button" data-view-btn="register"><img src="./register-airdrop.png" alt="Register Airdrop"></button>
+                  <button class="tokenomics-asset-img-btn" type="button" data-view-btn="buy"><img src="./buy-firu.png" alt="Buy $FIRU"></button>
+                </div>
+              </div>
+
               <div class="tokenomics-premium-top">
                 <div class="eyebrow"><span></span> Tokenomics · Premium allocation</div>
                 <h2 id="tokenomics-premium-title">Premium tokenomics, clear at a glance.</h2>
