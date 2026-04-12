@@ -1197,19 +1197,14 @@
       .view:not([data-view="home"]){padding-top:112px}
       .asset-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
       .quick-action-row{grid-template-columns:repeat(3,minmax(0,1fr))}
-      .hero-stage{
-        height:min(100svh,calc(100vw * 1440 / 2560));
-        min-height:720px;
-        max-height:1440px;
-        aspect-ratio:2560 / 1440;
-      }
-      .hero-desktop-image{display:block;background-size:cover;background-position:center top}
+      .hero-stage{height:auto;min-height:0;aspect-ratio:2048 / 1365}
+      .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
       .hero-mobile-image{display:none}
       .hero-assets{display:none}
       .hero-launch-strip{
         left:34px;
         right:auto;
-        bottom:150px;
+        bottom:174px;
         width:min(760px,calc(100% - 380px));
         grid-template-columns:repeat(4,minmax(0,1fr));
         gap:10px
@@ -1246,7 +1241,7 @@
     }
 
     @media(min-width:860px) and (max-aspect-ratio:3/2){
-      .hero-desktop-image{background-size:cover;background-position:center top;}
+      .hero-desktop-image{background-size:100% auto;background-position:center top;}
     }
   
     .phase-card.is-active{border-color:rgba(255,216,77,.34);background:linear-gradient(180deg, rgba(255,216,77,.14), rgba(255,255,255,.04));box-shadow:0 0 0 1px rgba(255,216,77,.08) inset}
@@ -1452,7 +1447,7 @@
                       <strong class="metric-hero-value" id="metricHolders">0</strong>
                       <strong>Official holders</strong>
                     </div>
-                    <p>This metric stays at 0 before launch and switches to live on-chain holder tracking after the official $FIRU mint is configured in Vercel.</p>
+                    <p>This metric stays at 0 during prelaunch and only switches to live on-chain holder tracking after the project stage moves beyond prelaunch and the official $FIRU mint is configured in Vercel.</p>
                   </div>
                 </div>
               </div>
@@ -1656,7 +1651,7 @@
                 <button type="button" data-open="socialDialog">Official channels</button>
               </div>
             </div>
-            <div class="summary-note">Approved wallets only · same wallet required · manual $FIRU delivery follows the current project distribution flow after claim.</div>
+            <div class="summary-note" id="claimSummaryNote">Approved wallets only · same wallet required · manual $FIRU delivery follows the current project distribution flow after claim.</div>
           </div>
           <div class="card"><div id="airdrop-claim-status"></div></div>
         </div>
@@ -2325,12 +2320,9 @@
     }
 
     async function loadCommunityStats() {
-      const holdersEl = document.getElementById("metricHolders");
-      const holdersElSecondary = document.getElementById("metricHoldersSecondary");
-      const telegramEl = document.getElementById("metricTelegram");
-      const telegramElSecondary = document.getElementById("metricTelegramSecondary");
-      const xEl = document.getElementById("metricX");
-      const xElSecondary = document.getElementById("metricXSecondary");
+      const holdersEls = [document.getElementById("metricHolders")].filter(Boolean);
+      const telegramEls = [document.getElementById("metricTelegramSecondary")].filter(Boolean);
+      const xEls = [document.getElementById("metricXSecondary")].filter(Boolean);
       const supplyEl = document.getElementById("metricSupply");
 
       try {
@@ -2340,18 +2332,21 @@
 
         if (Number.isFinite(Number(data.holders))) {
           const holdersValue = Number(data.holders).toLocaleString("en-US");
-          if (holdersEl) holdersEl.textContent = holdersValue;
-          if (holdersElSecondary) holdersElSecondary.textContent = holdersValue;
+          holdersEls.forEach((el) => {
+            el.textContent = holdersValue;
+          });
         }
         if (Number.isFinite(Number(data.telegramMembers))) {
           const telegramValue = Number(data.telegramMembers).toLocaleString("en-US");
-          if (telegramEl) telegramEl.textContent = telegramValue;
-          if (telegramElSecondary) telegramElSecondary.textContent = telegramValue;
+          telegramEls.forEach((el) => {
+            el.textContent = telegramValue;
+          });
         }
         if (Number.isFinite(Number(data.xFollowers))) {
           const xValue = Number(data.xFollowers).toLocaleString("en-US");
-          if (xEl) xEl.textContent = xValue;
-          if (xElSecondary) xElSecondary.textContent = xValue;
+          xEls.forEach((el) => {
+            el.textContent = xValue;
+          });
         }
         if (supplyEl && Number.isFinite(Number(data.totalSupply))) {
           supplyEl.textContent = formatCompactNumber(Number(data.totalSupply));
