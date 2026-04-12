@@ -164,7 +164,7 @@ Important removed/legacy items that must **not** be reintroduced casually:
 
 - Telegram member count can be read live through `/api/community-stats.js` using `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`
 - X count is treated as manual unless the project explicitly restores a paid/live integration later
-- holders count can come from live RPC or configured fallback values
+- holders count stays locked at 0 during `PROJECT_STAGE=prelaunch`; after launch it can come from live RPC or configured fallback values
 
 ## Distribution script note
 
