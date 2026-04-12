@@ -1068,7 +1068,7 @@
 
 
     .tokenomics-assets-desktop{display:none}
-    .tokenomics-assets-side{display:flex;align-items:center;gap:10px;pointer-events:none}
+    .tokenomics-assets-side{display:flex;align-items:center;gap:14px;pointer-events:none}
     .tokenomics-assets-side.is-right{justify-content:flex-end}
     .tokenomics-asset-img-btn{
       display:block;
@@ -1210,6 +1210,11 @@
       .tokenomics-distribution{grid-template-columns:repeat(2,minmax(0,1fr))}
       .tokenomics-rounds{grid-template-columns:repeat(2,minmax(0,1fr))}
       body::before{background-image:url("hero-desktop-image.png?v=hero-desktop-image-v4-20260328")}
+      body::after{
+        background:
+          radial-gradient(circle at 50% 0%,rgba(41,145,255,.035),transparent 36%),
+          linear-gradient(180deg,rgba(4,9,24,.12),rgba(4,9,24,.94) 48%);
+      }
       .topbar{padding:0 18px}
       .topbar-inner{position:relative;justify-content:flex-start;min-height:58px}
       .float-btn{margin-left:-4px}
@@ -1389,7 +1394,7 @@
       .tokenomics-assets-side.is-left{justify-content:flex-start}
       .tokenomics-assets-side.is-right{justify-content:flex-end}
       .tokenomics-premium-top{padding-top:122px}
-      .tokenomics-asset-img-btn img{height:99px}
+      .tokenomics-asset-img-btn img{height:114px}
       .tokenomics-assets-side .tokenomics-asset-img-btn:nth-child(odd){
         animation:sfAssetFloatA 5.4s ease-in-out infinite, sfAssetGlow 5.8s ease-in-out infinite
       }
