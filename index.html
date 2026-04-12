@@ -838,38 +838,43 @@
     .tokenomics-premium-inner::after{
       content:"";
       position:absolute;
-      top:20px;
-      bottom:20px;
-      width:170px;
+      top:24px;
+      bottom:24px;
+      width:138px;
       pointer-events:none;
       z-index:0;
-      opacity:.72;
+      opacity:.92;
+      background-repeat:no-repeat;
+      mix-blend-mode:screen;
     }
     .tokenomics-premium-inner::before{
-      left:12px;
+      left:14px;
       background:
-        radial-gradient(circle at 20px 52px, rgba(255,255,255,.34) 0 1.1px, transparent 1.9px),
-        radial-gradient(circle at 56px 110px, rgba(111,198,255,.24) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 96px 44px, rgba(255,220,150,.26) 0 1.3px, transparent 2.1px),
-        radial-gradient(circle at 128px 138px, rgba(255,255,255,.18) 0 1px, transparent 1.8px),
-        radial-gradient(circle at 78px 210px, rgba(120,198,255,.16) 0 1px, transparent 2px),
-        radial-gradient(circle at 0% 32%, rgba(47,126,255,.16), transparent 56%),
-        radial-gradient(circle at 16% 72%, rgba(255,208,96,.12), transparent 48%);
-      filter:blur(.1px);
-      animation:sfSideAtmosphereLeft 10.5s ease-in-out infinite;
+        radial-gradient(circle at 16px 36px, rgba(255,255,255,.72) 0 1.2px, transparent 2.2px),
+        radial-gradient(circle at 38px 118px, rgba(120,198,255,.52) 0 1.3px, transparent 2.3px),
+        radial-gradient(circle at 92px 62px, rgba(255,222,158,.58) 0 1.4px, transparent 2.4px),
+        radial-gradient(circle at 118px 152px, rgba(255,255,255,.42) 0 1.2px, transparent 2.1px),
+        radial-gradient(circle at 76px 214px, rgba(120,198,255,.34) 0 1.1px, transparent 2.1px),
+        radial-gradient(circle at 52px 276px, rgba(255,220,150,.36) 0 1.2px, transparent 2.2px),
+        radial-gradient(circle at 28px 332px, rgba(255,255,255,.28) 0 1px, transparent 2px),
+        radial-gradient(circle at 96px 384px, rgba(120,198,255,.28) 0 1px, transparent 2px),
+        radial-gradient(circle at 44px 70%, rgba(37,122,255,.12) 0 18px, transparent 42px),
+        radial-gradient(circle at 18px 84%, rgba(255,208,96,.10) 0 14px, transparent 34px);
+      animation:sfSideAtmosphereLeft 11s ease-in-out infinite;
     }
     .tokenomics-premium-inner::after{
-      right:12px;
+      right:14px;
       background:
-        radial-gradient(circle at 148px 58px, rgba(255,255,255,.30) 0 1.1px, transparent 1.9px),
-        radial-gradient(circle at 112px 120px, rgba(111,198,255,.22) 0 1.2px, transparent 2px),
-        radial-gradient(circle at 78px 36px, rgba(255,220,150,.24) 0 1.3px, transparent 2.1px),
-        radial-gradient(circle at 38px 148px, rgba(255,255,255,.18) 0 1px, transparent 1.8px),
-        radial-gradient(circle at 92px 214px, rgba(120,198,255,.14) 0 1px, transparent 2px),
-        radial-gradient(circle at 100% 30%, rgba(255,208,96,.14), transparent 52%),
-        radial-gradient(circle at 84% 76%, rgba(47,126,255,.15), transparent 50%);
-      filter:blur(.1px);
-      animation:sfSideAtmosphereRight 12s ease-in-out infinite;
+        radial-gradient(circle at 122px 42px, rgba(255,255,255,.68) 0 1.2px, transparent 2.2px),
+        radial-gradient(circle at 94px 126px, rgba(120,198,255,.50) 0 1.3px, transparent 2.3px),
+        radial-gradient(circle at 52px 64px, rgba(255,222,158,.56) 0 1.4px, transparent 2.4px),
+        radial-gradient(circle at 24px 172px, rgba(255,255,255,.42) 0 1.2px, transparent 2.1px),
+        radial-gradient(circle at 68px 236px, rgba(120,198,255,.34) 0 1.1px, transparent 2.1px),
+        radial-gradient(circle at 104px 302px, rgba(255,220,150,.34) 0 1.2px, transparent 2.2px),
+        radial-gradient(circle at 40px 360px, rgba(255,255,255,.26) 0 1px, transparent 2px),
+        radial-gradient(circle at 86px 82%, rgba(255,208,96,.10) 0 15px, transparent 34px),
+        radial-gradient(circle at 118px 68%, rgba(37,122,255,.11) 0 18px, transparent 40px);
+      animation:sfSideAtmosphereRight 12.5s ease-in-out infinite;
     }
     .tokenomics-premium-inner > *{position:relative;z-index:1}
     .tokenomics-premium-top{display:grid;gap:10px}
