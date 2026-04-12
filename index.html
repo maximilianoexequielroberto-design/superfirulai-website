@@ -836,53 +836,7 @@
     .tokenomics-premium-inner{position:relative;z-index:1;display:grid;gap:16px}
     .tokenomics-premium-inner::before,
     .tokenomics-premium-inner::after{
-      content:"";
-      position:absolute;
-      top:20px;
-      bottom:20px;
-      width:176px;
-      pointer-events:none;
-      z-index:0;
-      opacity:1;
-      background-repeat:no-repeat;
-      mix-blend-mode:screen;
-      filter:drop-shadow(0 0 8px rgba(255,214,128,.10)) drop-shadow(0 0 10px rgba(92,168,255,.08));
-    }
-    .tokenomics-premium-inner::before{
-      left:10px;
-      background:
-        radial-gradient(circle at 20px 32px, rgba(255,255,255,.92) 0 1.9px, transparent 3.1px),
-        radial-gradient(circle at 54px 72px, rgba(140,208,255,.78) 0 1.8px, transparent 3px),
-        radial-gradient(circle at 110px 44px, rgba(255,225,168,.82) 0 2px, transparent 3.2px),
-        radial-gradient(circle at 144px 108px, rgba(255,255,255,.64) 0 1.7px, transparent 2.9px),
-        radial-gradient(circle at 82px 146px, rgba(130,204,255,.56) 0 1.6px, transparent 2.8px),
-        radial-gradient(circle at 36px 188px, rgba(255,221,155,.52) 0 1.6px, transparent 2.8px),
-        radial-gradient(circle at 126px 228px, rgba(255,255,255,.50) 0 1.5px, transparent 2.7px),
-        radial-gradient(circle at 62px 266px, rgba(130,204,255,.50) 0 1.5px, transparent 2.7px),
-        radial-gradient(circle at 28px 322px, rgba(255,245,220,.44) 0 1.4px, transparent 2.6px),
-        radial-gradient(circle at 118px 372px, rgba(140,208,255,.42) 0 1.4px, transparent 2.6px),
-        radial-gradient(circle at 92px 418px, rgba(255,225,168,.40) 0 1.4px, transparent 2.5px),
-        radial-gradient(circle at 50px 18%, rgba(45,128,255,.18) 0 26px, transparent 58px),
-        radial-gradient(circle at 24px 82%, rgba(255,208,96,.16) 0 20px, transparent 46px);
-      animation:sfSideAtmosphereLeft 11s ease-in-out infinite;
-    }
-    .tokenomics-premium-inner::after{
-      right:10px;
-      background:
-        radial-gradient(circle at 154px 34px, rgba(255,255,255,.90) 0 1.9px, transparent 3.1px),
-        radial-gradient(circle at 118px 76px, rgba(140,208,255,.76) 0 1.8px, transparent 3px),
-        radial-gradient(circle at 62px 46px, rgba(255,225,168,.80) 0 2px, transparent 3.2px),
-        radial-gradient(circle at 34px 112px, rgba(255,255,255,.64) 0 1.7px, transparent 2.9px),
-        radial-gradient(circle at 98px 154px, rgba(130,204,255,.56) 0 1.6px, transparent 2.8px),
-        radial-gradient(circle at 142px 196px, rgba(255,221,155,.52) 0 1.6px, transparent 2.8px),
-        radial-gradient(circle at 70px 236px, rgba(255,255,255,.48) 0 1.5px, transparent 2.7px),
-        radial-gradient(circle at 128px 286px, rgba(130,204,255,.48) 0 1.5px, transparent 2.7px),
-        radial-gradient(circle at 44px 338px, rgba(255,245,220,.42) 0 1.4px, transparent 2.6px),
-        radial-gradient(circle at 96px 390px, rgba(140,208,255,.40) 0 1.4px, transparent 2.6px),
-        radial-gradient(circle at 132px 442px, rgba(255,225,168,.38) 0 1.4px, transparent 2.5px),
-        radial-gradient(circle at 146px 22%, rgba(45,128,255,.18) 0 24px, transparent 56px),
-        radial-gradient(circle at 132px 78%, rgba(255,208,96,.16) 0 20px, transparent 46px);
-      animation:sfSideAtmosphereRight 12.5s ease-in-out infinite;
+      content:none;
     }
     .tokenomics-premium-inner > *{position:relative;z-index:1}
     .tokenomics-premium-top{display:grid;gap:10px}
@@ -1149,12 +1103,12 @@
       50%{filter:drop-shadow(0 16px 28px rgba(255,208,96,.12))}
     }
     @keyframes sfSideAtmosphereLeft{
-      0%,100%{transform:translate3d(0,0,0);opacity:.66}
-      50%{transform:translate3d(4px,-3px,0);opacity:.82}
+      0%,100%{transform:translate3d(0,0,0);opacity:.74}
+      50%{transform:translate3d(6px,-4px,0);opacity:.96}
     }
     @keyframes sfSideAtmosphereRight{
-      0%,100%{transform:translate3d(0,0,0);opacity:.64}
-      50%{transform:translate3d(-5px,4px,0);opacity:.80}
+      0%,100%{transform:translate3d(0,0,0);opacity:.72}
+      50%{transform:translate3d(-6px,5px,0);opacity:.94}
     }
 
 
@@ -1313,6 +1267,54 @@
       .hero-launch-chip strong{font-size:14px}
       .hero-launch-chip span{font-size:10px}
       .hero-assets-desktop{display:none !important}
+      .tokenomics-premium{
+        overflow:visible;
+      }
+      .tokenomics-premium::before,
+      .tokenomics-premium::after{
+        content:"";
+        position:absolute;
+        top:10px;
+        bottom:10px;
+        width:calc((100vw - 100%) / 2);
+        min-width:90px;
+        max-width:320px;
+        pointer-events:none;
+        z-index:0;
+        background-repeat:no-repeat;
+        mix-blend-mode:screen;
+        filter:drop-shadow(0 0 8px rgba(255,214,128,.12)) drop-shadow(0 0 12px rgba(92,168,255,.10));
+      }
+      .tokenomics-premium::before{
+        left:calc((100vw - 100%) / -2);
+        background:
+          radial-gradient(circle at 24px 56px, rgba(255,255,255,.98) 0 2px, transparent 3.6px),
+          radial-gradient(circle at 74px 116px, rgba(140,208,255,.84) 0 1.9px, transparent 3.4px),
+          radial-gradient(circle at 126px 188px, rgba(255,225,168,.82) 0 1.9px, transparent 3.4px),
+          radial-gradient(circle at 48px 276px, rgba(255,255,255,.72) 0 1.8px, transparent 3.3px),
+          radial-gradient(circle at 138px 342px, rgba(130,204,255,.64) 0 1.7px, transparent 3.1px),
+          radial-gradient(circle at 86px 422px, rgba(255,221,155,.60) 0 1.7px, transparent 3px),
+          radial-gradient(circle at 30px 508px, rgba(255,255,255,.54) 0 1.6px, transparent 2.9px),
+          radial-gradient(circle at 118px 592px, rgba(130,204,255,.48) 0 1.5px, transparent 2.8px),
+          radial-gradient(circle at 54px 34%, rgba(45,128,255,.18) 0 28px, transparent 62px),
+          radial-gradient(circle at 34px 78%, rgba(255,208,96,.16) 0 22px, transparent 52px);
+        animation:sfSideAtmosphereLeft 12s ease-in-out infinite;
+      }
+      .tokenomics-premium::after{
+        right:calc((100vw - 100%) / -2);
+        background:
+          radial-gradient(circle at calc(100% - 24px) 62px, rgba(255,255,255,.98) 0 2px, transparent 3.6px),
+          radial-gradient(circle at calc(100% - 74px) 124px, rgba(140,208,255,.84) 0 1.9px, transparent 3.4px),
+          radial-gradient(circle at calc(100% - 126px) 196px, rgba(255,225,168,.82) 0 1.9px, transparent 3.4px),
+          radial-gradient(circle at calc(100% - 48px) 284px, rgba(255,255,255,.72) 0 1.8px, transparent 3.3px),
+          radial-gradient(circle at calc(100% - 138px) 350px, rgba(130,204,255,.64) 0 1.7px, transparent 3.1px),
+          radial-gradient(circle at calc(100% - 86px) 430px, rgba(255,221,155,.60) 0 1.7px, transparent 3px),
+          radial-gradient(circle at calc(100% - 30px) 516px, rgba(255,255,255,.54) 0 1.6px, transparent 2.9px),
+          radial-gradient(circle at calc(100% - 118px) 600px, rgba(130,204,255,.48) 0 1.5px, transparent 2.8px),
+          radial-gradient(circle at calc(100% - 54px) 34%, rgba(45,128,255,.18) 0 28px, transparent 62px),
+          radial-gradient(circle at calc(100% - 34px) 78%, rgba(255,208,96,.16) 0 22px, transparent 52px);
+        animation:sfSideAtmosphereRight 13s ease-in-out infinite;
+      }
       .tokenomics-premium-inner{position:relative}
       .tokenomics-assets-desktop{
         display:grid;
