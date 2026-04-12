@@ -347,7 +347,7 @@ create table if not exists public.round_registrations (
   created_at timestamptz not null default now(),
 
   constraint round_registrations_tx_unique unique (tx_hash),
-  constraint round_registrations_round_check check (round in ('round1', 'round2')),
+  constraint round_registrations_round_check check (round in ('round1', 'round2', 'round3')),
   constraint round_registrations_payment_token_check check (
     payment_token is null
     or payment_token in ('SOL', 'USDT', 'USDC')
@@ -395,6 +395,13 @@ alter table public.round_registrations
 
 alter table public.round_registrations
   alter column delivery_status set default 'pending';
+
+alter table public.round_registrations
+  drop constraint if exists round_registrations_round_check;
+
+alter table public.round_registrations
+  add constraint round_registrations_round_check
+  check (round in ('round1', 'round2', 'round3'));
 
 update public.round_registrations
 set payment_token = 'SOL'
