@@ -401,7 +401,9 @@ alter table public.round_registrations
 
 alter table public.round_registrations
   add constraint round_registrations_round_check
-  check (round in ('round1', 'round2', 'round3'));
+  check (
+    round in ('round1', 'round2', 'round3')
+  );
 
 update public.round_registrations
 set payment_token = 'SOL'
