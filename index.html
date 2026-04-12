@@ -834,6 +834,44 @@
       z-index:0;
     }
     .tokenomics-premium-inner{position:relative;z-index:1;display:grid;gap:16px}
+    .tokenomics-premium-inner::before,
+    .tokenomics-premium-inner::after{
+      content:"";
+      position:absolute;
+      top:20px;
+      bottom:20px;
+      width:170px;
+      pointer-events:none;
+      z-index:0;
+      opacity:.72;
+    }
+    .tokenomics-premium-inner::before{
+      left:12px;
+      background:
+        radial-gradient(circle at 20px 52px, rgba(255,255,255,.34) 0 1.1px, transparent 1.9px),
+        radial-gradient(circle at 56px 110px, rgba(111,198,255,.24) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 96px 44px, rgba(255,220,150,.26) 0 1.3px, transparent 2.1px),
+        radial-gradient(circle at 128px 138px, rgba(255,255,255,.18) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 78px 210px, rgba(120,198,255,.16) 0 1px, transparent 2px),
+        radial-gradient(circle at 0% 32%, rgba(47,126,255,.16), transparent 56%),
+        radial-gradient(circle at 16% 72%, rgba(255,208,96,.12), transparent 48%);
+      filter:blur(.1px);
+      animation:sfSideAtmosphereLeft 10.5s ease-in-out infinite;
+    }
+    .tokenomics-premium-inner::after{
+      right:12px;
+      background:
+        radial-gradient(circle at 148px 58px, rgba(255,255,255,.30) 0 1.1px, transparent 1.9px),
+        radial-gradient(circle at 112px 120px, rgba(111,198,255,.22) 0 1.2px, transparent 2px),
+        radial-gradient(circle at 78px 36px, rgba(255,220,150,.24) 0 1.3px, transparent 2.1px),
+        radial-gradient(circle at 38px 148px, rgba(255,255,255,.18) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 92px 214px, rgba(120,198,255,.14) 0 1px, transparent 2px),
+        radial-gradient(circle at 100% 30%, rgba(255,208,96,.14), transparent 52%),
+        radial-gradient(circle at 84% 76%, rgba(47,126,255,.15), transparent 50%);
+      filter:blur(.1px);
+      animation:sfSideAtmosphereRight 12s ease-in-out infinite;
+    }
+    .tokenomics-premium-inner > *{position:relative;z-index:1}
     .tokenomics-premium-top{display:grid;gap:10px}
     .tokenomics-premium-top p{color:var(--muted);line-height:1.55;max-width:52ch;font-size:15px}
     .tokenomics-premium-grid{display:grid;gap:12px}
@@ -1097,6 +1135,14 @@
       0%,100%{filter:drop-shadow(0 12px 22px rgba(0,0,0,.24))}
       50%{filter:drop-shadow(0 16px 28px rgba(255,208,96,.12))}
     }
+    @keyframes sfSideAtmosphereLeft{
+      0%,100%{transform:translate3d(0,0,0);opacity:.66}
+      50%{transform:translate3d(4px,-3px,0);opacity:.82}
+    }
+    @keyframes sfSideAtmosphereRight{
+      0%,100%{transform:translate3d(0,0,0);opacity:.64}
+      50%{transform:translate3d(-5px,4px,0);opacity:.80}
+    }
 
 
     @media(max-width:640px){
@@ -1269,8 +1315,8 @@
       }
       .tokenomics-assets-side.is-left{justify-content:flex-start}
       .tokenomics-assets-side.is-right{justify-content:flex-end}
-      .tokenomics-premium-top{padding-top:96px}
-      .tokenomics-asset-img-btn img{height:76px}
+      .tokenomics-premium-top{padding-top:122px}
+      .tokenomics-asset-img-btn img{height:99px}
       .tokenomics-assets-side .tokenomics-asset-img-btn:nth-child(odd){
         animation:sfAssetFloatA 5.4s ease-in-out infinite, sfAssetGlow 5.8s ease-in-out infinite
       }
@@ -1291,8 +1337,8 @@
     @media (min-width: 1360px){
       .mobile-top-links{right:168px}
       .tokenomics-assets-desktop{left:22px;right:22px;top:22px}
-      .tokenomics-premium-top{padding-top:104px}
-      .tokenomics-asset-img-btn img{height:84px}
+      .tokenomics-premium-top{padding-top:132px}
+      .tokenomics-asset-img-btn img{height:109px}
       .asset-img-btn img{height:118px}
     }
 
