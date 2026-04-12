@@ -44,7 +44,7 @@ Main active files in the current site:
 - Claim flow is currently **test/manual**:
   - the claim endpoint marks the row as `claimed` in Supabase
   - token delivery is still handled manually by the operator
-  - approved claims are communicated as manual delivery with up to 7 days after claim
+  - approved claims are communicated as manual project delivery after claim, without promising an automatic or fixed-time on-chain send
 
 ### Rounds
 
@@ -164,7 +164,7 @@ Important removed/legacy items that must **not** be reintroduced casually:
 
 - Telegram member count can be read live through `/api/community-stats.js` using `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`
 - X count is treated as manual unless the project explicitly restores a paid/live integration later
-- holders count stays locked at 0 during `PROJECT_STAGE=prelaunch`; after launch it can come from live RPC or configured fallback values
+- holders stay locked at 0 during `PROJECT_STAGE=prelaunch`; after launch, the site can switch to live on-chain holder tracking when the mint + RPC are configured
 
 ## Distribution script note
 
