@@ -1285,41 +1285,40 @@
       .hero-assets-desktop{display:none !important}
       .tokenomics-premium{
         overflow:visible;
+        background:linear-gradient(180deg,rgba(10,19,45,.95),rgba(6,13,31,.98));
       }
       .tokenomics-premium::before,
       .tokenomics-premium::after{
         content:"";
         position:absolute;
-        top:10px;
-        bottom:10px;
-        width:calc((100vw - 100%) / 2);
-        min-width:90px;
-        max-width:320px;
         pointer-events:none;
         z-index:0;
-        background-repeat:no-repeat;
-        mix-blend-mode:screen;
-        filter:drop-shadow(0 0 8px rgba(255,214,128,.12)) drop-shadow(0 0 12px rgba(92,168,255,.10));
+        mix-blend-mode:normal;
+        filter:none;
+        animation:none;
       }
       .tokenomics-premium::before{
-        inset:auto -100px -100px auto;
         left:auto;
-        right:-100px;
-        width:240px;
-        height:240px;
+        right:-88px;
+        bottom:-88px;
+        top:auto;
+        width:220px;
+        height:220px;
         border-radius:50%;
-        background:radial-gradient(circle,rgba(41,145,255,.16),transparent 70%);
-        animation:none;
+        background:radial-gradient(circle,rgba(41,145,255,.11),transparent 72%);
+        opacity:.78;
       }
       .tokenomics-premium::after{
         inset:0;
-        right:auto;
+        width:auto;
+        min-width:0;
+        max-width:none;
         background:
-          radial-gradient(circle at 16% 18%, rgba(255,255,255,.018), transparent 26%),
-          radial-gradient(circle at 84% 16%, rgba(255,208,96,.030), transparent 24%),
-          radial-gradient(circle at 22% 82%, rgba(41,145,255,.018), transparent 28%),
-          linear-gradient(180deg, rgba(255,255,255,.010), rgba(255,255,255,0) 38%, rgba(255,255,255,.006) 100%);
-        animation:none;
+          radial-gradient(circle at 14% 14%, rgba(61,161,255,.08), transparent 24%),
+          radial-gradient(circle at 84% 12%, rgba(255,208,96,.07), transparent 22%),
+          radial-gradient(circle at 18% 86%, rgba(61,161,255,.05), transparent 28%),
+          radial-gradient(circle at 88% 76%, rgba(255,255,255,.028), transparent 20%);
+        opacity:.92;
       }
       .desktop-side-stars{
         display:block;
