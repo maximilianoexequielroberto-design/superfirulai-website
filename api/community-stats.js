@@ -128,7 +128,11 @@ export default async function handler(req, res) {
 
   const fallbackXFollowers = Number(process.env.X_FOLLOWERS_COUNT || DEFAULT_X_FOLLOWERS);
   const totalSupply = Number(process.env.TOTAL_SUPPLY || DEFAULT_TOTAL_SUPPLY);
-  const fallbackHolders = Number(process.env.HOLDERS_COUNT || DEFAULT_HOLDERS);
+  const projectStage = String(process.env.PROJECT_STAGE || "prelaunch").trim().toLowerCase() || "prelaunch";
+  const holdersLockedPrelaunch = projectStage === "prelaunch";
+  const fallbackHolders = holdersLockedPrelaunch
+    ? DEFAULT_HOLDERS
+    : Number(process.env.HOLDERS_COUNT || DEFAULT_HOLDERS);
   const commitment = String(process.env.HOLDERS_RPC_COMMITMENT || DEFAULT_COMMITMENT).trim() || DEFAULT_COMMITMENT;
 
   let telegramMembers = Number(process.env.TELEGRAM_MEMBERS_FALLBACK || DEFAULT_TELEGRAM_MEMBERS);
@@ -138,7 +142,7 @@ export default async function handler(req, res) {
   let xFollowersError = null;
 
   let holders = fallbackHolders;
-  let holdersMode = "fallback";
+  let holdersMode = holdersLockedPrelaunch ? "prelaunch" : "fallback";
   let holdersUpdatedAt = new Date().toISOString();
   let holdersError = null;
 
@@ -179,21 +183,27 @@ export default async function handler(req, res) {
       throw new Error(`Invalid HOLDERS_EXCLUDED_TOKEN_ACCOUNTS entries: ${invalidExcludedTokenAccounts.join(", ")}`);
     }
 
-    if (rpcUrl && mintAddress && !mintAddressValid) {
-      throw new Error("Invalid TOKEN_MINT_ADDRESS");
-    }
-
-    if (rpcUrl && mintAddress && mintAddressValid) {
-      const live = await fetchLiveHolders({
-        rpcUrl,
-        mintAddress,
-        commitment,
-        excludedWallets,
-        excludedTokenAccounts
-      });
-      holders = live.holders;
-      holdersMode = "live";
+    if (holdersLockedPrelaunch) {
+      holders = DEFAULT_HOLDERS;
+      holdersMode = "prelaunch";
       holdersUpdatedAt = new Date().toISOString();
+    } else {
+      if (rpcUrl && mintAddress && !mintAddressValid) {
+        throw new Error("Invalid TOKEN_MINT_ADDRESS");
+      }
+
+      if (rpcUrl && mintAddress && mintAddressValid) {
+        const live = await fetchLiveHolders({
+          rpcUrl,
+          mintAddress,
+          commitment,
+          excludedWallets,
+          excludedTokenAccounts
+        });
+        holders = live.holders;
+        holdersMode = "live";
+        holdersUpdatedAt = new Date().toISOString();
+      }
     }
   } catch (error) {
     holdersError = error instanceof Error ? error.message : "holders unavailable";
