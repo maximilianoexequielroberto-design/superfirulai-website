@@ -95,6 +95,24 @@ export default async function handler(req, res) {
       });
     }
 
+    if (data.status === "claim_processing") {
+      return res.status(200).json({
+        ok: true,
+        wallet,
+        state: "claim_processing",
+        eligible: false,
+        claimLive,
+        status: data.status,
+        createdAt: data.created_at,
+        approvedAt: data.approved_at,
+        claimRequestedAt: data.claim_requested_at,
+        claimedAt: data.claimed_at,
+        claimTx: data.claim_tx,
+        airdropAmount: data.airdrop_amount,
+        message: "Claim request received. Manual $FIRU delivery remains pending through the current project distribution flow."
+      });
+    }
+
     if (data.status === "approved") {
       return res.status(200).json({
         ok: true,

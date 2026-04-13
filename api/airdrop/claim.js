@@ -27,9 +27,16 @@ function getExpectedMessage({ wallet, nonce, timestamp }) {
   ].join("\n");
 }
 
+
+function getChallengeSecret() {
+  return String(process.env.NONCE_SECRET || "").trim();
+}
+
 function verifyChallenge({ nonce, timestamp, challenge }) {
-  const secret = process.env.NONCE_SECRET || process.env.TURNSTILE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!secret) return false;
+  const secret = getChallengeSecret();
+  if (!secret) {
+    throw new Error("NONCE_SECRET is required for claim verification");
+  }
 
   const expected = crypto
     .createHmac("sha256", secret)
@@ -41,7 +48,6 @@ function verifyChallenge({ nonce, timestamp, challenge }) {
 
   return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(provided));
 }
-
 
 function isLikelyBase58(value, { minLength = 1, maxLength = 256 } = {}) {
   const normalized = String(value || "").trim();
@@ -68,6 +74,16 @@ function verifyWalletSignature({ wallet, message, signature }) {
 
   const msgBytes = new TextEncoder().encode(message);
   return nacl.sign.detached.verify(msgBytes, sigBytes, publicKey);
+}
+
+function getClaimResponse(wallet, amount, message) {
+  return {
+    ok: true,
+    wallet,
+    status: "claim_processing",
+    airdropAmount: amount,
+    message
+  };
 }
 
 export default async function handler(req, res) {
@@ -107,7 +123,7 @@ export default async function handler(req, res) {
 
     const { data, error } = await supabase
       .from("airdrop_registrations")
-      .select("wallet,status,claim_tx,claimed_at,airdrop_amount")
+      .select("wallet,status,claim_tx,claimed_at,claim_requested_at,airdrop_amount")
       .eq("wallet", wallet)
       .maybeSingle();
 
@@ -119,11 +135,13 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "This wallet is not registered for the airdrop" });
     }
 
-    if (data.status === "claimed" || data.claimed_at || data.claim_tx) {
+    const amount = Number(data.airdrop_amount || DEFAULT_AIRDROP_AMOUNT);
+
+    if (data.status === "claimed" || data.status === "airdrop_sent" || data.claimed_at || data.claim_tx) {
       return res.status(409).json({
         error: "This wallet already claimed $FIRU.",
         claimTx: data.claim_tx,
-        airdropAmount: data.airdrop_amount || DEFAULT_AIRDROP_AMOUNT
+        airdropAmount: amount
       });
     }
 
@@ -135,39 +153,64 @@ export default async function handler(req, res) {
       return res.status(409).json({ error: "This wallet was rejected for the airdrop." });
     }
 
-    if (!["approved", "claim_processing"].includes(String(data.status || ""))) {
+    if (data.status === "claim_processing") {
+      return res.status(200).json(
+        getClaimResponse(
+          wallet,
+          amount,
+          "Claim request already received. Manual $FIRU delivery remains pending through the current project distribution flow."
+        )
+      );
+    }
+
+    if (data.status !== "approved") {
       return res.status(409).json({ error: `This wallet cannot claim from status: ${data.status || "unknown"}.` });
     }
 
-    const amount = Number(data.airdrop_amount || DEFAULT_AIRDROP_AMOUNT);
-    const claimTx = `test-claim-${Date.now()}-${String(wallet).slice(0, 8)}`;
+    const { data: rpcRows, error: startError } = await supabase.rpc("airdrop_claim_start", { p_wallet: wallet });
+    if (startError) {
+      return res.status(500).json({ error: startError.message || "Could not start claim request" });
+    }
 
-    if (data.status === "approved") {
-      const { error: startError } = await supabase.rpc("airdrop_claim_start", { p_wallet: wallet });
-      if (startError) {
-        return res.status(500).json({ error: startError.message || "Could not start claim" });
+    if (Number(rpcRows || 0) < 1) {
+      const { data: freshRow, error: freshError } = await supabase
+        .from("airdrop_registrations")
+        .select("status,claim_tx,claimed_at,airdrop_amount")
+        .eq("wallet", wallet)
+        .maybeSingle();
+
+      if (freshError) {
+        return res.status(500).json({ error: freshError.message || "Could not refresh claim state" });
       }
+
+      if (freshRow?.status === "claim_processing") {
+        return res.status(200).json(
+          getClaimResponse(
+            wallet,
+            Number(freshRow.airdrop_amount || amount),
+            "Claim request already received. Manual $FIRU delivery remains pending through the current project distribution flow."
+          )
+        );
+      }
+
+      if (freshRow?.status === "claimed" || freshRow?.status === "airdrop_sent" || freshRow?.claimed_at || freshRow?.claim_tx) {
+        return res.status(409).json({
+          error: "This wallet already claimed $FIRU.",
+          claimTx: freshRow.claim_tx,
+          airdropAmount: Number(freshRow.airdrop_amount || amount)
+        });
+      }
+
+      return res.status(409).json({ error: "This wallet is no longer eligible to request the claim." });
     }
 
-    const { error: completeError } = await supabase.rpc("airdrop_claim_complete", {
-      p_wallet: wallet,
-      p_claim_tx: claimTx,
-      p_airdrop_amount: amount
-    });
-
-    if (completeError) {
-      await supabase.rpc("airdrop_claim_reset", { p_wallet: wallet }).catch(() => {});
-      return res.status(500).json({ error: completeError.message || "Could not complete claim" });
-    }
-
-    return res.status(200).json({
-      ok: true,
-      wallet,
-      status: "claimed",
-      claimTx,
-      airdropAmount: amount,
-      message: "Airdrop claim confirmed in test mode."
-    });
+    return res.status(200).json(
+      getClaimResponse(
+        wallet,
+        amount,
+        "Claim request accepted. Manual $FIRU delivery remains pending through the current project distribution flow."
+      )
+    );
   } catch (err) {
     return res.status(500).json({
       error: err instanceof Error ? err.message : "Unknown error"
