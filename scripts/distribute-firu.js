@@ -13,10 +13,19 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 const RPC_URL = process.env.SOLANA_RPC_URL || "https://api.mainnet-beta.solana.com";
 const TOKEN_MINT_ADDRESS = process.env.TOKEN_MINT_ADDRESS;
 const TREASURY_PRIVATE_KEY_JSON = process.env.TREASURY_PRIVATE_KEY_JSON;
+const DEFAULT_EXPECTED_TREASURY_WALLET = "2Zg4feRthjbiSBVNyT85cDm1Wx6VpoBCfuvWzvjV9gfb";
 
 function required(name, value) {
   if (!value) throw new Error(`${name} is required`);
   return value;
+}
+
+function getExpectedTreasuryWallet() {
+  return String(
+    process.env.ROUND_DISTRIBUTION_SOURCE_WALLET ||
+    process.env.EXPECTED_TREASURY_WALLET ||
+    DEFAULT_EXPECTED_TREASURY_WALLET
+  ).trim();
 }
 
 function toRawAmount(firuAllocation, decimals) {
@@ -60,6 +69,14 @@ async function main() {
 
   const connection = new Connection(RPC_URL, "confirmed");
   const treasury = Keypair.fromSecretKey(Uint8Array.from(JSON.parse(TREASURY_PRIVATE_KEY_JSON)));
+  const expectedTreasuryWallet = required("ROUND_DISTRIBUTION_SOURCE_WALLET", getExpectedTreasuryWallet());
+
+  if (treasury.publicKey.toBase58() !== expectedTreasuryWallet) {
+    throw new Error(
+      `Distribution wallet mismatch. Expected ${expectedTreasuryWallet} but loaded ${treasury.publicKey.toBase58()}. Aborting before any transfer.`
+    );
+  }
+
   const mint = new PublicKey(TOKEN_MINT_ADDRESS);
   const treasuryAta = await getAssociatedTokenAddress(mint, treasury.publicKey);
   const mintInfo = await getMint(connection, mint);
