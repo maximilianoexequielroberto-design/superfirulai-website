@@ -300,8 +300,8 @@ function mountAirdropClaim(root) {
         <div class="sf-claim-row">
           <div class="sf-claim-inline"><button id="sf-claim-submit" class="btn btn-gold" type="button">Claim Airdrop</button></div>
           ${renderTestingNotice(data.claimLive
-            ? "This flow marks the approved wallet as claimed in Supabase after a fresh wallet signature. Token delivery remains manual after claim."
-            : "This flow now attempts the real test/manual claim endpoint. If the backend claim window is still closed, the server will reject it until CLAIM_LIVE is enabled.")}
+            ? "This flow records a manual claim request after a fresh wallet signature. Token delivery remains manual and is not marked as delivered automatically on-chain."
+            : "This flow now attempts the current manual claim request endpoint. If the backend claim window is still closed, the server will reject it until CLAIM_LIVE is enabled.")}
         </div>`;
       root.querySelector("#sf-claim-submit")?.addEventListener("click", async () => {
         setStepState(4, true, false);
@@ -323,7 +323,8 @@ function mountAirdropClaim(root) {
           const result = await submitAirdropClaim(claimPayload);
 
           ctaEl.innerHTML = `<div class="sf-btn-disabled" aria-disabled="true">CLAIMED</div>`;
-          setStatusMessage(`<strong>${result.message || "Airdrop claim confirmed."}</strong><br>Claim TX: <code class="sf-claim-code">${result.claimTx || "test-claim"}</code><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong><br>Manual token delivery is processed through the current project distribution flow after claim confirmation.`, "ok");
+          ctaEl.innerHTML = `<div class="sf-btn-disabled" aria-disabled="true">CLAIM REQUESTED</div>`;
+          setStatusMessage(`<strong>${result.message || "Claim request accepted."}</strong><br>Airdrop amount: <strong>${Number(result.airdropAmount || 0).toLocaleString("en-US")} $FIRU</strong><br>Your wallet is now in manual claim-processing status. Token delivery stays manual through the current project distribution flow.`, "ok");
           setStepState(4, false, true);
         } catch (err) {
           if (submitBtn) {
@@ -341,6 +342,10 @@ function mountAirdropClaim(root) {
     }
     if (state === "not_registered") {
       ctaEl.innerHTML = `<div class="sf-claim-inline"><a class="btn btn-gold" href="#register">Register Airdrop</a></div>`;
+      return;
+    }
+    if (state === "claim_processing") {
+      ctaEl.innerHTML = `<div class="sf-btn-disabled" aria-disabled="true">CLAIM REQUESTED</div>`;
       return;
     }
     if (state === "claimed") {

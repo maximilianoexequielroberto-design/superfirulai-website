@@ -185,6 +185,12 @@ async function fetchRoundConfig() {
   return data;
 }
 
+function quoteNeedsRefresh(config, minRemainingMs = 60_000) {
+  const expiresAt = Date.parse(config?.quote?.expiresAt || "");
+  if (!Number.isFinite(expiresAt)) return true;
+  return (expiresAt - Date.now()) < minRemainingMs;
+}
+
 function getSelectedRoundMeta(config, value) {
   const rounds = config?.rounds || {};
   return rounds[value] || Object.values(rounds)[0] || null;
@@ -1237,11 +1243,19 @@ export function mountRoundRegister(selector) {
   });
 
   async function registerRoundPurchase(txHash) {
+    if (quoteNeedsRefresh(roundConfig)) {
+      roundConfig = await fetchRoundConfig();
+      syncRoundOptions(roundEl, roundConfig);
+      updateRoundMeta();
+      updateProgress();
+    }
+
     const payload = {
       wallet: walletAddress || null,
       tx_hash: txHash,
       round: roundEl.value,
       payment_token: tokenEl.value,
+      quote: roundConfig?.quote || null,
     };
 
     const resp = await fetch("/api/round/register", {
@@ -1286,6 +1300,13 @@ export function mountRoundRegister(selector) {
 
       await ensureConnected();
       stepAttention = 0;
+
+      if (quoteNeedsRefresh(roundConfig, 120_000)) {
+        roundConfig = await fetchRoundConfig();
+        syncRoundOptions(roundEl, roundConfig);
+        updateRoundMeta();
+        updateProgress();
+      }
 
       const round = getSelectedRoundMeta(roundConfig, roundEl.value);
       const amount = Number(amountEl.value || 0);

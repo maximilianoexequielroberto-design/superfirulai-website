@@ -223,3 +223,11 @@ The frontend can now react to these Vercel variables without changing `index.htm
 - `ROUND_3_ENABLED=false|true`
 
 When `ROUND_3_ENABLED=true`, the round API can also expose `ROUND_3_FIRU_PRICE` and `ROUND_3_TOKEN_CAP` for a future third round.
+
+
+## Additional hardening in the current base
+
+- Round registration now uses a signed short-lived pricing quote from `/api/round/config` so the UI estimate and backend validation stay aligned during registration.
+- Round registration rejects transactions outside the accepted round time window using `ROUND_TX_MAX_AGE_HOURS` and optional `ROUND_TX_NOT_BEFORE`.
+- Airdrop claim now records a manual claim request (`claim_processing`) instead of marking wallets as claimed automatically before manual distribution happens.
+- `scripts/distribute-firu.js` now aborts if the loaded distribution wallet does not match the expected community distribution wallet.
