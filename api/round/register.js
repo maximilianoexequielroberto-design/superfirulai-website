@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
@@ -13,16 +14,9 @@ const ROUND_RECEIVER_USDT_ATA = String(process.env.ROUND_RECEIVER_USDT_ATA || ""
 const ROUND_RECEIVER_USDC_ATA = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
-const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
 const TX_TIMEOUT_MS = 15000;
+const DEFAULT_TX_MAX_AGE_HOURS = 24 * 7;
 
-function getFallbackPrices() {
-  return {
-    SOL: Number(process.env.FALLBACK_SOL_PRICE_USD || 90.84),
-    USDT: Number(process.env.FALLBACK_USDT_PRICE_USD || 1),
-    USDC: Number(process.env.FALLBACK_USDC_PRICE_USD || 1)
-  };
-}
 const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const SOL_EQ_EPSILON = 1e-9;
@@ -82,35 +76,66 @@ function getRoundConfig(round) {
   };
 }
 
-async function fetchLivePrices() {
-  try {
-    const resp = await fetch(PRICE_URL, {
-      headers: {
-        accept: "application/json",
-        "user-agent": "SuperFirulai/1.0"
-      }
-    });
+function getPricingSecret() {
+  return String(
+    process.env.ROUND_PRICING_SECRET ||
+    process.env.NONCE_SECRET ||
+    ""
+  ).trim();
+}
 
-    if (!resp.ok) {
-      throw new Error(`price_http_${resp.status}`);
-    }
-
-    const data = await resp.json();
-    const prices = {
-      SOL: Number(data?.solana?.usd || 0),
-      USDT: Number(data?.tether?.usd || 0),
-      USDC: Number(data?.["usd-coin"]?.usd || 0)
-    };
-
-    if (!(prices.SOL > 0) || !(prices.USDT > 0) || !(prices.USDC > 0)) {
-      throw new Error("price_payload_invalid");
-    }
-
-    return prices;
-  } catch (error) {
-    console.error("live price fallback", error);
-    return getFallbackPrices();
+function verifyRoundQuote(quote, roundConfig) {
+  const secret = getPricingSecret();
+  if (!secret) {
+    throw new Error("ROUND_PRICING_SECRET or NONCE_SECRET is required for round pricing quotes");
   }
+
+  const payload = quote && typeof quote === "object" ? { ...quote } : null;
+  const signature = String(payload?.signature || "").trim();
+  if (!payload || !signature) {
+    throw new Error("Missing round pricing quote");
+  }
+  delete payload.signature;
+
+  const expected = crypto
+    .createHmac("sha256", secret)
+    .update(JSON.stringify(payload))
+    .digest("hex");
+
+  if (expected.length !== signature.length) {
+    throw new Error("Invalid round pricing quote signature");
+  }
+  if (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) {
+    throw new Error("Invalid round pricing quote signature");
+  }
+
+  const now = Date.now();
+  const issuedAt = Date.parse(payload.issuedAt || "");
+  const expiresAt = Date.parse(payload.expiresAt || "");
+  if (!Number.isFinite(issuedAt) || !Number.isFinite(expiresAt) || expiresAt <= issuedAt) {
+    throw new Error("Invalid round pricing quote window");
+  }
+  if (now > expiresAt) {
+    throw new Error("Round pricing quote expired. Refresh the page and try again.");
+  }
+  if (issuedAt - now > 30_000) {
+    throw new Error("Round pricing quote is not valid yet");
+  }
+
+  const quoteRound = payload?.rounds?.[roundConfig.round];
+  if (!quoteRound) {
+    throw new Error("Round pricing quote does not include the selected round");
+  }
+
+  const prices = payload?.prices || {};
+  const tokenPriceUsd = Number(prices.SOL || 0);
+  const usdtPriceUsd = Number(prices.USDT || 0);
+  const usdcPriceUsd = Number(prices.USDC || 0);
+  if (!(tokenPriceUsd > 0) || !(usdtPriceUsd > 0) || !(usdcPriceUsd > 0)) {
+    throw new Error("Round pricing quote is missing token prices");
+  }
+
+  return payload;
 }
 
 async function rpcCall(method, params) {
@@ -216,6 +241,39 @@ function toWholeFiruAmount(amount) {
   return Math.floor(Number(amount));
 }
 
+function getTxAgeMs(tx) {
+  if (!tx?.blockTime) return null;
+  return Date.now() - (Number(tx.blockTime) * 1000);
+}
+
+function getTxMaxAgeMs() {
+  const hours = Number(process.env.ROUND_TX_MAX_AGE_HOURS || DEFAULT_TX_MAX_AGE_HOURS);
+  if (!(hours > 0)) return null;
+  return hours * 60 * 60 * 1000;
+}
+
+function getRoundTxNotBeforeMs() {
+  const raw = String(process.env.ROUND_TX_NOT_BEFORE || "").trim();
+  if (!raw) return null;
+  const parsed = Date.parse(raw);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function assertTransactionIsWithinCurrentWindow(tx) {
+  const txAgeMs = getTxAgeMs(tx);
+  const maxAgeMs = getTxMaxAgeMs();
+  const notBeforeMs = getRoundTxNotBeforeMs();
+
+  if (txAgeMs !== null && maxAgeMs !== null && txAgeMs > maxAgeMs) {
+    const maxHours = Number(process.env.ROUND_TX_MAX_AGE_HOURS || DEFAULT_TX_MAX_AGE_HOURS);
+    throw new Error(`Transaction is too old for the current round window. Only transactions from the last ${formatAmount(maxHours, 0)} hours can be registered.`);
+  }
+
+  if (tx?.blockTime && notBeforeMs !== null && (Number(tx.blockTime) * 1000) < notBeforeMs) {
+    throw new Error("Transaction is older than the current accepted round start window.");
+  }
+}
+
 async function getRoundRaisedFiru(round) {
   const { data, error } = await supabase
     .from("round_registrations")
@@ -238,8 +296,8 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Round receiver wallet is not configured" });
     }
 
-    const { wallet, tx_hash, round, payment_token, telegram, x } = req.body || {};
-    if (!tx_hash || !round || !payment_token) {
+    const { wallet, tx_hash, round, payment_token, telegram, x, quote } = req.body || {};
+    if (!tx_hash || !round || !payment_token || !quote) {
       return res.status(400).json({ error: "Missing fields" });
     }
 
@@ -259,8 +317,18 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Round FIRU price is not configured" });
     }
 
-    const minSol = Number(process.env.ROUND_MIN || 0);
-    const maxSol = Number(process.env.ROUND_MAX || 0);
+    const quotePayload = verifyRoundQuote(quote, roundConfig);
+    const quoteRound = quotePayload.rounds?.[roundConfig.round] || {};
+
+    if (Boolean(quoteRound.enabled) !== Boolean(roundConfig.enabled)) {
+      return res.status(409).json({ error: "Round state changed. Refresh the page and try again." });
+    }
+    if (Number(quoteRound.firuPriceUsd || 0) !== Number(roundConfig.firuPriceUsd || 0)) {
+      return res.status(409).json({ error: "Round price changed. Refresh the page and try again." });
+    }
+
+    const minSol = Number(quotePayload?.limits?.minSol || 0);
+    const maxSol = Number(quotePayload?.limits?.maxSol || 0);
 
     const txHash = String(tx_hash).trim();
     const telegramUsername = telegram ? normalizeTelegramHandle(telegram) : null;
@@ -296,6 +364,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Transaction failed on-chain" });
     }
 
+    assertTransactionIsWithinCurrentWindow(tx);
+
     const senderWallet = getSenderWallet(tx);
     const inputWallet = String(wallet || "").trim();
     if (inputWallet && senderWallet && inputWallet !== senderWallet) {
@@ -315,21 +385,20 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: `No ${token} payment to the official destination was found in this transaction` });
     }
 
-    const livePrices = await fetchLivePrices();
-    const tokenPriceUsd = Number(livePrices[token] || 0);
-    const solPriceUsd = Number(livePrices.SOL || 0);
+    const quotedTokenPriceUsd = Number(quotePayload?.prices?.[token] || 0);
+    const quotedSolPriceUsd = Number(quotePayload?.prices?.SOL || 0);
 
-    if (!(tokenPriceUsd > 0)) {
-      return res.status(500).json({ error: `Live price for ${token} is unavailable` });
+    if (!(quotedTokenPriceUsd > 0)) {
+      return res.status(500).json({ error: `Quoted price for ${token} is unavailable` });
     }
-    if (!(solPriceUsd > 0)) {
-      return res.status(500).json({ error: "Live SOL price is unavailable" });
+    if (!(quotedSolPriceUsd > 0)) {
+      return res.status(500).json({ error: "Quoted SOL price is unavailable" });
     }
 
-    const paymentAmountUsd = paymentAmount * tokenPriceUsd;
+    const paymentAmountUsd = paymentAmount * quotedTokenPriceUsd;
     const paymentAmountSolEquivalent = token === "SOL"
       ? paymentAmount
-      : paymentAmountUsd / solPriceUsd;
+      : paymentAmountUsd / quotedSolPriceUsd;
 
     if (paymentAmountSolEquivalent < minSol - SOL_EQ_EPSILON) {
       return res.status(400).json({ error: `Minimum purchase is ${formatAmount(minSol)} SOL` });
@@ -382,7 +451,7 @@ export default async function handler(req, res) {
       payment_token: token,
       payment_amount: paymentAmount,
       payment_amount_usd: paymentAmountUsd,
-      token_price_usd: tokenPriceUsd,
+      token_price_usd: quotedTokenPriceUsd,
       firu_price_usd: roundConfig.firuPriceUsd,
       firu_allocation: firuAllocation,
       telegram_username: telegramUsername,
@@ -396,13 +465,17 @@ export default async function handler(req, res) {
         minSol,
         maxSol,
         senderWallet,
-        livePriceUsd: tokenPriceUsd,
-        liveSolPriceUsd: solPriceUsd,
-        referenceSolPriceUsd: solPriceUsd,
+        pricingMode: "quoted_realtime",
+        quoteIssuedAt: quotePayload.issuedAt,
+        quoteExpiresAt: quotePayload.expiresAt,
+        quotePriceSource: quotePayload.priceSource,
+        quotedTokenPriceUsd,
+        quotedSolPriceUsd,
         paymentAmountSolEquivalent,
         roundTokenCap: roundConfig.tokenCap,
         roundRaisedFiruBefore: roundRaisedFiru,
-        roundRemainingFiruBefore: remainingFiruBefore
+        roundRemainingFiruBefore: remainingFiruBefore,
+        txAgeMs: getTxAgeMs(tx)
       }
     };
 
@@ -463,8 +536,12 @@ export default async function handler(req, res) {
       payment_amount: Number(formatAmount(paymentAmount, 9)),
       payment_amount_usd: Number(paymentAmountUsd.toFixed(6)),
       payment_amount_sol_equivalent: Number(paymentAmountSolEquivalent.toFixed(9)),
-      token_price_usd: Number(tokenPriceUsd.toFixed(6)),
-      sol_price_usd: Number(solPriceUsd.toFixed(6)),
+      token_price_usd: Number(quotedTokenPriceUsd.toFixed(6)),
+      sol_price_usd: Number(quotedSolPriceUsd.toFixed(6)),
+      pricing_mode: "quoted_realtime",
+      price_source: quotePayload.priceSource,
+      quote_issued_at: quotePayload.issuedAt,
+      quote_expires_at: quotePayload.expiresAt,
       firu_price_usd: roundConfig.firuPriceUsd,
       firu_allocation: firuAllocation,
       round: roundConfig.round,

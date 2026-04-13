@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
@@ -11,6 +12,7 @@ const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
 const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
 const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
+const QUOTE_TTL_MS = Math.max(Number(process.env.ROUND_PRICE_QUOTE_TTL_MS || 15 * 60 * 1000), 60_000);
 
 function getFallbackPrices() {
   return {
@@ -18,6 +20,25 @@ function getFallbackPrices() {
     USDT: Number(process.env.FALLBACK_USDT_PRICE_USD || 1),
     USDC: Number(process.env.FALLBACK_USDC_PRICE_USD || 1)
   };
+}
+
+function getPricingSecret() {
+  return String(
+    process.env.ROUND_PRICING_SECRET ||
+    process.env.NONCE_SECRET ||
+    ""
+  ).trim();
+}
+
+function signRoundQuote(payload) {
+  const secret = getPricingSecret();
+  if (!secret) {
+    throw new Error("ROUND_PRICING_SECRET or NONCE_SECRET is required for round pricing quotes");
+  }
+  return crypto
+    .createHmac("sha256", secret)
+    .update(JSON.stringify(payload))
+    .digest("hex");
 }
 
 async function getLivePrices() {
@@ -45,10 +66,10 @@ async function getLivePrices() {
       throw new Error("price_payload_invalid");
     }
 
-    return prices;
+    return { prices, source: "live" };
   } catch (error) {
     console.error("live price fallback", error);
-    return getFallbackPrices();
+    return { prices: getFallbackPrices(), source: "fallback" };
   }
 }
 
@@ -124,7 +145,7 @@ export default async function handler(req, res) {
 
     const usdcMint = String(process.env.USDC_MINT_ADDRESS || DEFAULT_USDC_MINT).trim();
     const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
-    const prices = await getLivePrices();
+    const { prices, source } = await getLivePrices();
 
     const roundKeys = ["round1", "round2"];
     const round3Enabled = String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() === "true";
@@ -143,12 +164,33 @@ export default async function handler(req, res) {
       }];
     }));
 
-    const payload = {
-      rpcUrl: getPublicRpcUrl(),
-      projectReceiveWallet,
+    const quoteIssuedAt = new Date().toISOString();
+    const quoteExpiresAt = new Date(Date.now() + QUOTE_TTL_MS).toISOString();
+    const quotePayload = {
+      version: 1,
+      issuedAt: quoteIssuedAt,
+      expiresAt: quoteExpiresAt,
+      priceSource: source,
+      prices,
+      rounds: Object.fromEntries(Object.entries(rounds).map(([key, value]) => [key, {
+        firuPriceUsd: value.firuPriceUsd,
+        enabled: value.enabled,
+        tokenCap: value.tokenCap
+      }])),
       limits: {
         minSol: Number(process.env.ROUND_MIN || 0),
         maxSol: Number(process.env.ROUND_MAX || 0)
+      }
+    };
+
+    const payload = {
+      rpcUrl: getPublicRpcUrl(),
+      projectReceiveWallet,
+      limits: quotePayload.limits,
+      pricingMode: "quoted_realtime",
+      quote: {
+        ...quotePayload,
+        signature: signRoundQuote(quotePayload)
       },
       rounds,
       tokens: [
