@@ -4,20 +4,10 @@
   "description": "Official token of the SuperFirulai ecosystem on Solana.",
   "image": "https://superfirulai.com/token/firu-logo.png",
   "external_url": "https://superfirulai.com/",
-  "attributes": [],
-  "properties": {
-    "files": [
-      {
-        "uri": "https://superfirulai.com/token/firu-logo.png",
-        "type": "image/png"
-      }
-    ],
-    "category": "image"
-  },
   "extensions": {
     "website": "https://superfirulai.com/",
     "twitter": "https://x.com/superfirulai",
-    "telegram": "https://t.me/superfirulai",
+    "telegram_channel": "https://t.me/superfirulai",
     "community_chat": "https://t.me/superfirulaicommunity"
   }
 }
