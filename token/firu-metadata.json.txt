@@ -1,0 +1,7 @@
+{
+  "name": "SuperFirulai",
+  "symbol": "FIRU",
+  "description": "Official token of the SuperFirulai ecosystem on Solana.",
+  "image": "https://superfirulai.com/token/firu-logo.png",
+  "external_url": "https://superfirulai.com/"
+}
