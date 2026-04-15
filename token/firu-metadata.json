@@ -3,5 +3,11 @@
   "symbol": "FIRU",
   "description": "Official token of the SuperFirulai ecosystem on Solana.",
   "image": "https://superfirulai.com/token/firu-logo.png",
-  "external_url": "https://superfirulai.com/"
+  "external_url": "https://superfirulai.com/",
+  "extensions": {
+    "website": "https://superfirulai.com/",
+    "twitter": "https://x.com/superfirulai",
+    "telegram": "https://t.me/superfirulai",
+    "telegram_community": "https://t.me/superfirulaicommunity"
+  }
 }
