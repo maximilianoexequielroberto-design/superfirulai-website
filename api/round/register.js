@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
+import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -141,6 +142,10 @@ function verifyRoundQuote(quote, roundConfig) {
 async function rpcCall(method, params) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TX_TIMEOUT_MS);
+
+  if (!enforceRateLimit(req, res, { scope: "round-register", limit: 10, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
+  }
 
   try {
     const resp = await fetch(SOLANA_RPC_URL, {
@@ -287,6 +292,8 @@ async function getRoundRaisedFiru(round) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -555,7 +562,6 @@ export default async function handler(req, res) {
       }
     });
   } catch (error) {
-    console.error("round register error", error);
-    return res.status(500).json({ error: error?.message || "Server error" });
+    return serverError(res, "Could not register round purchase", error);
   }
 }

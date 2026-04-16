@@ -1,3 +1,4 @@
+import { applySecurityHeaders, serverError } from "./_security.js";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { PublicKey } from "@solana/web3.js";
@@ -136,6 +137,8 @@ async function getRaisedFiruByRound(round) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
   try {
     const projectReceiveWallet = String(process.env.ROUND_RECEIVER_WALLET || "").trim();
 
@@ -219,6 +222,6 @@ export default async function handler(req, res) {
     return res.status(200).json(payload);
   } catch (error) {
     console.error("round config error", error);
-    return res.status(500).json({ error: "Could not load round configuration" });
+    return serverError(res, "Could not load round configuration", error);
   }
 }

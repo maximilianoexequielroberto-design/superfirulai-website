@@ -1,3 +1,4 @@
+import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -37,6 +38,12 @@ function getOwnershipStatus(row) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
+  if (!enforceRateLimit(req, res, { scope: "round-history", limit: 30, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
+  }
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -111,7 +118,6 @@ export default async function handler(req, res) {
       latest_purchase_at: purchases[0]?.created_at || null
     });
 
-    res.setHeader("Cache-Control", "no-store, max-age=0");
     return res.status(200).json({
       wallet,
       summary: {
@@ -123,7 +129,6 @@ export default async function handler(req, res) {
       purchases
     });
   } catch (error) {
-    console.error("round history error", error);
-    return res.status(500).json({ error: "Could not load purchase history" });
+    return serverError(res, "Could not load purchase history", error);
   }
 }
