@@ -1,3 +1,4 @@
+import { applySecurityHeaders, serverError } from "./_security.js";
 import { PublicKey } from "@solana/web3.js";
 const DEFAULT_HOLDERS = 0;
 const DEFAULT_X_FOLLOWERS = 61;
@@ -122,6 +123,8 @@ async function fetchLiveHolders({ rpcUrl, mintAddress, commitment, excludedWalle
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res, { privateResponse: false });
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
