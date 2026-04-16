@@ -130,6 +130,7 @@ end $$;
 create or replace function public.airdrop_approve(p_wallet text)
 returns integer
 language plpgsql
+set search_path = public, pg_temp
 as $$
 declare
   v_rows integer;
@@ -153,6 +154,7 @@ create or replace function public.airdrop_reject(
 )
 returns integer
 language plpgsql
+set search_path = public, pg_temp
 as $$
 declare
   v_rows integer;
@@ -172,6 +174,7 @@ $$;
 create or replace function public.airdrop_claim_start(p_wallet text)
 returns integer
 language plpgsql
+set search_path = public, pg_temp
 as $$
 declare
   v_rows integer;
@@ -195,6 +198,7 @@ create or replace function public.airdrop_claim_complete(
 )
 returns integer
 language plpgsql
+set search_path = public, pg_temp
 as $$
 declare
   v_rows integer;
@@ -216,6 +220,7 @@ $$;
 create or replace function public.airdrop_claim_reset(p_wallet text)
 returns integer
 language plpgsql
+set search_path = public, pg_temp
 as $$
 declare
   v_rows integer;
@@ -231,6 +236,12 @@ begin
   return v_rows;
 end;
 $$;
+
+revoke execute on function public.airdrop_approve(text) from public, anon, authenticated;
+revoke execute on function public.airdrop_reject(text, text) from public, anon, authenticated;
+revoke execute on function public.airdrop_claim_start(text) from public, anon, authenticated;
+revoke execute on function public.airdrop_claim_complete(text, text, numeric) from public, anon, authenticated;
+revoke execute on function public.airdrop_claim_reset(text) from public, anon, authenticated;
 
 create or replace view public.v_airdrop_status_counts as
 select status, count(*)::bigint as total
@@ -282,6 +293,12 @@ select
 from public.airdrop_registrations
 where status = 'rejected'
 order by created_at desc;
+
+revoke all on public.v_airdrop_status_counts from anon, authenticated;
+revoke all on public.v_airdrop_claimed from anon, authenticated;
+revoke all on public.v_airdrop_approved_pending_claim from anon, authenticated;
+revoke all on public.v_airdrop_pending_review from anon, authenticated;
+revoke all on public.v_airdrop_rejected from anon, authenticated;
 
 alter table public.airdrop_registrations enable row level security;
 
@@ -582,6 +599,10 @@ from public.round_registrations
 group by delivery_status
 order by delivery_status;
 
+revoke all on public.v_round_pending_delivery from anon, authenticated;
+revoke all on public.v_round_delivered from anon, authenticated;
+revoke all on public.v_round_delivery_status_counts from anon, authenticated;
+
 alter table public.round_registrations enable row level security;
 
 drop policy if exists "deny all round reads" on public.round_registrations;
@@ -669,3 +690,6 @@ comment on view public."00_airdrop_limpio" is
 
 comment on view public."01_rounds_limpio" is
 'Vista limpia de lectura para revisar rounds en el panel.';
+
+revoke all on public."00_airdrop_limpio" from anon, authenticated;
+revoke all on public."01_rounds_limpio" from anon, authenticated;
