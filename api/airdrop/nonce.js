@@ -1,13 +1,20 @@
 import crypto from "crypto";
+import { applySecurityHeaders, enforceRateLimit } from "../_security.js";
 
 const NONCE_TTL_MS = 5 * 60 * 1000;
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const secret = process.env.NONCE_SECRET || process.env.TURNSTILE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!enforceRateLimit(req, res, { scope: "airdrop-nonce", limit: 20, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
+  }
+
+  const secret = String(process.env.NONCE_SECRET || "").trim();
   if (!secret) {
     return res.status(500).json({ error: "Server nonce secret is not configured" });
   }

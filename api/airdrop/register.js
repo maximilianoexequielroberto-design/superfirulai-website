@@ -2,6 +2,7 @@ import crypto from "crypto";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import { createClient } from "@supabase/supabase-js";
+import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -45,6 +46,10 @@ async function verifyTurnstile(token, ip) {
 }
 
 function verifyWalletSignature({ wallet, message, signature }) {
+  if (!enforceRateLimit(req, res, { scope: "airdrop-register", limit: 8, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
+  }
+
   try {
     const publicKey = bs58.decode(wallet);
     const sigBytes = bs58.decode(signature);
@@ -115,7 +120,7 @@ async function getLockedAirdropSlots() {
 }
 
 function verifyChallenge({ nonce, timestamp, challenge }) {
-  const secret = process.env.NONCE_SECRET || process.env.TURNSTILE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const secret = String(process.env.NONCE_SECRET || "").trim();
   if (!secret) return false;
 
   const expected = crypto
@@ -130,6 +135,8 @@ function verifyChallenge({ nonce, timestamp, challenge }) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -226,7 +233,7 @@ export default async function handler(req, res) {
       if (/duplicate key|unique/i.test(message)) {
         return res.status(409).json({ error: "Registration already exists" });
       }
-      return res.status(500).json({ error: error.message });
+      return serverError(res, "Could not save registration", error);
     }
 
     return res.status(200).json({
@@ -234,8 +241,6 @@ export default async function handler(req, res) {
       message: "Registration received and pending review"
     });
   } catch (err) {
-    return res.status(500).json({
-      error: err instanceof Error ? err.message : "Unknown error"
-    });
+    return serverError(res, "Could not complete registration", err);
   }
 }

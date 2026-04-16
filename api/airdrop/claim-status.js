@@ -1,3 +1,4 @@
+import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
 import { PublicKey } from "@solana/web3.js";
 import { createClient } from "@supabase/supabase-js";
 
@@ -25,6 +26,12 @@ function parseBool(value, fallback = false) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
+  if (!enforceRateLimit(req, res, { scope: "airdrop-claim-status", limit: 30, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
+  }
+
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -59,7 +66,7 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     if (error) {
-      return res.status(500).json({ error: error.message || "Could not check claim status" });
+      return serverError(res, "Could not check claim status", error);
     }
 
     const claimLive = parseBool(process.env.CLAIM_LIVE, false);
@@ -166,8 +173,6 @@ export default async function handler(req, res) {
       message: "This wallet is registered and waiting for approval."
     });
   } catch (err) {
-    return res.status(500).json({
-      error: err instanceof Error ? err.message : "Unknown error"
-    });
+    return serverError(res, "Could not check claim status", err);
   }
 }

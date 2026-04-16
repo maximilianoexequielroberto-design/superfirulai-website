@@ -2,6 +2,7 @@ import crypto from "crypto";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
 import { createClient } from "@supabase/supabase-js";
+import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -87,8 +88,14 @@ function getClaimResponse(wallet, amount, message) {
 }
 
 export default async function handler(req, res) {
+  applySecurityHeaders(res);
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (!enforceRateLimit(req, res, { scope: "airdrop-claim", limit: 8, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
   }
 
   if (!parseBool(process.env.CLAIM_LIVE, false)) {
@@ -128,7 +135,7 @@ export default async function handler(req, res) {
       .maybeSingle();
 
     if (error) {
-      return res.status(500).json({ error: error.message || "Could not load claim record" });
+      return serverError(res, "Could not load claim record", error);
     }
 
     if (!data) {
@@ -169,7 +176,7 @@ export default async function handler(req, res) {
 
     const { data: rpcRows, error: startError } = await supabase.rpc("airdrop_claim_start", { p_wallet: wallet });
     if (startError) {
-      return res.status(500).json({ error: startError.message || "Could not start claim request" });
+      return serverError(res, "Could not start claim request", startError);
     }
 
     if (Number(rpcRows || 0) < 1) {
@@ -180,7 +187,7 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (freshError) {
-        return res.status(500).json({ error: freshError.message || "Could not refresh claim state" });
+        return serverError(res, "Could not refresh claim state", freshError);
       }
 
       if (freshRow?.status === "claim_processing") {
@@ -212,8 +219,6 @@ export default async function handler(req, res) {
       )
     );
   } catch (err) {
-    return res.status(500).json({
-      error: err instanceof Error ? err.message : "Unknown error"
-    });
+    return serverError(res, "Could not process claim request", err);
   }
 }
