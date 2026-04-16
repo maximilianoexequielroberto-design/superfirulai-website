@@ -23,7 +23,7 @@ Main active files in the current site:
 - `/api/airdrop/nonce.js` — nonce + challenge generator used before wallet signature
 - `/api/airdrop/register.js` — airdrop registration backend
 - `/api/airdrop/claim-status.js` — airdrop claim-status backend
-- `/api/airdrop/claim.js` — current test/manual airdrop claim backend that marks rows as claimed in Supabase
+- `/api/airdrop/claim.js` — current test/manual airdrop claim backend that records manual claim requests as `claim_processing` before operator delivery
 - `/api/community-stats.js` — community stats endpoint, holders count, X manual count, and Telegram live counter
 - `/api/round/config.js` — public config for round pricing, limits, receiver wallets, progress, and remaining allocation
 - `/api/round/register.js` — round validation + registration backend
@@ -31,6 +31,8 @@ Main active files in the current site:
 - `/api/round-register.js` — compatibility re-export for `/api/round/register.js`
 - `/scripts/distribute-firu.js` — manual FIRU distribution helper script
 - `/supabase/schema.sql` — project database schema reference
+- `/api/_security.js` — shared API security headers, generic server-error handling, and lightweight rate-limit helper
+- `/vercel.json` — global Vercel security headers policy
 
 ## Current approved operating model
 
@@ -42,7 +44,8 @@ Main active files in the current site:
 - Telegram in the form is **manual username + confirmation checkbox**, not real-time Telegram verification
 - X in the form is a **manual username field**, not OAuth or live follow verification
 - Claim flow is currently **test/manual**:
-  - the claim endpoint marks the row as `claimed` in Supabase
+  - the claim endpoint moves approved wallets to `claim_processing` in Supabase
+  - wallets are marked `claimed` only after manual/operator delivery is completed
   - token delivery is still handled manually by the operator
   - approved claims are communicated as manual project delivery after claim, without promising an automatic or fixed-time on-chain send
 
@@ -116,9 +119,12 @@ Important removed/legacy items that must **not** be reintroduced casually:
 - `AIRDROP_APPROVED_LIMIT` (use `100` for the current campaign, or `0` / `off` / `unlimited` for no limit)
 - `TREASURY_PRIVATE_KEY_JSON`
 
-### Optional but recommended
+### Required security variables
 
 - `NONCE_SECRET`
+
+### Optional but recommended
+
 - `ROUND_RECEIVER_USDT_ATA`
 - `ROUND_RECEIVER_USDC_ATA`
 - `ROUND_1_TOKEN_CAP`
@@ -157,7 +163,7 @@ Important removed/legacy items that must **not** be reintroduced casually:
 - `/api/airdrop/nonce` creates a nonce + challenge payload used before wallet signature
 - `/api/airdrop/register` validates the challenge, wallet signature, Turnstile token, and uniqueness checks before saving the registration
 - `/api/airdrop/claim-status` checks whether a wallet is pending, approved, rejected, or already claimed
-- `/api/airdrop/claim.js` is the active test/manual claim endpoint for the current flow
+- `/api/airdrop/claim.js` is the active test/manual claim endpoint for the current flow and now records `claim_processing` instead of auto-claiming wallets
 - the frontend claim flow must not simulate fake preview success; it should reflect the real backend response
 
 ## Community stats logic
@@ -230,4 +236,14 @@ When `ROUND_3_ENABLED=true`, the round API can also expose `ROUND_3_FIRU_PRICE` 
 - Round registration now uses a signed short-lived pricing quote from `/api/round/config` so the UI estimate and backend validation stay aligned during registration.
 - Round registration rejects transactions outside the accepted round time window using `ROUND_TX_MAX_AGE_HOURS` and optional `ROUND_TX_NOT_BEFORE`.
 - Airdrop claim now records a manual claim request (`claim_processing`) instead of marking wallets as claimed automatically before manual distribution happens.
+- Sensitive API routes now share lightweight rate limiting, generic server error responses, and basic no-store / anti-framing / no-sniff headers through `/api/_security.js`.
+- `/api/airdrop/nonce.js` now requires a dedicated `NONCE_SECRET`; it no longer falls back to other secrets.
+- `vercel.json` now applies a project-wide security-headers policy including CSP, frame protection, referrer policy, and related browser hardening headers.
+- Supabase hardening is now aligned with the frozen live base: RLS enabled on the two sensitive tables, future-table auto-RLS trigger enabled, sensitive views closed to `anon` / `authenticated`, and admin airdrop functions locked with `search_path = public, pg_temp` plus revoked public execute rights.
 - `scripts/distribute-firu.js` now aborts if the loaded distribution wallet does not match the expected community distribution wallet.
+
+## Current validated infrastructure state
+
+- Vercel domains currently validated: `superfirulai.com`, `www.superfirulai.com`, and `superfirulai-website.vercel.app`
+- DNS is aligned with the Vercel-recommended records for the apex domain and `www`
+- `NONCE_SECRET` is confirmed in Vercel
