@@ -22,6 +22,8 @@ const TELEGRAM_HANDLE_RE = /^[A-Za-z0-9_]{3,32}$/;
 const X_HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
 const SOL_EQ_EPSILON = 1e-9;
 const FIRU_EPSILON = 1e-9;
+const SOL_PAYMENT_TOLERANCE = 0.00001;
+const STABLE_PAYMENT_TOLERANCE = 0.01;
 
 function stripSpaces(value) {
   return String(value || "").trim().replace(/\s+/g, "");
@@ -303,7 +305,7 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Round receiver wallet is not configured" });
     }
 
-    const { wallet, tx_hash, round, payment_token, telegram, x, quote } = req.body || {};
+    const { wallet, tx_hash, round, payment_token, telegram, x, quote, requested_amount } = req.body || {};
     if (!tx_hash || !round || !payment_token || !quote) {
       return res.status(400).json({ error: "Missing fields" });
     }
@@ -345,6 +347,7 @@ export default async function handler(req, res) {
     const maxSol = Number(quotePayload?.limits?.maxSol || 0);
 
     const txHash = String(tx_hash).trim();
+    const requestedPaymentAmount = Number(requested_amount || 0);
     const telegramUsername = telegram ? normalizeTelegramHandle(telegram) : null;
     const xUsername = x ? normalizeXHandle(x) : null;
 
@@ -397,6 +400,16 @@ export default async function handler(req, res) {
 
     if (!(paymentAmount > 0)) {
       return res.status(400).json({ error: `No ${token} payment to the official destination was found in this transaction` });
+    }
+
+    const paymentTolerance = token === "SOL" ? SOL_PAYMENT_TOLERANCE : STABLE_PAYMENT_TOLERANCE;
+    if (Number.isFinite(requestedPaymentAmount) && requestedPaymentAmount > 0) {
+      const paymentDelta = Math.abs(paymentAmount - requestedPaymentAmount);
+      if (paymentDelta > paymentTolerance) {
+        return res.status(400).json({
+          error: `${token} payment does not match the amount entered. Sent ${formatAmount(paymentAmount, token === "SOL" ? 6 : 2)} ${token}, expected ${formatAmount(requestedPaymentAmount, token === "SOL" ? 6 : 2)} ${token}.`
+        });
+      }
     }
 
     const quotedTokenPriceUsd = Number(quotePayload?.prices?.[token] || 0);
@@ -483,6 +496,8 @@ export default async function handler(req, res) {
         quoteIssuedAt: quotePayload.issuedAt,
         quoteExpiresAt: quotePayload.expiresAt,
         quotePriceSource: quotePayload.priceSource,
+        requestedPaymentAmount,
+        paymentTolerance,
         quotedTokenPriceUsd,
         quotedSolPriceUsd,
         paymentAmountSolEquivalent,
