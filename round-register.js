@@ -55,6 +55,9 @@ function injectStyles() {
     .sf-handle-shell,.sf-input-shell{display:flex;align-items:center;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#11182f;overflow:hidden}
     .sf-prefix{flex:0 0 auto;padding:0 14px;height:52px;display:inline-flex;align-items:center;justify-content:center;color:#8fb3ff;font-weight:800;border-right:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
     .sf-input,.sf-select{width:100%;padding:14px;border:none;background:transparent;color:#fff;outline:none;font:inherit}
+    .sf-select{appearance:none;-webkit-appearance:none;-moz-appearance:none;color:#fff}
+    .sf-select option{color:#fff;background:#0b1430}
+    .sf-select option:disabled{color:#8ca6d8;background:#0b1430}
     .sf-input-shell:focus-within,.sf-handle-shell:focus-within{border-color:rgba(81,151,255,.7);box-shadow:0 0 0 3px rgba(81,151,255,.16)}
     .sf-help{font-size:12px;color:#8ca6d8;line-height:1.45}
     .sf-round-actions{display:grid;gap:10px;padding:0;border-radius:0;background:transparent;border:none}
@@ -178,10 +181,25 @@ function injectStyles() {
 
 async function fetchRoundConfig() {
   const resp = await fetch(CONFIG_ENDPOINT, { cache: "no-store" });
-  const data = await resp.json();
+
+  let data = null;
+  const contentType = String(resp.headers.get("content-type") || "").toLowerCase();
+
+  if (contentType.includes("application/json")) {
+    data = await resp.json();
+  } else {
+    const raw = await resp.text();
+    try {
+      data = JSON.parse(raw);
+    } catch {
+      data = { error: raw?.trim() || "Could not load round config" };
+    }
+  }
+
   if (!resp.ok) {
     throw new Error(data?.error || "Could not load round config");
   }
+
   return data;
 }
 
