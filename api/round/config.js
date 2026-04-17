@@ -1,4 +1,4 @@
-import { applySecurityHeaders, serverError } from "./_security.js";
+import { applySecurityHeaders, serverError } from "../_security.js";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
 import { PublicKey } from "@solana/web3.js";
