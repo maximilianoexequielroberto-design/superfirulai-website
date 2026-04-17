@@ -261,19 +261,19 @@ export async function mountAirdropRegister(selector = "#airdrop-register") {
       <div class="sf-field">
         <label class="sf-label" for="sf-x">X username</label>
         <div id="sf-x-shell" class="sf-handle-shell">
-          <span class="sf-prefix">@</span>
+          <span class="sf-prefix">x.com/</span>
           <input id="sf-x" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
         </div>
-        <div class="sf-help">Write your public X username manually. Real-time X verification is disabled.</div>
+        <div class="sf-help">Write only your public X username. Full links also work. Real-time X verification is disabled.</div>
       </div>
 
       <div class="sf-field">
         <label class="sf-label" for="sf-telegram">Telegram username</label>
         <div id="sf-telegram-shell" class="sf-handle-shell">
-          <span class="sf-prefix">@</span>
+          <span class="sf-prefix">t.me/</span>
           <input id="sf-telegram" class="sf-input" placeholder="usuario" autocomplete="off" autocapitalize="off" spellcheck="false" />
         </div>
-        <div class="sf-help">Write your Telegram username manually. Real-time Telegram verification is disabled.</div>
+        <div class="sf-help">Write only your public Telegram username. Full links also work. Real-time Telegram verification is disabled.</div>
       </div>
       <label class="sf-check-row">
         <input id="sf-telegram-confirm" type="checkbox" />
