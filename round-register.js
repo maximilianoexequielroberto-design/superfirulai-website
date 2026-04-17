@@ -1393,13 +1393,15 @@ export function mountRoundRegister(selector) {
       updateProgress();
     }
 
+    const selectedToken = tokenEl.value;
+    const expectedStableAmount = Number(estimatedUsdEl?.textContent?.replace(/[^0-9.]/g, "") || 0);
     const payload = {
       wallet: walletAddress || null,
       tx_hash: txHash,
       round: roundEl.value,
-      payment_token: tokenEl.value,
-      requested_amount: Number(amountEl.value || 0),
-      requested_amount_usd: Number(estimatedUsdEl?.textContent?.replace(/[^0-9.]/g, "") || 0),
+      payment_token: selectedToken,
+      requested_amount: selectedToken === "SOL" ? Number(amountEl.value || 0) : expectedStableAmount,
+      requested_amount_usd: expectedStableAmount,
       quote: roundConfig?.quote || null,
     };
 
