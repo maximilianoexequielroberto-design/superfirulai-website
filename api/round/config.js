@@ -4,10 +4,16 @@ import { createClient } from "@supabase/supabase-js";
 import { PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+function getSupabaseClient() {
+  const url = String(process.env.SUPABASE_URL || "").trim();
+  const serviceRoleKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
+
+  if (!url || !serviceRoleKey) {
+    return null;
+  }
+
+  return createClient(url, serviceRoleKey);
+}
 
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
@@ -123,17 +129,30 @@ function getPublicRpcUrl() {
 }
 
 async function getRaisedFiruByRound(round) {
-  const { data, error } = await supabase
-    .from("round_registrations")
-    .select("firu_allocation,delivery_status")
-    .eq("round", round);
+  const supabase = getSupabaseClient();
+  if (!supabase) {
+    console.warn("round config: Supabase is not configured. Using raisedFiru=0 fallback.");
+    return 0;
+  }
 
-  if (error) throw error;
+  try {
+    const { data, error } = await supabase
+      .from("round_registrations")
+      .select("firu_allocation,delivery_status")
+      .eq("round", round);
 
-  return (data || []).reduce((sum, row) => {
-    if (String(row?.delivery_status || "").toLowerCase() === "cancelled") return sum;
-    return sum + Number(row?.firu_allocation || 0);
-  }, 0);
+    if (error) {
+      throw error;
+    }
+
+    return (data || []).reduce((sum, row) => {
+      if (String(row?.delivery_status || "").toLowerCase() === "cancelled") return sum;
+      return sum + Number(row?.firu_allocation || 0);
+    }, 0);
+  } catch (error) {
+    console.error(`round config: could not load raised FIRU for ${round}. Using fallback 0.`, error);
+    return 0;
+  }
 }
 
 export default async function handler(req, res) {
