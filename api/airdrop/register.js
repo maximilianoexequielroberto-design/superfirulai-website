@@ -46,10 +46,6 @@ async function verifyTurnstile(token, ip) {
 }
 
 function verifyWalletSignature({ wallet, message, signature }) {
-  if (!enforceRateLimit(req, res, { scope: "airdrop-register", limit: 8, windowMs: 60_000 })) {
-    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
-  }
-
   try {
     const publicKey = bs58.decode(wallet);
     const sigBytes = bs58.decode(signature);
@@ -139,6 +135,10 @@ export default async function handler(req, res) {
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  if (!enforceRateLimit(req, res, { scope: "airdrop-register", limit: 8, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
   }
 
   try {
