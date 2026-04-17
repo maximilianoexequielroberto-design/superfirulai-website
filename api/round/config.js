@@ -169,6 +169,13 @@ export default async function handler(req, res) {
     const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
     const { prices, source } = await getLivePrices();
 
+    if (source !== "live") {
+      return res.status(503).json({
+        error: "Live pricing temporarily unavailable. Buy is paused until live prices return.",
+        priceSource: source
+      });
+    }
+
     const roundKeys = ["round1", "round2"];
     const round3Enabled = String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() === "true";
     if (round3Enabled) roundKeys.push("round3");

@@ -143,10 +143,6 @@ async function rpcCall(method, params) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TX_TIMEOUT_MS);
 
-  if (!enforceRateLimit(req, res, { scope: "round-register", limit: 10, windowMs: 60_000 })) {
-    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
-  }
-
   try {
     const resp = await fetch(SOLANA_RPC_URL, {
       method: "POST",
@@ -298,6 +294,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
+  if (!enforceRateLimit(req, res, { scope: "round-register", limit: 10, windowMs: 60_000 })) {
+    return res.status(429).json({ error: "Too many requests. Try again in a minute." });
+  }
+
   try {
     if (!ROUND_RECEIVER_WALLET) {
       return res.status(500).json({ error: "Round receiver wallet is not configured" });
@@ -325,6 +325,13 @@ export default async function handler(req, res) {
     }
 
     const quotePayload = verifyRoundQuote(quote, roundConfig);
+
+    if (quotePayload.priceSource !== "live") {
+      return res.status(409).json({
+        error: "Live pricing is unavailable. Buy is temporarily paused. Refresh and try again later."
+      });
+    }
+
     const quoteRound = quotePayload.rounds?.[roundConfig.round] || {};
 
     if (Boolean(quoteRound.enabled) !== Boolean(roundConfig.enabled)) {
