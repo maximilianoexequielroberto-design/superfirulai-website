@@ -977,6 +977,102 @@ export function mountRoundRegister(selector) {
     return `https://solscan.io/tx/${encodeURIComponent(txHash)}`;
   }
 
+  function getRpcCandidates(primaryRpcUrl) {
+    return Array.from(new Set([
+      String(primaryRpcUrl || "").trim(),
+      "https://api.mainnet-beta.solana.com"
+    ].filter(Boolean)));
+  }
+
+  async function getWalletBalanceWithFallback(senderPublicKey, primaryRpcUrl) {
+    let lastError = null;
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      try {
+        const connection = new Connection(rpcUrl, "confirmed");
+        return await connection.getBalance(senderPublicKey, "confirmed");
+      } catch (error) {
+        lastError = error;
+        console.warn(`Balance pre-check failed on ${rpcUrl}`, error);
+      }
+    }
+    if (lastError) {
+      console.warn("Could not fetch Phantom balance before purchase. Continuing without pre-check.", lastError);
+    }
+    return null;
+  }
+
+  async function getWorkingRpcContext(primaryRpcUrl, senderPublicKey, recipientPublicKey, lamports) {
+    let lastError = null;
+
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      const connection = new Connection(rpcUrl, "confirmed");
+      try {
+        const latest = await connection.getLatestBlockhash("confirmed");
+        const tx = new Transaction({
+          feePayer: senderPublicKey,
+          recentBlockhash: latest.blockhash
+        }).add(
+          SystemProgram.transfer({
+            fromPubkey: senderPublicKey,
+            toPubkey: recipientPublicKey,
+            lamports
+          })
+        );
+
+        return { connection, latest, tx, rpcUrl };
+      } catch (error) {
+        lastError = error;
+        console.warn(`Blockhash fetch failed on ${rpcUrl}`, error);
+      }
+    }
+
+    throw lastError || new Error("Could not reach Solana RPC.");
+  }
+
+  async function confirmTransactionWithFallback(signature, latest, primaryRpcUrl) {
+    let lastError = null;
+
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      try {
+        const connection = new Connection(rpcUrl, "confirmed");
+        await connection.confirmTransaction(
+          {
+            signature,
+            blockhash: latest.blockhash,
+            lastValidBlockHeight: latest.lastValidBlockHeight
+          },
+          "confirmed"
+        );
+        return;
+      } catch (error) {
+        lastError = error;
+        console.warn(`Confirmation failed on ${rpcUrl}`, error);
+      }
+    }
+
+    throw lastError || new Error("Could not confirm the transaction on Solana.");
+  }
+
+  async function sendRawTransactionWithFallback(serializedTx, primaryRpcUrl) {
+    let lastError = null;
+
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      try {
+        const connection = new Connection(rpcUrl, "confirmed");
+        return await connection.sendRawTransaction(serializedTx, {
+          skipPreflight: false,
+          preflightCommitment: "confirmed",
+          maxRetries: 3
+        });
+      } catch (error) {
+        lastError = error;
+        console.warn(`Raw transaction send failed on ${rpcUrl}`, error);
+      }
+    }
+
+    throw lastError || new Error("Could not broadcast the transaction on Solana.");
+  }
+
   function lockPurchaseUi() {
     amountEl.disabled = true;
     txEl.disabled = true;
@@ -1356,18 +1452,13 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.textContent = "Preparing...";
       setMsg("Preparing Phantom transaction...", "warn");
 
-      const connection = new Connection(roundConfig.rpcUrl || "https://api.mainnet-beta.solana.com", "confirmed");
+      const primaryRpcUrl = roundConfig.rpcUrl || "https://api.mainnet-beta.solana.com";
       const sender = new PublicKey(walletAddress);
       const recipient = new PublicKey(roundConfig.projectReceiveWallet);
       const lamports = Math.round(amount * LAMPORTS_PER_SOL);
       const minFeeReserveLamports = 10000;
 
-      let walletBalanceLamports = null;
-      try {
-        walletBalanceLamports = await connection.getBalance(sender, "confirmed");
-      } catch (balanceError) {
-        console.warn("Could not fetch Phantom balance before purchase. Continuing without pre-check.", balanceError);
-      }
+      const walletBalanceLamports = await getWalletBalanceWithFallback(sender, primaryRpcUrl);
 
       if (Number.isFinite(walletBalanceLamports) && walletBalanceLamports < lamports + minFeeReserveLamports) {
         const availableSol = walletBalanceLamports / LAMPORTS_PER_SOL;
@@ -1376,31 +1467,18 @@ export function mountRoundRegister(selector) {
         );
       }
 
-      async function buildAutoBuyTransaction() {
-        const latest = await connection.getLatestBlockhash("confirmed");
-        const tx = new Transaction({
-          feePayer: sender,
-          recentBlockhash: latest.blockhash
-        }).add(
-          SystemProgram.transfer({
-            fromPubkey: sender,
-            toPubkey: recipient,
-            lamports
-          })
-        );
-        return { tx, latest };
-      }
-
+      let activeConnection;
       let latest;
       let tx;
 
       autoBuyBtn.textContent = "Checking...";
       try {
-        const built = await buildAutoBuyTransaction();
-        tx = built.tx;
-        latest = built.latest;
+        const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
+        activeConnection = rpcContext.connection;
+        latest = rpcContext.latest;
+        tx = rpcContext.tx;
 
-        const simulation = await connection.simulateTransaction(tx, {
+        const simulation = await activeConnection.simulateTransaction(tx, {
           sigVerify: false,
           replaceRecentBlockhash: true,
           commitment: "confirmed"
@@ -1416,9 +1494,10 @@ export function mountRoundRegister(selector) {
         if (!/invalid arguments/i.test(rawSimulationMessage)) {
           throw simulationError;
         }
-        const built = await buildAutoBuyTransaction();
-        tx = built.tx;
-        latest = built.latest;
+        const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
+        activeConnection = rpcContext.connection;
+        latest = rpcContext.latest;
+        tx = rpcContext.tx;
       }
 
       autoBuyBtn.textContent = "Waiting for approval...";
@@ -1429,11 +1508,7 @@ export function mountRoundRegister(selector) {
         signature = sent?.signature || "";
       } else if (typeof provider.signTransaction === "function") {
         const signedTx = await provider.signTransaction(tx);
-        signature = await connection.sendRawTransaction(signedTx.serialize(), {
-          skipPreflight: false,
-          preflightCommitment: "confirmed",
-          maxRetries: 3
-        });
+        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
       } else {
         throw new Error("This wallet does not support transaction signing.");
       }
@@ -1446,14 +1521,7 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.textContent = "Confirming...";
       setMsg("Transaction sent. Waiting for confirmation on Solana...", "warn");
 
-      await connection.confirmTransaction(
-        {
-          signature,
-          blockhash: latest.blockhash,
-          lastValidBlockHeight: latest.lastValidBlockHeight
-        },
-        "confirmed"
-      );
+      await confirmTransactionWithFallback(signature, latest, primaryRpcUrl);
 
       autoBuyBtn.textContent = "Registering...";
       const data = await registerRoundPurchase(signature);
@@ -1495,6 +1563,8 @@ export function mountRoundRegister(selector) {
         message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
       } else if (/invalid arguments/i.test(rawMessage)) {
         message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
+      } else if (/recent blockhash|failed to fetch|could not reach solana rpc/i.test(rawMessage)) {
+        message = "Could not reach Solana from this browser at this moment. Please try again in a few seconds.";
       } else if (/insufficient/i.test(rawMessage)) {
         message = "Insufficient SOL balance for the purchase amount plus network fee.";
       }
