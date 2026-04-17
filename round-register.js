@@ -984,6 +984,32 @@ export function mountRoundRegister(selector) {
     ].filter(Boolean)));
   }
 
+  function wait(ms) {
+    return new Promise((resolve) => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
+  }
+
+  async function fetchServerRoundBlockhash() {
+    const resp = await fetch("/api/round/blockhash", {
+      method: "GET",
+      headers: { accept: "application/json" },
+      cache: "no-store"
+    });
+
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      throw new Error(data?.error || "Could not load latest blockhash from server");
+    }
+
+    const blockhash = String(data?.blockhash || "").trim();
+    const lastValidBlockHeight = Number(data?.lastValidBlockHeight || 0);
+
+    if (!blockhash || !Number.isFinite(lastValidBlockHeight) || lastValidBlockHeight <= 0) {
+      throw new Error("Server returned an invalid blockhash payload");
+    }
+
+    return { blockhash, lastValidBlockHeight };
+  }
+
   async function getWalletBalanceWithFallback(senderPublicKey, primaryRpcUrl) {
     let lastError = null;
     for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
@@ -1372,30 +1398,40 @@ export function mountRoundRegister(selector) {
       quote: roundConfig?.quote || null,
     };
 
-    const resp = await fetch("/api/round/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    });
+    let lastError = null;
 
-    const data = await resp.json();
-    if (!resp.ok) {
-      throw new Error(data.error || "Round registration failed");
-    }
+    for (let attempt = 1; attempt <= 6; attempt += 1) {
+      const resp = await fetch("/api/round/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
 
-    if (data?.round_status) {
-      const meta = roundConfig?.rounds?.[roundEl.value];
-      if (meta) {
-        meta.raisedFiru = data.round_status.raised_firu;
-        meta.remainingFiru = data.round_status.remaining_firu;
-        meta.soldOut = Boolean(data.round_status.sold_out);
+      const data = await resp.json().catch(() => ({}));
+      if (resp.ok) {
+        if (data?.round_status) {
+          const meta = roundConfig?.rounds?.[roundEl.value];
+          if (meta) {
+            meta.raisedFiru = data.round_status.raised_firu;
+            meta.remainingFiru = data.round_status.remaining_firu;
+            meta.soldOut = Boolean(data.round_status.sold_out);
+          }
+          updateRoundMeta();
+          updateProgress();
+          setReady();
+        }
+        return data;
       }
-      updateRoundMeta();
-      updateProgress();
-      setReady();
+
+      lastError = new Error(data?.error || "Round registration failed");
+      if (/transaction not found/i.test(lastError.message) && attempt < 6) {
+        await wait(2000);
+        continue;
+      }
+      throw lastError;
     }
 
-    return data;
+    throw lastError || new Error("Round registration failed");
   }
 
   autoBuyBtn.addEventListener("click", async () => {
@@ -1458,7 +1494,12 @@ export function mountRoundRegister(selector) {
       const lamports = Math.round(amount * LAMPORTS_PER_SOL);
       const minFeeReserveLamports = 10000;
 
-      const walletBalanceLamports = await getWalletBalanceWithFallback(sender, primaryRpcUrl);
+      let walletBalanceLamports = null;
+      try {
+        walletBalanceLamports = await getWalletBalanceWithFallback(sender, primaryRpcUrl);
+      } catch (balanceError) {
+        console.warn("wallet balance precheck skipped", balanceError);
+      }
 
       if (Number.isFinite(walletBalanceLamports) && walletBalanceLamports < lamports + minFeeReserveLamports) {
         const availableSol = walletBalanceLamports / LAMPORTS_PER_SOL;
@@ -1467,35 +1508,25 @@ export function mountRoundRegister(selector) {
         );
       }
 
-      let activeConnection;
       let latest;
       let tx;
 
       autoBuyBtn.textContent = "Checking...";
       try {
+        latest = await fetchServerRoundBlockhash();
+        tx = new Transaction({
+          feePayer: sender,
+          recentBlockhash: latest.blockhash
+        }).add(
+          SystemProgram.transfer({
+            fromPubkey: sender,
+            toPubkey: recipient,
+            lamports
+          })
+        );
+      } catch (serverBlockhashError) {
+        console.warn("server blockhash failed, falling back to browser rpc", serverBlockhashError);
         const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
-        activeConnection = rpcContext.connection;
-        latest = rpcContext.latest;
-        tx = rpcContext.tx;
-
-        const simulation = await activeConnection.simulateTransaction(tx, {
-          sigVerify: false,
-          replaceRecentBlockhash: true,
-          commitment: "confirmed"
-        });
-
-        if (simulation?.value?.err) {
-          const logs = Array.isArray(simulation.value.logs) ? simulation.value.logs.join(" | ") : "";
-          const reason = logs || JSON.stringify(simulation.value.err);
-          throw new Error(`Simulation failed: ${reason}`);
-        }
-      } catch (simulationError) {
-        const rawSimulationMessage = String(simulationError?.message || "");
-        if (!/invalid arguments/i.test(rawSimulationMessage)) {
-          throw simulationError;
-        }
-        const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
-        activeConnection = rpcContext.connection;
         latest = rpcContext.latest;
         tx = rpcContext.tx;
       }
@@ -1518,12 +1549,10 @@ export function mountRoundRegister(selector) {
       }
 
       txEl.value = signature;
-      autoBuyBtn.textContent = "Confirming...";
-      setMsg("Transaction sent. Waiting for confirmation on Solana...", "warn");
-
-      await confirmTransactionWithFallback(signature, latest, primaryRpcUrl);
-
       autoBuyBtn.textContent = "Registering...";
+      setMsg("Transaction sent. Verifying it with the server...", "warn");
+
+      await wait(3500);
       const data = await registerRoundPurchase(signature);
 
       if (data?.round_status) {
