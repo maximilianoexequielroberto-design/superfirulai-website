@@ -1362,23 +1362,17 @@ export function mountRoundRegister(selector) {
       const lamports = Math.round(amount * LAMPORTS_PER_SOL);
       const minFeeReserveLamports = 10000;
 
-      let walletBalanceLamports = 0;
+      let walletBalanceLamports = null;
       try {
         walletBalanceLamports = await connection.getBalance(sender, "confirmed");
       } catch (balanceError) {
-        console.warn("Could not fetch Phantom balance before purchase", balanceError);
+        console.warn("Could not fetch Phantom balance before purchase. Continuing without pre-check.", balanceError);
       }
 
-      if (Number.isFinite(walletBalanceLamports) && walletBalanceLamports > 0 && walletBalanceLamports < lamports + minFeeReserveLamports) {
+      if (Number.isFinite(walletBalanceLamports) && walletBalanceLamports < lamports + minFeeReserveLamports) {
         const availableSol = walletBalanceLamports / LAMPORTS_PER_SOL;
         throw new Error(
           `Insufficient SOL balance. You need at least ${formatCompact(amount, 4)} SOL plus network fee. Wallet balance: ${formatCompact(availableSol, 4)} SOL.`
-        );
-      }
-
-      if (walletBalanceLamports <= 0) {
-        throw new Error(
-          `Insufficient SOL balance. You need at least ${formatCompact(amount, 4)} SOL plus network fee. Wallet balance: 0 SOL.`
         );
       }
 
