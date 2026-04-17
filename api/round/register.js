@@ -474,7 +474,7 @@ export default async function handler(req, res) {
       project_wallet: ROUND_RECEIVER_WALLET,
       tx_hash: txHash,
       round: roundConfig.round,
-      sol_amount: token === "SOL" ? paymentAmount : null,
+      sol_amount: Number(paymentAmountSolEquivalent.toFixed(9)),
       payment_token: token,
       payment_amount: paymentAmount,
       payment_amount_usd: paymentAmountUsd,
