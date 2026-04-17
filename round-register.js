@@ -49,6 +49,9 @@ function injectStyles() {
     .sf-copy-btn{flex:0 0 auto;min-width:84px;height:52px;padding:0 14px;border:none;border-left:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.05);color:#fff;font:inherit;font-weight:800;cursor:pointer;transition:background .18s ease,color .18s ease;white-space:nowrap}
     .sf-copy-btn:hover{background:rgba(255,255,255,.1)}
     .sf-copy-btn.copied{background:rgba(33,203,126,.18);color:#8bf0b2}
+    #sfRoundSubmit{background:linear-gradient(135deg,#18a3ff,#6f8cff);color:#fff;border:1px solid rgba(143,179,255,.55);box-shadow:0 12px 30px rgba(24,163,255,.20)}
+    #sfRoundSubmit:hover{filter:brightness(1.06);transform:translateY(-1px)}
+    #sfRoundSubmit:disabled{background:rgba(255,255,255,.08);color:rgba(255,255,255,.52);border-color:rgba(255,255,255,.10);box-shadow:none;filter:none;transform:none}
     .sf-hash-warning{display:grid;gap:8px;padding:14px 16px;border-radius:16px;background:rgba(255,216,125,.08);border:1px solid rgba(255,216,125,.22);color:#ffe39d;font-size:13px;line-height:1.55}
     .sf-hash-warning strong{color:#fff}
     .sf-label{font-size:13px;font-weight:800;letter-spacing:.02em;color:#fff}
@@ -402,7 +405,7 @@ export function mountRoundRegister(selector) {
 
         <div class="sf-action-grid sf-action-grid-bottom">
           <button type="button" class="btn btn-blue" id="sfRoundAutoBuy" disabled>Buy SOL with Phantom</button>
-          <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX Hash</button>
+          <button type="button" class="btn btn-dark" id="sfRoundSubmit" disabled>Register TX</button>
         </div>
         <div id="sfRoundWalletMsg" class="sf-round-note warn"><strong>Wallet not connected.</strong> Connect Phantom for SOL, or paste the confirmed TX hash for USDT/USDC.</div>
       </div>
@@ -1208,7 +1211,7 @@ export function mountRoundRegister(selector) {
     autoBuyBtn.disabled = !amountReady;
     submitBtn.disabled = !manualReady;
     autoBuyBtn.textContent = token === "SOL" ? "Buy SOL with Phantom" : "Automatic buy only for SOL";
-    submitBtn.textContent = token === "SOL" ? "Register TX Hash" : `Register ${token} TX Hash`;
+    submitBtn.textContent = token === "SOL" ? "Register TX" : `Register ${token} TX`;
     updateStepWitness();
   }
 
@@ -1395,6 +1398,8 @@ export function mountRoundRegister(selector) {
       tx_hash: txHash,
       round: roundEl.value,
       payment_token: tokenEl.value,
+      requested_amount: Number(amountEl.value || 0),
+      requested_amount_usd: Number(estimatedUsdEl?.textContent?.replace(/[^0-9.]/g, "") || 0),
       quote: roundConfig?.quote || null,
     };
 
@@ -1594,6 +1599,10 @@ export function mountRoundRegister(selector) {
         message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
       } else if (/recent blockhash|failed to fetch|could not reach solana rpc/i.test(rawMessage)) {
         message = "Could not reach Solana from this browser at this moment. Please try again in a few seconds.";
+      } else if (/does not match the amount entered|payment amount mismatch/i.test(rawMessage)) {
+        message = rawMessage;
+      } else if (/wallet did not return a transaction signature|missing transaction signature/i.test(rawMessage)) {
+        message = "The wallet did not return a valid signature. Please reopen Phantom and try again.";
       } else if (/insufficient/i.test(rawMessage)) {
         message = "Insufficient SOL balance for the purchase amount plus network fee.";
       }
@@ -1627,7 +1636,7 @@ export function mountRoundRegister(selector) {
       await loadPurchaseHistory(true);
     } catch (err) {
       submitBtn.disabled = false;
-      submitBtn.textContent = "Register TX Hash";
+      submitBtn.textContent = "Register TX";
       setReady();
       setMsg(err?.message || "Could not register the purchase.", "error");
     }
