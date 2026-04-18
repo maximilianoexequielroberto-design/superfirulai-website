@@ -1102,61 +1102,6 @@ export function mountRoundRegister(selector) {
     throw lastError || new Error("Could not broadcast the transaction on Solana.");
   }
 
-  async function simulateWalletTransactionBeforePrompt(transaction, primaryRpcUrl) {
-    let lastError = null;
-
-    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
-      const connection = new Connection(rpcUrl, "processed");
-      try {
-        let result = null;
-        try {
-          result = await connection.simulateTransaction(transaction, {
-            sigVerify: false,
-            replaceRecentBlockhash: true,
-            commitment: "processed"
-          });
-        } catch (primaryError) {
-          result = await connection.simulateTransaction(transaction, [], "processed");
-        }
-
-        const simulationError = result?.value?.err || result?.err || null;
-        if (simulationError) {
-          const serialized = typeof simulationError === "string" ? simulationError : JSON.stringify(simulationError);
-          throw new Error(`Transaction simulation failed before wallet prompt: ${serialized}`);
-        }
-
-        return { ok: true, rpcUrl };
-      } catch (error) {
-        lastError = error;
-        console.warn(`Wallet pre-simulation failed on ${rpcUrl}`, error);
-      }
-    }
-
-    throw lastError || new Error("Could not simulate the transaction before opening Phantom.");
-  }
-
-  async function requestWalletSignatureAndBroadcast(transaction, provider, primaryRpcUrl) {
-    if (provider && typeof provider.signTransaction === "function") {
-      const signedTx = await provider.signTransaction(transaction);
-      if (!signedTx || typeof signedTx.serialize !== "function") {
-        throw new Error("Wallet did not return a signed transaction.");
-      }
-      const signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
-      return { signature, method: "signTransaction" };
-    }
-
-    if (provider && typeof provider.signAndSendTransaction === "function") {
-      const sent = await provider.signAndSendTransaction(transaction);
-      const signature = typeof sent === "string" ? sent : sent?.signature || "";
-      if (!signature) {
-        throw new Error("Wallet did not return a transaction signature.");
-      }
-      return { signature, method: "signAndSendTransaction" };
-    }
-
-    throw new Error("This wallet does not support transaction signing.");
-  }
-
   function lockPurchaseUi() {
     amountEl.disabled = true;
     txEl.disabled = true;
@@ -1575,7 +1520,24 @@ export function mountRoundRegister(selector) {
 
       autoBuyBtn.textContent = "Checking...";
       try {
-        latest = await fetchServerRoundBlockhash();
+        let lastServerBlockhashError = null;
+
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          try {
+            latest = await fetchServerRoundBlockhash();
+            break;
+          } catch (serverBlockhashError) {
+            lastServerBlockhashError = serverBlockhashError;
+            if (attempt < 2) {
+              await wait(700);
+            }
+          }
+        }
+
+        if (!latest?.blockhash) {
+          throw lastServerBlockhashError || new Error("Could not get server blockhash.");
+        }
+
         tx = new Transaction({
           feePayer: sender,
           recentBlockhash: latest.blockhash
@@ -1587,18 +1549,31 @@ export function mountRoundRegister(selector) {
           })
         );
       } catch (serverBlockhashError) {
+        const canWalletSendDirect = typeof provider?.signAndSendTransaction === "function";
+
+        if (canWalletSendDirect) {
+          console.warn("server blockhash failed for direct wallet send", serverBlockhashError);
+          throw new Error("Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.");
+        }
+
         console.warn("server blockhash failed, falling back to browser rpc", serverBlockhashError);
         const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
         latest = rpcContext.latest;
         tx = rpcContext.tx;
       }
 
-      autoBuyBtn.textContent = "Preparing secure transfer...";
-      await simulateWalletTransactionBeforePrompt(tx, primaryRpcUrl);
-
       autoBuyBtn.textContent = "Waiting for approval...";
-      const sendResult = await requestWalletSignatureAndBroadcast(tx, provider, primaryRpcUrl);
-      const signature = String(sendResult?.signature || "");
+      let signature = "";
+
+      if (typeof provider.signAndSendTransaction === "function") {
+        const sent = await provider.signAndSendTransaction(tx);
+        signature = sent?.signature || "";
+      } else if (typeof provider.signTransaction === "function") {
+        const signedTx = await provider.signTransaction(tx);
+        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
+      } else {
+        throw new Error("This wallet does not support transaction signing.");
+      }
 
       if (!signature) {
         throw new Error("Wallet did not return a transaction signature.");
@@ -1648,6 +1623,8 @@ export function mountRoundRegister(selector) {
         message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
       } else if (/invalid arguments/i.test(rawMessage)) {
         message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
+      } else if (/fresh Solana blockhash from the server/i.test(rawMessage)) {
+        message = "Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.";
       } else if (/recent blockhash|failed to fetch|could not reach solana rpc/i.test(rawMessage)) {
         message = "Could not reach Solana from this browser at this moment. Please try again in a few seconds.";
       } else if (/does not match the amount entered|payment amount mismatch/i.test(rawMessage)) {
