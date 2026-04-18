@@ -1102,6 +1102,61 @@ export function mountRoundRegister(selector) {
     throw lastError || new Error("Could not broadcast the transaction on Solana.");
   }
 
+  async function simulateWalletTransactionBeforePrompt(transaction, primaryRpcUrl) {
+    let lastError = null;
+
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      const connection = new Connection(rpcUrl, "processed");
+      try {
+        let result = null;
+        try {
+          result = await connection.simulateTransaction(transaction, {
+            sigVerify: false,
+            replaceRecentBlockhash: true,
+            commitment: "processed"
+          });
+        } catch (primaryError) {
+          result = await connection.simulateTransaction(transaction, [], "processed");
+        }
+
+        const simulationError = result?.value?.err || result?.err || null;
+        if (simulationError) {
+          const serialized = typeof simulationError === "string" ? simulationError : JSON.stringify(simulationError);
+          throw new Error(`Transaction simulation failed before wallet prompt: ${serialized}`);
+        }
+
+        return { ok: true, rpcUrl };
+      } catch (error) {
+        lastError = error;
+        console.warn(`Wallet pre-simulation failed on ${rpcUrl}`, error);
+      }
+    }
+
+    throw lastError || new Error("Could not simulate the transaction before opening Phantom.");
+  }
+
+  async function requestWalletSignatureAndBroadcast(transaction, provider, primaryRpcUrl) {
+    if (provider && typeof provider.signTransaction === "function") {
+      const signedTx = await provider.signTransaction(transaction);
+      if (!signedTx || typeof signedTx.serialize !== "function") {
+        throw new Error("Wallet did not return a signed transaction.");
+      }
+      const signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
+      return { signature, method: "signTransaction" };
+    }
+
+    if (provider && typeof provider.signAndSendTransaction === "function") {
+      const sent = await provider.signAndSendTransaction(transaction);
+      const signature = typeof sent === "string" ? sent : sent?.signature || "";
+      if (!signature) {
+        throw new Error("Wallet did not return a transaction signature.");
+      }
+      return { signature, method: "signAndSendTransaction" };
+    }
+
+    throw new Error("This wallet does not support transaction signing.");
+  }
+
   function lockPurchaseUi() {
     amountEl.disabled = true;
     txEl.disabled = true;
@@ -1538,18 +1593,12 @@ export function mountRoundRegister(selector) {
         tx = rpcContext.tx;
       }
 
-      autoBuyBtn.textContent = "Waiting for approval...";
-      let signature = "";
+      autoBuyBtn.textContent = "Preparing secure transfer...";
+      await simulateWalletTransactionBeforePrompt(tx, primaryRpcUrl);
 
-      if (typeof provider.signAndSendTransaction === "function") {
-        const sent = await provider.signAndSendTransaction(tx);
-        signature = sent?.signature || "";
-      } else if (typeof provider.signTransaction === "function") {
-        const signedTx = await provider.signTransaction(tx);
-        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
-      } else {
-        throw new Error("This wallet does not support transaction signing.");
-      }
+      autoBuyBtn.textContent = "Waiting for approval...";
+      const sendResult = await requestWalletSignatureAndBroadcast(tx, provider, primaryRpcUrl);
+      const signature = String(sendResult?.signature || "");
 
       if (!signature) {
         throw new Error("Wallet did not return a transaction signature.");
