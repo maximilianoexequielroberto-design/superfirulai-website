@@ -1102,6 +1102,33 @@ export function mountRoundRegister(selector) {
     throw lastError || new Error("Could not broadcast the transaction on Solana.");
   }
 
+
+  async function simulateTransactionWithFallback(tx, primaryRpcUrl) {
+    let lastError = null;
+
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      try {
+        const connection = new Connection(rpcUrl, "confirmed");
+        const simulation = await connection.simulateTransaction(tx, {
+          sigVerify: false,
+          replaceRecentBlockhash: true,
+          commitment: "confirmed"
+        });
+
+        if (simulation?.value?.err) {
+          throw new Error("Transaction simulation failed before wallet approval.");
+        }
+
+        return simulation;
+      } catch (error) {
+        lastError = error;
+        console.warn(`Transaction simulation failed on ${rpcUrl}`, error);
+      }
+    }
+
+    throw lastError || new Error("Could not simulate the transaction before wallet approval.");
+  }
+
   function lockPurchaseUi() {
     amountEl.disabled = true;
     txEl.disabled = true;
@@ -1624,6 +1651,9 @@ export function mountRoundRegister(selector) {
         tx = rpcContext.tx;
       }
 
+      autoBuyBtn.textContent = "Simulating...";
+      await simulateTransactionWithFallback(tx, primaryRpcUrl);
+
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
 
@@ -1688,7 +1718,7 @@ export function mountRoundRegister(selector) {
       if (/user rejected|rejected the request|4001/i.test(rawMessage)) {
         message = "The wallet request was rejected before signing.";
       } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
-        message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
+        message = "The transaction could not be simulated cleanly before wallet approval. Please wait a few seconds and try again.";
       } else if (/solicitud bloqueada|blocked this request|blocked this transaction|malicious|phishing|unsafe/i.test(rawMessage)) {
         message = "Phantom blocked this request in the wallet. This usually comes from Phantom's security layer, not from the buy logic itself. This file now uses wallet signing first and broadcasts the signed transaction from the site to reduce that warning.";
       } else if (/invalid arguments/i.test(rawMessage)) {
