@@ -12,8 +12,6 @@ import {
   getPreferredSolanaProvider
 } from "./wallet-provider.js";
 
-import bs58 from "https://esm.sh/bs58@6.0.0";
-
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
 const CONFIG_ENDPOINT = "/api/round/config";
 const TOKEN_ORDER = ["SOL", "USDT", "USDC"];
@@ -1104,33 +1102,6 @@ export function mountRoundRegister(selector) {
     throw lastError || new Error("Could not broadcast the transaction on Solana.");
   }
 
-
-  async function simulateTransactionWithFallback(tx, primaryRpcUrl) {
-    let lastError = null;
-
-    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
-      try {
-        const connection = new Connection(rpcUrl, "confirmed");
-        const simulation = await connection.simulateTransaction(tx, {
-          sigVerify: false,
-          replaceRecentBlockhash: true,
-          commitment: "confirmed"
-        });
-
-        if (simulation?.value?.err) {
-          throw new Error("Transaction simulation failed before wallet approval.");
-        }
-
-        return simulation;
-      } catch (error) {
-        lastError = error;
-        console.warn(`Transaction simulation failed on ${rpcUrl}`, error);
-      }
-    }
-
-    throw lastError || new Error("Could not simulate the transaction before wallet approval.");
-  }
-
   function lockPurchaseUi() {
     amountEl.disabled = true;
     txEl.disabled = true;
@@ -1414,55 +1385,6 @@ export function mountRoundRegister(selector) {
     }
   });
 
-
-  async function recoverRegisteredPurchase(txHash) {
-    const normalizedTxHash = String(txHash || "").trim();
-    if (!walletAddress || !normalizedTxHash) return null;
-
-    try {
-      const resp = await fetch(`/api/round/history?wallet=${encodeURIComponent(walletAddress)}`, {
-        headers: { accept: "application/json" },
-        cache: "no-store"
-      });
-
-      const data = await resp.json().catch(() => ({}));
-      if (!resp.ok) return null;
-
-      const purchase = (data?.purchases || []).find((item) => String(item?.tx_hash || "").trim() === normalizedTxHash);
-      if (!purchase) return null;
-
-      const purchaseRoundKey = String(purchase.round || "").trim();
-      const purchaseRoundMeta = roundConfig?.rounds?.[purchaseRoundKey] || null;
-
-      return {
-        success: true,
-        already_registered: true,
-        wallet: purchase.wallet || walletAddress,
-        sender_wallet: purchase.sender_wallet || purchase.wallet || walletAddress,
-        payment_token: purchase.payment_token || tokenEl.value || "SOL",
-        payment_amount: Number(purchase.payment_amount || 0),
-        payment_amount_usd: Number(purchase.payment_amount_usd || 0),
-        payment_amount_sol_equivalent: Number(purchase.payment_amount_usd || 0) > 0 && Number(roundConfig?.quote?.prices?.SOL || 0) > 0
-          ? Number(purchase.payment_amount_usd || 0) / Number(roundConfig.quote.prices.SOL)
-          : Number(amountEl.value || 0),
-        token_price_usd: Number(roundConfig?.quote?.prices?.[purchase.payment_token] || 0),
-        sol_price_usd: Number(roundConfig?.quote?.prices?.SOL || 0),
-        pricing_mode: "quoted_realtime",
-        price_source: String(roundConfig?.quote?.priceSource || "live"),
-        quote_issued_at: roundConfig?.quote?.issuedAt || null,
-        quote_expires_at: roundConfig?.quote?.expiresAt || null,
-        firu_price_usd: Number(purchaseRoundMeta?.firuPriceUsd || 0),
-        firu_allocation: Number(purchase.firu_allocation || 0),
-        round: purchase.round || roundEl.value,
-        destination_address: roundConfig?.projectReceiveWallet || destinationEl?.value || "",
-        tx_hash: normalizedTxHash,
-        recovered_from_history: true
-      };
-    } catch (_) {
-      return null;
-    }
-  }
-
   async function registerRoundPurchase(txHash) {
     if (quoteNeedsRefresh(roundConfig)) {
       roundConfig = await fetchRoundConfig();
@@ -1513,20 +1435,7 @@ export function mountRoundRegister(selector) {
         await wait(2000);
         continue;
       }
-
-      if (/transaction already used/i.test(lastError.message)) {
-        const recovered = await recoverRegisteredPurchase(txHash);
-        if (recovered) {
-          return recovered;
-        }
-      }
-
       throw lastError;
-    }
-
-    const recovered = await recoverRegisteredPurchase(txHash);
-    if (recovered) {
-      return recovered;
     }
 
     throw lastError || new Error("Round registration failed");
@@ -1653,29 +1562,10 @@ export function mountRoundRegister(selector) {
         tx = rpcContext.tx;
       }
 
-      autoBuyBtn.textContent = "Simulating...";
-      await simulateTransactionWithFallback(tx, primaryRpcUrl);
-
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
 
-      const preferPhantomLegacyRequest = Boolean(provider?.isPhantom && typeof provider?.request === "function");
-
-      if (preferPhantomLegacyRequest) {
-        const signedTx = await provider.request({
-          method: "signTransaction",
-          params: {
-            message: bs58.encode(tx.serializeMessage())
-          }
-        });
-
-        if (!signedTx || typeof signedTx.serialize !== "function") {
-          throw new Error("Phantom returned an unexpected transaction format.");
-        }
-
-        autoBuyBtn.textContent = "Broadcasting...";
-        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
-      } else if (typeof provider.signTransaction === "function") {
+      if (typeof provider.signTransaction === "function") {
         const signedTx = await provider.signTransaction(tx);
         autoBuyBtn.textContent = "Broadcasting...";
         signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
@@ -1711,7 +1601,7 @@ export function mountRoundRegister(selector) {
       setReady();
 
       setMsg(
-        `${data?.already_registered ? "<strong>✔ Existing purchase recovered.</strong>" : "<strong>✔ Payment registered successfully.</strong>"} ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} $FIRU allocated. Your allocation is now reserved for distribution after launch.`,
+        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} $FIRU allocated. Your allocation is now reserved for distribution after launch.`,
         "ok"
       );
 
@@ -1731,7 +1621,7 @@ export function mountRoundRegister(selector) {
       if (/user rejected|rejected the request|4001/i.test(rawMessage)) {
         message = "The wallet request was rejected before signing.";
       } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
-        message = "The transaction could not be simulated cleanly before wallet approval. Please wait a few seconds and try again.";
+        message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
       } else if (/solicitud bloqueada|blocked this request|blocked this transaction|malicious|phishing|unsafe/i.test(rawMessage)) {
         message = "Phantom blocked this request in the wallet. This usually comes from Phantom's security layer, not from the buy logic itself. This file now uses wallet signing first and broadcasts the signed transaction from the site to reduce that warning.";
       } else if (/invalid arguments/i.test(rawMessage)) {
@@ -1767,7 +1657,7 @@ export function mountRoundRegister(selector) {
       const data = await registerRoundPurchase(tx_hash);
 
       setMsg(
-        `${data?.already_registered ? "<strong>✔ Existing purchase recovered.</strong>" : "<strong>✔ Payment registered successfully.</strong>"} ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} $FIRU allocated. Your allocation is now reserved for distribution after launch.`,
+        `<strong>✔ Payment registered successfully.</strong> ${data.payment_amount} ${data.payment_token} verified · ${formatCurrency(data.payment_amount_usd, 2)} market value · ${formatCompact(data.firu_allocation, 0)} $FIRU allocated. Your allocation is now reserved for distribution after launch.`,
         "ok"
       );
 
