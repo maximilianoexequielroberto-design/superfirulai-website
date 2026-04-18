@@ -1627,7 +1627,12 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
 
-      if (typeof provider.signTransaction === "function") {
+      const preferDirectWalletSend = Boolean(provider?.isPhantom && typeof provider?.signAndSendTransaction === "function");
+
+      if (preferDirectWalletSend) {
+        const sent = await provider.signAndSendTransaction(tx);
+        signature = sent?.signature || "";
+      } else if (typeof provider.signTransaction === "function") {
         const signedTx = await provider.signTransaction(tx);
         autoBuyBtn.textContent = "Broadcasting...";
         signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
