@@ -12,6 +12,8 @@ import {
   getPreferredSolanaProvider
 } from "./wallet-provider.js";
 
+import bs58 from "https://esm.sh/bs58@6.0.0";
+
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
 const CONFIG_ENDPOINT = "/api/round/config";
 const TOKEN_ORDER = ["SOL", "USDT", "USDC"];
@@ -1657,11 +1659,22 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
 
-      const preferDirectWalletSend = Boolean(provider?.isPhantom && typeof provider?.signAndSendTransaction === "function");
+      const preferPhantomLegacyRequest = Boolean(provider?.isPhantom && typeof provider?.request === "function");
 
-      if (preferDirectWalletSend) {
-        const sent = await provider.signAndSendTransaction(tx);
-        signature = sent?.signature || "";
+      if (preferPhantomLegacyRequest) {
+        const signedTx = await provider.request({
+          method: "signTransaction",
+          params: {
+            message: bs58.encode(tx.serializeMessage())
+          }
+        });
+
+        if (!signedTx || typeof signedTx.serialize !== "function") {
+          throw new Error("Phantom returned an unexpected transaction format.");
+        }
+
+        autoBuyBtn.textContent = "Broadcasting...";
+        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
       } else if (typeof provider.signTransaction === "function") {
         const signedTx = await provider.signTransaction(tx);
         autoBuyBtn.textContent = "Broadcasting...";
