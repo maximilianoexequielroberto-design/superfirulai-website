@@ -1570,7 +1570,7 @@ export function mountRoundRegister(selector) {
 
         if (canWalletSendDirect) {
           console.warn("server simulation failed for direct wallet send", serverSimulationError);
-          throw new Error("Could not validate the transaction on the server. Please try again in a few seconds.");
+          throw new Error(serverSimulationError?.message || "Could not validate the transaction on the server. Please try again in a few seconds.");
         }
 
         console.warn("server simulation failed, falling back to browser rpc", serverSimulationError);
