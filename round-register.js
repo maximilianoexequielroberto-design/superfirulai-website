@@ -1565,12 +1565,13 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
 
-      if (typeof provider.signAndSendTransaction === "function") {
+      if (typeof provider.signTransaction === "function") {
+        const signedTx = await provider.signTransaction(tx);
+        autoBuyBtn.textContent = "Broadcasting...";
+        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
+      } else if (typeof provider.signAndSendTransaction === "function") {
         const sent = await provider.signAndSendTransaction(tx);
         signature = sent?.signature || "";
-      } else if (typeof provider.signTransaction === "function") {
-        const signedTx = await provider.signTransaction(tx);
-        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
       } else {
         throw new Error("This wallet does not support transaction signing.");
       }
@@ -1621,6 +1622,8 @@ export function mountRoundRegister(selector) {
         message = "The wallet request was rejected before signing.";
       } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
         message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
+      } else if (/solicitud bloqueada|blocked this request|blocked this transaction|malicious|phishing|unsafe/i.test(rawMessage)) {
+        message = "Phantom blocked this request in the wallet. This usually comes from Phantom's security layer, not from the buy logic itself. This file now uses wallet signing first and broadcasts the signed transaction from the site to reduce that warning.";
       } else if (/invalid arguments/i.test(rawMessage)) {
         message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
       } else if (/fresh Solana blockhash from the server/i.test(rawMessage)) {
