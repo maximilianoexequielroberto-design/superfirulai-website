@@ -1,5 +1,43 @@
+import { BrowserSDK, AddressType } from "https://esm.sh/@phantom/browser-sdk";
+
 const PHANTOM_DEEPLINK_BASE = "https://phantom.app/ul/browse/";
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
+
+
+let phantomBrowserSdk = null;
+
+export function isPhantomInjectedAvailable() {
+  return Boolean(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
+}
+
+export function getPhantomBrowserSdk() {
+  if (!phantomBrowserSdk) {
+    phantomBrowserSdk = new BrowserSDK({
+      providers: ["injected"],
+      addressTypes: [AddressType.solana]
+    });
+  }
+
+  return phantomBrowserSdk;
+}
+
+export async function connectPhantomInjected() {
+  const sdk = getPhantomBrowserSdk();
+  await sdk.connect({ provider: "injected" });
+
+  const publicKey = await sdk.solana.getPublicKey();
+  return {
+    sdk,
+    publicKey: String(publicKey || "")
+  };
+}
+
+export async function disconnectPhantomInjected() {
+  const sdk = getPhantomBrowserSdk();
+  if (typeof sdk.disconnect === "function") {
+    await sdk.disconnect();
+  }
+}
 
 export function isMobileDevice() {
   return MOBILE_RE.test(navigator.userAgent || "");

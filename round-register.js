@@ -2,14 +2,18 @@ import {
   Connection,
   PublicKey,
   SystemProgram,
-  Transaction,
+  TransactionMessage,
+  VersionedTransaction,
   LAMPORTS_PER_SOL
 } from "https://esm.sh/@solana/web3.js@1.98.4";
 
 import {
   shortAddress,
   openInPreferredWallet,
-  getPreferredSolanaProvider
+  isPhantomInjectedAvailable,
+  connectPhantomInjected,
+  disconnectPhantomInjected,
+  getPhantomBrowserSdk
 } from "./wallet-provider.js";
 
 const MOBILE_RE = /Android|iPhone|iPad|iPod/i;
@@ -1030,6 +1034,41 @@ export function mountRoundRegister(selector) {
     return null;
   }
 
+
+  async function getVersionedTransferContext(primaryRpcUrl, senderPublicKey, recipientPublicKey, lamports) {
+    let lastError = null;
+
+    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
+      const connection = new Connection(rpcUrl, "confirmed");
+      try {
+        const latest = await connection.getLatestBlockhash("confirmed");
+        const messageV0 = new TransactionMessage({
+          payerKey: senderPublicKey,
+          recentBlockhash: latest.blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: senderPublicKey,
+              toPubkey: recipientPublicKey,
+              lamports
+            })
+          ]
+        }).compileToV0Message();
+
+        return {
+          connection,
+          latest,
+          tx: new VersionedTransaction(messageV0),
+          rpcUrl
+        };
+      } catch (error) {
+        lastError = error;
+        console.warn(`Versioned blockhash fetch failed on ${rpcUrl}`, error);
+      }
+    }
+
+    throw lastError || new Error("Could not reach Solana RPC.");
+  }
+
   async function getWorkingRpcContext(primaryRpcUrl, senderPublicKey, recipientPublicKey, lamports) {
     let lastError = null;
 
@@ -1310,26 +1349,27 @@ export function mountRoundRegister(selector) {
   }, 30000);
 
   async function ensureConnected() {
-    const preferredWallet = provider ? { provider, name: provider?.isPhantom ? "Phantom" : provider?.isBackpack ? "Backpack" : provider?.isSolflare ? "Solflare" : "Wallet" } : await getPreferredSolanaProvider();
-    provider = preferredWallet?.provider;
-    const providerLabel = preferredWallet?.name || "wallet";
-
-    if (!provider) {
+    if (!isPhantomInjectedAvailable()) {
       if (isMobileDevice() && !isInPhantomBrowser()) {
         openBtn.classList.add("show");
         openInPreferredWallet("#buy");
         throw new Error("Opening Phantom...");
       }
-      throw new Error("No compatible wallet was found on this device.");
+      throw new Error("Phantom is not available on this device.");
     }
 
-    const resp = await provider.connect({ onlyIfTrusted: false });
-    walletAddress = resp.publicKey.toString();
+    const { sdk, publicKey } = await connectPhantomInjected();
+    if (!publicKey) {
+      throw new Error("Phantom did not return a public key.");
+    }
+
+    provider = { type: "phantom-browser-sdk", sdk };
+    walletAddress = publicKey;
     updateWalletControls();
     setMsg(
       isMobileDevice() && isInPhantomBrowser()
-        ? `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Wallet mode is active. Continue with the automatic SOL purchase below.`
-        : `<strong>${providerLabel} connected:</strong> ${shortAddress(walletAddress)}. Use automatic buy for SOL, or for USDT / USDC send funds on Solana and register the confirmed transaction hash.`,
+        ? `<strong>Phantom connected:</strong> ${shortAddress(walletAddress)}. Wallet mode is active. Continue with the automatic SOL purchase below.`
+        : `<strong>Phantom connected:</strong> ${shortAddress(walletAddress)}. Use automatic buy for SOL, or for USDT / USDC send funds on Solana and register the confirmed transaction hash.`,
       "ok"
     );
     stepAttention = 0;
@@ -1340,9 +1380,7 @@ export function mountRoundRegister(selector) {
 
   async function disconnectCurrentWallet() {
     try {
-      if (provider?.disconnect) {
-        await provider.disconnect();
-      }
+      await disconnectPhantomInjected();
     } catch (_) {}
     walletAddress = "";
     provider = null;
@@ -1515,69 +1553,25 @@ export function mountRoundRegister(selector) {
         );
       }
 
-      let latest;
-      let tx;
-
-      autoBuyBtn.textContent = "Checking...";
-      try {
-        let lastServerBlockhashError = null;
-
-        for (let attempt = 0; attempt < 3; attempt += 1) {
-          try {
-            latest = await fetchServerRoundBlockhash();
-            break;
-          } catch (serverBlockhashError) {
-            lastServerBlockhashError = serverBlockhashError;
-            if (attempt < 2) {
-              await wait(700);
-            }
-          }
-        }
-
-        if (!latest?.blockhash) {
-          throw lastServerBlockhashError || new Error("Could not get server blockhash.");
-        }
-
-        tx = new Transaction({
-          feePayer: sender,
-          recentBlockhash: latest.blockhash
-        }).add(
-          SystemProgram.transfer({
-            fromPubkey: sender,
-            toPubkey: recipient,
-            lamports
-          })
-        );
-      } catch (serverBlockhashError) {
-        const canWalletSendDirect = typeof provider?.signAndSendTransaction === "function";
-
-        if (canWalletSendDirect) {
-          console.warn("server blockhash failed for direct wallet send", serverBlockhashError);
-          throw new Error("Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.");
-        }
-
-        console.warn("server blockhash failed, falling back to browser rpc", serverBlockhashError);
-        const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
-        latest = rpcContext.latest;
-        tx = rpcContext.tx;
-      }
+      autoBuyBtn.textContent = "Building...";
+      const rpcContext = await getVersionedTransferContext(primaryRpcUrl, sender, recipient, lamports);
+      const latest = rpcContext.latest;
+      const tx = rpcContext.tx;
 
       autoBuyBtn.textContent = "Waiting for approval...";
-      let signature = "";
-
-      if (typeof provider.signTransaction === "function") {
-        const signedTx = await provider.signTransaction(tx);
-        autoBuyBtn.textContent = "Broadcasting...";
-        signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
-      } else if (typeof provider.signAndSendTransaction === "function") {
-        const sent = await provider.signAndSendTransaction(tx);
-        signature = sent?.signature || "";
-      } else {
-        throw new Error("This wallet does not support transaction signing.");
-      }
+      const sdk = getPhantomBrowserSdk();
+      const sent = await sdk.solana.signAndSendTransaction(tx);
+      const signature = String(sent?.hash || sent?.signature || "").trim();
 
       if (!signature) {
-        throw new Error("Wallet did not return a transaction signature.");
+        throw new Error("Phantom SDK did not return a transaction signature.");
+      }
+
+      try {
+        autoBuyBtn.textContent = "Confirming...";
+        await confirmTransactionWithFallback(signature, latest, primaryRpcUrl);
+      } catch (confirmError) {
+        console.warn("post-send confirmation check skipped", confirmError);
       }
 
       txEl.value = signature;
@@ -1623,9 +1617,9 @@ export function mountRoundRegister(selector) {
       } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
         message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
       } else if (/solicitud bloqueada|blocked this request|blocked this transaction|malicious|phishing|unsafe/i.test(rawMessage)) {
-        message = "Phantom blocked this request in the wallet. This usually comes from Phantom's security layer, not from the buy logic itself. This file now uses wallet signing first and broadcasts the signed transaction from the site to reduce that warning.";
-      } else if (/invalid arguments/i.test(rawMessage)) {
-        message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
+        message = "Phantom blocked this request in the wallet before confirmation. Please try again in Phantom after reconnecting the wallet.";
+      } else if (/invalid arguments|transaction format/i.test(rawMessage)) {
+        message = "Phantom rejected the transaction payload. The clean SDK path is now required for this flow.";
       } else if (/fresh Solana blockhash from the server/i.test(rawMessage)) {
         message = "Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.";
       } else if (/recent blockhash|failed to fetch|could not reach solana rpc/i.test(rawMessage)) {
