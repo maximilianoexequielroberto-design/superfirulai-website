@@ -289,55 +289,6 @@ async function getRoundRaisedFiru(round) {
   return (data || []).reduce((sum, row) => sum + Number(row?.firu_allocation || 0), 0);
 }
 
-
-function buildRoundRegisterSuccessPayload({
-  wallet,
-  senderWallet,
-  token,
-  paymentAmount,
-  paymentAmountUsd,
-  paymentAmountSolEquivalent,
-  quotedTokenPriceUsd,
-  quotedSolPriceUsd,
-  quotePayload,
-  roundConfig,
-  destinationAddress,
-  txHash,
-  raisedFiruAfter,
-  remainingFiruAfter,
-  soldOutAfter,
-  firuAllocation,
-  alreadyRegistered = false
-}) {
-  return {
-    success: true,
-    already_registered: alreadyRegistered,
-    wallet,
-    sender_wallet: senderWallet,
-    payment_token: token,
-    payment_amount: Number(formatAmount(paymentAmount, 9)),
-    payment_amount_usd: Number(Number(paymentAmountUsd || 0).toFixed(6)),
-    payment_amount_sol_equivalent: Number(Number(paymentAmountSolEquivalent || 0).toFixed(9)),
-    token_price_usd: Number(Number(quotedTokenPriceUsd || 0).toFixed(6)),
-    sol_price_usd: Number(Number(quotedSolPriceUsd || 0).toFixed(6)),
-    pricing_mode: "quoted_realtime",
-    price_source: quotePayload?.priceSource || "live",
-    quote_issued_at: quotePayload?.issuedAt || null,
-    quote_expires_at: quotePayload?.expiresAt || null,
-    firu_price_usd: roundConfig.firuPriceUsd,
-    firu_allocation: firuAllocation,
-    round: roundConfig.round,
-    destination_address: destinationAddress,
-    tx_hash: txHash,
-    round_status: {
-      cap_tokens: roundConfig.tokenCap > 0 ? Math.round(roundConfig.tokenCap) : null,
-      raised_firu: Math.round(raisedFiruAfter),
-      remaining_firu: remainingFiruAfter === null ? null : Math.max(Math.floor(remainingFiruAfter), 0),
-      sold_out: soldOutAfter
-    }
-  };
-}
-
 export default async function handler(req, res) {
   applySecurityHeaders(res);
 
@@ -396,7 +347,6 @@ export default async function handler(req, res) {
     const maxSol = Number(quotePayload?.limits?.maxSol || 0);
 
     const txHash = String(tx_hash).trim();
-    const inputWallet = String(wallet || "").trim();
     const requestedPaymentAmount = Number(requested_amount || 0);
     const telegramUsername = telegram ? normalizeTelegramHandle(telegram) : null;
     const xUsername = x ? normalizeXHandle(x) : null;
@@ -410,73 +360,12 @@ export default async function handler(req, res) {
 
     const { data: existing, error: existingError } = await supabase
       .from("round_registrations")
-      .select([
-        "id",
-        "wallet",
-        "sender_wallet",
-        "project_wallet",
-        "tx_hash",
-        "round",
-        "payment_token",
-        "payment_amount",
-        "payment_amount_usd",
-        "sol_amount",
-        "token_price_usd",
-        "firu_price_usd",
-        "firu_allocation",
-        "raw_validation"
-      ].join(","))
+      .select("id")
       .eq("tx_hash", txHash)
       .limit(1);
 
     if (existingError) throw existingError;
     if (existing && existing.length > 0) {
-      const existingRow = existing[0];
-      const walletMatchesExisting = inputWallet
-        && (inputWallet === String(existingRow.wallet || "").trim()
-          || inputWallet === String(existingRow.sender_wallet || "").trim());
-
-      if (walletMatchesExisting) {
-        const existingRoundConfig = getRoundConfig(existingRow.round);
-        if (!existingRoundConfig) {
-          return res.status(400).json({ error: "Transaction already used" });
-        }
-
-        const raisedFiruAfter = await getRoundRaisedFiru(existingRoundConfig.round);
-        const remainingFiruAfter = existingRoundConfig.tokenCap > 0
-          ? Math.max(existingRoundConfig.tokenCap - raisedFiruAfter, 0)
-          : null;
-        const soldOutAfter = existingRoundConfig.tokenCap > 0
-          ? remainingFiruAfter <= FIRU_EPSILON
-          : false;
-
-        return res.status(200).json(buildRoundRegisterSuccessPayload({
-          wallet: String(existingRow.wallet || existingRow.sender_wallet || inputWallet || ""),
-          senderWallet: String(existingRow.sender_wallet || existingRow.wallet || inputWallet || ""),
-          token: String(existingRow.payment_token || token).toUpperCase(),
-          paymentAmount: Number(existingRow.payment_amount || 0),
-          paymentAmountUsd: Number(existingRow.payment_amount_usd || 0),
-          paymentAmountSolEquivalent: Number(existingRow.sol_amount || 0),
-          quotedTokenPriceUsd: Number(existingRow.token_price_usd || 0),
-          quotedSolPriceUsd: Number(existingRow?.raw_validation?.quotedSolPriceUsd || quotePayload?.prices?.SOL || 0),
-          quotePayload: existingRow?.raw_validation?.quoteIssuedAt || existingRow?.raw_validation?.quoteExpiresAt
-            ? {
-                priceSource: String(existingRow?.raw_validation?.quotePriceSource || quotePayload?.priceSource || "live"),
-                issuedAt: existingRow?.raw_validation?.quoteIssuedAt || quotePayload?.issuedAt || null,
-                expiresAt: existingRow?.raw_validation?.quoteExpiresAt || quotePayload?.expiresAt || null
-              }
-            : quotePayload,
-          roundConfig: existingRoundConfig,
-          destinationAddress: String(existingRow.project_wallet || ROUND_RECEIVER_WALLET || ""),
-          txHash,
-          raisedFiruAfter,
-          remainingFiruAfter,
-          soldOutAfter,
-          firuAllocation: Number(existingRow.firu_allocation || 0),
-          alreadyRegistered: true
-        }));
-      }
-
       return res.status(400).json({ error: "Transaction already used" });
     }
 
@@ -495,6 +384,7 @@ export default async function handler(req, res) {
     assertTransactionIsWithinCurrentWindow(tx);
 
     const senderWallet = getSenderWallet(tx);
+    const inputWallet = String(wallet || "").trim();
     if (inputWallet && senderWallet && inputWallet !== senderWallet) {
       return res.status(400).json({ error: "Connected wallet does not match the sender wallet" });
     }
@@ -667,24 +557,32 @@ export default async function handler(req, res) {
       })
       .eq("id", insertedId);
 
-    return res.status(200).json(buildRoundRegisterSuccessPayload({
+    return res.status(200).json({
+      success: true,
       wallet: inputWallet || senderWallet,
-      senderWallet,
-      token,
-      paymentAmount,
-      paymentAmountUsd,
-      paymentAmountSolEquivalent,
-      quotedTokenPriceUsd,
-      quotedSolPriceUsd,
-      quotePayload,
-      roundConfig,
-      destinationAddress,
-      txHash,
-      raisedFiruAfter,
-      remainingFiruAfter,
-      soldOutAfter,
-      firuAllocation
-    }));
+      sender_wallet: senderWallet,
+      payment_token: token,
+      payment_amount: Number(formatAmount(paymentAmount, 9)),
+      payment_amount_usd: Number(paymentAmountUsd.toFixed(6)),
+      payment_amount_sol_equivalent: Number(paymentAmountSolEquivalent.toFixed(9)),
+      token_price_usd: Number(quotedTokenPriceUsd.toFixed(6)),
+      sol_price_usd: Number(quotedSolPriceUsd.toFixed(6)),
+      pricing_mode: "quoted_realtime",
+      price_source: quotePayload.priceSource,
+      quote_issued_at: quotePayload.issuedAt,
+      quote_expires_at: quotePayload.expiresAt,
+      firu_price_usd: roundConfig.firuPriceUsd,
+      firu_allocation: firuAllocation,
+      round: roundConfig.round,
+      destination_address: destinationAddress,
+      tx_hash: txHash,
+      round_status: {
+        cap_tokens: roundConfig.tokenCap > 0 ? Math.round(roundConfig.tokenCap) : null,
+        raised_firu: Math.round(raisedFiruAfter),
+        remaining_firu: remainingFiruAfter === null ? null : Math.max(Math.floor(remainingFiruAfter), 0),
+        sold_out: soldOutAfter
+      }
+    });
   } catch (error) {
     return serverError(res, "Could not register round purchase", error);
   }
