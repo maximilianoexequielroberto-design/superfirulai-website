@@ -2,7 +2,8 @@ import {
   Connection,
   PublicKey,
   SystemProgram,
-  Transaction,
+  TransactionMessage,
+  VersionedTransaction,
   LAMPORTS_PER_SOL
 } from "https://esm.sh/@solana/web3.js@1.98.4";
 
@@ -1013,6 +1014,25 @@ export function mountRoundRegister(selector) {
     return { blockhash, lastValidBlockHeight };
   }
 
+  async function fetchServerRoundSimulation(wallet, lamports) {
+    const resp = await fetch("/api/round/simulate", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json"
+      },
+      body: JSON.stringify({ wallet, lamports })
+    });
+
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) {
+      const details = data?.details ? ` ${JSON.stringify(data.details)}` : "";
+      throw new Error((data?.error || "Could not simulate transaction") + details);
+    }
+
+    return data;
+  }
+
   async function getWalletBalanceWithFallback(senderPublicKey, primaryRpcUrl) {
     let lastError = null;
     for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
@@ -1037,18 +1057,24 @@ export function mountRoundRegister(selector) {
       const connection = new Connection(rpcUrl, "confirmed");
       try {
         const latest = await connection.getLatestBlockhash("confirmed");
-        const tx = new Transaction({
-          feePayer: senderPublicKey,
-          recentBlockhash: latest.blockhash
-        }).add(
-          SystemProgram.transfer({
-            fromPubkey: senderPublicKey,
-            toPubkey: recipientPublicKey,
-            lamports
-          })
-        );
+        const messageV0 = new TransactionMessage({
+          payerKey: senderPublicKey,
+          recentBlockhash: latest.blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: senderPublicKey,
+              toPubkey: recipientPublicKey,
+              lamports
+            })
+          ]
+        }).compileToV0Message();
 
-        return { connection, latest, tx, rpcUrl };
+        return {
+          connection,
+          latest,
+          tx: new VersionedTransaction(messageV0),
+          rpcUrl
+        };
       } catch (error) {
         lastError = error;
         console.warn(`Blockhash fetch failed on ${rpcUrl}`, error);
@@ -1100,33 +1126,6 @@ export function mountRoundRegister(selector) {
     }
 
     throw lastError || new Error("Could not broadcast the transaction on Solana.");
-  }
-
-
-  async function simulateTransactionWithFallback(tx, primaryRpcUrl) {
-    let lastError = null;
-
-    for (const rpcUrl of getRpcCandidates(primaryRpcUrl)) {
-      try {
-        const connection = new Connection(rpcUrl, "confirmed");
-        const simulation = await connection.simulateTransaction(tx, {
-          sigVerify: false,
-          replaceRecentBlockhash: true,
-          commitment: "confirmed"
-        });
-
-        if (simulation?.value?.err) {
-          throw new Error("Transaction simulation failed before wallet approval.");
-        }
-
-        return simulation;
-      } catch (error) {
-        lastError = error;
-        console.warn(`Transaction simulation failed on ${rpcUrl}`, error);
-      }
-    }
-
-    throw lastError || new Error("Could not simulate the transaction before wallet approval.");
   }
 
   function lockPurchaseUi() {
@@ -1547,50 +1546,38 @@ export function mountRoundRegister(selector) {
 
       autoBuyBtn.textContent = "Checking...";
       try {
-        let lastServerBlockhashError = null;
+        const simulation = await fetchServerRoundSimulation(walletAddress, lamports);
+        latest = {
+          blockhash: simulation.blockhash,
+          lastValidBlockHeight: simulation.lastValidBlockHeight
+        };
 
-        for (let attempt = 0; attempt < 3; attempt += 1) {
-          try {
-            latest = await fetchServerRoundBlockhash();
-            break;
-          } catch (serverBlockhashError) {
-            lastServerBlockhashError = serverBlockhashError;
-            if (attempt < 2) {
-              await wait(700);
-            }
-          }
-        }
+        const messageV0 = new TransactionMessage({
+          payerKey: sender,
+          recentBlockhash: latest.blockhash,
+          instructions: [
+            SystemProgram.transfer({
+              fromPubkey: sender,
+              toPubkey: recipient,
+              lamports
+            })
+          ]
+        }).compileToV0Message();
 
-        if (!latest?.blockhash) {
-          throw lastServerBlockhashError || new Error("Could not get server blockhash.");
-        }
-
-        tx = new Transaction({
-          feePayer: sender,
-          recentBlockhash: latest.blockhash
-        }).add(
-          SystemProgram.transfer({
-            fromPubkey: sender,
-            toPubkey: recipient,
-            lamports
-          })
-        );
-      } catch (serverBlockhashError) {
+        tx = new VersionedTransaction(messageV0);
+      } catch (serverSimulationError) {
         const canWalletSendDirect = typeof provider?.signAndSendTransaction === "function";
 
         if (canWalletSendDirect) {
-          console.warn("server blockhash failed for direct wallet send", serverBlockhashError);
-          throw new Error("Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.");
+          console.warn("server simulation failed for direct wallet send", serverSimulationError);
+          throw new Error("Could not validate the transaction on the server. Please try again in a few seconds.");
         }
 
-        console.warn("server blockhash failed, falling back to browser rpc", serverBlockhashError);
+        console.warn("server simulation failed, falling back to browser rpc", serverSimulationError);
         const rpcContext = await getWorkingRpcContext(primaryRpcUrl, sender, recipient, lamports);
         latest = rpcContext.latest;
         tx = rpcContext.tx;
       }
-
-      autoBuyBtn.textContent = "Simulating...";
-      await simulateTransactionWithFallback(tx, primaryRpcUrl);
 
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
@@ -1653,9 +1640,9 @@ export function mountRoundRegister(selector) {
       } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
         message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
       } else if (/solicitud bloqueada|blocked this request|blocked this transaction|malicious|phishing|unsafe/i.test(rawMessage)) {
-        message = "Phantom blocked this request in the wallet before approval. This flow now simulates the transaction first with sigVerify:false, as recommended by Phantom, and then requests the signature.";
-      } else if (/invalid arguments/i.test(rawMessage)) {
-        message = "Phantom rejected the transaction format. Please try again. If it keeps happening, we need one more compatibility adjustment.";
+        message = "Phantom blocked this request in the wallet. This usually comes from Phantom's security layer, not from the buy logic itself. This file now uses wallet signing first and broadcasts the signed transaction from the site to reduce that warning.";
+      } else if (/invalid arguments|transaction format/i.test(rawMessage)) {
+        message = "Phantom rejected the transaction format. This flow now validates the transfer on the server first and uses a versioned Solana transaction.";
       } else if (/fresh Solana blockhash from the server/i.test(rawMessage)) {
         message = "Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.";
       } else if (/recent blockhash|failed to fetch|could not reach solana rpc/i.test(rawMessage)) {
