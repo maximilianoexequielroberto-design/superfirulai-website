@@ -1638,7 +1638,7 @@ export function mountRoundRegister(selector) {
       if (/user rejected|rejected the request|4001/i.test(rawMessage)) {
         message = "The wallet request was rejected before signing.";
       } else if (/could not safely simulate|simulation failed|blocked this transaction during simulation/i.test(rawMessage)) {
-        message = "Phantom could not safely simulate this transaction yet. Please try again in a few seconds.";
+        message = rawMessage;
       } else if (/solicitud bloqueada|blocked this request|blocked this transaction|malicious|phishing|unsafe/i.test(rawMessage)) {
         message = "Phantom blocked this request in the wallet. This usually comes from Phantom's security layer, not from the buy logic itself. This file now uses wallet signing first and broadcasts the signed transaction from the site to reduce that warning.";
       } else if (/invalid arguments|transaction format/i.test(rawMessage)) {
