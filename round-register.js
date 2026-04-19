@@ -980,28 +980,11 @@ export function mountRoundRegister(selector) {
     return `https://solscan.io/tx/${encodeURIComponent(txHash)}`;
   }
 
-  function isBrowserRestrictedRpcUrl(value) {
-    const rpcUrl = String(value || "").trim().toLowerCase();
-    return rpcUrl.includes("quiknode.pro") || rpcUrl.includes("helius-rpc.com") || rpcUrl.includes("alchemy.com");
-  }
-
-  function isRpcAccessForbiddenError(error) {
-    const message = String(error?.message || error || "").toLowerCase();
-    return message.includes("access forbidden") || message.includes('"code":403') || message.includes(" 403") || message.includes("forbidden");
-  }
-
   function getRpcCandidates(primaryRpcUrl) {
-    const primary = String(primaryRpcUrl || "").trim();
-    const fallbackRpcUrls = [
-      "https://api.mainnet-beta.solana.com",
-      "https://solana-api.projectserum.com",
-      "https://rpc.ankr.com/solana"
-    ];
-    const ordered = isBrowserRestrictedRpcUrl(primary)
-      ? [...fallbackRpcUrls, primary]
-      : [primary, ...fallbackRpcUrls];
-
-    return Array.from(new Set(ordered.filter(Boolean)));
+    return Array.from(new Set([
+      String(primaryRpcUrl || "").trim(),
+      "https://api.mainnet-beta.solana.com"
+    ].filter(Boolean)));
   }
 
   function wait(ms) {
@@ -1113,14 +1096,7 @@ export function mountRoundRegister(selector) {
       } catch (error) {
         lastError = error;
         console.warn(`Raw transaction send failed on ${rpcUrl}`, error);
-        if (isBrowserRestrictedRpcUrl(rpcUrl) && isRpcAccessForbiddenError(error)) {
-          continue;
-        }
       }
-    }
-
-    if (isRpcAccessForbiddenError(lastError)) {
-      throw new Error("Browser RPC blocked the transaction. Please try again.");
     }
 
     throw lastError || new Error("Could not broadcast the transaction on Solana.");
@@ -1589,13 +1565,14 @@ export function mountRoundRegister(selector) {
       autoBuyBtn.textContent = "Waiting for approval...";
       let signature = "";
 
-      if (typeof provider.signTransaction === "function") {
+      if (typeof provider.signAndSendTransaction === "function") {
+        autoBuyBtn.textContent = "Sending with Phantom...";
+        const sent = await provider.signAndSendTransaction(tx);
+        signature = sent?.signature || "";
+      } else if (typeof provider.signTransaction === "function") {
         const signedTx = await provider.signTransaction(tx);
         autoBuyBtn.textContent = "Broadcasting...";
         signature = await sendRawTransactionWithFallback(signedTx.serialize(), primaryRpcUrl);
-      } else if (typeof provider.signAndSendTransaction === "function") {
-        const sent = await provider.signAndSendTransaction(tx);
-        signature = sent?.signature || "";
       } else {
         throw new Error("This wallet does not support transaction signing.");
       }
@@ -1653,7 +1630,7 @@ export function mountRoundRegister(selector) {
       } else if (/fresh Solana blockhash from the server/i.test(rawMessage)) {
         message = "Could not get a fresh Solana blockhash from the server. Please try again in a few seconds.";
       } else if (/recent blockhash|failed to fetch|could not reach solana rpc/i.test(rawMessage)) {
-        message = "Could not reach Solana from this browser at this moment. Please try again in a few seconds.";
+        message = "The site could not broadcast the transaction through the browser RPC. This usually happens when the browser blocks direct RPC calls. Please try again, and if it repeats we should keep Phantom as the sender path only.";
       } else if (/does not match the amount entered|payment amount mismatch/i.test(rawMessage)) {
         message = rawMessage;
       } else if (/wallet did not return a transaction signature|missing transaction signature/i.test(rawMessage)) {
