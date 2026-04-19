@@ -121,7 +121,6 @@ function getPublicRpcUrl() {
   const publicRpcUrl = String(
     process.env.SOLANA_RPC_URL_PUBLIC ||
     process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
-    process.env.SOLANA_RPC_URL ||
     DEFAULT_PUBLIC_RPC_URL
   ).trim();
 
@@ -169,13 +168,6 @@ export default async function handler(req, res) {
     const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
     const { prices, source } = await getLivePrices();
 
-    if (source !== "live") {
-      return res.status(503).json({
-        error: "Live pricing temporarily unavailable. Buy is paused until live prices return.",
-        priceSource: source
-      });
-    }
-
     const roundKeys = ["round1", "round2"];
     const round3Enabled = String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() === "true";
     if (round3Enabled) roundKeys.push("round3");
@@ -221,6 +213,7 @@ export default async function handler(req, res) {
         ...quotePayload,
         signature: signRoundQuote(quotePayload)
       },
+      priceSource: source,
       rounds,
       tokens: [
         {
