@@ -247,3 +247,4 @@ When `ROUND_3_ENABLED=true`, the round API can also expose `ROUND_3_FIRU_PRICE` 
 - Vercel domains currently validated: `superfirulai.com`, `www.superfirulai.com`, and `superfirulai-website.vercel.app`
 - DNS is aligned with the Vercel-recommended records for the apex domain and `www`
 - `NONCE_SECRET` is confirmed in Vercel
+- .
