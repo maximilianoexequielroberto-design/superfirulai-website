@@ -1,6 +1,8 @@
 import { applySecurityHeaders, serverError } from "../_security.js";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
+import { PublicKey } from "@solana/web3.js";
+import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 function getSupabaseClient() {
   const url = String(process.env.SUPABASE_URL || "").trim();
@@ -101,13 +103,20 @@ async function getLivePrices() {
   return { prices: getFallbackPrices(), source: "fallback" };
 }
 
-function getDestinationAddress(symbol, owner) {
+function getAta(owner, mint) {
+  return getAssociatedTokenAddressSync(
+    new PublicKey(mint),
+    new PublicKey(owner),
+    false
+  ).toBase58();
+}
+
+function getDestinationAddress(symbol, owner, mint) {
   const explicitUsdtAta = String(process.env.ROUND_RECEIVER_USDT_ATA || "").trim();
   const explicitUsdcAta = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
-
   if (symbol === "SOL") return owner;
-  if (symbol === "USDT") return explicitUsdtAta;
-  if (symbol === "USDC") return explicitUsdcAta;
+  if (symbol === "USDT") return explicitUsdtAta || getAta(owner, mint);
+  if (symbol === "USDC") return explicitUsdcAta || getAta(owner, mint);
   return "";
 }
 
@@ -223,8 +232,8 @@ export default async function handler(req, res) {
       rounds,
       tokens: [
         { symbol: "SOL", mint: null, livePriceUsd: prices.SOL, destinationAddress: projectReceiveWallet },
-        { symbol: "USDT", mint: usdtMint, livePriceUsd: prices.USDT, destinationAddress: getDestinationAddress("USDT", projectReceiveWallet) },
-        { symbol: "USDC", mint: usdcMint, livePriceUsd: prices.USDC, destinationAddress: getDestinationAddress("USDC", projectReceiveWallet) }
+        { symbol: "USDT", mint: usdtMint, livePriceUsd: prices.USDT, destinationAddress: getDestinationAddress("USDT", projectReceiveWallet, usdtMint) },
+        { symbol: "USDC", mint: usdcMint, livePriceUsd: prices.USDC, destinationAddress: getDestinationAddress("USDC", projectReceiveWallet, usdcMint) }
       ]
     };
 
