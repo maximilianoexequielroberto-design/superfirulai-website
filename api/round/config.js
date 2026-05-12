@@ -18,12 +18,20 @@ function getSupabaseClient() {
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
 const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
-const PRICE_URL = "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
+
+// Jupiter Price API (primary) — free, no API key, Solana-native
+const JUPITER_PRICE_URL =
+  "https://api.jup.ag/price/v2?ids=So11111111111111111111111111111111111111112,EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v,Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
+
+// CoinGecko (fallback)
+const COINGECKO_PRICE_URL =
+  "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd";
+
 const QUOTE_TTL_MS = Math.max(Number(process.env.ROUND_PRICE_QUOTE_TTL_MS || 15 * 60 * 1000), 60_000);
 
 function getFallbackPrices() {
   return {
-    SOL: Number(process.env.FALLBACK_SOL_PRICE_USD || 90.84),
+    SOL: Number(process.env.FALLBACK_SOL_PRICE_USD || 150),
     USDT: Number(process.env.FALLBACK_USDT_PRICE_USD || 1),
     USDC: Number(process.env.FALLBACK_USDC_PRICE_USD || 1)
   };
@@ -48,36 +56,84 @@ function signRoundQuote(payload) {
     .digest("hex");
 }
 
-async function getLivePrices() {
+async function fetchWithTimeout(url, options = {}, timeoutMs = 8000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const resp = await fetch(PRICE_URL, {
-      headers: {
-        accept: "application/json",
-        "user-agent": "SuperFirulai/1.0"
-      }
-    });
-
-    if (!resp.ok) {
-      throw new Error(`price_http_${resp.status}`);
-    }
-
-    const data = await resp.json();
-
-    const prices = {
-      SOL: Number(data?.solana?.usd || 0),
-      USDT: Number(data?.tether?.usd || 0),
-      USDC: Number(data?.["usd-coin"]?.usd || 0)
-    };
-
-    if (!(prices.SOL > 0) || !(prices.USDT > 0) || !(prices.USDC > 0)) {
-      throw new Error("price_payload_invalid");
-    }
-
-    return { prices, source: "live" };
-  } catch (error) {
-    console.error("live price fallback", error);
-    return { prices: getFallbackPrices(), source: "fallback" };
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
   }
+}
+
+// Primary: Jupiter Price API v2
+async function getLivePricesFromJupiter() {
+  const resp = await fetchWithTimeout(JUPITER_PRICE_URL, {
+    headers: { accept: "application/json", "user-agent": "SuperFirulai/1.0" }
+  }, 8000);
+
+  if (!resp.ok) throw new Error(`jupiter_http_${resp.status}`);
+
+  const data = await resp.json();
+
+  const SOL = Number(data?.data?.["So11111111111111111111111111111111111111112"]?.price || 0);
+  const USDC = Number(data?.data?.["EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"]?.price || 0);
+  const USDT = Number(data?.data?.["Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt"]?.price || 0);
+
+  if (!(SOL > 0)) throw new Error("jupiter_payload_invalid");
+
+  return {
+    SOL,
+    USDT: USDT > 0 ? USDT : 1,
+    USDC: USDC > 0 ? USDC : 1
+  };
+}
+
+// Fallback: CoinGecko (optional API key via env)
+async function getLivePricesFromCoinGecko() {
+  const apiKey = String(process.env.COINGECKO_API_KEY || "").trim();
+  const headers = { accept: "application/json", "user-agent": "SuperFirulai/1.0" };
+  if (apiKey) headers["x-cg-demo-api-key"] = apiKey;
+
+  const resp = await fetchWithTimeout(COINGECKO_PRICE_URL, { headers }, 8000);
+  if (!resp.ok) throw new Error(`coingecko_http_${resp.status}`);
+
+  const data = await resp.json();
+  const SOL = Number(data?.solana?.usd || 0);
+  const USDT = Number(data?.tether?.usd || 0);
+  const USDC = Number(data?.["usd-coin"]?.usd || 0);
+
+  if (!(SOL > 0)) throw new Error("coingecko_payload_invalid");
+
+  return {
+    SOL,
+    USDT: USDT > 0 ? USDT : 1,
+    USDC: USDC > 0 ? USDC : 1
+  };
+}
+
+async function getLivePrices() {
+  // 1. Try Jupiter (primary)
+  try {
+    const prices = await getLivePricesFromJupiter();
+    console.log("prices: jupiter live", prices.SOL);
+    return { prices, source: "live" };
+  } catch (jupiterErr) {
+    console.warn("Jupiter price failed, trying CoinGecko:", jupiterErr.message);
+  }
+
+  // 2. Try CoinGecko (secondary)
+  try {
+    const prices = await getLivePricesFromCoinGecko();
+    console.log("prices: coingecko live", prices.SOL);
+    return { prices, source: "live" };
+  } catch (cgErr) {
+    console.error("CoinGecko price failed too:", cgErr.message);
+  }
+
+  // 3. Static fallback
+  console.warn("prices: using env/hardcoded fallback");
+  return { prices: getFallbackPrices(), source: "fallback" };
 }
 
 function getAta(owner, mint) {
@@ -118,13 +174,11 @@ function getRoundConfig(roundKey) {
 }
 
 function getPublicRpcUrl() {
-  const publicRpcUrl = String(
+  return String(
     process.env.SOLANA_RPC_URL_PUBLIC ||
     process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
     DEFAULT_PUBLIC_RPC_URL
-  ).trim();
-
-  return publicRpcUrl || DEFAULT_PUBLIC_RPC_URL;
+  ).trim() || DEFAULT_PUBLIC_RPC_URL;
 }
 
 async function getRaisedFiruByRound(round) {
@@ -140,9 +194,7 @@ async function getRaisedFiruByRound(round) {
       .select("firu_allocation,delivery_status")
       .eq("round", round);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     return (data || []).reduce((sum, row) => {
       if (String(row?.delivery_status || "").toLowerCase() === "cancelled") return sum;
@@ -172,18 +224,25 @@ export default async function handler(req, res) {
     const round3Enabled = String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() === "true";
     if (round3Enabled) roundKeys.push("round3");
 
-    const raisedPairs = await Promise.all(roundKeys.map(async (roundKey) => [roundKey, await getRaisedFiruByRound(roundKey)]));
+    const raisedPairs = await Promise.all(
+      roundKeys.map(async (roundKey) => [roundKey, await getRaisedFiruByRound(roundKey)])
+    );
     const raisedMap = Object.fromEntries(raisedPairs);
-    const rounds = Object.fromEntries(roundKeys.map((roundKey) => {
-      const cfg = getRoundConfig(roundKey);
-      const raisedFiru = Number(raisedMap[roundKey] || 0);
-      return [roundKey, {
-        ...cfg,
-        raisedFiru: Math.round(raisedFiru),
-        remainingFiru: cfg.tokenCap > 0 ? Math.max(Math.round(cfg.tokenCap - raisedFiru), 0) : null,
-        soldOut: cfg.tokenCap > 0 ? raisedFiru >= cfg.tokenCap : false
-      }];
-    }));
+    const rounds = Object.fromEntries(
+      roundKeys.map((roundKey) => {
+        const cfg = getRoundConfig(roundKey);
+        const raisedFiru = Number(raisedMap[roundKey] || 0);
+        return [
+          roundKey,
+          {
+            ...cfg,
+            raisedFiru: Math.round(raisedFiru),
+            remainingFiru: cfg.tokenCap > 0 ? Math.max(Math.round(cfg.tokenCap - raisedFiru), 0) : null,
+            soldOut: cfg.tokenCap > 0 ? raisedFiru >= cfg.tokenCap : false
+          }
+        ];
+      })
+    );
 
     const quoteIssuedAt = new Date().toISOString();
     const quoteExpiresAt = new Date(Date.now() + QUOTE_TTL_MS).toISOString();
@@ -193,11 +252,12 @@ export default async function handler(req, res) {
       expiresAt: quoteExpiresAt,
       priceSource: source,
       prices,
-      rounds: Object.fromEntries(Object.entries(rounds).map(([key, value]) => [key, {
-        firuPriceUsd: value.firuPriceUsd,
-        enabled: value.enabled,
-        tokenCap: value.tokenCap
-      }])),
+      rounds: Object.fromEntries(
+        Object.entries(rounds).map(([key, value]) => [
+          key,
+          { firuPriceUsd: value.firuPriceUsd, enabled: value.enabled, tokenCap: value.tokenCap }
+        ])
+      ),
       limits: {
         minSol: Number(process.env.ROUND_MIN || 0),
         maxSol: Number(process.env.ROUND_MAX || 0)
@@ -209,10 +269,7 @@ export default async function handler(req, res) {
       projectReceiveWallet,
       limits: quotePayload.limits,
       pricingMode: "quoted_realtime",
-      quote: {
-        ...quotePayload,
-        signature: signRoundQuote(quotePayload)
-      },
+      quote: { ...quotePayload, signature: signRoundQuote(quotePayload) },
       priceSource: source,
       rounds,
       tokens: [
