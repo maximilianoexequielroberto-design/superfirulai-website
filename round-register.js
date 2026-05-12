@@ -1203,7 +1203,7 @@ export function mountRoundRegister(selector) {
     const selectedRound = getSelectedRoundMeta(roundConfig, roundEl.value);
     const amount = Number(amountEl.value || 0);
     const amountInvalid = Boolean(getAmountValidation());
-    const amountReady = walletAddress && token === "SOL" && Number.isFinite(amount) && amount > 0 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
+    const amountReady = token === "SOL" && Number.isFinite(amount) && amount > 0 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
     const manualReady = txEl.value.trim().length > 20 && !amountInvalid && selectedRound?.enabled && !selectedRound?.soldOut;
     if (stepAttention === 1 && walletAddress) stepAttention = 0;
     if (stepAttention === 2 && token) stepAttention = 0;
@@ -1320,7 +1320,9 @@ export function mountRoundRegister(selector) {
         openInPreferredWallet("#buy");
         throw new Error("Opening Phantom...");
       }
-      throw new Error("No compatible wallet was found on this device.");
+
+      window.open("https://phantom.app/", "_blank", "noopener,noreferrer");
+      throw new Error("Phantom extension was not detected. Install, enable or unlock Phantom in this browser, then reload and tap Connect Wallet again.");
     }
 
     const resp = await provider.connect({ onlyIfTrusted: false });
@@ -1447,6 +1449,8 @@ export function mountRoundRegister(selector) {
         throw new Error("Automatic buy is only available for SOL. Use manual TX registration for USDT and USDC.");
       }
 
+      await ensureConnected();
+
       const missingStep = getMissingBuyStep();
       if (missingStep) {
         stepAttention = missingStep.step;
@@ -1455,7 +1459,6 @@ export function mountRoundRegister(selector) {
         return;
       }
 
-      await ensureConnected();
       stepAttention = 0;
 
       if (quoteNeedsRefresh(roundConfig, 120_000)) {
