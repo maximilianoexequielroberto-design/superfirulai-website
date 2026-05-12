@@ -21,7 +21,15 @@ function short(address) {
 }
 
 function isMobileDevice() {
-  return MOBILE_RE.test(navigator.userAgent || "");
+  const ua = navigator.userAgent || "";
+  const uaDataMobile = navigator.userAgentData?.mobile === true;
+  const hasTouch = Number(navigator.maxTouchPoints || 0) > 1;
+  const viewportWidth = Math.min(
+    Number(window.innerWidth || 9999),
+    Number(window.screen?.width || 9999)
+  );
+
+  return MOBILE_RE.test(ua) || uaDataMobile || (hasTouch && viewportWidth <= 980);
 }
 
 function isInPhantomBrowser() {
@@ -65,6 +73,24 @@ function getInjectedSolanaProviderFallback() {
   });
 
   return usableCandidates.find(({ provider }) => provider?.isPhantom) || usableCandidates[0] || null;
+}
+
+function delayForWalletProvider(ms) {
+  return new Promise((resolve) => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
+}
+
+async function waitForInjectedSolanaProvider(timeoutMs = 1800) {
+  const firstProvider = getInjectedSolanaProviderFallback();
+  if (firstProvider?.provider) return firstProvider;
+
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < timeoutMs) {
+    await delayForWalletProvider(120);
+    const detectedProvider = getInjectedSolanaProviderFallback();
+    if (detectedProvider?.provider) return detectedProvider;
+  }
+
+  return null;
 }
 
 function injectStyles() {
@@ -1371,7 +1397,7 @@ export function mountRoundRegister(selector) {
     }
 
     if (!preferredWallet?.provider) {
-      preferredWallet = getInjectedSolanaProviderFallback();
+      preferredWallet = await waitForInjectedSolanaProvider(isMobileDevice() ? 500 : 1800);
     }
 
     provider = preferredWallet?.provider;
@@ -1380,7 +1406,11 @@ export function mountRoundRegister(selector) {
     if (!provider) {
       if (isMobileDevice() && !isInPhantomBrowser()) {
         openBtn.classList.add("show");
-        openInPreferredWallet("#buy");
+        try {
+          openInPreferredWallet("#buy");
+        } catch (openError) {
+          console.warn("Could not open preferred mobile wallet automatically", openError);
+        }
         throw new Error("Opening Phantom...");
       }
 
@@ -1449,6 +1479,7 @@ export function mountRoundRegister(selector) {
     } catch (err) {
       if (err?.message === "Opening Phantom...") {
         connectBtn.textContent = "Connect Wallet";
+        setMsg("<strong>Opening Phantom...</strong> If it does not open automatically, tap <strong>Open Phantom</strong> and continue from the Phantom browser.", "warn");
       } else {
         connectBtn.textContent = "Connect Wallet";
         setMsg(err?.message || "Could not connect the wallet.", "error");
