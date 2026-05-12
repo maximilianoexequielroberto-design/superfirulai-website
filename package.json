@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "22.x"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "vercel dev",
@@ -17,8 +17,5 @@
     "@supabase/supabase-js": "^2.49.0",
     "bs58": "^6.0.0",
     "tweetnacl": "^1.0.3"
-  },
-  "overrides": {
-    "uuid": "9"
   }
 }
