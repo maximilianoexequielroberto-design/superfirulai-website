@@ -2180,61 +2180,6 @@
         : "Claim stays tied to the same approved registration wallet · manual project distribution flow remains active · the official claim window will be announced separately.";
     }
 
-    function formatReadonlyPrice(value) {
-      const n = Number(value);
-      if (!Number.isFinite(n) || n <= 0) return "-";
-      return `$${n.toLocaleString("en-US", { minimumFractionDigits: n >= 10 ? 2 : 4, maximumFractionDigits: 6 })}`;
-    }
-
-    function renderPriceCard(token) {
-      const symbol = String(token?.symbol || "-");
-      const price = formatReadonlyPrice(token?.livePriceUsd);
-      return `
-        <div style="border:1px solid rgba(125,211,252,.22);background:rgba(7,18,38,.58);border-radius:16px;padding:14px;text-align:left;box-shadow:0 12px 28px rgba(0,0,0,.18)">
-          <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9dd8ff;font-weight:900">${symbol}</div>
-          <div style="font-size:22px;font-weight:950;color:#ffffff;margin-top:4px">${price}</div>
-          <div style="font-size:11px;color:#b9d8ef;margin-top:4px">Live USD price</div>
-        </div>
-      `;
-    }
-
-    async function renderReadonlyBuyPrices(root, state) {
-      const cleanState = String(state || "coming-soon").replace(/-/g, " ");
-      root.innerHTML = `
-        <div class="summary-note">
-          BUY is currently ${cleanState} in the project configuration.
-          <div style="margin-top:12px">Loading live SOL / USDT / USDC prices...</div>
-        </div>
-      `;
-
-      try {
-        const resp = await fetch(`/api/round/config?prices=${Date.now()}`, { cache: "no-store" });
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) throw new Error(data?.error || "Could not load live prices");
-
-        const bySymbol = new Map((data?.tokens || []).map((token) => [String(token.symbol || "").toUpperCase(), token]));
-        const tokens = ["SOL", "USDT", "USDC"].map((symbol) => bySymbol.get(symbol)).filter(Boolean);
-
-        root.innerHTML = `
-          <div class="summary-note" style="text-align:left">
-            <strong>Live payment prices are online.</strong><br>
-            BUY is currently ${cleanState}; purchases stay controlled by Vercel, but the live prices remain visible here.
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px">
-              ${tokens.map(renderPriceCard).join("")}
-            </div>
-            <div style="font-size:12px;color:#b9d8ef;margin-top:12px">Prices refresh from the official round config endpoint when the page is opened.</div>
-          </div>
-        `;
-      } catch (err) {
-        root.innerHTML = `
-          <div class="summary-note">
-            BUY is currently ${cleanState}. Live price panel could not load right now.
-            <div style="margin-top:8px;color:#ffd1d1">${err?.message || "Could not load live prices"}</div>
-          </div>
-        `;
-      }
-    }
-
     try {
       if (String(publicConfig.airdropUiState || "live") !== "hidden") {
         await mountAirdropRegister("#airdrop-register");
@@ -2247,7 +2192,7 @@
       } else {
         const buyRoot = document.querySelector("#round-register");
         if (buyRoot) {
-          await renderReadonlyBuyPrices(buyRoot, publicConfig.buyUiState || "live");
+          buyRoot.innerHTML = `<div class="summary-note">BUY is currently ${String(publicConfig.buyUiState || "live").replace(/-/g, " ")} in the project configuration. You can switch it later from Vercel without changing website files.</div>`;
         }
       }
     } catch (e) {
