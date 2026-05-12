@@ -1,8 +1,6 @@
 import { applySecurityHeaders, serverError } from "../_security.js";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
-import { PublicKey } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 function getSupabaseClient() {
   const url = String(process.env.SUPABASE_URL || "").trim();
@@ -12,7 +10,7 @@ function getSupabaseClient() {
 }
 
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
+const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
 const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
 
 const QUOTE_TTL_MS = Math.max(Number(process.env.ROUND_PRICE_QUOTE_TTL_MS || 15 * 60 * 1000), 60_000);
@@ -103,20 +101,13 @@ async function getLivePrices() {
   return { prices: getFallbackPrices(), source: "fallback" };
 }
 
-function getAta(owner, mint) {
-  return getAssociatedTokenAddressSync(
-    new PublicKey(mint),
-    new PublicKey(owner),
-    false
-  ).toBase58();
-}
-
-function getDestinationAddress(symbol, owner, mint) {
+function getDestinationAddress(symbol, owner) {
   const explicitUsdtAta = String(process.env.ROUND_RECEIVER_USDT_ATA || "").trim();
   const explicitUsdcAta = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
+
   if (symbol === "SOL") return owner;
-  if (symbol === "USDT") return explicitUsdtAta || getAta(owner, mint);
-  if (symbol === "USDC") return explicitUsdcAta || getAta(owner, mint);
+  if (symbol === "USDT") return explicitUsdtAta;
+  if (symbol === "USDC") return explicitUsdcAta;
   return "";
 }
 
@@ -170,10 +161,6 @@ async function getRaisedFiruByRound(round) {
 
 export default async function handler(req, res) {
   applySecurityHeaders(res);
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
-  if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
     const projectReceiveWallet = String(process.env.ROUND_RECEIVER_WALLET || "").trim();
@@ -236,8 +223,8 @@ export default async function handler(req, res) {
       rounds,
       tokens: [
         { symbol: "SOL", mint: null, livePriceUsd: prices.SOL, destinationAddress: projectReceiveWallet },
-        { symbol: "USDT", mint: usdtMint, livePriceUsd: prices.USDT, destinationAddress: getDestinationAddress("USDT", projectReceiveWallet, usdtMint) },
-        { symbol: "USDC", mint: usdcMint, livePriceUsd: prices.USDC, destinationAddress: getDestinationAddress("USDC", projectReceiveWallet, usdcMint) }
+        { symbol: "USDT", mint: usdtMint, livePriceUsd: prices.USDT, destinationAddress: getDestinationAddress("USDT", projectReceiveWallet) },
+        { symbol: "USDC", mint: usdcMint, livePriceUsd: prices.USDC, destinationAddress: getDestinationAddress("USDC", projectReceiveWallet) }
       ]
     };
 
