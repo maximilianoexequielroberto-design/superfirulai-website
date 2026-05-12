@@ -1,248 +1,300 @@
-import { applySecurityHeaders, serverError } from "../_security.js";
 import crypto from "crypto";
-import { createClient } from "@supabase/supabase-js";
+import { PublicKey } from "@solana/web3.js";
+import { setSecurityHeaders, handleOptions, serverError } from "../_security.js";
 
-function getSupabaseClient() {
-  const url = String(process.env.SUPABASE_URL || "").trim();
-  const serviceRoleKey = String(process.env.SUPABASE_SERVICE_ROLE_KEY || "").trim();
-  if (!url || !serviceRoleKey) return null;
-  return createClient(url, serviceRoleKey);
+const TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
+const ASSOCIATED_TOKEN_PROGRAM_ID = new PublicKey("ATokenGPvoterG1dLGHfwDzz4dzjS9sG3JWgRHL5");
+const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4dtkiNL5Q4bSTy9FLS8L";
+const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qWZKXxAKnpJzksm2GkZcvTPeL";
+const DEFAULT_FIRU_MINT = "7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV";
+const DEFAULT_RECEIVER_WALLET = "6SnSdFkMFSfRMkZEL9UmqZ6z5QTYCbbXRANmzUhEhjjH";
+const DEFAULT_USDT_ATA = "5MoFMXTuf54fwZDmt8pZBtwnH6KeQmjNPtytWuNziZSu";
+const DEFAULT_USDC_ATA = "BZHNsP3LkLQZ2iovGy5X4YJ7TL9DAgthUrnzKfs9Gapb";
+
+function clean(value, fallback = "") {
+  const text = typeof value === "string" ? value.trim() : "";
+  return text || fallback;
 }
 
-const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
-const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
-
-const QUOTE_TTL_MS = Math.max(Number(process.env.ROUND_PRICE_QUOTE_TTL_MS || 15 * 60 * 1000), 60_000);
-
-function getFallbackPrices() {
-  return {
-    SOL: Number(process.env.FALLBACK_SOL_PRICE_USD || 155),
-    USDT: Number(process.env.FALLBACK_USDT_PRICE_USD || 1),
-    USDC: Number(process.env.FALLBACK_USDC_PRICE_USD || 1)
-  };
+function boolEnv(name, fallback = false) {
+  const value = clean(process.env[name]).toLowerCase();
+  if (["1", "true", "yes", "on"].includes(value)) return true;
+  if (["0", "false", "no", "off"].includes(value)) return false;
+  return fallback;
 }
 
-function getPricingSecret() {
-  return String(process.env.ROUND_PRICING_SECRET || process.env.NONCE_SECRET || "").trim();
+function numberEnv(name, fallback) {
+  const raw = clean(process.env[name]);
+  if (!raw) return fallback;
+  const value = Number(raw.replace(",", "."));
+  return Number.isFinite(value) ? value : fallback;
 }
 
-function signRoundQuote(payload) {
-  const secret = getPricingSecret();
-  if (!secret) throw new Error("ROUND_PRICING_SECRET or NONCE_SECRET is required");
-  return crypto.createHmac("sha256", secret).update(JSON.stringify(payload)).digest("hex");
-}
+function jsonNumberEnv(name, fallback) {
+  const raw = clean(process.env[name]);
+  if (!raw) return fallback;
 
-async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
-  } finally {
-    clearTimeout(timer);
+    const parsed = JSON.parse(raw);
+    if (typeof parsed === "number" && Number.isFinite(parsed)) return parsed;
+    if (typeof parsed === "string") {
+      const asNumber = Number(parsed.replace(",", "."));
+      if (Number.isFinite(asNumber)) return asNumber;
+    }
+  } catch {
+    const asNumber = Number(raw.replace(",", "."));
+    if (Number.isFinite(asNumber)) return asNumber;
+  }
+
+  return fallback;
+}
+
+function validPublicKey(value, fallback) {
+  const candidate = clean(value, fallback);
+  try {
+    return new PublicKey(candidate).toBase58();
+  } catch {
+    return fallback;
   }
 }
 
-// Primary: Binance — free, no key, very fast
-async function getSolPriceFromBinance() {
-  const resp = await fetchWithTimeout(
-    "https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT",
-    { headers: { accept: "application/json" } },
-    4000
+function getAssociatedTokenAddressSyncSafe(mint, owner) {
+  const mintKey = new PublicKey(mint);
+  const ownerKey = new PublicKey(owner);
+  const [address] = PublicKey.findProgramAddressSync(
+    [ownerKey.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), mintKey.toBuffer()],
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   );
-  if (!resp.ok) throw new Error(`binance_http_${resp.status}`);
-  const data = await resp.json();
-  const price = Number(data?.price || 0);
-  if (!(price > 0)) throw new Error("binance_payload_invalid");
-  return price;
+  return address.toBase58();
 }
 
-// Fallback: CoinGecko (with optional API key)
-async function getSolPriceFromCoinGecko() {
-  const apiKey = String(process.env.COINGECKO_API_KEY || "").trim();
-  const headers = { accept: "application/json" };
-  if (apiKey) headers["x-cg-demo-api-key"] = apiKey;
-  const resp = await fetchWithTimeout(
-    "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",
-    { headers },
-    4000
-  );
-  if (!resp.ok) throw new Error(`coingecko_http_${resp.status}`);
-  const data = await resp.json();
-  const price = Number(data?.solana?.usd || 0);
-  if (!(price > 0)) throw new Error("coingecko_payload_invalid");
-  return price;
+function getDestinationAddress(symbol, projectReceiveWallet, mint) {
+  if (symbol === "SOL") return projectReceiveWallet;
+
+  if (symbol === "USDT") {
+    const explicit = validPublicKey(process.env.ROUND_RECEIVER_USDT_ATA, "");
+    if (explicit) return explicit;
+  }
+
+  if (symbol === "USDC") {
+    const explicit = validPublicKey(process.env.ROUND_RECEIVER_USDC_ATA, "");
+    if (explicit) return explicit;
+  }
+
+  try {
+    return getAssociatedTokenAddressSyncSafe(mint, projectReceiveWallet);
+  } catch {
+    return "";
+  }
+}
+
+async function fetchJson(url, timeoutMs = 3500) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
+
+  try {
+    const response = await fetch(url, {
+      headers: { accept: "application/json" },
+      signal: controller.signal,
+    });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 async function getLivePrices() {
-  // USDT and USDC are stablecoins — always ~$1
-  const stables = { USDT: 1, USDC: 1 };
-
-  // 1. Try Binance (primary — fastest)
-  try {
-    const SOL = await getSolPriceFromBinance();
-    console.log("prices: binance live SOL =", SOL);
-    return { prices: { SOL, ...stables }, source: "live" };
-  } catch (err) {
-    console.warn("Binance price failed:", err.message);
-  }
-
-  // 2. Try CoinGecko (secondary)
-  try {
-    const SOL = await getSolPriceFromCoinGecko();
-    console.log("prices: coingecko live SOL =", SOL);
-    return { prices: { SOL, ...stables }, source: "live" };
-  } catch (err) {
-    console.warn("CoinGecko price failed:", err.message);
-  }
-
-  // 3. Hardcoded fallback
-  console.warn("prices: using env/hardcoded fallback");
-  return { prices: getFallbackPrices(), source: "fallback" };
-}
-
-const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
-
-function validateSolanaAddress(value) {
-  return typeof value === "string" && SOLANA_ADDRESS_RE.test(value.trim());
-}
-
-function requireEnvAddress(name) {
-  const value = String(process.env[name] || "").trim();
-  if (!validateSolanaAddress(value)) {
-    throw new Error(`${name} is missing or invalid`);
-  }
-  return value;
-}
-
-function getDestinationAddress(symbol, owner) {
-  if (symbol === "SOL") return owner;
-  if (symbol === "USDT") return requireEnvAddress("ROUND_RECEIVER_USDT_ATA");
-  if (symbol === "USDC") return requireEnvAddress("ROUND_RECEIVER_USDC_ATA");
-  return "";
-}
-
-function getRoundNumber(roundKey) {
-  const match = String(roundKey || "").toLowerCase().match(/^round(\d+)$/);
-  return match ? Number(match[1]) : 0;
-}
-
-function getRoundConfig(roundKey) {
-  const number = getRoundNumber(roundKey);
-  if (!number) return null;
-  const envPrefix = `ROUND_${number}`;
-  const tokenCap = Number(process.env[`${envPrefix}_TOKEN_CAP`] || 0);
-  return {
-    key: roundKey,
-    label: `Round ${number}`,
-    enabled: String(process.env[`${envPrefix}_ENABLED`] || (number === 2 ? "false" : "true")).toLowerCase() !== "false",
-    firuPriceUsd: Number(process.env[`${envPrefix}_FIRU_PRICE`] || 0),
-    tokenCap
+  const result = {
+    SOL: null,
+    USDT: 1,
+    USDC: 1,
+    priceSource: "unavailable",
+    updatedAt: new Date().toISOString(),
   };
-}
 
-function getPublicRpcUrl() {
-  return (
-    String(process.env.SOLANA_RPC_URL_PUBLIC || process.env.NEXT_PUBLIC_SOLANA_RPC_URL || DEFAULT_PUBLIC_RPC_URL).trim() ||
-    DEFAULT_PUBLIC_RPC_URL
+  const coingecko = await fetchJson(
+    "https://api.coingecko.com/api/v3/simple/price?ids=solana,tether,usd-coin&vs_currencies=usd",
   );
+
+  const cgSol = Number(coingecko?.solana?.usd);
+  if (Number.isFinite(cgSol) && cgSol > 0) {
+    result.SOL = cgSol;
+    result.USDT = Number(coingecko?.tether?.usd) > 0 ? Number(coingecko.tether.usd) : 1;
+    result.USDC = Number(coingecko?.["usd-coin"]?.usd) > 0 ? Number(coingecko["usd-coin"].usd) : 1;
+    result.priceSource = "coingecko";
+    return result;
+  }
+
+  const binance = await fetchJson("https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT");
+  const binanceSol = Number(binance?.price);
+  if (Number.isFinite(binanceSol) && binanceSol > 0) {
+    result.SOL = binanceSol;
+    result.priceSource = "binance";
+    return result;
+  }
+
+  return result;
 }
 
 async function getRaisedFiruByRound(round) {
-  const supabase = getSupabaseClient();
-  if (!supabase) {
-    console.warn("round config: Supabase not configured. Using raisedFiru=0.");
-    return 0;
-  }
+  const supabaseUrl = clean(process.env.SUPABASE_URL);
+  const serviceKey = clean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+  if (!supabaseUrl || !serviceKey) return 0;
+
   try {
-    const { data, error } = await supabase
-      .from("round_registrations")
-      .select("firu_allocation,delivery_status")
-      .eq("round", round);
-    if (error) throw error;
-    return (data || []).reduce((sum, row) => {
-      if (String(row?.delivery_status || "").toLowerCase() === "cancelled") return sum;
-      return sum + Number(row?.firu_allocation || 0);
-    }, 0);
-  } catch (error) {
-    console.error(`round config: could not load raised FIRU for ${round}.`, error);
+    const url = new URL("/rest/v1/round_registrations", supabaseUrl);
+    url.searchParams.set("select", "firu_amount,status,round");
+    url.searchParams.set("round", `eq.${round}`);
+
+    const response = await fetch(url.toString(), {
+      headers: {
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+      },
+    });
+
+    if (!response.ok) return 0;
+    const rows = await response.json();
+
+    return rows
+      .filter((row) => ["verified", "confirmed", "completed", "pending"].includes(String(row.status || "").toLowerCase()))
+      .reduce((total, row) => total + (Number(row.firu_amount) || 0), 0);
+  } catch {
     return 0;
   }
 }
 
+function getRoundConfig(roundNumber, raisedFiru) {
+  const roundKey = `ROUND_${roundNumber}`;
+  const round = `round${roundNumber}`;
+
+  const enabled = boolEnv(`${roundKey}_ENABLED`, roundNumber === 1);
+  const firuPriceUsd = numberEnv(`${roundKey}_FIRU_PRICE`, roundNumber === 1 ? 0.000168 : roundNumber === 2 ? 0.000269 : 0.00043);
+  const tokenCap = jsonNumberEnv(`${roundKey}_TOKEN_CAP`, roundNumber === 1 ? 25000000 : roundNumber === 2 ? 25000000 : 0);
+  const soldFiru = Number.isFinite(raisedFiru) ? raisedFiru : 0;
+  const remainingFiru = Math.max(0, tokenCap - soldFiru);
+
+  return {
+    round,
+    roundNumber,
+    label: `Round ${roundNumber}`,
+    enabled,
+    firuPriceUsd,
+    tokenCap,
+    soldFiru,
+    remainingFiru,
+    soldPercent: tokenCap > 0 ? Math.min(100, (soldFiru / tokenCap) * 100) : 0,
+  };
+}
+
+function signRoundQuote(payload) {
+  const secret = clean(process.env.ROUND_PRICING_SECRET);
+  if (!secret) return "";
+
+  return crypto
+    .createHmac("sha256", secret)
+    .update(JSON.stringify(payload))
+    .digest("hex");
+}
+
 export default async function handler(req, res) {
-  applySecurityHeaders(res);
+  setSecurityHeaders(res, ["GET", "OPTIONS"]);
+  res.setHeader("Cache-Control", "no-store, max-age=0, must-revalidate");
+
+  if (handleOptions(req, res, ["GET", "OPTIONS"])) return;
+
+  if (req.method !== "GET") {
+    return res.status(405).json({ ok: false, error: "Method not allowed" });
+  }
 
   try {
-    const projectReceiveWallet = String(process.env.ROUND_RECEIVER_WALLET || "").trim();
-    if (!projectReceiveWallet) {
-      return res.status(500).json({ error: "Round receiver wallet is not configured" });
-    }
+    const projectReceiveWallet = validPublicKey(process.env.ROUND_RECEIVER_WALLET, DEFAULT_RECEIVER_WALLET);
+    const usdtMint = validPublicKey(process.env.USDT_MINT_ADDRESS, DEFAULT_USDT_MINT);
+    const usdcMint = validPublicKey(process.env.USDC_MINT_ADDRESS, DEFAULT_USDC_MINT);
+    const saleTokenMint = validPublicKey(process.env.TOKEN_MINT_ADDRESS, DEFAULT_FIRU_MINT);
 
-    const usdcMint = String(process.env.USDC_MINT_ADDRESS || DEFAULT_USDC_MINT).trim();
-    const usdtMint = String(process.env.USDT_MINT_ADDRESS || DEFAULT_USDT_MINT).trim();
-    const { prices, source } = await getLivePrices();
+    const prices = await getLivePrices();
+    const raised = await Promise.all([
+      getRaisedFiruByRound("round1"),
+      getRaisedFiruByRound("round2"),
+      getRaisedFiruByRound("round3"),
+    ]);
 
-    const roundKeys = ["round1", "round2"];
-    const round3Enabled = String(process.env.ROUND_3_ENABLED || "false").trim().toLowerCase() === "true";
-    if (round3Enabled) roundKeys.push("round3");
+    const rounds = [
+      getRoundConfig(1, raised[0]),
+      getRoundConfig(2, raised[1]),
+      getRoundConfig(3, raised[2]),
+    ];
 
-    const raisedPairs = await Promise.all(
-      roundKeys.map(async (roundKey) => [roundKey, await getRaisedFiruByRound(roundKey)])
-    );
-    const raisedMap = Object.fromEntries(raisedPairs);
-    const rounds = Object.fromEntries(
-      roundKeys.map((roundKey) => {
-        const cfg = getRoundConfig(roundKey);
-        const raisedFiru = Number(raisedMap[roundKey] || 0);
-        return [roundKey, {
-          ...cfg,
-          raisedFiru: Math.round(raisedFiru),
-          remainingFiru: cfg.tokenCap > 0 ? Math.max(Math.round(cfg.tokenCap - raisedFiru), 0) : null,
-          soldOut: cfg.tokenCap > 0 ? raisedFiru >= cfg.tokenCap : false
-        }];
-      })
-    );
-
-    const quoteIssuedAt = new Date().toISOString();
-    const quoteExpiresAt = new Date(Date.now() + QUOTE_TTL_MS).toISOString();
+    const issuedAt = Date.now();
     const quotePayload = {
-      version: 1,
-      issuedAt: quoteIssuedAt,
-      expiresAt: quoteExpiresAt,
-      priceSource: source,
-      prices,
+      issuedAt,
+      expiresAt: issuedAt + 5 * 60 * 1000,
+      priceSource: prices.priceSource,
+      prices: {
+        SOL: prices.SOL,
+        USDT: prices.USDT,
+        USDC: prices.USDC,
+      },
       rounds: Object.fromEntries(
-        Object.entries(rounds).map(([key, value]) => [
-          key,
-          { firuPriceUsd: value.firuPriceUsd, enabled: value.enabled, tokenCap: value.tokenCap }
-        ])
+        rounds.map((round) => [
+          round.round,
+          {
+            enabled: round.enabled,
+            firuPriceUsd: round.firuPriceUsd,
+            tokenCap: round.tokenCap,
+            remainingFiru: round.remainingFiru,
+          },
+        ]),
       ),
       limits: {
-        minSol: Number(process.env.ROUND_MIN || 0),
-        maxSol: Number(process.env.ROUND_MAX || 0)
-      }
+        minSol: numberEnv("ROUND_MIN", 0.1),
+        maxSol: numberEnv("ROUND_MAX", 2),
+      },
     };
 
-    const payload = {
-      rpcUrl: getPublicRpcUrl(),
-      projectReceiveWallet,
-      limits: quotePayload.limits,
-      pricingMode: "quoted_realtime",
-      quote: { ...quotePayload, signature: signRoundQuote(quotePayload) },
-      priceSource: source,
-      rounds,
-      tokens: [
-        { symbol: "SOL", mint: null, livePriceUsd: prices.SOL, destinationAddress: projectReceiveWallet },
-        { symbol: "USDT", mint: usdtMint, livePriceUsd: prices.USDT, destinationAddress: getDestinationAddress("USDT", projectReceiveWallet, usdtMint) },
-        { symbol: "USDC", mint: usdcMint, livePriceUsd: prices.USDC, destinationAddress: getDestinationAddress("USDC", projectReceiveWallet, usdcMint) }
-      ]
-    };
-
-    res.setHeader("Cache-Control", "no-store, max-age=0");
-    return res.status(200).json(payload);
+    return res.status(200).json({
+      ok: true,
+      serverTime: new Date().toISOString(),
+      config: {
+        projectReceiveWallet,
+        minSol: quotePayload.limits.minSol,
+        maxSol: quotePayload.limits.maxSol,
+        defaultRound: "round1",
+        saleTokenMint,
+        tokens: [
+          {
+            symbol: "SOL",
+            mint: null,
+            livePriceUsd: prices.SOL,
+            destinationAddress: projectReceiveWallet,
+          },
+          {
+            symbol: "USDT",
+            mint: usdtMint,
+            livePriceUsd: prices.USDT,
+            destinationAddress: getDestinationAddress("USDT", projectReceiveWallet, usdtMint),
+          },
+          {
+            symbol: "USDC",
+            mint: usdcMint,
+            livePriceUsd: prices.USDC,
+            destinationAddress: getDestinationAddress("USDC", projectReceiveWallet, usdcMint),
+          },
+        ],
+        rounds,
+        quote: {
+          ...quotePayload,
+          signature: signRoundQuote(quotePayload),
+        },
+      },
+    });
   } catch (error) {
-    console.error("round config error", error);
-    return serverError(res, "Could not load round configuration", error);
+    console.error("Round config failed", error);
+    return serverError(res, "Could not load round configuration");
   }
 }
