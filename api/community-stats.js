@@ -1,5 +1,4 @@
 import { applySecurityHeaders, serverError } from "./_security.js";
-import { PublicKey } from "@solana/web3.js";
 const DEFAULT_HOLDERS = 0;
 const DEFAULT_X_FOLLOWERS = 61;
 const DEFAULT_TELEGRAM_MEMBERS = 24;
@@ -12,14 +11,11 @@ const FALLBACK_REFRESH_MS = 120000;
 const RPC_TIMEOUT_MS = 8000;
 const TELEGRAM_TIMEOUT_MS = 5000;
 
+const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
 function isValidPublicKey(value) {
   const normalized = String(value || "").trim();
-  if (!normalized) return false;
-  try {
-    return new PublicKey(normalized).toBase58() === normalized;
-  } catch {
-    return false;
-  }
+  return Boolean(normalized && SOLANA_ADDRESS_RE.test(normalized));
 }
 
 async function fetchJsonWithTimeout(url, options = {}, timeoutMs = 8000) {
