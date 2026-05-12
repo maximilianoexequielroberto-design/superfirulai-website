@@ -1,5 +1,4 @@
 import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
-import { PublicKey } from "@solana/web3.js";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -11,12 +10,10 @@ function normalizeWallet(value) {
   return String(value || "").trim();
 }
 
+const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
 function looksLikeSolanaWallet(wallet) {
-  try {
-    return new PublicKey(wallet).toBase58() === wallet;
-  } catch {
-    return false;
-  }
+  return typeof wallet === "string" && SOLANA_ADDRESS_RE.test(wallet.trim());
 }
 
 function parseBool(value, fallback = false) {
