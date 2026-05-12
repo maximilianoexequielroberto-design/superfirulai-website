@@ -182,41 +182,71 @@ function injectStyles() {
   document.head.appendChild(style);
 }
 
+function normalizeRoundConfig(data) {
+  if (!data || typeof data !== "object") return data;
+
+  const rounds = data.rounds && typeof data.rounds === "object" ? data.rounds : {};
+  for (const [key, meta] of Object.entries(rounds)) {
+    if (!meta || typeof meta !== "object") continue;
+    if (!meta.key) meta.key = key;
+    if (!meta.label) meta.label = `Round ${getRoundNumberFromKey(key)}`;
+  }
+
+  if (!Array.isArray(data.tokens)) data.tokens = [];
+  data.tokens = data.tokens.map((token) => ({
+    ...token,
+    symbol: String(token?.symbol || "").toUpperCase()
+  }));
+
+  if (!data.limits || typeof data.limits !== "object") data.limits = { minSol: 0.1, maxSol: 2 };
+  return data;
+}
+
+async function parseJsonResponse(resp) {
+  const contentType = String(resp.headers.get("content-type") || "").toLowerCase();
+  if (contentType.includes("application/json")) return resp.json();
+
+  const raw = await resp.text();
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return { error: raw?.trim() || "Could not load round config" };
+  }
+}
+
 async function fetchRoundConfig() {
+  const sameOriginUrl = new URL(CONFIG_ENDPOINT, window.location.origin);
   const urls = [
-    `${CONFIG_ENDPOINT}?t=${Date.now()}`,
-    CONFIG_ENDPOINT
+    sameOriginUrl.toString(),
+    `${sameOriginUrl.toString()}?ts=${Date.now()}`
   ];
+
+  if (window.location.hostname === "superfirulai.com") {
+    urls.push(`https://www.superfirulai.com${CONFIG_ENDPOINT}?ts=${Date.now()}`);
+  }
+
   let lastError = null;
 
-  for (const url of urls) {
+  for (const url of [...new Set(urls)]) {
     try {
       const resp = await fetch(url, {
         cache: "no-store",
-        headers: { "Accept": "application/json" }
+        headers: { "Accept": "application/json" },
+        credentials: "omit"
       });
-
-      let data = null;
-      const contentType = String(resp.headers.get("content-type") || "").toLowerCase();
-
-      if (contentType.includes("application/json")) {
-        data = await resp.json();
-      } else {
-        const raw = await resp.text();
-        try {
-          data = JSON.parse(raw);
-        } catch {
-          data = { error: raw?.trim() || "Could not load round config" };
-        }
-      }
+      const data = await parseJsonResponse(resp);
 
       if (!resp.ok) {
         throw new Error(data?.error || `Could not load round config (${resp.status})`);
       }
+      if (!Array.isArray(data?.tokens) || !data.tokens.length || !data?.rounds) {
+        throw new Error("Round config response is incomplete");
+      }
 
-      return data;
+      return normalizeRoundConfig(data);
     } catch (err) {
       lastError = err;
+      console.warn("Round config fetch failed", url, err);
     }
   }
 
@@ -1487,6 +1517,10 @@ export function mountRoundRegister(selector) {
 
       const round = getSelectedRoundMeta(roundConfig, roundEl.value);
       const amount = Number(amountEl.value || 0);
+
+      if (!roundConfig?.quote?.signature) {
+        throw new Error("Live signed price quote is not available yet. Replace api/round/config.js, redeploy Production, then refresh the page.");
+      }
 
       if (!round?.enabled || round?.soldOut) throw new Error(round?.soldOut ? "This round is sold out." : "This round is currently closed.");
       if (!Number.isFinite(amount) || amount <= 0) throw new Error("Enter a valid SOL amount.");
