@@ -28,6 +28,45 @@ function isInPhantomBrowser() {
   return Boolean(window.phantom?.solana?.isPhantom || window.solana?.isPhantom);
 }
 
+function getInjectedSolanaProviderFallback() {
+  const candidates = [];
+
+  const addCandidate = (provider, fallbackName = "Wallet") => {
+    if (!provider) return;
+    candidates.push({
+      provider,
+      name: provider?.isPhantom
+        ? "Phantom"
+        : provider?.isBackpack
+          ? "Backpack"
+          : provider?.isSolflare
+            ? "Solflare"
+            : fallbackName
+    });
+  };
+
+  addCandidate(window.phantom?.solana, "Phantom");
+
+  if (Array.isArray(window.solana?.providers)) {
+    window.solana.providers.forEach((walletProvider) => addCandidate(walletProvider));
+  }
+
+  addCandidate(window.solana, "Phantom");
+  addCandidate(window.backpack?.solana, "Backpack");
+  addCandidate(window.solflare, "Solflare");
+
+  const usableCandidates = candidates.filter(({ provider }) => {
+    return provider && (
+      provider.isPhantom ||
+      provider.isBackpack ||
+      provider.isSolflare ||
+      typeof provider.connect === "function"
+    );
+  });
+
+  return usableCandidates.find(({ provider }) => provider?.isPhantom) || usableCandidates[0] || null;
+}
+
 function injectStyles() {
   if (document.getElementById("sf-round-styles")) return;
   const style = document.createElement("style");
@@ -1310,7 +1349,31 @@ export function mountRoundRegister(selector) {
   }, 30000);
 
   async function ensureConnected() {
-    const preferredWallet = provider ? { provider, name: provider?.isPhantom ? "Phantom" : provider?.isBackpack ? "Backpack" : provider?.isSolflare ? "Solflare" : "Wallet" } : await getPreferredSolanaProvider();
+    let preferredWallet = provider
+      ? {
+          provider,
+          name: provider?.isPhantom
+            ? "Phantom"
+            : provider?.isBackpack
+              ? "Backpack"
+              : provider?.isSolflare
+                ? "Solflare"
+                : "Wallet"
+        }
+      : null;
+
+    if (!preferredWallet?.provider) {
+      try {
+        preferredWallet = await getPreferredSolanaProvider();
+      } catch (error) {
+        console.warn("Preferred wallet provider detection failed", error);
+      }
+    }
+
+    if (!preferredWallet?.provider) {
+      preferredWallet = getInjectedSolanaProviderFallback();
+    }
+
     provider = preferredWallet?.provider;
     const providerLabel = preferredWallet?.name || "wallet";
 
@@ -1320,11 +1383,22 @@ export function mountRoundRegister(selector) {
         openInPreferredWallet("#buy");
         throw new Error("Opening Phantom...");
       }
-      throw new Error("No compatible wallet was found on this device.");
+
+      throw new Error("No compatible wallet was found. On desktop, install and unlock the Phantom browser extension, then refresh the page.");
+    }
+
+    if (typeof provider.connect !== "function") {
+      throw new Error("The detected wallet does not support connection from this browser. Please use the Phantom browser extension.");
     }
 
     const resp = await provider.connect({ onlyIfTrusted: false });
-    walletAddress = resp.publicKey.toString();
+    const publicKey = resp?.publicKey || provider.publicKey;
+
+    if (!publicKey) {
+      throw new Error("Wallet connected, but no public key was returned. Please unlock Phantom and try again.");
+    }
+
+    walletAddress = publicKey.toString();
     updateWalletControls();
     setMsg(
       isMobileDevice() && isInPhantomBrowser()
