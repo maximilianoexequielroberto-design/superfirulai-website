@@ -12,7 +12,7 @@ function getSupabaseClient() {
 }
 
 const DEFAULT_USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
-const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkLZ6K2JmQ94Yb9zt";
+const DEFAULT_USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
 const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
 
 const QUOTE_TTL_MS = Math.max(Number(process.env.ROUND_PRICE_QUOTE_TTL_MS || 15 * 60 * 1000), 60_000);
@@ -170,6 +170,10 @@ async function getRaisedFiruByRound(round) {
 
 export default async function handler(req, res) {
   applySecurityHeaders(res);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  if (req.method === "OPTIONS") return res.status(204).end();
 
   try {
     const projectReceiveWallet = String(process.env.ROUND_RECEIVER_WALLET || "").trim();
