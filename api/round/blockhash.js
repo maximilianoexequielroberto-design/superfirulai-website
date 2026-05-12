@@ -1,37 +1,51 @@
-import { Connection } from "@solana/web3.js";
-import { applySecurityHeaders, serverError } from "../_security.js";
+import { applySecurityHeaders, withMethods, rateLimit, serverError } from "../_security.js";
 
-const DEFAULT_PUBLIC_RPC_URL = "https://api.mainnet-beta.solana.com";
+const RPC_URL =
+  process.env.SOLANA_RPC_URL ||
+  process.env.SOLANA_RPC_URL_PUBLIC ||
+  "https://api.mainnet-beta.solana.com";
 
-function getServerRpcUrl() {
-  return String(
-    process.env.SOLANA_RPC_URL ||
-    process.env.SOLANA_RPC_URL_PUBLIC ||
-    process.env.NEXT_PUBLIC_SOLANA_RPC_URL ||
-    DEFAULT_PUBLIC_RPC_URL
-  ).trim() || DEFAULT_PUBLIC_RPC_URL;
+async function fetchLatestBlockhash() {
+  const response = await fetch(RPC_URL, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      jsonrpc: "2.0",
+      id: "superfirulai-round-blockhash",
+      method: "getLatestBlockhash",
+      params: [{ commitment: "confirmed" }]
+    })
+  });
+
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok || data?.error || !data?.result?.value?.blockhash) {
+    const message = data?.error?.message || `RPC request failed with status ${response.status}`;
+    throw new Error(message);
+  }
+
+  return data.result.value;
 }
 
 export default async function handler(req, res) {
   applySecurityHeaders(res);
 
-  if (req.method && req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "Method not allowed" });
-  }
+  if (!withMethods(req, res, ["GET"])) return;
+  if (!rateLimit(req, res, { bucket: "round_blockhash", limit: 90, windowMs: 60_000 })) return;
 
   try {
-    const connection = new Connection(getServerRpcUrl(), "confirmed");
-    const latest = await connection.getLatestBlockhash("confirmed");
+    const value = await fetchLatestBlockhash();
 
     res.setHeader("Cache-Control", "no-store, max-age=0");
     return res.status(200).json({
-      blockhash: latest.blockhash,
-      lastValidBlockHeight: latest.lastValidBlockHeight,
-      source: "server"
+      blockhash: value.blockhash,
+      lastValidBlockHeight: value.lastValidBlockHeight,
+      commitment: "confirmed",
+      rpc: "mainnet-beta",
+      timestamp: new Date().toISOString()
     });
   } catch (error) {
-    console.error("round blockhash error", error);
-    return serverError(res, "Could not load latest blockhash", error);
+    console.error("round_blockhash_error", error);
+    return serverError(res, "Could not load Solana blockhash.");
   }
 }

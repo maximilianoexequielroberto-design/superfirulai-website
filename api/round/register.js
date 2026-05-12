@@ -1,7 +1,5 @@
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
-import { PublicKey } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { applySecurityHeaders, enforceRateLimit, serverError } from "../_security.js";
 
 const supabase = createClient(
@@ -163,18 +161,24 @@ async function rpcCall(method, params) {
   }
 }
 
-function getAta(owner, mint) {
-  return getAssociatedTokenAddressSync(
-    new PublicKey(mint),
-    new PublicKey(owner),
-    false
-  ).toBase58();
+const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+function validateBase58(value) {
+  return typeof value === "string" && SOLANA_ADDRESS_RE.test(value.trim());
 }
 
-function getDestinationAddress(token, projectWallet, tokenMint) {
+function requireEnvAddress(name) {
+  const value = String(process.env[name] || "").trim();
+  if (!validateBase58(value)) {
+    throw new Error(`${name} is missing or invalid`);
+  }
+  return value;
+}
+
+function getDestinationAddress(token, projectWallet) {
   if (token === "SOL") return projectWallet;
-  if (token === "USDT") return ROUND_RECEIVER_USDT_ATA || getAta(projectWallet, tokenMint);
-  if (token === "USDC") return ROUND_RECEIVER_USDC_ATA || getAta(projectWallet, tokenMint);
+  if (token === "USDT") return requireEnvAddress("ROUND_RECEIVER_USDT_ATA");
+  if (token === "USDC") return requireEnvAddress("ROUND_RECEIVER_USDC_ATA");
   return "";
 }
 

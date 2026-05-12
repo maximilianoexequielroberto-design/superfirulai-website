@@ -1,8 +1,6 @@
 import { applySecurityHeaders, serverError } from "../_security.js";
 import crypto from "crypto";
 import { createClient } from "@supabase/supabase-js";
-import { PublicKey } from "@solana/web3.js";
-import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 
 function getSupabaseClient() {
   const url = String(process.env.SUPABASE_URL || "").trim();
@@ -103,20 +101,24 @@ async function getLivePrices() {
   return { prices: getFallbackPrices(), source: "fallback" };
 }
 
-function getAta(owner, mint) {
-  return getAssociatedTokenAddressSync(
-    new PublicKey(mint),
-    new PublicKey(owner),
-    false
-  ).toBase58();
+const SOLANA_ADDRESS_RE = /^[1-9A-HJ-NP-Za-km-z]{32,44}$/;
+
+function validateSolanaAddress(value) {
+  return typeof value === "string" && SOLANA_ADDRESS_RE.test(value.trim());
 }
 
-function getDestinationAddress(symbol, owner, mint) {
-  const explicitUsdtAta = String(process.env.ROUND_RECEIVER_USDT_ATA || "").trim();
-  const explicitUsdcAta = String(process.env.ROUND_RECEIVER_USDC_ATA || "").trim();
+function requireEnvAddress(name) {
+  const value = String(process.env[name] || "").trim();
+  if (!validateSolanaAddress(value)) {
+    throw new Error(`${name} is missing or invalid`);
+  }
+  return value;
+}
+
+function getDestinationAddress(symbol, owner) {
   if (symbol === "SOL") return owner;
-  if (symbol === "USDT") return explicitUsdtAta || getAta(owner, mint);
-  if (symbol === "USDC") return explicitUsdcAta || getAta(owner, mint);
+  if (symbol === "USDT") return requireEnvAddress("ROUND_RECEIVER_USDT_ATA");
+  if (symbol === "USDC") return requireEnvAddress("ROUND_RECEIVER_USDC_ATA");
   return "";
 }
 
