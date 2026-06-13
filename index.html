@@ -2570,12 +2570,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('a,button').forEach(el=>{
-    const t=(el.textContent||'').toLowerCase();
-    if(t.includes('buy')) el.onclick=()=>window.open('https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
-    if(t.includes('live')) el.onclick=()=>window.open('https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
-    if(t.includes('view')||t.includes('chart')) el.onclick=()=>window.open('https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1','_blank');
-  });
+document.querySelectorAll('a,button').forEach(el=>{
+ const t=(el.textContent||'').toLowerCase();
+ if(t.includes('buy')) el.onclick=()=>window.open('https://jup.ag/swap/SOL-7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
+ else if(t.includes('jupiter')) el.onclick=()=>window.open('https://jup.ag/swap/SOL-7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
+ else if(t.includes('live')) el.onclick=()=>window.open('https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
+ else if(t.includes('view')||t.includes('chart')) el.onclick=()=>window.open('https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1','_blank');
+});
 });
 </script>
 </body>
