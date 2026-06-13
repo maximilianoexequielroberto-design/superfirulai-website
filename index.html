@@ -2344,7 +2344,7 @@
     const FIRU_LAUNCH_CONFIG = {
       mintAddress:"7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
       mintExplorerUrl: "",
-      tradingEnabled: false,
+      tradingEnabled: true,
       jupiterUrl:"https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&buy=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
       raydiumUrl:"https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
       dexscreenerUrl:"https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1",
@@ -2568,52 +2568,6 @@
     window.setInterval(loadCommunityStats, 60000);
   </script>
 
-<script>
-/* Mobile-safe external link handler — does NOT override internal navigation */
-document.addEventListener('DOMContentLoaded', function() {
-  var JUP = 'https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&buy=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
-  var RAY = 'https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
-  var DEX = 'https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1';
 
-  function openExternal(url) {
-    var a = document.createElement('a');
-    a.href = url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  }
-
-  document.querySelectorAll('a[href], a[href=""], button').forEach(function(el) {
-    /* Skip elements that handle internal navigation (data-view-btn, data-home-section, etc.) */
-    if (el.dataset.viewBtn || el.dataset.homeSection || el.dataset.open ||
-        el.dataset.close || el.dataset.launchShortcut || el.dataset.copyFiruContract ||
-        el.dataset.shortcutAction || el.dataset.firuLink || el.id === 'menuBtn' ||
-        el.id === 'buyFloat') return;
-
-    /* Skip anchors that point to external urls already */
-    if (el.tagName === 'A') {
-      var href = (el.getAttribute('href') || '').trim();
-      if (href.startsWith('http') && !href.startsWith('#')) return;
-    }
-
-    var t = (el.textContent || '').toLowerCase().trim();
-    var targetUrl = null;
-
-    if (/\bjupiter\b/.test(t)) targetUrl = JUP;
-    else if (/\bchart\b|\bdexscreener\b|\bview chart\b/.test(t)) targetUrl = DEX;
-    else if (/\braydium\b|\blive\b/.test(t)) targetUrl = RAY;
-
-    if (targetUrl) {
-      el.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        openExternal(targetUrl);
-      });
-    }
-  });
-});
-</script>
 </body>
 </html>
