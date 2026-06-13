@@ -155,7 +155,7 @@
     .drawer-links button.compact span,.drawer-links a.compact span{font-size:11px;letter-spacing:.03em;color:#aac0e4}
     .info-accordion{display:grid;gap:12px}
     .info-item{border:1px solid rgba(255,255,255,.08);border-radius:22px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));overflow:hidden}
-    .info-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;color:#fff;font-weight:900;font-size:24px;line-height:1.05}
+    .info-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;color:#66ccff;font-weight:400;font-size:24px;line-height:1.05}
     .info-item summary::-webkit-details-marker{display:none}
     .info-item summary span{display:block;color:#9fb2d1;font-size:13px;font-weight:700;line-height:1.5;margin-top:8px;max-width:860px}
     .info-item summary::after{content:"+";flex:0 0 auto;width:34px;height:34px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);font-size:24px;font-weight:500}
@@ -2342,14 +2342,14 @@
 
 
     const FIRU_LAUNCH_CONFIG = {
-  mintAddress: "7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-  mintExplorerUrl: "https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-  tradingEnabled: true,
-  jupiterUrl: "https://jup.ag/swap/SOL-7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-  raydiumUrl: "https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-  dexscreenerUrl: "https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1",
-  birdeyeUrl: ""
-};
+      mintAddress: "",
+      mintExplorerUrl: "",
+      tradingEnabled: false,
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: "",
+      birdeyeUrl: ""
+    };
 
     let CURRENT_FIRU_LAUNCH_STATE = {
       hasMint: false,
