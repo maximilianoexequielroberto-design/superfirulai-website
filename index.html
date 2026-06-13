@@ -1442,29 +1442,6 @@
     [data-config-hidden="true"]{display:none !important}
 
   </style>
-
-<style id="firu-premium-hero-patch">
-.hero-shortcuts,.hero-buttons,.hero-actions{
- display:flex;flex-wrap:wrap;gap:14px;justify-content:center;align-items:center
-}
-.hero-shortcuts a,.hero-buttons a,.hero-actions a,
-.hero-shortcuts button,.hero-buttons button,.hero-actions button{
- background:linear-gradient(135deg,#5b8cff,#8b5cf6);
- color:#fff;border:1px solid rgba(255,255,255,.18);
- border-radius:16px;padding:14px 22px;
- font-weight:800;letter-spacing:.02em;
- box-shadow:0 8px 24px rgba(91,140,255,.25);
- transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
- text-decoration:none;
-}
-.hero-shortcuts a:hover,.hero-buttons a:hover,.hero-actions a:hover,
-.hero-shortcuts button:hover,.hero-buttons button:hover,.hero-actions button:hover{
- transform:translateY(-2px) scale(1.02);
- box-shadow:0 14px 34px rgba(91,140,255,.35);
- filter:brightness(1.05);
-}
-</style>
-
 </head>
 <body>
   <div class="desktop-side-stars" aria-hidden="true">
@@ -1491,7 +1468,7 @@
     </div>
   </header>
 
-  <a href="#"side class="drawer" id="drawer">
+  <aside class="drawer" id="drawer">
     <div class="drawer-panel">
       <div class="drawer-section-title"><span></span><span class="drawer-title-mobile">Mobile menu</span><span class="drawer-title-desktop">Menu</span></div>
       <nav class="drawer-links">
@@ -2364,15 +2341,15 @@
     });
 
 
-    const FIRU_LAUNCH_CONFIG = {
-      mintAddress: "",
-      mintExplorerUrl: "",
-      tradingEnabled: false,
-      jupiterUrl: "",
-      raydiumUrl: "",
-      dexscreenerUrl: "",
-      birdeyeUrl: ""
-    };
+    const FIRU_LAUNCH_CONFIG={
+  mintAddress:"7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
+  mintExplorerUrl:"https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
+  tradingEnabled:true,
+  jupiterUrl:"https://jup.ag/swap/SOL-7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
+  raydiumUrl:"https://raydium.io/swap/?inputMint=So11111111111111111111111111111111111111112&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
+  dexscreenerUrl:"https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1",
+  birdeyeUrl:""
+};
 
     let CURRENT_FIRU_LAUNCH_STATE = {
       hasMint: false,
@@ -2590,5 +2567,18 @@
     loadCommunityStats();
     window.setInterval(loadCommunityStats, 60000);
   </script>
-</body>
+
+<style id="hero-override">
+.hero-launch-chip,.hero-shortcut,.launch-chip{
+background:linear-gradient(180deg,#57b7ff,#2f84ff)!important;
+border:1px solid rgba(255,255,255,.18)!important;
+box-shadow:0 8px 24px rgba(45,132,255,.35)!important;
+}
+.hero-launch-chip strong,.hero-shortcut strong,.launch-chip strong,
+.hero-launch-chip .title,.hero-shortcut .title{
+color:#fff!important;font-weight:800!important}
+.hero-launch-chip small,.hero-shortcut small,.launch-chip small,
+.hero-launch-chip .subtitle,.hero-shortcut .subtitle{
+color:rgba(255,255,255,.9)!important}
+</style></body>
 </html>
