@@ -1198,7 +1198,7 @@
 
 
       .hero-launch-strip{position:absolute;left:14px;right:14px;bottom:122px;z-index:1403;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;pointer-events:auto}
-      .hero-launch-chip{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:68px;padding:12px;border-radius:18px;background:#0052FF!important;border:1px solid #3B82F6!important;color:#fff!important;text-decoration:none;text-align:center;box-shadow:0 12px 28px rgba(0,82,255,.40)!important}
+      .hero-launch-chip{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:2px;min-height:66px;padding:10px 12px;border-radius:18px;border:1px solid rgba(255,255,255,.1);background:linear-gradient(180deg,rgba(8,14,38,.96),rgba(8,14,38,.9));box-shadow:0 18px 38px rgba(0,0,0,.28), inset 0 0 0 1px rgba(255,255,255,.03);color:#eef5ff;text-decoration:none;text-align:left;backdrop-filter:blur(8px)}
       .hero-launch-chip strong{font-size:12px;line-height:1.02;letter-spacing:.01em;font-weight:900}
       .hero-launch-chip span{font-size:9px;line-height:1.08;color:rgba(225,235,255,.72);text-transform:uppercase;letter-spacing:.08em}
       .hero-launch-chip.is-live{background:linear-gradient(180deg,#2f95ff,#1d6dff);border-color:rgba(115,185,255,.4);color:#fff}
@@ -2342,12 +2342,12 @@
 
 
     const FIRU_LAUNCH_CONFIG = {
-      mintAddress:"7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
+      mintAddress: "",
       mintExplorerUrl: "",
       tradingEnabled: false,
-      jupiterUrl:"https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-      raydiumUrl:"https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-      dexscreenerUrl:"https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1",
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: "",
       birdeyeUrl: ""
     };
 
@@ -2355,9 +2355,9 @@
       hasMint: false,
       liveTrading: false,
       mintUrl: "",
-      jupiterUrl:"https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-      raydiumUrl:"https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV",
-      dexscreenerUrl:"https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1"
+      jupiterUrl: "",
+      raydiumUrl: "",
+      dexscreenerUrl: ""
     };
 
     function setLaunchLinkState(elements, url, enabled) {
@@ -2569,29 +2569,21 @@
   </script>
 
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
-document.querySelectorAll('a,button').forEach(el=>{
+document.addEventListener('click',function(e){
+ const el=e.target.closest('a,button');
+ if(!el) return;
  const t=(el.textContent||'').toLowerCase();
- if(t.includes('buy')) el.onclick=()=>window.open('https://jup.ag/swap/SOL-7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
- else if(t.includes('jupiter')) el.onclick=()=>window.open('https://jup.ag/swap/SOL-7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
- else if(t.includes('live')) el.onclick=()=>window.open('https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV','_blank');
- else if(t.includes('view')||t.includes('chart')) el.onclick=()=>window.open('https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1','_blank');
-});
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded',function(){
- const JUP='https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&buy=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
- const RAY='https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
- const DEX='https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1';
- document.querySelectorAll('a,button').forEach(el=>{
-   const t=(el.textContent||'').toLowerCase();
-   if(t.includes('buy')) el.onclick=()=>location.href=JUP;
-   else if(t.includes('live')) el.onclick=()=>location.href=RAY;
-   else if(t.includes('view')||t.includes('chart')) el.onclick=()=>location.href=DEX;
- });
-});
+ let url=null;
+ if(t.includes('buy')) url='https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&buy=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
+ else if(t.includes('live')) url='https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
+ else if(t.includes('view')||t.includes('chart')) url='https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1';
+ if(url){
+   e.preventDefault();
+   e.stopPropagation();
+   const w=window.open(url,'_blank','noopener');
+   if(!w){ window.location.assign(url); }
+ }
+},true);
 </script>
 
 </body>
