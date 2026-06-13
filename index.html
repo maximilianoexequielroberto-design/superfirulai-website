@@ -2579,5 +2579,20 @@ document.querySelectorAll('a,button').forEach(el=>{
 });
 });
 </script>
+
+<script>
+document.addEventListener('DOMContentLoaded',function(){
+ const JUP='https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&buy=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
+ const RAY='https://raydium.io/swap/?inputMint=sol&outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV';
+ const DEX='https://dexscreener.com/solana/5MxQcYCqsW2KDSvnwukzAvNQrVAAfCXyA4K154cXbzs1';
+ document.querySelectorAll('a,button').forEach(el=>{
+   const t=(el.textContent||'').toLowerCase();
+   if(t.includes('buy')) el.onclick=()=>location.href=JUP;
+   else if(t.includes('live')) el.onclick=()=>location.href=RAY;
+   else if(t.includes('view')||t.includes('chart')) el.onclick=()=>location.href=DEX;
+ });
+});
+</script>
+
 </body>
 </html>
