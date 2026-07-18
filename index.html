@@ -169,6 +169,10 @@
     .contract-chip code{display:block;font-size:12.5px;color:var(--text);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
     .contract-chip button{flex:0 0 auto;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center}
     .contract-chip button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+    .hero-asset-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px}
+    .asset-img-btn{display:block;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .15s ease}
+    .asset-img-btn:hover{transform:translateY(-2px)}
+    .asset-img-btn img{width:auto;height:52px;display:block}
     .hero-media{border-radius:28px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
     .hero-media img{width:100%;height:auto;display:block}
     .hero-media .hero-desktop-img{display:none}
@@ -328,8 +332,13 @@
             <h1>SuperFirulai<br><em>$FIRU</em> is live.</h1>
             <p class="lead">A community-driven meme token on Solana, built around transparency, real liquidity and a growing on-chain community.</p>
             <div class="hero-ctas">
-              <a class="btn btn-primary" href="#buy">Comprar $FIRU</a>
-              <a class="btn btn-secondary" href="#tokenomics">Ver Tokenomics</a>
+              <a class="btn btn-primary" href="#buy">Buy $FIRU</a>
+              <a class="btn btn-secondary" href="#tokenomics">View Tokenomics</a>
+            </div>
+            <div class="hero-asset-buttons">
+              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="Open X" /></a>
+              <a class="asset-img-btn" href="https://t.me/superfirulai" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join official Telegram channel" /></a>
+              <a class="asset-img-btn" href="#buy"><img src="./buy-firu.png" alt="Buy $FIRU" /></a>
             </div>
             <div class="contract-chip">
               <div>
@@ -352,21 +361,21 @@
       <section id="about">
         <div class="section-head">
           <div class="eyebrow"><span></span>About</div>
-          <h2>¿Qué es SuperFirulai?</h2>
-          <p>SuperFirulai ($FIRU) es un token meme en la blockchain de Solana, nacido de la comunidad y pensado para crecer con ella. Sin promesas vacías: liquidez real, contrato verificable y un roadmap centrado en construir algo que dure.</p>
+          <h2>What is SuperFirulai?</h2>
+          <p>SuperFirulai ($FIRU) is a community-born meme token on the Solana blockchain, built to grow together with its holders. No empty promises: real liquidity, a verifiable contract, and a roadmap focused on building something that lasts.</p>
         </div>
         <div class="about-points">
           <div class="about-point">
             <div class="ico">🚀</div>
-            <div><strong>Lanzamiento comunitario</strong><p>$FIRU ya está en vivo y operando en Solana, con trading habilitado en los principales DEX y exchanges Web3.</p></div>
+            <div><strong>Community launch</strong><p>$FIRU is live and trading on Solana, with trading enabled on all major DEXs and Web3 exchanges.</p></div>
           </div>
           <div class="about-point">
             <div class="ico">🛡️</div>
-            <div><strong>Transparencia primero</strong><p>Liquidez bloqueada, contrato público y verificable en cualquier explorador de Solana en cualquier momento.</p></div>
+            <div><strong>Transparency first</strong><p>Locked liquidity and a public contract, verifiable on any Solana explorer at any time.</p></div>
           </div>
           <div class="about-point">
             <div class="ico">📈</div>
-            <div><strong>Comunidad activa</strong><p>Métricas de holders, seguidores y comunidad de Telegram visibles en tiempo real más abajo en esta misma página.</p></div>
+            <div><strong>Active community</strong><p>Live holder, follower and Telegram member metrics further down this same page.</p></div>
           </div>
         </div>
       </section>
@@ -375,39 +384,39 @@
       <section id="buy">
         <div class="section-head">
           <div class="eyebrow"><span></span>Buy $FIRU</div>
-          <h2>Comprá $FIRU</h2>
-          <p>Disponible en los principales exchanges y agregadores de Solana. Verificá siempre que el contract address coincida con el de arriba antes de operar.</p>
+          <h2>Buy $FIRU</h2>
+          <p>Available on the leading Solana exchanges and aggregators. Always verify the contract address matches the one above before trading.</p>
         </div>
         <div class="grid-3">
           <a class="card link-card" href="https://jup.ag/swap?sell=So11111111111111111111111111111111111111112&amp;buy=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon">JUP</div>
-            <div><strong>Jupiter</strong><br><span>Agregador líder de Solana</span></div>
-            <span class="go">Comprar en Jupiter →</span>
+            <div><strong>Jupiter</strong><br><span>Solana's leading aggregator</span></div>
+            <span class="go">Buy on Jupiter →</span>
           </a>
           <a class="card link-card" href="https://raydium.io/swap/?inputMint=sol&amp;outputMint=7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon">RAY</div>
-            <div><strong>Raydium</strong><br><span>DEX / AMM en Solana</span></div>
-            <span class="go">Comprar en Raydium →</span>
+            <div><strong>Raydium</strong><br><span>DEX / AMM on Solana</span></div>
+            <span class="go">Buy on Raydium →</span>
           </a>
           <a class="card link-card" href="https://web3.binance.com/token/sol/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon">BIN</div>
-            <div><strong>Binance Web3</strong><br><span>Wallet &amp; swap Web3</span></div>
-            <span class="go">Ver en Binance Web3 →</span>
+            <div><strong>Binance Web3</strong><br><span>Web3 wallet &amp; swap</span></div>
+            <span class="go">View on Binance Web3 →</span>
           </a>
           <a class="card link-card" href="https://www.okx.com/web3" target="_blank" rel="noopener">
             <div class="platform-icon">OKX</div>
-            <div><strong>OKX Web3</strong><br><span>Wallet &amp; swap Web3</span></div>
-            <span class="go">Abrir OKX Web3 →</span>
+            <div><strong>OKX Web3</strong><br><span>Web3 wallet &amp; swap</span></div>
+            <span class="go">Open OKX Web3 →</span>
           </a>
           <a class="card link-card" href="https://www.coinex.com/onchain" target="_blank" rel="noopener">
             <div class="platform-icon">CEX</div>
-            <div><strong>CoinEx Onchain</strong><br><span>Swap on-chain</span></div>
-            <span class="go">Abrir CoinEx Onchain →</span>
+            <div><strong>CoinEx Onchain</strong><br><span>On-chain swap</span></div>
+            <span class="go">Open CoinEx Onchain →</span>
           </a>
           <a class="card link-card" href="https://gmgn.ai/sol/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon">GMGN</div>
-            <div><strong>GMGN.AI</strong><br><span>Trading &amp; análisis meme tokens</span></div>
-            <span class="go">Abrir en GMGN →</span>
+            <div><strong>GMGN.AI</strong><br><span>Meme token trading &amp; analytics</span></div>
+            <span class="go">Open on GMGN →</span>
           </a>
         </div>
       </section>
@@ -416,19 +425,19 @@
       <section id="analytics">
         <div class="section-head">
           <div class="eyebrow"><span></span>Analytics</div>
-          <h2>Seguí el precio y la actividad</h2>
-          <p>Datos on-chain en tiempo real directamente desde las herramientas de analítica más usadas en Solana.</p>
+          <h2>Track price and activity</h2>
+          <p>Real-time on-chain data straight from the most trusted analytics tools on Solana.</p>
         </div>
         <div class="grid-2">
           <a class="card link-card" href="https://dexscreener.com/solana/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon">DEX</div>
-            <div><strong>DexScreener</strong><br><span>Gráfico de precio, volumen y liquidez en vivo</span></div>
-            <span class="go">Ver chart en DexScreener →</span>
+            <div><strong>DexScreener</strong><br><span>Live price, volume and liquidity chart</span></div>
+            <span class="go">View chart on DexScreener →</span>
           </a>
           <a class="card link-card" href="https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon">SOL</div>
-            <div><strong>Solscan</strong><br><span>Explorador oficial del contrato en Solana</span></div>
-            <span class="go">Ver token en Solscan →</span>
+            <div><strong>Solscan</strong><br><span>Official contract explorer on Solana</span></div>
+            <span class="go">View token on Solscan →</span>
           </a>
         </div>
       </section>
@@ -437,32 +446,33 @@
       <section id="security">
         <div class="section-head">
           <div class="eyebrow"><span></span>Security</div>
-          <h2>Seguridad &amp; Transparencia</h2>
-          <p>Todo lo que necesitás para verificar $FIRU por vos mismo, sin tener que confiar en nuestra palabra.</p>
+          <h2>Security &amp; Transparency</h2>
+          <p>Everything you need to verify $FIRU for yourself, without having to take our word for it.</p>
         </div>
         <div class="security-list">
           <div class="card security-item">
             <div class="ico">🔎</div>
             <div>
-              <strong>Contrato verificable</strong>
-              <p>El contract address oficial es público y podés inspeccionarlo en cualquier momento en Solscan.</p>
-              <a href="https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">Ver contrato en Solscan →</a>
+              <strong>Verifiable contract</strong>
+              <p>The official contract address is public and can be inspected at any time on Solscan.</p>
+              <a href="https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">View contract on Solscan →</a>
             </div>
           </div>
           <div class="card security-item">
             <div class="ico">🔒</div>
             <div>
-              <strong>Liquidez bloqueada</strong>
-              <p>El lock de liquidez de $FIRU se verifica de forma independiente en StakePoint, el token locker de Solana.</p>
-              <a href="https://stakepoint.app/solana-token-locker" target="_blank" rel="noopener">Verificar lock en StakePoint →</a>
+              <strong>Liquidity locked forever, in 2 parts</strong>
+              <p>$FIRU liquidity is permanently locked on StakePoint, split across two independent locks. Both are verifiable on-chain at any time.</p>
+              <a href="https://stakepoint.app/locks/cmqq1lpqj0000jv04rr3n6s6m" target="_blank" rel="noopener">View lock #1 on StakePoint →</a><br>
+              <a href="https://stakepoint.app/locks/cmqjkshrk0000ky043813hgut" target="_blank" rel="noopener">View lock #2 on StakePoint →</a>
             </div>
           </div>
           <div class="card security-item">
             <div class="ico">🛡️</div>
             <div>
-              <strong>Análisis de contrato</strong>
-              <p>Escaneá el contrato de forma independiente con De.Fi Scanner para revisar riesgos y permisos del token.</p>
-              <a href="https://de.fi/scanner/contract/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV?chainId=sol" target="_blank" rel="noopener">Escanear en De.Fi →</a>
+              <strong>Contract scan</strong>
+              <p>Independently scan the contract with De.Fi Scanner to review risks and token permissions.</p>
+              <a href="https://de.fi/scanner/contract/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV?chainId=sol" target="_blank" rel="noopener">Scan on De.Fi →</a>
             </div>
           </div>
         </div>
@@ -472,12 +482,12 @@
       <section id="tokenomics">
         <div class="section-head">
           <div class="eyebrow"><span></span>Tokenomics</div>
-          <h2>Distribución del supply</h2>
-          <p>Supply total fijo: <strong style="color:var(--text)">1,000,000,000 $FIRU</strong>. Sin distribuciones ocultas.</p>
+          <h2>Supply distribution</h2>
+          <p>Fixed total supply: <strong style="color:var(--text)">1,000,000,000 $FIRU</strong>. No hidden allocations.</p>
         </div>
         <div class="grid-5">
-          <div class="card tokenomics-item"><div class="pct">55%</div><strong>Liquidez</strong><span>550,000,000 FIRU</span></div>
-          <div class="card tokenomics-item"><div class="pct">20%</div><strong>Comunidad</strong><span>200,000,000 FIRU</span></div>
+          <div class="card tokenomics-item"><div class="pct">55%</div><strong>Liquidity</strong><span>550,000,000 FIRU</span></div>
+          <div class="card tokenomics-item"><div class="pct">20%</div><strong>Community</strong><span>200,000,000 FIRU</span></div>
           <div class="card tokenomics-item"><div class="pct">10%</div><strong>Marketing</strong><span>100,000,000 FIRU</span></div>
           <div class="card tokenomics-item"><div class="pct">10%</div><strong>Team</strong><span>100,000,000 FIRU</span></div>
           <div class="card tokenomics-item"><div class="pct">5%</div><strong>Burn</strong><span>50,000,000 FIRU</span></div>
@@ -495,31 +505,31 @@
       <section id="roadmap">
         <div class="section-head">
           <div class="eyebrow"><span></span>Roadmap</div>
-          <h2>Hacia dónde vamos</h2>
+          <h2>Where we're headed</h2>
         </div>
         <div class="roadmap-list">
           <div class="roadmap-item is-done">
             <div class="dot-col"><div class="dot"></div><div class="line"></div></div>
             <div class="card">
-              <span class="tag">Completado</span>
-              <h3>Fase 1 — Fundación</h3>
-              <p>Contrato desplegado en Solana, liquidez inicial bloqueada, sitio web oficial y primeras comunidades en X y Telegram.</p>
+              <span class="tag">Completed</span>
+              <h3>Phase 1 — Foundation</h3>
+              <p>Contract deployed on Solana, initial liquidity locked, official website live, and first communities on X and Telegram.</p>
             </div>
           </div>
           <div class="roadmap-item is-active">
             <div class="dot-col"><div class="dot"></div><div class="line"></div></div>
             <div class="card">
-              <span class="tag">En curso</span>
-              <h3>Fase 2 — Crecimiento</h3>
-              <p>Expansión a nuevos exchanges y wallets Web3, campañas de comunidad (incluyendo TaskOn) y crecimiento del volumen de trading.</p>
+              <span class="tag">In progress</span>
+              <h3>Phase 2 — Growth</h3>
+              <p>Expansion to new exchanges and Web3 wallets, community campaigns (including TaskOn), and growing trading volume.</p>
             </div>
           </div>
           <div class="roadmap-item">
             <div class="dot-col"><div class="dot"></div></div>
             <div class="card">
-              <span class="tag">Próximamente</span>
-              <h3>Fase 3 — Ecosistema</h3>
-              <p>Nuevas alianzas dentro del ecosistema Solana y herramientas para la comunidad de holders de $FIRU.</p>
+              <span class="tag">Upcoming</span>
+              <h3>Phase 3 — Ecosystem</h3>
+              <p>New partnerships within the Solana ecosystem and tools built for the $FIRU holder community.</p>
             </div>
           </div>
         </div>
@@ -529,8 +539,8 @@
       <section id="community">
         <div class="section-head">
           <div class="eyebrow"><span></span>Community</div>
-          <h2>Únete a la comunidad</h2>
-          <p>Números en vivo directamente desde la blockchain y nuestras redes oficiales.</p>
+          <h2>Join the community</h2>
+          <p>Live numbers straight from the blockchain and our official channels.</p>
         </div>
 
         <div class="metrics-shell">
@@ -543,9 +553,9 @@
         </div>
 
         <div class="community-actions">
-          <a class="btn btn-secondary" href="https://x.com/superfirulai" target="_blank" rel="noopener">X Oficial</a>
-          <a class="btn btn-secondary" href="https://t.me/superfirulai" target="_blank" rel="noopener">Canal de Telegram</a>
-          <a class="btn btn-secondary" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Comunidad de Telegram</a>
+          <a class="btn btn-secondary" href="https://x.com/superfirulai" target="_blank" rel="noopener">Official X</a>
+          <a class="btn btn-secondary" href="https://t.me/superfirulai" target="_blank" rel="noopener">Telegram Channel</a>
+          <a class="btn btn-secondary" href="https://t.me/superfirulaicommunity" target="_blank" rel="noopener">Telegram Community</a>
         </div>
       </section>
 
@@ -554,10 +564,10 @@
         <div class="card taskon-card">
           <div class="copy">
             <div class="eyebrow"><span></span>TaskOn</div>
-            <h3>Ganá recompensas completando misiones</h3>
-            <p>Sumate a la campaña oficial de $FIRU en TaskOn: conectá tu wallet, completá las tareas y participá de las recompensas de la comunidad.</p>
+            <h3>Earn rewards by completing quests</h3>
+            <p>Join the official $FIRU campaign on TaskOn: connect your wallet, complete the quests, and take part in the community rewards.</p>
           </div>
-          <a class="btn btn-primary" href="https://taskon.xyz/quest/337685846" target="_blank" rel="noopener">Ver tareas en TaskOn</a>
+          <a class="btn btn-primary" href="https://taskon.xyz/quest/337685846" target="_blank" rel="noopener">View quests on TaskOn</a>
         </div>
       </section>
 
@@ -565,32 +575,32 @@
       <section id="faq">
         <div class="section-head">
           <div class="eyebrow"><span></span>FAQ</div>
-          <h2>Preguntas frecuentes</h2>
+          <h2>Frequently asked questions</h2>
         </div>
 
         <details class="faq-item">
-          <summary>¿Qué es $FIRU?</summary>
-          <div class="body"><p>$FIRU es un token meme lanzado en la blockchain de Solana por la comunidad de SuperFirulai, con supply fijo de 1,000,000,000 FIRU.</p></div>
+          <summary>What is $FIRU?</summary>
+          <div class="body"><p>$FIRU is a meme token launched on the Solana blockchain by the SuperFirulai community, with a fixed supply of 1,000,000,000 FIRU.</p></div>
         </details>
         <details class="faq-item">
-          <summary>¿Dónde puedo comprar $FIRU?</summary>
-          <div class="body"><p>En Jupiter, Raydium, Binance Web3, OKX Web3, CoinEx Onchain o GMGN.AI. Todos los links oficiales están en la sección <a href="#buy" style="color:var(--gold);font-weight:800">Buy $FIRU</a>.</p></div>
+          <summary>Where can I buy $FIRU?</summary>
+          <div class="body"><p>On Jupiter, Raydium, Binance Web3, OKX Web3, CoinEx Onchain, or GMGN.AI. All official links are in the <a href="#buy" style="color:var(--gold);font-weight:800">Buy $FIRU</a> section.</p></div>
         </details>
         <details class="faq-item">
-          <summary>¿Cómo verifico que el contrato es el oficial?</summary>
-          <div class="body"><p>Compará siempre el contract address contra el que aparece en esta página y verificalo en <a href="https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">Solscan</a> o escaneándolo en <a href="https://de.fi/scanner/contract/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV?chainId=sol" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">De.Fi Scanner</a>.</p></div>
+          <summary>How do I verify the contract is official?</summary>
+          <div class="body"><p>Always compare the contract address against the one shown on this page, and verify it on <a href="https://solscan.io/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">Solscan</a> or by scanning it on <a href="https://de.fi/scanner/contract/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV?chainId=sol" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">De.Fi Scanner</a>.</p></div>
         </details>
         <details class="faq-item">
-          <summary>¿Está la liquidez bloqueada?</summary>
-          <div class="body"><p>El lock de liquidez se puede verificar de forma independiente en <a href="https://stakepoint.app/solana-token-locker" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">StakePoint</a>.</p></div>
+          <summary>Is the liquidity locked?</summary>
+          <div class="body"><p>Yes, liquidity is locked forever, split across two independent locks that you can verify yourself: <a href="https://stakepoint.app/locks/cmqq1lpqj0000jv04rr3n6s6m" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">lock #1</a> and <a href="https://stakepoint.app/locks/cmqjkshrk0000ky043813hgut" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800">lock #2</a> on StakePoint.</p></div>
         </details>
         <details class="faq-item">
-          <summary>¿El supply es fijo?</summary>
-          <div class="body"><p>Sí, el supply total es de 1,000,000,000 $FIRU, distribuido según la sección <a href="#tokenomics" style="color:var(--gold);font-weight:800">Tokenomics</a> de esta página.</p></div>
+          <summary>Is the supply fixed?</summary>
+          <div class="body"><p>Yes, total supply is 1,000,000,000 $FIRU, distributed according to the <a href="#tokenomics" style="color:var(--gold);font-weight:800">Tokenomics</a> section of this page.</p></div>
         </details>
         <details class="faq-item">
-          <summary>¿Cómo participo en la comunidad?</summary>
-          <div class="body"><p>Sumate a nuestro canal oficial y a la comunidad de Telegram, seguinos en X, y participá de las misiones activas en TaskOn.</p></div>
+          <summary>How do I join the community?</summary>
+          <div class="body"><p>Join our official channel and Telegram community, follow us on X, and take part in the active quests on TaskOn.</p></div>
         </details>
       </section>
 
@@ -614,8 +624,8 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <span>&copy; <span id="year"></span> SuperFirulai. Todos los derechos reservados.</span>
-        <span>$FIRU en Solana · Solo canales oficiales</span>
+        <span>&copy; <span id="year"></span> SuperFirulai. All rights reserved.</span>
+        <span>$FIRU on Solana · Official channels only</span>
       </div>
     </div>
   </footer>
