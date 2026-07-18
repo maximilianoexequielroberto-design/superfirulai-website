@@ -816,7 +816,7 @@
         const xEl = document.getElementById("metricX");
         const tgEl = document.getElementById("metricTelegram");
         const supplyEl = document.getElementById("metricSupply");
-        if (holdersEl && Number.isFinite(Number(data.holders))) holdersEl.textContent = fmt(data.holders);
+        if (holdersEl && data.holdersMode === "live" && Number.isFinite(Number(data.holders))) holdersEl.textContent = fmt(data.holders);
         if (xEl && Number.isFinite(Number(data.xFollowers))) xEl.textContent = fmt(data.xFollowers);
         if (tgEl && Number.isFinite(Number(data.telegramMembers))) tgEl.textContent = fmt(data.telegramMembers);
         if (supplyEl && Number.isFinite(Number(data.totalSupply))) supplyEl.textContent = fmt(data.totalSupply);
