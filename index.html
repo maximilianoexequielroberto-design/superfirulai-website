@@ -279,8 +279,8 @@
 
     /* Community */
     .metrics-shell{border:1px solid var(--line);box-shadow:var(--shadow);border-radius:26px;background:linear-gradient(180deg,rgba(9,17,40,.88),rgba(7,14,34,.94));padding:26px 22px;margin-bottom:26px}
-    .metrics-grid{display:grid;gap:16px;grid-template-columns:repeat(2,1fr);margin-top:18px}
-    @media (min-width:640px){ .metrics-grid{grid-template-columns:repeat(4,1fr)} }
+    .metrics-grid{display:grid;gap:16px;grid-template-columns:repeat(1,1fr);margin-top:18px}
+    @media (min-width:480px){ .metrics-grid{grid-template-columns:repeat(3,1fr)} }
     .metric{text-align:left}
     .metric strong{display:block;font-family:"Barlow Condensed",sans-serif;font-weight:900;font-size:34px}
     .metric span{font-size:11.5px;color:var(--muted-2);text-transform:uppercase;letter-spacing:.08em}
@@ -309,7 +309,7 @@
     .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
 
     /* Starfield + floating rockets — subtle site-wide ambience */
-    .stars-field{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+    .stars-field{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden}
     .stars{position:absolute;inset:-10% -10%;background-repeat:repeat;opacity:.55}
     .stars-1{
       background-image:radial-gradient(1.6px 1.6px at 20% 30%,#fff,transparent),radial-gradient(1.6px 1.6px at 65% 12%,#fff,transparent),radial-gradient(1.2px 1.2px at 82% 55%,#fff,transparent),radial-gradient(1.4px 1.4px at 40% 70%,#fff,transparent),radial-gradient(1.2px 1.2px at 10% 85%,#fff,transparent),radial-gradient(1.6px 1.6px at 92% 80%,#fff,transparent),radial-gradient(1.2px 1.2px at 55% 45%,#fff,transparent);
@@ -563,11 +563,6 @@
             <div><strong>CoinEx Onchain</strong><br><span>On-chain swap</span></div>
             <span class="go">Open CoinEx Onchain →</span>
           </a>
-          <a class="card link-card" href="https://www.okx.com/web3" target="_blank" rel="noopener">
-            <div class="platform-icon"><img src="https://www.google.com/s2/favicons?sz=128&amp;domain=okx.com" alt="" loading="lazy" onerror="this.style.display='none'" /><span>OKX</span></div>
-            <div><strong>OKX Web3</strong><br><span>Web3 wallet &amp; swap</span></div>
-            <span class="go">Open OKX Web3 →</span>
-          </a>
           <a class="card link-card" href="https://gmgn.ai/sol/token/7HvY2dyYYtzkjU1u9kniGyuTe41KwVxDCefywaTVf8rV" target="_blank" rel="noopener">
             <div class="platform-icon"><img src="https://www.google.com/s2/favicons?sz=128&amp;domain=gmgn.ai" alt="" loading="lazy" onerror="this.style.display='none'" /><span>GMGN</span></div>
             <div><strong>GMGN.AI</strong><br><span>Meme token trading &amp; analytics</span></div>
@@ -679,7 +674,6 @@
 
         <div class="metrics-shell">
           <div class="metrics-grid">
-            <div class="metric"><strong id="metricHolders">—</strong><span>Holders</span></div>
             <div class="metric"><strong id="metricX">—</strong><span>X Followers</span></div>
             <div class="metric"><strong id="metricTelegram">—</strong><span>Telegram Members</span></div>
             <div class="metric"><strong id="metricSupply">1,000,000,000</strong><span>Total Supply</span></div>
@@ -718,7 +712,7 @@
         </details>
         <details class="faq-item">
           <summary>Where can I buy $FIRU?</summary>
-          <div class="body"><p>On Jupiter, Raydium, Binance Web3, OKX Web3, CoinEx Onchain, or GMGN.AI. All official links are in the <a href="#buy" style="color:var(--gold);font-weight:800">Buy $FIRU</a> section.</p></div>
+          <div class="body"><p>On Jupiter, Raydium, Binance Web3, CoinEx Onchain, or GMGN.AI. All official links are in the <a href="#buy" style="color:var(--gold);font-weight:800">Buy $FIRU</a> section.</p></div>
         </details>
         <details class="faq-item">
           <summary>How do I verify the contract is official?</summary>
@@ -812,11 +806,9 @@
         if (!res.ok) throw new Error("community-stats request failed: " + res.status);
         const data = await res.json();
         const fmt = (n) => Number(n || 0).toLocaleString("en-US");
-        const holdersEl = document.getElementById("metricHolders");
         const xEl = document.getElementById("metricX");
         const tgEl = document.getElementById("metricTelegram");
         const supplyEl = document.getElementById("metricSupply");
-        if (holdersEl && data.holdersMode === "live" && Number.isFinite(Number(data.holders))) holdersEl.textContent = fmt(data.holders);
         if (xEl && Number.isFinite(Number(data.xFollowers))) xEl.textContent = fmt(data.xFollowers);
         if (tgEl && Number.isFinite(Number(data.telegramMembers))) tgEl.textContent = fmt(data.telegramMembers);
         if (supplyEl && Number.isFinite(Number(data.totalSupply))) supplyEl.textContent = fmt(data.totalSupply);
