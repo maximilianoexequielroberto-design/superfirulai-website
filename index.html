@@ -156,29 +156,63 @@
     .drawer-links a{display:block;padding:14px 16px;border-radius:15px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-weight:800;font-size:15px}
     .drawer-social{display:flex;gap:10px;margin-top:12px}
 
-    /* Hero */
-    .hero{position:relative;padding-top:150px;padding-bottom:70px;overflow:hidden}
-    .hero-grid{display:grid;gap:40px;align-items:center}
-    @media (min-width:900px){ .hero-grid{grid-template-columns:1.05fr .95fr} }
-    .hero h1{margin-bottom:18px}
+    /* Hero — same adaptive technique as the original site: full-bleed background image
+       that swaps between the mobile and desktop asset at the 860px breakpoint. */
+    .hero-stage{
+      position:relative;
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      height:100svh;
+      min-height:640px;
+      background:#040b19;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .hero-desktop-image,.hero-mobile-image{
+      position:absolute;inset:0;background-repeat:no-repeat;background-position:center top;z-index:0;
+    }
+    .hero-mobile-image{background-size:cover;background-image:url("hero-mobile-image.png")}
+    .hero-desktop-image{display:none;background-image:url("hero-desktop-image.png")}
+    .hero-stage::before{
+      content:"";position:absolute;inset:0;
+      background:radial-gradient(circle at 50% 78%,rgba(255,184,43,.16),transparent 24%);
+      pointer-events:none;z-index:0;
+    }
+    .hero-stage::after{
+      content:"";position:absolute;left:0;right:0;bottom:0;height:55%;
+      background:linear-gradient(180deg,rgba(5,13,31,0),rgba(5,13,31,.55) 55%,rgba(5,13,31,.95) 100%);
+      pointer-events:none;z-index:1;
+    }
+    .hero-overlay{
+      position:absolute;left:0;right:0;bottom:0;z-index:2;
+      padding:0 14px 34px;
+    }
+    .hero-overlay-inner{width:min(calc(100% - 4px),var(--max));margin:0 auto}
+    .hero h1{margin-bottom:14px}
     .hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--gold),var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent}
-    .hero p.lead{font-size:17px;max-width:520px;margin-bottom:28px}
-    .hero-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:26px}
-    .contract-chip{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);max-width:fit-content}
-    .contract-chip .label{font-size:10.5px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
-    .contract-chip code{display:block;font-size:12.5px;color:var(--text);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
-    .contract-chip button{flex:0 0 auto;width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center}
-    .contract-chip button svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
-    .hero-asset-buttons{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px}
-    .asset-img-btn{display:block;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);transition:transform .15s ease}
+    .hero p.lead{font-size:15.5px;max-width:480px;margin-bottom:20px}
+    .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:18px}
+    .contract-chip{display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:16px;background:rgba(8,14,32,.7);border:1px solid var(--line);backdrop-filter:blur(8px);max-width:fit-content;margin-bottom:18px}
+    .contract-chip .label{font-size:10px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted-2)}
+    .contract-chip code{display:block;font-size:12px;color:var(--text);word-break:break-all;font-family:ui-monospace,Menlo,monospace}
+    .contract-chip button{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.08);border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center}
+    .contract-chip button svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+    .hero-asset-buttons{display:flex;flex-wrap:wrap;gap:10px}
+    .asset-img-btn{display:block;border-radius:14px;overflow:hidden;border:1px solid var(--line);box-shadow:0 12px 26px rgba(0,0,0,.3);transition:transform .15s ease}
     .asset-img-btn:hover{transform:translateY(-2px)}
-    .asset-img-btn img{width:auto;height:52px;display:block}
-    .hero-media{border-radius:28px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow)}
-    .hero-media img{width:100%;height:auto;display:block}
-    .hero-media .hero-desktop-img{display:none}
+    .asset-img-btn img{width:auto;height:46px;display:block}
+    @media (min-width:640px){
+      .hero-overlay{padding:0 24px 44px}
+      .hero p.lead{font-size:17px}
+      .asset-img-btn img{height:56px}
+    }
     @media (min-width:860px){
-      .hero-media .hero-desktop-img{display:block}
-      .hero-media .hero-mobile-img{display:none}
+      .hero-stage{height:auto;min-height:0;aspect-ratio:2048 / 1365}
+      .hero-desktop-image{display:block;background-size:100% auto;background-position:center top}
+      .hero-mobile-image{display:none}
+      .hero-stage::after{height:60%}
+      .hero-overlay{padding:0 40px 56px}
+      .hero-overlay-inner{max-width:620px;margin:0}
     }
 
     /* Grids */
@@ -325,20 +359,18 @@
     <div class="container">
 
       <!-- HERO -->
-      <section class="hero" id="home">
-        <div class="hero-grid">
-          <div>
+      <section class="hero-stage" id="home" role="img" aria-label="SuperFirulai $FIRU hero artwork">
+        <div class="hero-desktop-image" aria-hidden="true"></div>
+        <div class="hero-mobile-image" aria-hidden="true"></div>
+
+        <div class="hero-overlay">
+          <div class="hero-overlay-inner">
             <div class="eyebrow"><span></span>Live on Solana</div>
             <h1>SuperFirulai<br><em>$FIRU</em> is live.</h1>
             <p class="lead">A community-driven meme token on Solana, built around transparency, real liquidity and a growing on-chain community.</p>
             <div class="hero-ctas">
               <a class="btn btn-primary" href="#buy">Buy $FIRU</a>
               <a class="btn btn-secondary" href="#tokenomics">View Tokenomics</a>
-            </div>
-            <div class="hero-asset-buttons">
-              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="Open X" /></a>
-              <a class="asset-img-btn" href="https://t.me/superfirulai" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join official Telegram channel" /></a>
-              <a class="asset-img-btn" href="#buy"><img src="./buy-firu.png" alt="Buy $FIRU" /></a>
             </div>
             <div class="contract-chip">
               <div>
@@ -349,10 +381,11 @@
                 <svg viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"></rect><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"></path></svg>
               </button>
             </div>
-          </div>
-          <div class="hero-media">
-            <img class="hero-desktop-img" src="./hero-desktop-image.png" alt="SuperFirulai hero artwork" />
-            <img class="hero-mobile-img" src="./hero-mobile-image.png" alt="SuperFirulai hero artwork" />
+            <div class="hero-asset-buttons">
+              <a class="asset-img-btn" href="https://x.com/superfirulai" target="_blank" rel="noopener"><img src="./x-button.png" alt="Open X" /></a>
+              <a class="asset-img-btn" href="https://t.me/superfirulai" target="_blank" rel="noopener"><img src="./join-telegram.png" alt="Join official Telegram channel" /></a>
+              <a class="asset-img-btn" href="#buy"><img src="./buy-firu.png" alt="Buy $FIRU" /></a>
+            </div>
           </div>
         </div>
       </section>
@@ -672,25 +705,26 @@
     document.getElementById("year").textContent = String(new Date().getFullYear());
 
     // --- Live community stats ---
-    (async () => {
+    async function loadCommunityStats() {
       try {
         const res = await fetch("/api/community-stats", { cache: "no-store" });
-        if (!res.ok) return;
-        const data = await res.json().catch(() => null);
-        if (!data) return;
+        if (!res.ok) throw new Error("community-stats request failed: " + res.status);
+        const data = await res.json();
         const fmt = (n) => Number(n || 0).toLocaleString("en-US");
         const holdersEl = document.getElementById("metricHolders");
         const xEl = document.getElementById("metricX");
         const tgEl = document.getElementById("metricTelegram");
         const supplyEl = document.getElementById("metricSupply");
-        if (holdersEl && data.holders != null) holdersEl.textContent = fmt(data.holders);
-        if (xEl && data.xFollowers != null) xEl.textContent = fmt(data.xFollowers);
-        if (tgEl && data.telegramMembers != null) tgEl.textContent = fmt(data.telegramMembers);
-        if (supplyEl && data.totalSupply != null) supplyEl.textContent = fmt(data.totalSupply);
+        if (holdersEl && Number.isFinite(Number(data.holders))) holdersEl.textContent = fmt(data.holders);
+        if (xEl && Number.isFinite(Number(data.xFollowers))) xEl.textContent = fmt(data.xFollowers);
+        if (tgEl && Number.isFinite(Number(data.telegramMembers))) tgEl.textContent = fmt(data.telegramMembers);
+        if (supplyEl && Number.isFinite(Number(data.totalSupply))) supplyEl.textContent = fmt(data.totalSupply);
       } catch (e) {
         console.warn("community-stats", e);
       }
-    })();
+    }
+    loadCommunityStats();
+    window.setInterval(loadCommunityStats, 60000);
   </script>
 </body>
 </html>
