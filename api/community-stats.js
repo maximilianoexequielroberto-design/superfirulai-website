@@ -1,5 +1,12 @@
 import { applySecurityHeaders, serverError } from "./_security.js";
-import { PublicKey } from "@solana/web3.js";
+
+let PublicKey = null;
+try {
+  ({ PublicKey } = await import("@solana/web3.js"));
+} catch (moduleLoadError) {
+  console.error("community-stats: failed to load @solana/web3.js", moduleLoadError);
+}
+
 const DEFAULT_HOLDERS = 0;
 const DEFAULT_X_FOLLOWERS = 61;
 const DEFAULT_TELEGRAM_MEMBERS = 24;
@@ -15,6 +22,7 @@ const TELEGRAM_TIMEOUT_MS = 5000;
 function isValidPublicKey(value) {
   const normalized = String(value || "").trim();
   if (!normalized) return false;
+  if (!PublicKey) return false;
   try {
     return new PublicKey(normalized).toBase58() === normalized;
   } catch {
@@ -123,107 +131,127 @@ async function fetchLiveHolders({ rpcUrl, mintAddress, commitment, excludedWalle
 }
 
 export default async function handler(req, res) {
-  applySecurityHeaders(res, { privateResponse: false });
-
-  if (req.method !== "GET") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const fallbackXFollowers = Number(process.env.X_FOLLOWERS_COUNT || DEFAULT_X_FOLLOWERS);
-  const totalSupply = Number(process.env.TOTAL_SUPPLY || DEFAULT_TOTAL_SUPPLY);
-  const fallbackHolders = Number(process.env.HOLDERS_COUNT || DEFAULT_HOLDERS);
-  const commitment = String(process.env.HOLDERS_RPC_COMMITMENT || DEFAULT_COMMITMENT).trim() || DEFAULT_COMMITMENT;
-  const projectStage = String(process.env.PROJECT_STAGE || "prelaunch").trim().toLowerCase();
-  const holdersUnlocked = projectStage !== "prelaunch";
-
-  let telegramMembers = Number(process.env.TELEGRAM_MEMBERS_FALLBACK || DEFAULT_TELEGRAM_MEMBERS);
-  let xFollowers = fallbackXFollowers;
-  let xFollowersMode = "fallback";
-  let xFollowersUpdatedAt = new Date().toISOString();
-  let xFollowersError = null;
-
-  let holders = fallbackHolders;
-  let holdersMode = "fallback";
-  let holdersUpdatedAt = new Date().toISOString();
-  let holdersError = null;
-
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
-  const rpcUrl = String(process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC_URL_PUBLIC || "").trim();
-  const mintAddress = String(process.env.TOKEN_MINT_ADDRESS || "").trim();
-  const excludedWallets = parseAddressList(process.env.HOLDERS_EXCLUDED_WALLETS);
-  const excludedTokenAccounts = parseAddressList(process.env.HOLDERS_EXCLUDED_TOKEN_ACCOUNTS);
-
-  const invalidExcludedWallets = [...excludedWallets].filter((value) => !isValidPublicKey(value));
-  const invalidExcludedTokenAccounts = [...excludedTokenAccounts].filter((value) => !isValidPublicKey(value));
-  const mintAddressValid = !mintAddress || isValidPublicKey(mintAddress);
-
   try {
-    if (token && chatId) {
-      const url = `https://api.telegram.org/bot${token}/getChatMemberCount?chat_id=${encodeURIComponent(chatId)}`;
-      const resp = await fetchJsonWithTimeout(url, {}, TELEGRAM_TIMEOUT_MS);
-      const data = await resp.json();
-      if (data && data.ok && typeof data.result === "number") {
-        telegramMembers = data.result;
-      }
+    applySecurityHeaders(res, { privateResponse: false });
+
+    if (req.method !== "GET") {
+      return res.status(405).json({ error: "Method not allowed" });
     }
-  } catch {
-    // fallback to env/default
-  }
 
-  xFollowersMode = "manual";
-  xFollowersUpdatedAt = new Date().toISOString();
-  xFollowersError = null;
+    const fallbackXFollowers = Number(process.env.X_FOLLOWERS_COUNT || DEFAULT_X_FOLLOWERS);
+    const totalSupply = Number(process.env.TOTAL_SUPPLY || DEFAULT_TOTAL_SUPPLY);
+    const fallbackHolders = Number(process.env.HOLDERS_COUNT || DEFAULT_HOLDERS);
+    const commitment = String(process.env.HOLDERS_RPC_COMMITMENT || DEFAULT_COMMITMENT).trim() || DEFAULT_COMMITMENT;
+    const projectStage = String(process.env.PROJECT_STAGE || "prelaunch").trim().toLowerCase();
+    const holdersUnlocked = projectStage !== "prelaunch";
 
-  try {
-    if (!holdersUnlocked) {
-      holders = 0;
-      holdersMode = "prelaunch_locked";
-      holdersUpdatedAt = new Date().toISOString();
-    } else {
-      if (invalidExcludedWallets.length) {
-        throw new Error(`Invalid HOLDERS_EXCLUDED_WALLETS entries: ${invalidExcludedWallets.join(", ")}`);
+    let telegramMembers = Number(process.env.TELEGRAM_MEMBERS_FALLBACK || DEFAULT_TELEGRAM_MEMBERS);
+    let xFollowers = fallbackXFollowers;
+    let xFollowersMode = "fallback";
+    let xFollowersUpdatedAt = new Date().toISOString();
+    let xFollowersError = null;
+
+    let holders = fallbackHolders;
+    let holdersMode = "fallback";
+    let holdersUpdatedAt = new Date().toISOString();
+    let holdersError = null;
+
+    const token = process.env.TELEGRAM_BOT_TOKEN;
+    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const rpcUrl = String(process.env.SOLANA_RPC_URL || process.env.SOLANA_RPC_URL_PUBLIC || "").trim();
+    const mintAddress = String(process.env.TOKEN_MINT_ADDRESS || "").trim();
+    const excludedWallets = parseAddressList(process.env.HOLDERS_EXCLUDED_WALLETS);
+    const excludedTokenAccounts = parseAddressList(process.env.HOLDERS_EXCLUDED_TOKEN_ACCOUNTS);
+
+    const invalidExcludedWallets = [...excludedWallets].filter((value) => !isValidPublicKey(value));
+    const invalidExcludedTokenAccounts = [...excludedTokenAccounts].filter((value) => !isValidPublicKey(value));
+    const mintAddressValid = !mintAddress || isValidPublicKey(mintAddress);
+
+    try {
+      if (token && chatId) {
+        const url = `https://api.telegram.org/bot${token}/getChatMemberCount?chat_id=${encodeURIComponent(chatId)}`;
+        const resp = await fetchJsonWithTimeout(url, {}, TELEGRAM_TIMEOUT_MS);
+        const data = await resp.json();
+        if (data && data.ok && typeof data.result === "number") {
+          telegramMembers = data.result;
+        }
       }
+    } catch {
+      // fallback to env/default
+    }
 
-      if (invalidExcludedTokenAccounts.length) {
-        throw new Error(`Invalid HOLDERS_EXCLUDED_TOKEN_ACCOUNTS entries: ${invalidExcludedTokenAccounts.join(", ")}`);
+    xFollowersMode = "manual";
+    xFollowersUpdatedAt = new Date().toISOString();
+    xFollowersError = null;
+
+    try {
+      if (!PublicKey) {
+        throw new Error("@solana/web3.js unavailable in this deployment");
       }
-
-      if (rpcUrl && mintAddress && !mintAddressValid) {
-        throw new Error("Invalid TOKEN_MINT_ADDRESS");
-      }
-
-      if (rpcUrl && mintAddress && mintAddressValid) {
-        const live = await fetchLiveHolders({
-          rpcUrl,
-          mintAddress,
-          commitment,
-          excludedWallets,
-          excludedTokenAccounts
-        });
-        holders = live.holders;
-        holdersMode = "live";
+      if (!holdersUnlocked) {
+        holders = 0;
+        holdersMode = "prelaunch_locked";
         holdersUpdatedAt = new Date().toISOString();
+      } else {
+        if (invalidExcludedWallets.length) {
+          throw new Error(`Invalid HOLDERS_EXCLUDED_WALLETS entries: ${invalidExcludedWallets.join(", ")}`);
+        }
+
+        if (invalidExcludedTokenAccounts.length) {
+          throw new Error(`Invalid HOLDERS_EXCLUDED_TOKEN_ACCOUNTS entries: ${invalidExcludedTokenAccounts.join(", ")}`);
+        }
+
+        if (rpcUrl && mintAddress && !mintAddressValid) {
+          throw new Error("Invalid TOKEN_MINT_ADDRESS");
+        }
+
+        if (rpcUrl && mintAddress && mintAddressValid) {
+          const live = await fetchLiveHolders({
+            rpcUrl,
+            mintAddress,
+            commitment,
+            excludedWallets,
+            excludedTokenAccounts
+          });
+          holders = live.holders;
+          holdersMode = "live";
+          holdersUpdatedAt = new Date().toISOString();
+        }
       }
+    } catch (error) {
+      holdersError = error instanceof Error ? error.message : "holders unavailable";
     }
-  } catch (error) {
-    holdersError = error instanceof Error ? error.message : "holders unavailable";
+
+    res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=120");
+
+    return res.status(200).json({
+      holders,
+      holdersMode,
+      projectStage,
+      holdersUpdatedAt,
+      holdersError,
+      holdersRefreshMs: FALLBACK_REFRESH_MS,
+      telegramMembers,
+      xFollowers,
+      xFollowersMode,
+      xFollowersUpdatedAt,
+      xFollowersError,
+      totalSupply
+    });
+  } catch (fatalError) {
+    console.error("community-stats: unexpected failure", fatalError);
+    try {
+      return res.status(200).json({
+        holders: Number(process.env.HOLDERS_COUNT || DEFAULT_HOLDERS),
+        holdersMode: "fallback",
+        holdersError: fatalError instanceof Error ? fatalError.message : "unexpected error",
+        telegramMembers: Number(process.env.TELEGRAM_MEMBERS_FALLBACK || DEFAULT_TELEGRAM_MEMBERS),
+        xFollowers: Number(process.env.X_FOLLOWERS_COUNT || DEFAULT_X_FOLLOWERS),
+        xFollowersMode: "fallback",
+        totalSupply: Number(process.env.TOTAL_SUPPLY || DEFAULT_TOTAL_SUPPLY)
+      });
+    } catch {
+      return serverError(res, "community stats unavailable", fatalError);
+    }
   }
-
-  res.setHeader("Cache-Control", "s-maxage=60, stale-while-revalidate=120");
-
-  return res.status(200).json({
-    holders,
-    holdersMode,
-    projectStage,
-    holdersUpdatedAt,
-    holdersError,
-    holdersRefreshMs: FALLBACK_REFRESH_MS,
-    telegramMembers,
-    xFollowers,
-    xFollowersMode,
-    xFollowersUpdatedAt,
-    xFollowersError,
-    totalSupply
-  });
 }
