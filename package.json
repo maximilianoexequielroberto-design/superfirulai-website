@@ -1,6 +1,6 @@
 {
-  "name": "superfirulai-verified-airdrop-site",
-  "version": "2.0.0",
+  "name": "superfirulai-website",
+  "version": "3.0.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -8,17 +8,9 @@
   },
   "scripts": {
     "dev": "vercel dev",
-    "start": "vercel dev",
-    "distribute:firu": "node scripts/distribute-firu.js"
+    "start": "vercel dev"
   },
   "dependencies": {
-    "@solana/spl-token": "^0.4.8",
-    "@solana/web3.js": "^1.98.2",
-    "@supabase/supabase-js": "^2.49.0",
-    "bs58": "^6.0.0",
-    "tweetnacl": "^1.0.3"
-  },
-  "overrides": {
-    "uuid": "9"
+    "@solana/web3.js": "^1.98.2"
   }
 }
