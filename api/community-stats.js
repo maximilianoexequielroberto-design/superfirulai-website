@@ -1,10 +1,37 @@
 import { applySecurityHeaders, serverError } from "./_security.js";
 
-let PublicKey = null;
-try {
-  ({ PublicKey } = await import("@solana/web3.js"));
-} catch (moduleLoadError) {
-  console.error("community-stats: failed to load @solana/web3.js", moduleLoadError);
+// Solana addresses are base58-encoded 32-byte public keys. Validating this
+// ourselves (instead of relying on @solana/web3.js) removes an external
+// dependency that can fail to install/bundle in some deployments.
+const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+const BASE58_MAP = (() => {
+  const map = {};
+  for (let i = 0; i < BASE58_ALPHABET.length; i++) map[BASE58_ALPHABET[i]] = i;
+  return map;
+})();
+
+function base58Decode(input) {
+  const str = String(input || "");
+  if (!str.length) return null;
+  const bytes = [0];
+  for (let i = 0; i < str.length; i++) {
+    const value = BASE58_MAP[str[i]];
+    if (value === undefined) return null;
+    let carry = value;
+    for (let j = 0; j < bytes.length; j++) {
+      carry += bytes[j] * 58;
+      bytes[j] = carry & 0xff;
+      carry >>= 8;
+    }
+    while (carry > 0) {
+      bytes.push(carry & 0xff);
+      carry >>= 8;
+    }
+  }
+  for (let i = 0; i < str.length && str[i] === "1"; i++) {
+    bytes.push(0);
+  }
+  return bytes.reverse();
 }
 
 const DEFAULT_HOLDERS = 0;
@@ -22,12 +49,8 @@ const TELEGRAM_TIMEOUT_MS = 5000;
 function isValidPublicKey(value) {
   const normalized = String(value || "").trim();
   if (!normalized) return false;
-  if (!PublicKey) return false;
-  try {
-    return new PublicKey(normalized).toBase58() === normalized;
-  } catch {
-    return false;
-  }
+  const decoded = base58Decode(normalized);
+  return Array.isArray(decoded) && decoded.length === 32;
 }
 
 async function fetchJsonWithTimeout(url, options = {}, timeoutMs = 8000) {
@@ -185,9 +208,6 @@ export default async function handler(req, res) {
     xFollowersError = null;
 
     try {
-      if (!PublicKey) {
-        throw new Error("@solana/web3.js unavailable in this deployment");
-      }
       if (!holdersUnlocked) {
         holders = 0;
         holdersMode = "prelaunch_locked";
