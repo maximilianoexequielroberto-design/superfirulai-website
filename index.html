@@ -84,7 +84,9 @@
     section:first-of-type{padding-top:0}
     @media (max-width:720px){ section{padding:64px 0} }
 
-    h1,h2,h3{font-family:"Barlow Condensed",sans-serif;letter-spacing:-.02em;line-height:1}
+    h1,h2,h3{font-family:"Barlow Condensed",sans-serif;font-weight:900;letter-spacing:-.02em;line-height:1}
+    h1{letter-spacing:-.03em;text-shadow:0 2px 24px rgba(0,0,0,.45),0 0 44px rgba(255,180,70,.16)}
+    h2{text-shadow:0 2px 18px rgba(0,0,0,.3)}
     h1{font-size:clamp(44px,10vw,84px)}
     h2{font-size:clamp(34px,7vw,52px)}
     h3{font-size:clamp(24px,5vw,32px)}
@@ -329,21 +331,39 @@
     @keyframes twinkle-a{0%,100%{opacity:.35}50%{opacity:.85}}
     @keyframes twinkle-b{0%,100%{opacity:.5}50%{opacity:.15}}
 
-    .rocket{position:absolute;width:26px;height:26px;color:#ffd8a3;opacity:0;left:-8%;top:78%;animation:fly-across 22s linear infinite}
-    .rocket svg{width:100%;height:100%;fill:currentColor;transform:rotate(45deg);filter:drop-shadow(0 0 6px rgba(255,180,80,.55))}
-    .rocket-trail{position:absolute;top:50%;left:50%;width:120px;height:3px;border-radius:999px;transform:translate(-100%,-50%) rotate(45deg);transform-origin:right center;background:linear-gradient(90deg,transparent,rgba(255,208,96,.65));filter:blur(1px)}
+    .rocket{position:absolute;width:34px;height:34px;color:#eef5ff;opacity:0;left:-8%;top:78%;animation:fly-across 22s linear infinite}
+    .rocket svg{width:100%;height:100%;transform:rotate(45deg);filter:drop-shadow(0 0 7px rgba(255,170,60,.5))}
+    .rocket-trail{position:absolute;top:50%;left:8%;width:80px;height:9px;transform:translateY(-50%) rotate(45deg);transform-origin:right center;pointer-events:none}
+    .rocket-trail::before{
+      content:"";position:absolute;inset:0;border-radius:999px;
+      background:linear-gradient(90deg,transparent,rgba(255,140,40,.15) 30%,rgba(255,190,90,.55) 70%,rgba(255,236,180,.9));
+      filter:blur(1.5px)
+    }
     .rocket-1{animation-duration:26s;animation-delay:2s}
-    .rocket-2{top:35%;width:20px;height:20px;animation-duration:32s;animation-delay:14s}
+    .rocket-2{top:35%;width:24px;height:24px;animation-duration:32s;animation-delay:14s}
+    .rocket-2 .rocket-trail{width:56px;height:6px}
     @keyframes fly-across{
       0%{left:-8%;top:82%;opacity:0}
-      6%{opacity:.9}
+      6%{opacity:1}
       50%{left:52%;top:38%}
-      94%{opacity:.9}
+      94%{opacity:1}
       100%{left:112%;top:6%;opacity:0}
+    }
+
+    .satellite{position:absolute;width:30px;height:30px;color:#cfe0ff;opacity:0;left:-6%;animation:drift-across linear infinite}
+    .satellite svg{width:100%;height:100%;filter:drop-shadow(0 0 5px rgba(160,200,255,.4))}
+    .satellite-1{top:22%;animation-duration:52s;animation-delay:5s}
+    .satellite-2{top:64%;width:22px;height:22px;animation-duration:64s;animation-delay:30s}
+    @keyframes drift-across{
+      0%{left:-6%;opacity:0;transform:rotate(-6deg)}
+      8%{opacity:.85}
+      50%{transform:rotate(6deg)}
+      92%{opacity:.85}
+      100%{left:106%;opacity:0;transform:rotate(-6deg)}
     }
     @media (prefers-reduced-motion: reduce){
       .stars-1,.stars-2,.stars-3{animation:none;opacity:.4}
-      .rocket{animation:none;display:none}
+      .rocket,.satellite{animation:none;display:none}
     }
   </style>
 </head>
@@ -355,11 +375,53 @@
     <div class="stars stars-3"></div>
     <div class="rocket rocket-1">
       <div class="rocket-trail"></div>
-      <svg viewBox="0 0 24 24"><path d="M12 2c2.5 2.2 4 5.6 4 9.5 0 2.4-.6 4.4-1.4 6l-2.6 3-2.6-3c-.8-1.6-1.4-3.6-1.4-6C8 7.6 9.5 4.2 12 2Z"></path><circle cx="12" cy="10" r="1.6"></circle><path d="M8.5 15.5 5 17.5l1-4"></path><path d="M15.5 15.5 19 17.5l-1-4"></path></svg>
+      <svg viewBox="0 0 40 40">
+        <path d="M20 4c5 4.4 8 11 8 18.5 0 3-.5 5.6-1.3 8L20 36l-6.7-5.5c-.8-2.4-1.3-5-1.3-8C12 15 15 8.4 20 4Z" fill="#e9eef7"/>
+        <path d="M20 4c5 4.4 8 11 8 18.5 0 3-.5 5.6-1.3 8L20 36V4Z" fill="#c7d2e6"/>
+        <circle cx="20" cy="17" r="3.4" fill="#ffb545"/>
+        <circle cx="20" cy="17" r="3.4" fill="none" stroke="#7c5a1e" stroke-width="1"/>
+        <path d="M12.6 24.5 5 30l2.4-8.6c1.4-1.7 3.2-2.6 5.2-2.9Z" fill="#ff5c4d"/>
+        <path d="M27.4 24.5 35 30l-2.4-8.6c-1.4-1.7-3.2-2.6-5.2-2.9Z" fill="#ff5c4d"/>
+        <path d="M16.5 31.5 20 39l3.5-7.5c-1.1.5-2.3.8-3.5.8s-2.4-.3-3.5-.8Z" fill="#ffb545"/>
+        <path d="M17.5 31.8 20 37l2.5-5.2c-.8.3-1.6.4-2.5.4s-1.7-.1-2.5-.4Z" fill="#ffe6a8"/>
+      </svg>
     </div>
     <div class="rocket rocket-2">
       <div class="rocket-trail"></div>
-      <svg viewBox="0 0 24 24"><path d="M12 2c2.5 2.2 4 5.6 4 9.5 0 2.4-.6 4.4-1.4 6l-2.6 3-2.6-3c-.8-1.6-1.4-3.6-1.4-6C8 7.6 9.5 4.2 12 2Z"></path><circle cx="12" cy="10" r="1.6"></circle><path d="M8.5 15.5 5 17.5l1-4"></path><path d="M15.5 15.5 19 17.5l-1-4"></path></svg>
+      <svg viewBox="0 0 40 40">
+        <path d="M20 4c5 4.4 8 11 8 18.5 0 3-.5 5.6-1.3 8L20 36l-6.7-5.5c-.8-2.4-1.3-5-1.3-8C12 15 15 8.4 20 4Z" fill="#e9eef7"/>
+        <path d="M20 4c5 4.4 8 11 8 18.5 0 3-.5 5.6-1.3 8L20 36V4Z" fill="#c7d2e6"/>
+        <circle cx="20" cy="17" r="3.4" fill="#7fc4ff"/>
+        <circle cx="20" cy="17" r="3.4" fill="none" stroke="#1c4e73" stroke-width="1"/>
+        <path d="M12.6 24.5 5 30l2.4-8.6c1.4-1.7 3.2-2.6 5.2-2.9Z" fill="#ff5c4d"/>
+        <path d="M27.4 24.5 35 30l-2.4-8.6c-1.4-1.7-3.2-2.6-5.2-2.9Z" fill="#ff5c4d"/>
+        <path d="M16.5 31.5 20 39l3.5-7.5c-1.1.5-2.3.8-3.5.8s-2.4-.3-3.5-.8Z" fill="#ffb545"/>
+        <path d="M17.5 31.8 20 37l2.5-5.2c-.8.3-1.6.4-2.5.4s-1.7-.1-2.5-.4Z" fill="#ffe6a8"/>
+      </svg>
+    </div>
+    <div class="satellite satellite-1">
+      <svg viewBox="0 0 40 40">
+        <rect x="16" y="15" width="8" height="10" rx="1.5" fill="#dfe6f2"/>
+        <rect x="17.3" y="16.5" width="5.4" height="3" rx=".6" fill="#8fa6c9"/>
+        <rect x="2" y="17.5" width="12" height="5" rx="1" fill="#3d5b8c"/>
+        <rect x="2" y="17.5" width="12" height="5" rx="1" fill="none" stroke="#1f2f4d" stroke-width=".6"/>
+        <rect x="26" y="17.5" width="12" height="5" rx="1" fill="#3d5b8c"/>
+        <rect x="26" y="17.5" width="12" height="5" rx="1" fill="none" stroke="#1f2f4d" stroke-width=".6"/>
+        <line x1="20" y1="15" x2="20" y2="10" stroke="#dfe6f2" stroke-width="1"/>
+        <circle cx="20" cy="9" r="1.4" fill="#ffd060"/>
+      </svg>
+    </div>
+    <div class="satellite satellite-2">
+      <svg viewBox="0 0 40 40">
+        <rect x="16" y="15" width="8" height="10" rx="1.5" fill="#dfe6f2"/>
+        <rect x="17.3" y="16.5" width="5.4" height="3" rx=".6" fill="#8fa6c9"/>
+        <rect x="2" y="17.5" width="12" height="5" rx="1" fill="#3d5b8c"/>
+        <rect x="2" y="17.5" width="12" height="5" rx="1" fill="none" stroke="#1f2f4d" stroke-width=".6"/>
+        <rect x="26" y="17.5" width="12" height="5" rx="1" fill="#3d5b8c"/>
+        <rect x="26" y="17.5" width="12" height="5" rx="1" fill="none" stroke="#1f2f4d" stroke-width=".6"/>
+        <line x1="20" y1="15" x2="20" y2="10" stroke="#dfe6f2" stroke-width="1"/>
+        <circle cx="20" cy="9" r="1.4" fill="#ffd060"/>
+      </svg>
     </div>
   </div>
 
